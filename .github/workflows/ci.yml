@@ -1,0 +1,23 @@
+name: CI Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Directories
+        run: |
+          ls -R client/
+          ls -R server/
+          echo "Structure is OK"
+
+      - name: Secrets Scan (Basic)
+        run: |
+          if [ -f .env ]; then echo ".env file found! Fix it!"; exit 1; fi
