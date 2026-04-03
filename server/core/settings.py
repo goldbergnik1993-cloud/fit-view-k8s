@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -25,7 +24,7 @@ class Settings(BaseSettings):
     RESET_TOKEN_EXPIRE_MINUTES: int
 
     model_config = SettingsConfigDict(
-        env_file=os.path.join(BASE_DIR, ".env"),
+        env_file=BASE_DIR/".env",
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False
