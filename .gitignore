@@ -22,3 +22,6 @@ build/
 # System
 .DS_Store
 Thumbs.db
+
+# Poetry
+.venv/
