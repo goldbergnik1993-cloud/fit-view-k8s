@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.pytest_cache/
+.mypy_cache/
+
+# Poetry
+.poetry/
+dist/
+build/
+
+# System
+.env
+.env.sample
+Dockerfile
+.dockerignore
+.git
+.gitignore
+
+
+.DS_Store
