@@ -1,0 +1,30 @@
+🚀 Quick Start: Development Environment
+This project uses Docker Compose to orchestrate Frontend (Vite), Backend (Python), and PostgreSQL.
+1. Setup Environment Variables
+Create a .env file in the project root (the .gitignore will keep it safe):
+ini
+# Database Credentials
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=your_secure_password
+POSTGRES_DB=fitview_db
+
+# Frontend API Connection (Vite)
+VITE_API_URL=http://localhost:8000
+
+2. Launch Infrastructure
+Run the following command in your terminal:
+bash
+docker-compose up -d --build
+
+3. Service Access Points
+Service	URL	Info
+Frontend	http://localhost:3000	Vite/React App
+Backend	http://localhost:8000	Python API (Mock)
+Database	localhost:5432	PostgreSQL
+Adminer	http://localhost:8080	DB Web Interface
+4. Database Login (Adminer)
+To manage the DB via browser, use these credentials:
+System: PostgreSQL
+Server: db
+Username/Password: (Values from your .env)
+Database: fitview_db
