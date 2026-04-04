@@ -1,0 +1,73 @@
+import enum
+from datetime import datetime
+from typing import Optional
+
+from sqlalchemy import Integer, String, func, DateTime, Enum, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from database.models.base import Base
+
+
+class UserRoleEnum(str, enum.Enum):
+    BUYER = "buyer"
+    MANAGER = "manager"
+    ADMIN = "admin"
+
+
+class GenderEnum(str, enum.Enum):
+    MALE = "male"
+    FEMALE = "female"
+    UNISEX = "unisex"
+
+
+class UserModel(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(
+        String(255), unique=True, index=True, nullable=False
+    )
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    role: Mapped[UserRoleEnum] = mapped_column(
+        Enum(UserRoleEnum), nullable=False, default=UserRoleEnum.BUYER
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=func.now(),
+        server_default=func.now()
+    )
+
+    profile: Mapped[Optional["UserProfileModel"]] = relationship(
+        "UserProfileModel",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
+
+
+class UserProfileModel(Base):
+    __tablename__ = "user_profiles"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True
+    )
+    height_cm: Mapped[int] = mapped_column(Integer)
+    gender: Mapped[GenderEnum] = mapped_column(
+        Enum(GenderEnum), nullable=False, default=GenderEnum.UNISEX
+    )
+    leg_length_cm: Mapped[int] = mapped_column(Integer)
+    waist_length_cm: Mapped[int] = mapped_column(Integer)
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=func.now(),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    user: Mapped["UserModel"] = relationship(
+        "UserModel", back_populates="profile"
+    )

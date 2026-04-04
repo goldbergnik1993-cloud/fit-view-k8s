@@ -1,0 +1,7 @@
+from fastapi import FastAPI, status
+
+app = FastAPI()
+
+@app.get("/health", status_code=status.HTTP_200_OK)
+async def hello():
+    return {"message": "I'm Healthy as always!"}
