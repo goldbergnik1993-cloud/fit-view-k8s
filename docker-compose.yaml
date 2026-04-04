@@ -14,11 +14,16 @@ services:
       - backend
 
   backend:
-    image: python:3.12-slim
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     container_name: fitview_backend
+    volumes:
+      - ./server:/app
+      - /app/.venv
     ports:
       - "8000:8000"
-    command: python3 -m http.server 8000
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     networks:
@@ -42,6 +47,7 @@ services:
 
   adminer:
     image: adminer
+    container_name: fitview_adminer
     ports:
       - "8080:8080"
     networks:
