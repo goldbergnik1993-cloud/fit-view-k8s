@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Migrations**: Generated and applied the initial Alembic migration to create `users` and `user_profiles` tables.
 - **Migrations**: Initialized **Alembic** for database migrations, including custom configuration in `env.py` for asynchronous support.
 - **Models**: Implemented `UserModel` and `UserProfileModel` with SQLAlchemy, establishing the core user data architecture.
 - **Infrastructure**: Initialized project with **Poetry** and defined a modular FastAPI directory structure.
