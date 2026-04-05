@@ -1,17 +1,19 @@
 import secrets
 from datetime import datetime, UTC, timedelta
+from typing import Any, Coroutine
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import settings
-from database.models.user import UserModel, UserRoleEnum, RefreshTokenModel
+from database.models.user import UserModel, UserRoleEnum, RefreshTokenModel, \
+    UserProfileModel
 from schemas.user import (
     UserCreateSchema,
     UserRetrieveSchema,
     LoginSchema,
-    RefreshTokenRequest
+    RefreshTokenRequest, ProfileBaseSchema, ProfileViewSchema
 )
 from utils.tokens import (
     hash_password,
@@ -115,3 +117,43 @@ async def refresh_token_pair(
         "refresh_token": new_refresh_token_str,
         "token_type": "bearer"
     }
+
+
+async def profile_create(
+        payload: ProfileBaseSchema,
+        user: UserModel,
+        db: AsyncSession
+) -> UserProfileModel:
+    existing_profile = await db.scalar(
+        select(UserProfileModel).where(UserProfileModel.user_id == user.id)
+    )
+
+    if existing_profile:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You already have a profile."
+        )
+
+    data = payload.model_dump(exclude={"user_id"})
+    new_profile = UserProfileModel(
+        user_id=user.id,
+        **data
+    )
+
+    db.add(new_profile)
+    await db.commit()
+    await db.refresh(new_profile)
+    return new_profile
+
+
+async def get_user_profile(db: AsyncSession, user: UserModel):
+    profile_stmt = select(UserProfileModel).where(
+        UserProfileModel.user_id == user.id
+    )
+    profile = await db.scalar(profile_stmt)
+    if not profile:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You don't have a profile."
+        )
+    return profile
