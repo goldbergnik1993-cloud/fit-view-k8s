@@ -12,7 +12,6 @@ dist/
 build/
 
 # System
-.env
 .env.sample
 Dockerfile
 .dockerignore
