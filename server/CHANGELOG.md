@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ## Added
+- **Models**: Add to `UserModel` relationships to `FitviewEventsModel` and `FavoriteModel`.
+- **Models & Migrations**: Implemented `ItemsModel`, `SizeChartModel`, `ItemMeasurementsModel`, `FavoritesModel`, `FitviewEventsModel`, made corresponding migrations.
+- **API**: Exposed profile management `GET/POST` endpoints via `/user/profile`
+- **Services**: Added `profile_create` and `get_user_profile` services. Added `get_current_user` dependency.
+- **Schemas**: Added `ProfileBaseSchema` and `ProfileViewSchema` featuring user's profile creation and retrieving.
 - **Models**: Introduced `RefreshTokenModel` for managing active user sessions.
 - **Services**: 
     - `user_create`: Handles new user registration.
@@ -13,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - **Schemas**: 
     - Added `UserCreateSchema` featuring password complexity validation.
     - Implemented `TokenPairResponse` and `RefreshTokenRequest` for standard JWT handling.
-- **API**: Exposed user management endpoints via `/api/user`.
+- **API**: Exposed user management endpoints via `/user`.
 - **Migrations**: Generated and applied the initial Alembic migration to create `users` and `user_profiles` tables.
 - **Migrations**: Initialized **Alembic** for database migrations, including custom configuration in `env.py` for asynchronous support.
 - **Models**: Implemented `UserModel` and `UserProfileModel` with SQLAlchemy, establishing the core user data architecture.
