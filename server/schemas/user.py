@@ -1,6 +1,9 @@
 import re
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr, ConfigDict, field_validator, Field
+
+from database.models.user import GenderEnum
 
 
 class UserBaseSchema(BaseModel):
@@ -44,3 +47,16 @@ class TokenPairResponse(BaseModel):
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
+
+class ProfileBaseSchema(BaseModel):
+    height_cm: int = Field(..., ge=100, le=250)
+    gender: Optional[GenderEnum] = Field("unisex", max_length=6)
+    leg_length_cm: int = Field(..., ge=50, le=120)
+    waist_length_cm: int = Field(..., ge=40, le=150)
+
+
+class ProfileViewSchema(ProfileBaseSchema):
+    id: int
+    user_id: int
+
+    model_config = ConfigDict(from_attributes=True)
