@@ -4,7 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from database.models.catalog import ItemsModel, SizeChartModel
-from schemas.catalog import ItemsListSchema, ItemListItemSchema
+from schemas.catalog import ItemsListSchema, ItemListItemSchema, \
+    ItemDetailSchema
 from utils.service_helpers import pagination_helper
 
 
@@ -27,14 +28,14 @@ async def get_items_list(
     if filters.get("brands"):
         stmt = stmt.where(ItemsModel.brand_id.in_(filters["brands"]))
 
-    if filters.get("size"):
-        stmt = stmt.join(ItemsModel.size_charts).where(
-            SizeChartModel.id.is_(filters["size"])
-        )
     # if filters.get("size"):
     #     stmt = stmt.join(ItemsModel.size_charts).where(
-    #         SizeChartModel.size_label.ilike(f"%{filters['size']}%")
+    #         SizeChartModel.id.is_(filters["size"])
     #     )
+    if filters.get("size"):
+        stmt = stmt.join(ItemsModel.size_charts).where(
+            SizeChartModel.size_label.ilike(f"%{filters['size']}%")
+        )
 
     if filters.get("min_price"):
         stmt = stmt.where(ItemsModel.price >= filters["min_price"])
@@ -63,7 +64,7 @@ async def get_items_list(
             ItemListItemSchema(
                 id=piece.id,
                 name=piece.name,
-                brand=piece.brand.name if piece.brand else "Unknown",
+                brand=piece.brand,
                 category=piece.category,
                 image_url=piece.image_url,
                 price=piece.price,
@@ -80,3 +81,18 @@ async def get_items_list(
         prev_page=result["prev_page"],
         next_page=result["next_page"]
     )
+
+async def item_view(item_id: int, db: AsyncSession):
+    item_stmt = select(ItemsModel).where(ItemsModel.id == item_id).options(
+        selectinload(ItemsModel.size_charts),
+        selectinload(ItemsModel.measurements),
+        selectinload(ItemsModel.brand)
+    )
+    db_item = await db.scalar(item_stmt)
+    if not db_item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item is not found",
+        )
+
+    return ItemDetailSchema.model_validate(db_item)
