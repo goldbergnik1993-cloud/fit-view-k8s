@@ -20,6 +20,7 @@ from database.models.user import (
     RefreshTokenModel
 ) # noqa: F401
 from database.models.catalog import (
+    BrandsModel,
     ItemsModel,
     SizeChartModel,
     ItemMeasurementsModel,
