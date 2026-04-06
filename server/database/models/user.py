@@ -48,13 +48,13 @@ class UserModel(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
-    favorites: Mapped[List["FavoriteModel"]] = relationship(
-        "FavoriteModel",
+    favorites: Mapped[List["FavoritesModel"]] = relationship(
+        "FavoritesModel",
         back_populates="user",
         cascade="all, delete-orphan"
     )
     events: Mapped[List["FitviewEventsModel"]] = relationship(
-        "FitviewEventsModel", back_populates="item"
+        "FitviewEventsModel", back_populates="user"
     )
 
 

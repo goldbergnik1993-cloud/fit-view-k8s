@@ -30,6 +30,6 @@ class FitviewEventsModel(Base):
     user: Mapped["UserModel"] = relationship(
         "UserModel", back_populates="events"
     )
-    item: Mapped["ItemModel"] = relationship(
-        "ItemModel", back_populates="events"
+    item: Mapped["ItemsModel"] = relationship(
+        "ItemsModel", back_populates="events"
     )
