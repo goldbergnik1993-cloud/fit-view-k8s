@@ -1,5 +1,5 @@
 import re
-from typing import Optional, List
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr, ConfigDict, field_validator, Field
 
@@ -64,5 +64,5 @@ class ProfileViewSchema(ProfileBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class FavoritesListSchema(PaginatedResponse, BaseModel):
-    items: List[ItemListItemSchema]
+class FavoritesListSchema(PaginatedResponse[ItemListItemSchema]):
+    pass

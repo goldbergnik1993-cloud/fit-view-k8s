@@ -34,8 +34,8 @@ class ItemListItemSchema(ItemBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ItemsListSchema(PaginatedResponse, BaseModel):
-    items: List[ItemListItemSchema]
+class ItemsListSchema(PaginatedResponse[ItemListItemSchema]):
+    pass
 
 
 class ItemFilterParams(BaseModel):

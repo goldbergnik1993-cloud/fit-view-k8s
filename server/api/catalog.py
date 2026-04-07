@@ -64,7 +64,7 @@ async def get_item(
     return await item_view(item_id=item_id, db=db, user_id=user_id)
 
 
-@router.post("/items/{item_id}/favorite", response_model=ToggleFavoriteSchema)
+@router.post("/{item_id}/favorite", response_model=ToggleFavoriteSchema)
 async def favorite(
         item_id: int,
         current_user: UserModel = Depends(get_current_user),

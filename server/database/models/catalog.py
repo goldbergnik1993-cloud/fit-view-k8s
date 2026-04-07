@@ -11,7 +11,9 @@ from sqlalchemy import (
     ForeignKey,
     Boolean,
     DateTime,
-    func, DECIMAL, UniqueConstraint
+    func,
+    DECIMAL,
+    UniqueConstraint
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
