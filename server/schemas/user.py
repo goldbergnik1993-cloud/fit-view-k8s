@@ -1,9 +1,11 @@
 import re
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr, ConfigDict, field_validator, Field
 
 from database.models.user import GenderEnum
+from schemas.base import PaginatedResponse
+from schemas.catalog import ItemListItemSchema
 
 
 class UserBaseSchema(BaseModel):
@@ -60,3 +62,7 @@ class ProfileViewSchema(ProfileBaseSchema):
     user_id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class FavoritesListSchema(PaginatedResponse, BaseModel):
+    items: List[ItemListItemSchema]

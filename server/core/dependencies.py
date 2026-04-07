@@ -1,8 +1,10 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, HTTPBearer, \
+from fastapi.security import (
+    HTTPBearer,
     HTTPAuthorizationCredentials
+)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,6 +13,7 @@ from database.session_postgresql import get_db
 from utils.tokens import decode_access_token
 
 security = HTTPBearer()
+optional_security = HTTPBearer(auto_error=False)
 
 async def get_current_user(
         credentials: HTTPAuthorizationCredentials = Depends(security),
@@ -38,6 +41,30 @@ async def get_current_user(
         )
 
     return user
+
+
+async def get_optional_current_user(
+        credentials: Optional[HTTPAuthorizationCredentials] = Depends(
+            optional_security
+        ),
+        db: AsyncSession = Depends(get_db)
+) -> Optional[UserModel]:
+    if not credentials:
+        return None
+
+    token = credentials.credentials
+    payload = decode_access_token(token)
+
+    if not payload:
+        return None
+
+    user_id = payload.get("sub")
+    if not user_id:
+        return None
+
+    user_stmt = select(UserModel).where(UserModel.id == int(user_id))
+    result = await db.execute(user_stmt)
+    return result.scalar_one_or_none()
 
 
 class RoleChecker:
