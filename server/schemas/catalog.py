@@ -21,6 +21,7 @@ class ItemBaseSchema(BaseModel):
     category: ItemCategoryEnum
     image_url: str
     price: Decimal
+    is_favorite: bool = False
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -86,3 +87,9 @@ class ItemDetailSchema(ItemBaseSchema):
         validation_alias="measurements")
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# ============================== FAVORITES ================================
+class ToggleFavoriteSchema(BaseModel):
+    message: str
+    is_favorite: bool

@@ -1,17 +1,22 @@
-from fastapi import APIRouter
-from fastapi.params import Depends
+from typing import Optional, List
+
+from fastapi import APIRouter, Depends, Request, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import get_current_user
 from database.models.user import UserModel
 from database.session_postgresql import get_db
+from schemas.catalog import ItemFilterParams, ItemsListSchema
 from schemas.user import (
     UserCreateSchema,
     UserRetrieveSchema,
     LoginSchema,
     TokenPairResponse,
-    RefreshTokenRequest, ProfileBaseSchema, ProfileViewSchema
+    RefreshTokenRequest,
+    ProfileBaseSchema,
+    ProfileViewSchema,
 )
+from services.catalog import get_items_list
 from services.user import (
     user_create,
     user_login,
@@ -64,3 +69,29 @@ async def my_profile(
         current_user: UserModel = Depends(get_current_user)
 ):
     return await get_user_profile(db=db, user=current_user)
+
+
+@router.get("/favorites", response_model=ItemsListSchema)
+async def list_favorites(
+        request: Request,
+        db: AsyncSession = Depends(get_db),
+        params: ItemFilterParams = Depends(),
+        brands: Optional[List[int]] = Query(None),
+        current_user: UserModel = Depends(get_current_user) # STRICT dependency
+):
+    filters = params.model_dump(
+        exclude={"page", "per_page", "sort_by"}, exclude_none=True
+    )
+    if brands is not None:
+        filters["brands"] = brands
+
+    return await get_items_list(
+        request=request,
+        db=db,
+        filters=filters,
+        page=params.page,
+        per_page=params.per_page,
+        sort_by=params.sort_by,
+        user_id=current_user.id,
+        only_favorites=True
+    )

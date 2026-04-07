@@ -1,20 +1,22 @@
 import secrets
 from datetime import datetime, UTC, timedelta
-from typing import Any, Coroutine
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import settings
+from database.models import FavoritesModel
 from database.models.user import UserModel, UserRoleEnum, RefreshTokenModel, \
     UserProfileModel
 from schemas.user import (
     UserCreateSchema,
     UserRetrieveSchema,
     LoginSchema,
-    RefreshTokenRequest, ProfileBaseSchema, ProfileViewSchema
+    RefreshTokenRequest, ProfileBaseSchema, ProfileViewSchema,
+    FavoritesListSchema
 )
+from utils.service_helpers import pagination_helper
 from utils.tokens import (
     hash_password,
     verify_password,
@@ -157,3 +159,20 @@ async def get_user_profile(db: AsyncSession, user: UserModel):
             detail="You don't have a profile."
         )
     return profile
+
+
+async def get_users_favorites(
+        request: Request,
+        page: int,
+        per_page: int,
+        user: UserModel,
+        db: AsyncSession
+):
+    stmt = select(FavoritesModel).where(FavoritesModel.user_id == user.id)
+    result = await pagination_helper(
+        request=request,
+        page=page,
+        per_page=per_page,
+        stmt=stmt,
+        db=db
+    )
