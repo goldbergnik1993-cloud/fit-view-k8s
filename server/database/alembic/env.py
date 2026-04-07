@@ -14,7 +14,20 @@ root_dir = Path(__file__).resolve().parents[2]
 sys.path.append(str(root_dir))
 
 from database.models.base import Base
-from database.models.user import UserModel, UserProfileModel # noqa: F401
+from database.models.user import (
+    UserModel,
+    UserProfileModel,
+    RefreshTokenModel
+) # noqa: F401
+from database.models.catalog import (
+    BrandsModel,
+    ItemsModel,
+    SizeChartModel,
+    ItemMeasurementsModel,
+    FavoritesModel
+) # noqa: F401
+from database.models.events import FitviewEventsModel # noqa: F401
+
 
 load_dotenv()
 
