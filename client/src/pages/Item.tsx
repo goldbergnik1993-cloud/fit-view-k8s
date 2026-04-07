@@ -1,17 +1,46 @@
 import { useState } from 'react';
 import Silhouette from '../components/Silhouette';
 import { mockClothingItems } from '../data/mockClothing';
+import { calculateHEnd, getResultLabel, getLinePositionPct } from '../utils/fitCalculator';
 
 const Item = () => {
   const [height, setHeight] = useState(165);
+  const [selectedSize, setSelectedSize] = useState('M');
   const item = mockClothingItems[0];
-  const size = item.sizes[0];
+
+  const measurement = item.measurements.find(m => m.sizeLabel === selectedSize);
+  const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
+  const hEnd = calculateHEnd(height, item.category, lengthCm);
+  const linePositionPct = getLinePositionPct(hEnd, height);
+  const { text } = getResultLabel(hEnd);
 
   return (
     <div style={{ padding: '24px', maxWidth: '600px', margin: '0 auto' }}>
       <h1>{item.name}</h1>
       <p>{item.brand}</p>
-      <p>Length: {size.totalLengthCm}cm</p>
+      <p style={{ fontSize: '20px', fontWeight: 'bold' }}>${item.price}</p>
+
+      <div style={{ margin: '16px 0' }}>
+        <p>Size:</p>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {item.availableSizes.map(size => (
+            <button
+              key={size}
+              onClick={() => setSelectedSize(size)}
+              style={{
+                padding: '8px 16px',
+                background: selectedSize === size ? '#534AB7' : 'white',
+                color: selectedSize === size ? 'white' : '#333',
+                border: '1px solid #534AB7',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div style={{ margin: '24px 0' }}>
         <label>
@@ -27,7 +56,8 @@ const Item = () => {
         </label>
       </div>
 
-      <Silhouette userHeight={height} itemLengthCm={size.totalLengthCm} />
+      <Silhouette linePositionPct={linePositionPct} label={text} />
+      <p>Item ends {Math.round(hEnd)}cm from floor</p>
     </div>
   );
 };

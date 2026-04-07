@@ -1,39 +1,39 @@
-export interface BodyProportions {
-  waistFromFloor: number;
-  kneeFromFloor: number;
-  hipFromFloor: number;
-  shoulderFromFloor: number;
-}
+export type ItemCategory = 
+  'dress' | 't_shirt' | 'blouse' | 'shirt' | 'skirt' | 'pants';
 
-export const getBodyProportions = (heightCm: number): BodyProportions => {
-  return {
-    shoulderFromFloor: heightCm * 0.81,
-    waistFromFloor: heightCm * 0.62,
-    hipFromFloor: heightCm * 0.52,
-    kneeFromFloor: heightCm * 0.28,
-  };
+export const REF_COEFFICIENTS: Record<ItemCategory, number> = {
+  dress: 0.818,
+  t_shirt: 0.818,
+  blouse: 0.818,
+  shirt: 0.818,
+  skirt: 0.618,
+  pants: 0.470,
 };
 
-export const getFitPosition = (
-  userHeight: number,
-  itemLengthCm: number
+export const RESULT_LABELS: { min: number; max: number; label: string; text: string }[] = [
+  { min: 70, max: Infinity, label: 'mid_thigh', text: 'Mid-thigh' },
+  { min: 60, max: 70, label: 'at_hip', text: 'At the hip' },
+  { min: 50, max: 60, label: 'below_hip', text: 'Below the hip' },
+  { min: 42, max: 50, label: 'above_knee', text: 'Above the knee' },
+  { min: 38, max: 42, label: 'at_knee', text: 'At the knee' },
+  { min: 20, max: 38, label: 'midi', text: 'Midi' },
+  { min: 0, max: 20, label: 'maxi', text: 'Maxi' },
+];
+
+export const calculateHEnd = (
+  heightCm: number,
+  category: ItemCategory,
+  lengthCm: number
 ): number => {
-  const fromFloor = userHeight - itemLengthCm;
-  const percentage = (fromFloor / userHeight) * 100;
-  return Math.max(0, Math.min(100, percentage));
+  const refCoef = REF_COEFFICIENTS[category];
+  return refCoef * heightCm - lengthCm;
 };
 
-export const getFitLabel = (
-  userHeight: number,
-  itemLengthCm: number
-): string => {
-  const proportions = getBodyProportions(userHeight);
-  const fromFloor = userHeight - itemLengthCm;
+export const getResultLabel = (hEnd: number): { label: string; text: string } => {
+  const result = RESULT_LABELS.find(r => hEnd >= r.min && hEnd < r.max);
+  return result ?? { label: 'maxi', text: 'Maxi' };
+};
 
-  if (fromFloor <= 0) return 'Floor length';
-  if (fromFloor <= proportions.kneeFromFloor) return 'Below knee';
-  if (fromFloor <= proportions.hipFromFloor) return 'Knee length';
-  if (fromFloor <= proportions.waistFromFloor) return 'Midi';
-  if (fromFloor <= proportions.shoulderFromFloor) return 'Mini';
-  return 'Crop';
+export const getLinePositionPct = (hEnd: number, heightCm: number): number => {
+  return (hEnd / heightCm) * 100;
 };
