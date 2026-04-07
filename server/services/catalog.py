@@ -1,11 +1,14 @@
 from fastapi import Request, HTTPException, status
-from sqlalchemy import select, desc, asc, delete
+from sqlalchemy import select, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from database.models.catalog import ItemsModel, SizeChartModel, FavoritesModel
-from schemas.catalog import ItemsListSchema, ItemListItemSchema, \
+from schemas.catalog import (
+    ItemsListSchema,
+    ItemListItemSchema,
     ItemDetailSchema
+)
 from utils.service_helpers import pagination_helper
 
 
