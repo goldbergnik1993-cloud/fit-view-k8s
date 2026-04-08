@@ -1,14 +1,33 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Silhouette from '../components/Silhouette';
-import { mockClothingItems } from '../data/mockClothing';
+import { useItem } from '../hooks/useItems';
 import { calculateHEnd, getResultLabel, getLinePositionPct } from '../utils/fitCalculator';
 
 const Item = () => {
+  const { id } = useParams<{ id: string }>();
+  const { item, loading, error } = useItem(id);
+
   const [height, setHeight] = useState(165);
   const [selectedSize, setSelectedSize] = useState('M');
-  const item = mockClothingItems[0];
 
-  const measurement = item.measurements.find(m => m.sizeLabel === selectedSize);
+  if (loading) {
+    return (
+      <div style={{ padding: '24px', textAlign: 'center', color: '#666' }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <div style={{ padding: '24px', color: '#cc0000' }}>
+        Error: {error || 'Item not found'}
+      </div>
+    );
+  }
+
+  const measurement = item.measurements.find((m: { sizeLabel: string }) => m.sizeLabel === selectedSize);
   const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
   const hEnd = calculateHEnd(height, item.category, lengthCm);
   const linePositionPct = getLinePositionPct(hEnd, height);
@@ -23,7 +42,7 @@ const Item = () => {
       <div style={{ margin: '16px 0' }}>
         <p>Size:</p>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {item.availableSizes.map(size => (
+          {item.availableSizes.map((size: string) => (
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
