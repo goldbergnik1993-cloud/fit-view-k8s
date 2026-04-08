@@ -1,6 +1,6 @@
 import enum
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import Integer, String, func, DateTime, Enum, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -43,6 +43,19 @@ class UserModel(Base):
         uselist=False,
         cascade="all, delete-orphan"
     )
+    refresh_tokens: Mapped[List["RefreshTokenModel"]] = relationship(
+        "RefreshTokenModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    favorites: Mapped[List["FavoritesModel"]] = relationship(
+        "FavoritesModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    events: Mapped[List["FitviewEventsModel"]] = relationship(
+        "FitviewEventsModel", back_populates="user"
+    )
 
 
 class UserProfileModel(Base):
@@ -70,4 +83,22 @@ class UserProfileModel(Base):
 
     user: Mapped["UserModel"] = relationship(
         "UserModel", back_populates="profile"
+    )
+
+
+class RefreshTokenModel(Base):
+    __tablename__ = "refresh_tokens"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    token: Mapped[str] = mapped_column(
+        String(255), unique=True, nullable=False
+    )
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    user: Mapped["UserModel"] = relationship(
+        "UserModel", back_populates="refresh_tokens"
     )
