@@ -9,7 +9,8 @@ const Item = () => {
   const { item, loading, error } = useItem(id);
 
   const [height, setHeight] = useState(165);
-  const [selectedSize, setSelectedSize] = useState('M');
+  const firstSize = item?.availableSizes?.[0] ?? 'M';
+  const [selectedSize, setSelectedSize] = useState(firstSize);
 
   if (loading) {
     return (
@@ -30,7 +31,7 @@ const Item = () => {
   const measurement = item.measurements.find((m: { sizeLabel: string }) => m.sizeLabel === selectedSize);
   const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
   const hEnd = calculateHEnd(height, item.category, lengthCm);
-  const linePositionPct = getLinePositionPct(hEnd, height);
+  const linePositionPct = Math.min(100, Math.max(0, getLinePositionPct(hEnd, height)));
   const { text } = getResultLabel(hEnd);
 
   return (
