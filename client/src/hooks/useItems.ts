@@ -2,10 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 import { itemsApi, type BackendItem } from '../services/api';
 import type { ClothingItem } from '../types/clothing';
 
+type SizeEntry = string | { id: number; size_label: string };
+
+function getSizeLabel(s: SizeEntry): string {
+  return typeof s === 'object' ? s.size_label : s;
+}
+
 export function mapItem(item: BackendItem): ClothingItem {
   const brandName = typeof item.brand === 'object' && item.brand !== null
     ? item.brand.name
     : String(item.brand);
+
+  const sizes = (item.available_sizes ?? []).map(getSizeLabel);
+  const measurements = (item.available_measurements ?? []).map(getSizeLabel);
 
   return {
     id: String(item.id),
@@ -14,17 +23,9 @@ export function mapItem(item: BackendItem): ClothingItem {
     category: item.category as ClothingItem['category'],
     imageUrl: item.image_url,
     price: Number(item.price),
-    availableSizes: item.available_sizes ?? [],
-    sizeCharts: (item.available_sizes ?? []).map((s: string) => ({
-      id: s,
-      itemId: String(item.id),
-      sizeLabel: s,
-    })),
-    measurements: (item.available_measurements ?? []).map((s: string) => ({
-      id: s,
-      itemId: String(item.id),
-      sizeLabel: s,
-    })),
+    availableSizes: sizes,
+    sizeCharts: sizes.map((s) => ({ id: s, itemId: String(item.id), sizeLabel: s })),
+    measurements: measurements.map((s) => ({ id: s, itemId: String(item.id), sizeLabel: s })),
   };
 }
 
