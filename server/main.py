@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,6 +8,20 @@ from api.user import router as user_router
 from database.session_postgresql import get_db
 
 app = FastAPI()
+
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:8080"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
