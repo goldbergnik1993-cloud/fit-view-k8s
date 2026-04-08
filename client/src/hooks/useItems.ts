@@ -3,25 +3,27 @@ import { itemsApi, type BackendItem } from '../services/api';
 import type { ClothingItem } from '../types/clothing';
 
 export function mapItem(item: BackendItem): ClothingItem {
+  const brandName = typeof item.brand === 'object' && item.brand !== null
+    ? item.brand.name
+    : String(item.brand);
+
   return {
     id: String(item.id),
     name: item.name,
-    brand: item.brand,
+    brand: brandName,
     category: item.category as ClothingItem['category'],
     imageUrl: item.image_url,
-    price: item.price,
-    availableSizes: item.size_charts.map((s) => s.size_label),
-    sizeCharts: item.size_charts.map((s) => ({
-      id: String(s.id),
-      itemId: String(s.item_id),
-      sizeLabel: s.size_label,
+    price: Number(item.price),
+    availableSizes: item.available_sizes ?? [],
+    sizeCharts: (item.available_sizes ?? []).map((s: string) => ({
+      id: s,
+      itemId: String(item.id),
+      sizeLabel: s,
     })),
-    measurements: item.measurements.map((m) => ({
-      id: String(m.id),
-      itemId: String(m.item_id),
-      sizeLabel: m.size_label,
-      totalLengthCm: m.total_length_cm,
-      inseamCm: m.inseam_cm,
+    measurements: (item.available_measurements ?? []).map((s: string) => ({
+      id: s,
+      itemId: String(item.id),
+      sizeLabel: s,
     })),
   };
 }

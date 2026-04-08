@@ -62,7 +62,6 @@ async function request<T>(
 
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
-  // Try to refresh token on 401
   if (res.status === 401 && withAuth) {
     const refreshed = await tryRefreshToken();
     if (refreshed) {
@@ -113,13 +112,11 @@ export const authApi = {
     }),
 
   login: async (body: LoginRequest): Promise<AuthResponse> => {
-    // FastAPI OAuth2 expects form data for /token, but your endpoint is JSON /user/login
     const data = await request<TokenResponse>('/user/login', {
       method: 'POST',
       body: JSON.stringify(body),
     });
     tokenStorage.set(data.access_token, data.refresh_token);
-    // Fetch profile after login
     return request<AuthResponse>('/user/profile', {}, true);
   },
 
@@ -135,18 +132,13 @@ export const authApi = {
 export interface BackendItem {
   id: number;
   name: string;
-  brand: string;
+  brand: { id: number; name: string } | string;
   category: string;
   image_url: string;
-  price: number;
-  size_charts: { id: number; item_id: number; size_label: string }[];
-  measurements: {
-    id: number;
-    item_id: number;
-    size_label: string;
-    total_length_cm?: number;
-    inseam_cm?: number;
-  }[];
+  price: number | string;
+  is_favorite?: boolean;
+  available_sizes: string[];
+  available_measurements: string[];
 }
 
 export interface PaginatedResponse {
