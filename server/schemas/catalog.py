@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator, FileUrl
 
 from database.models.catalog import ItemCategoryEnum
 from schemas.base import PaginatedResponse
@@ -44,11 +44,10 @@ class ItemFilterParams(BaseModel):
     page: int = Field(1, ge=1)
     per_page: int = Field(20, ge=1, le=100)
 
-    category: Optional[str] = Field(
+    category: Optional[ItemCategoryEnum] = Field(
         None, description="Search by item's category"
     )
     name: Optional[str] = Field(None, description="Search by item's name")
-    # size: Optional[int] = Field(None, description="Search by item's size id")
     size: Optional[str] = Field(None, description="Search by item's size label")
     min_price: Optional[Decimal] = Field(
         None, description="Search by item's min price"
@@ -93,3 +92,24 @@ class ItemDetailSchema(ItemBaseSchema):
 class ToggleFavoriteSchema(BaseModel):
     message: str
     is_favorite: bool
+
+
+# ============================ FITTING-ROOM ================================
+class FittingRoomResultSchema(BaseModel):
+    h_end_cm: float
+    line_position_pct: float
+    result_label: str
+    result_text: str
+
+    height_cm: int
+    item_name: str
+    category: str
+
+
+# ============================= ITEM-CREATE ================================
+class ItemCreateRequest(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255)
+    brand: str = Field(..., min_length=1, max_length=50)
+    category: ItemCategoryEnum
+    image_url: FileUrl
+
