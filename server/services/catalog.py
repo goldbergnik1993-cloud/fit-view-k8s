@@ -3,7 +3,9 @@ from sqlalchemy import select, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from database.models.catalog import ItemsModel, SizeChartModel, FavoritesModel
+from database.models import UserModel
+from database.models.catalog import ItemsModel, SizeChartModel, FavoritesModel, \
+    ItemCategoryEnum
 from schemas.catalog import (
     ItemsListSchema,
     ItemListItemSchema,
@@ -28,8 +30,7 @@ async def get_items_list(
             FavoritesModel.user_id == user_id
         )
     if filters.get("category"):
-        stmt = stmt.where(
-            ItemsModel.category.ilike(f"%{filters['category']}%"))
+        stmt = stmt.where(ItemsModel.category == filters["category"])
     if filters.get("name"):
         stmt = stmt.where(
             ItemsModel.name.ilike(f"%{filters['name']}%")
@@ -161,3 +162,18 @@ async def toggle_favorite(
         "message": "Item added to favorites",
         "is_favorite": True
     }
+
+#
+# async def fitting_room(
+#         user: UserModel, item_id: int, db: AsyncSession
+# ) -> dict:
+#     item_stmt = select(ItemsModel).where(ItemsModel.id == item_id)
+#     item_db = await db.scalar(item_stmt)
+#     if not item_db:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Item not found"
+#         )
+#     h_end_cm, line_position_pct = 0, 0
+#     if item_db.category == ItemCategoryEnum.PANTS:
+#         h_end_cm = (item_db.ref_coefficient * height_cm) − inseam_cm
