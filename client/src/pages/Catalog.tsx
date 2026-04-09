@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useItems } from '../hooks/useItems';
 
-
 const FILTERS: { label: string; value: string }[] = [
   { label: 'All', value: 'All' },
   { label: 'Dress', value: 'dress' },
@@ -33,7 +32,14 @@ const Catalog = () => {
       <h1>Catalog</h1>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '24px',
+          flexWrap: 'wrap',
+        }}
+      >
         {FILTERS.map(({ label, value }) => (
           <button
             key={value}
@@ -53,6 +59,24 @@ const Catalog = () => {
         ))}
       </div>
 
+      {/* Clear all */}
+      {activeFilter !== 'All' && (
+        <button
+          onClick={() => handleFilterChange('All')}
+          style={{
+            padding: '6px 16px',
+            borderRadius: '20px',
+            border: '1px solid #cc0000',
+            background: 'white',
+            color: '#cc0000',
+            cursor: 'pointer',
+            fontSize: '13px',
+          }}
+        >
+          Clear all
+        </button>
+      )}
+
       {/* Loading */}
       {loading && (
         <div style={{ textAlign: 'center', padding: '48px', color: '#666' }}>
@@ -62,14 +86,16 @@ const Catalog = () => {
 
       {/* Error */}
       {error && (
-        <div style={{
-          padding: '16px',
-          background: '#fff0f0',
-          border: '1px solid #ffcccc',
-          borderRadius: '8px',
-          color: '#cc0000',
-          marginBottom: '16px',
-        }}>
+        <div
+          style={{
+            padding: '16px',
+            background: '#fff0f0',
+            border: '1px solid #ffcccc',
+            borderRadius: '8px',
+            color: '#cc0000',
+            marginBottom: '16px',
+          }}
+        >
           Error: {error}
         </div>
       )}
@@ -78,12 +104,20 @@ const Catalog = () => {
       {!loading && !error && (
         <>
           {items.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#999' }}>
+            <div
+              style={{ textAlign: 'center', padding: '48px', color: '#999' }}
+            >
               No items found
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-              {items.map(item => (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '16px',
+              }}
+            >
+              {items.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => navigate(`/item/${item.id}`)}
@@ -94,19 +128,49 @@ const Catalog = () => {
                     cursor: 'pointer',
                     transition: 'box-shadow 0.2s',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
-                  onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.boxShadow =
+                      '0 4px 16px rgba(0,0,0,0.1)')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.boxShadow = 'none')
+                  }
                 >
                   <img
                     src={item.imageUrl}
                     alt={item.name}
-                    style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                    onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/400x500?text=No+Image'; }}
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      objectFit: 'cover',
+                    }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://placehold.co/400x500?text=No+Image';
+                    }}
                   />
                   <div style={{ padding: '12px' }}>
-                    <p style={{ fontWeight: 'bold', margin: '0 0 4px' }}>{item.name}</p>
-                    <p style={{ color: '#666', fontSize: '13px', margin: '0 0 4px' }}>{item.brand}</p>
-                    <p style={{ color: '#534AB7', fontWeight: 'bold', margin: 0 }}>${item.price}</p>
+                    <p style={{ fontWeight: 'bold', margin: '0 0 4px' }}>
+                      {item.name}
+                    </p>
+                    <p
+                      style={{
+                        color: '#666',
+                        fontSize: '13px',
+                        margin: '0 0 4px',
+                      }}
+                    >
+                      {item.brand}
+                    </p>
+                    <p
+                      style={{
+                        color: '#534AB7',
+                        fontWeight: 'bold',
+                        margin: 0,
+                      }}
+                    >
+                      ${item.price}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -115,9 +179,16 @@ const Catalog = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '32px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '8px',
+                marginTop: '32px',
+              }}
+            >
               <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 style={{
                   padding: '8px 16px',
@@ -135,7 +206,7 @@ const Catalog = () => {
                 {page} / {totalPages}
               </span>
               <button
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 style={{
                   padding: '8px 16px',
