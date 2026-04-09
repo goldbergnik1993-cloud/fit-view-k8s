@@ -53,8 +53,11 @@ class RefreshTokenRequest(BaseModel):
 class ProfileBaseSchema(BaseModel):
     height_cm: int = Field(..., ge=100, le=250)
     gender: Optional[GenderEnum] = Field("unisex", max_length=6)
-    leg_length_cm: int = Field(..., ge=50, le=120)
+    shoulders_length_cm: int = Field(..., ge=30, le=60)
+    breast_length_cm: int = Field(..., ge=60, le=180)
     waist_length_cm: int = Field(..., ge=40, le=150)
+    hips_length_cm: int = Field(..., ge=60, le=180)
+    leg_length_cm: int = Field(..., ge=50, le=120)
 
 
 class ProfileViewSchema(ProfileBaseSchema):

@@ -1,7 +1,7 @@
 from decimal import Decimal
-from typing import List, Optional
+from typing import List, Optional, Literal
 
-from pydantic import BaseModel, Field, ConfigDict, field_validator, FileUrl
+from pydantic import BaseModel, Field, ConfigDict, FileUrl
 
 from database.models.catalog import ItemCategoryEnum
 from schemas.base import PaginatedResponse
@@ -95,15 +95,42 @@ class ToggleFavoriteSchema(BaseModel):
 
 
 # ============================ FITTING-ROOM ================================
-class FittingRoomResultSchema(BaseModel):
+class FittingRoomRequestSchema(BaseModel):
+    measurement_id: int
+    size_chart_id: int
+
+
+class VisualMarkersSchema(BaseModel):
     h_end_cm: float
     line_position_pct: float
-    result_label: str
-    result_text: str
+    reference_point: str
 
+
+class FitAnalysisSchema(BaseModel):
+    waist_fit: Literal["tight", "perfect", "loose", "null"]
+    breast_fit: Literal["tight", "perfect", "loose", "null"]
+    hips_fit: Literal["tight", "perfect", "loose", "null"]
+    shoulders_fit: Literal["tight", "perfect", "loose", "null"]
+
+
+class UserBodySchema(BaseModel):
+    gender: str
     height_cm: int
-    item_name: str
-    category: str
+    leg_length_cm: int
+    waist_length_cm: int
+    hips_length_cm: int
+    breast_length_cm: int
+    shoulders_length_cm: int
+
+
+class FittingRoomResponseSchema(BaseModel):
+    item_id: int
+    size_label: str
+    visual_markers: VisualMarkersSchema
+    fit_analysis: FitAnalysisSchema
+    user_body: UserBodySchema
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============================= ITEM-CREATE ================================

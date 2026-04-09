@@ -73,6 +73,9 @@ class UserProfileModel(Base):
     )
     leg_length_cm: Mapped[int] = mapped_column(Integer)
     waist_length_cm: Mapped[int] = mapped_column(Integer)
+    hips_length_cm: Mapped[int] = mapped_column(Integer)
+    breast_length_cm: Mapped[int] = mapped_column(Integer)
+    shoulders_length_cm: Mapped[int] = mapped_column(Integer)
 
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
