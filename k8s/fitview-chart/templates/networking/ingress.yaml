@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "fitview.fullname" . }}
+  labels:
+    {{- include "fitview.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    # Регулярка для вырезания /api из пути перед отправкой в бэк
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # Защита: ограничиваем размер загружаемых файлов (например, аватарок)
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  rules:
+    - host: {{ .Values.global.domain }}
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "fitview.fullname" . }}-backend
+                port:
+                  number: {{ .Values.backend.service.port }}
+
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "fitview.fullname" . }}-frontend
+                port:
+                  number: 80
