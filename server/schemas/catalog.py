@@ -98,6 +98,12 @@ class ToggleFavoriteSchema(BaseModel):
 class FittingRoomRequestSchema(BaseModel):
     measurement_id: int
     size_chart_id: int
+    height_cm: Optional[int] = Field(None, ge=100, le=250)
+    shoulders_length_cm: Optional[int] = Field(None, ge=30, le=60)
+    breast_length_cm: Optional[int] = Field(None, ge=60, le=180)
+    waist_length_cm: Optional[int] = Field(None, ge=40, le=150)
+    hips_length_cm: Optional[int] = Field(None, ge=60, le=180)
+    leg_length_cm: Optional[int] = Field(None, ge=50, le=120)
 
 
 class VisualMarkersSchema(BaseModel):
@@ -107,20 +113,20 @@ class VisualMarkersSchema(BaseModel):
 
 
 class FitAnalysisSchema(BaseModel):
-    waist_fit: Literal["tight", "perfect", "loose", "null"]
-    breast_fit: Literal["tight", "perfect", "loose", "null"]
-    hips_fit: Literal["tight", "perfect", "loose", "null"]
-    shoulders_fit: Literal["tight", "perfect", "loose", "null"]
+    waist_fit: Literal["tight", "perfect", "loose"] | None
+    breast_fit: Literal["tight", "perfect", "loose"] | None
+    hips_fit: Literal["tight", "perfect", "loose"] | None
+    shoulders_fit: Literal["tight", "perfect", "loose"] | None
 
 
 class UserBodySchema(BaseModel):
     gender: str
-    height_cm: int
-    leg_length_cm: int
-    waist_length_cm: int
-    hips_length_cm: int
-    breast_length_cm: int
-    shoulders_length_cm: int
+    height_cm: Optional[int]
+    leg_length_cm: Optional[int]
+    hips_length_cm: Optional[int]
+    waist_length_cm: Optional[int]
+    breast_length_cm: Optional[int]
+    shoulders_length_cm: Optional[int]
 
 
 class FittingRoomResponseSchema(BaseModel):

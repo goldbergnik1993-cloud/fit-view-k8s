@@ -25,6 +25,29 @@ from schemas.catalog import (
 from utils.service_helpers import pagination_helper
 
 
+REQUIRED_FIELDS_BY_CATEGORY = {
+    ItemCategoryEnum.PANTS: [
+        "height_cm", "waist_length_cm", "hips_length_cm", "leg_length_cm"
+    ],
+    ItemCategoryEnum.SKIRT: ["height_cm", "waist_length_cm", "hips_length_cm"],
+    ItemCategoryEnum.DRESS: [
+        "height_cm", "breast_length_cm", "waist_length_cm", "hips_length_cm"
+    ],
+    ItemCategoryEnum.T_SHIRT: [
+        "height_cm", "shoulders_length_cm", "breast_length_cm"
+    ],
+    ItemCategoryEnum.SHIRT: [
+        "height_cm", "shoulders_length_cm", "breast_length_cm"
+    ],
+    ItemCategoryEnum.BLOUSE: [
+        "height_cm",
+        "shoulders_length_cm",
+        "breast_length_cm",
+        "waist_length_cm"
+    ],
+}
+
+
 async def get_items_list(
         request: Request,
         db: AsyncSession,
@@ -193,10 +216,40 @@ async def fitting_room(
         )
     profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
-    if not profile_db:
+    active_body = {
+        "gender": profile_db.gender if profile_db else "unisex",
+        "height_cm": payload.height_cm or (
+            profile_db.height_cm if profile_db else None
+        ),
+        "shoulders_length_cm": payload.shoulders_length_cm or (
+            profile_db.shoulders_length_cm if profile_db else None
+        ),
+        "breast_length_cm": payload.breast_length_cm or (
+            profile_db.breast_length_cm if profile_db else None
+        ),
+        "waist_length_cm": payload.waist_length_cm or (
+            profile_db.waist_length_cm if profile_db else None
+        ),
+        "hips_length_cm": payload.hips_length_cm or (
+            profile_db.hips_length_cm if profile_db else None
+        ),
+        "leg_length_cm": payload.leg_length_cm or (
+            profile_db.leg_length_cm if profile_db else None
+        ),
+    }
+    required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(item_db.category,
+                                                      ["height_cm"])
+    missing_fields = [field for field in required_fields if
+                      active_body[field] is None]
+
+    if missing_fields:
+        readable_missing = [
+            field.replace("_length_cm", "")
+            .replace("_cm", "") for field in missing_fields
+        ]
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You need to create a profile first"
+            detail=f"Missing required measurements for this item: {', '.join(readable_missing)}."
         )
     measurement = next(
         (m for m in item_db.measurements if m.id == payload.measurement_id),
@@ -215,42 +268,42 @@ async def fitting_room(
 
     if item_db.category == ItemCategoryEnum.PANTS:
         h_end_cm = (
-            item_db.ref_coefficient * profile_db.height_cm - measurement.inseam_cm
+            item_db.ref_coefficient * active_body["height_cm"] - measurement.inseam_cm
         )
     else:
         h_end_cm = (
-            item_db.ref_coefficient * profile_db.height_cm - measurement.total_length_cm
+            item_db.ref_coefficient * active_body["height_cm"] - measurement.total_length_cm
         )
-    line_position_pct = (h_end_cm / profile_db.height_cm) * 100
+    line_position_pct = (h_end_cm / active_body["height_cm"]) * 100
 
     def does_it_fit(
             user_val: int,
             min_val: float | None = None,
             max_val: float | None = None
-    ) -> str:
+    ) -> str | None:
         if not min_val or not max_val:
-            return "null"
+            return None
         if user_val > max_val: return "tight"
         if user_val < min_val: return "loose"
         return "perfect"
 
     hips_fit = does_it_fit(
-        user_val=profile_db.hips_length_cm,
+        user_val=active_body["hips_length_cm"],
         min_val=size_chart.hips_min_cm,
         max_val=size_chart.hips_max_cm
     )
     waist_fit = does_it_fit(
-        user_val=profile_db.waist_length_cm,
+        user_val=active_body["waist_length_cm"],
         min_val=size_chart.waist_min_cm,
         max_val=size_chart.waist_max_cm
     )
     breast_fit = does_it_fit(
-        user_val=profile_db.breast_length_cm,
+        user_val=active_body["breast_length_cm"],
         min_val=size_chart.breast_min_cm,
         max_val=size_chart.breast_max_cm
     )
     shoulders_fit = does_it_fit(
-        user_val=profile_db.shoulders_length_cm,
+        user_val=active_body["shoulders_length_cm"],
         min_val=size_chart.shoulders_min_cm,
         max_val=size_chart.shoulders_max_cm
     )
@@ -259,13 +312,13 @@ async def fitting_room(
         user_id=user.id,
         item_id=item_id,
         event_type="result_shown",
-        height_used_cm=profile_db.height_cm,
+        height_used_cm=active_body["height_cm"],
         result_end_cm=h_end_cm,
         fit_shoulders=shoulders_fit,
         fit_breast=breast_fit,
         fit_waist=waist_fit,
         fit_hips=hips_fit,
-        ab_group=choice(("A", "B"))
+        ab_group=user.ab_group
     )
     db.add(new_event)
     await db.commit()
@@ -284,13 +337,5 @@ async def fitting_room(
             breast_fit=breast_fit,
             shoulders_fit=shoulders_fit
         ),
-        user_body=UserBodySchema(
-            gender=profile_db.gender,
-            height_cm=profile_db.height_cm,
-            leg_length_cm=profile_db.leg_length_cm,
-            waist_length_cm=profile_db.waist_length_cm,
-            hips_length_cm=profile_db.hips_length_cm,
-            breast_length_cm=profile_db.breast_length_cm,
-            shoulders_length_cm=profile_db.shoulders_length_cm
-        )
+        user_body=UserBodySchema(**active_body)
     )
