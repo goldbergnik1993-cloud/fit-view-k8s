@@ -4,6 +4,7 @@ from random import choice
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import settings
@@ -18,7 +19,9 @@ from schemas.user import (
     UserRetrieveSchema,
     LoginSchema,
     RefreshTokenRequest,
-    ProfileBaseSchema
+    ProfileBaseSchema,
+    ProfileUpdateSchema,
+    ProfileViewSchema
 )
 from utils.tokens import (
     hash_password,
@@ -163,3 +166,45 @@ async def get_user_profile(db: AsyncSession, user: UserModel):
             detail="You don't have a profile."
         )
     return profile
+
+
+async def profile_update(
+        payload: ProfileUpdateSchema, user: UserModel, db: AsyncSession
+) -> ProfileViewSchema:
+    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
+    profile_db = await db.scalar(profile_stmt)
+    if not profile_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="You don't have a profile."
+        )
+    update_data = payload.model_dump(exclude_unset=True)
+
+    for field, value in update_data.items():
+        setattr(profile_db, field, value)
+
+    try:
+        await db.commit()
+        await db.refresh(profile_db)
+
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Something went wrong. Try again later."
+        )
+    return ProfileViewSchema.model_validate(profile_db)
+
+
+async def profile_delete(user: UserModel, db: AsyncSession) -> dict:
+    profile_stmt = select(UserProfileModel).where(
+        UserProfileModel.user_id == user.id
+    )
+    profile_db = await db.scalar(profile_stmt)
+    if not profile_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="You don't have a profile."
+        )
+    await db.delete(profile_db)
+    await db.commit()
+    return {"message": "Your profile has been deleted."}
