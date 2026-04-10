@@ -11,16 +11,19 @@ class FitviewEventsModel(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("users.id", ondelete="CASCADE")
     )
     item_id: Mapped[int] = mapped_column(
-        ForeignKey("items.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("items.id", ondelete="CASCADE")
     )
-    event_type: Mapped[str] = mapped_column(String(255), nullable=True)
-    height_used_cm: Mapped[float] = mapped_column(Float, nullable=True)
-    result_end_cm: Mapped[float] = mapped_column(Float, nullable=True)
-    result_label: Mapped[str] = mapped_column(String(10), nullable=True)
-    ab_group: Mapped[str] = mapped_column(String(1), nullable=True)
+    event_type: Mapped[str] = mapped_column(String(50))
+    height_used_cm: Mapped[float] = mapped_column(Float)
+    result_end_cm: Mapped[float] = mapped_column(Float)
+    fit_shoulders: Mapped[str] = mapped_column(String(10))
+    fit_breast: Mapped[str] = mapped_column(String(10))
+    fit_waist: Mapped[str] = mapped_column(String(10))
+    fit_hips: Mapped[str] = mapped_column(String(10))
+    ab_group: Mapped[str] = mapped_column(String(1))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=func.now(),
