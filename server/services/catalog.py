@@ -1,5 +1,3 @@
-from random import choice
-
 from fastapi import Request, HTTPException, status
 from sqlalchemy import select, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +21,6 @@ from schemas.catalog import (
     UserBodySchema
 )
 from utils.service_helpers import pagination_helper
-
 
 REQUIRED_FIELDS_BY_CATEGORY = {
     ItemCategoryEnum.PANTS: [
@@ -160,7 +157,7 @@ async def item_view(
 
 
 async def toggle_favorite(
-    db: AsyncSession, user_id: int, item_id: int
+        db: AsyncSession, user_id: int, item_id: int
 ) -> dict:
     item_exists = await db.scalar(
         select(ItemsModel.id).where(ItemsModel.id == item_id)
@@ -214,7 +211,8 @@ async def fitting_room(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Item not found"
         )
-    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
+    profile_stmt = select(UserProfileModel).where(
+        UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
     active_body = {
         "gender": profile_db.gender if profile_db else "unisex",
@@ -249,7 +247,8 @@ async def fitting_room(
         ]
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Missing required measurements for this item: {', '.join(readable_missing)}."
+            detail=f"Missing required measurements for this item: "
+                   f"{', '.join(readable_missing)}."
         )
     measurement = next(
         (m for m in item_db.measurements if m.id == payload.measurement_id),
@@ -268,11 +267,13 @@ async def fitting_room(
 
     if item_db.category == ItemCategoryEnum.PANTS:
         h_end_cm = (
-            item_db.ref_coefficient * active_body["height_cm"] - measurement.inseam_cm
+                item_db.ref_coefficient * active_body[
+            "height_cm"] - measurement.inseam_cm
         )
     else:
         h_end_cm = (
-            item_db.ref_coefficient * active_body["height_cm"] - measurement.total_length_cm
+                item_db.ref_coefficient * active_body[
+            "height_cm"] - measurement.total_length_cm
         )
     line_position_pct = (h_end_cm / active_body["height_cm"]) * 100
 
