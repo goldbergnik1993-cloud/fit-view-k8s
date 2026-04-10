@@ -32,6 +32,7 @@ class UserCreateSchema(UserBaseSchema):
 class UserRetrieveSchema(UserBaseSchema):
     id: int
     role: str
+    ab_group: str
 
     model_config = ConfigDict(from_attributes=True)
 
