@@ -45,7 +45,7 @@ export const tokenStorage = {
 
 // ─── Base fetch ───────────────────────────────────────────────────────────────
 
-async function request<T>(
+export async function request<T>(
   path: string,
   options: RequestInit = {},
   withAuth = false
