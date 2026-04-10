@@ -1,5 +1,6 @@
 import secrets
 from datetime import datetime, UTC, timedelta
+from random import choice
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -41,7 +42,8 @@ async def user_create(
     new_user = UserModel(
         email=user.email,
         hashed_password=hash_password(user.password),
-        role=UserRoleEnum.BUYER
+        role=UserRoleEnum.BUYER,
+        ab_group=choice(("A", "B"))
     )
     db.add(new_user)
     await db.commit()

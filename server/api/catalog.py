@@ -15,9 +15,16 @@ from schemas.catalog import (
     ItemsListSchema,
     ItemFilterParams,
     ItemDetailSchema,
-    ToggleFavoriteSchema
+    ToggleFavoriteSchema,
+    FittingRoomResponseSchema,
+    FittingRoomRequestSchema
 )
-from services.catalog import get_items_list, item_view, toggle_favorite
+from services.catalog import (
+    get_items_list,
+    item_view,
+    toggle_favorite,
+    fitting_room
+)
 
 router = APIRouter(prefix="/items", tags=["item"])
 
@@ -72,4 +79,18 @@ async def favorite(
 ):
     return await toggle_favorite(
         db=db, item_id=item_id, user_id=current_user.id
+    )
+
+
+@router.post(
+    "/{item_id}/fitting-room", response_model=FittingRoomResponseSchema
+)
+async def fit_it(
+        item_id: int,
+        payload: FittingRoomRequestSchema,
+        current_user: UserModel = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db)
+):
+    return await fitting_room(
+        user=current_user, item_id=item_id, payload=payload, db=db
     )
