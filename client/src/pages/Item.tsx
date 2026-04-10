@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { request } from '../services/api';
 import { itemsApi } from '../services/api';
 import { useParams } from 'react-router-dom';
 import Silhouette from '../components/Silhouette';
@@ -12,6 +14,18 @@ import {
 const Item = () => {
   const { id } = useParams<{ id: string }>();
   const { item, loading, error } = useItem(id);
+  const { user } = useAuth();
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!user || profileLoaded) return;
+    request<{ height_cm: number }>('/user/profile', {}, true)
+      .then((profile) => {
+        setHeight(profile.height_cm);
+        setProfileLoaded(true);
+      })
+      .catch(() => {});
+  }, [user, profileLoaded]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
 
@@ -104,17 +118,23 @@ const Item = () => {
       </div>
 
       <div style={{ margin: '24px 0' }}>
-        <label>
-          Your height: {height}cm
-          <input
-            type="range"
-            min={150}
-            max={200}
-            value={height}
-            onChange={(e) => setHeight(Number(e.target.value))}
-            style={{ display: 'block', width: '200px', marginTop: '8px' }}
-          />
-        </label>
+        {user ? (
+          <p style={{ color: '#666', fontSize: '13px' }}>
+            Your height from profile: <strong>{height}cm</strong>
+          </p>
+        ) : (
+          <label>
+            Your height: {height}cm
+            <input
+              type="range"
+              min={150}
+              max={200}
+              value={height}
+              onChange={(e) => setHeight(Number(e.target.value))}
+              style={{ display: 'block', width: '200px', marginTop: '8px' }}
+            />
+          </label>
+        )}
       </div>
 
       <Silhouette linePositionPct={linePositionPct} label={text} />
