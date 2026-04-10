@@ -1,12 +1,32 @@
 import { useState } from 'react';
+import { itemsApi } from '../services/api';
 import { useParams } from 'react-router-dom';
 import Silhouette from '../components/Silhouette';
 import { useItem } from '../hooks/useItems';
-import { calculateHEnd, getResultLabel, getLinePositionPct } from '../utils/fitCalculator';
+import {
+  calculateHEnd,
+  getResultLabel,
+  getLinePositionPct,
+} from '../utils/fitCalculator';
 
 const Item = () => {
   const { id } = useParams<{ id: string }>();
   const { item, loading, error } = useItem(id);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+
+  const handleToggleFavorite = async () => {
+    if (!id) return;
+    setFavoriteLoading(true);
+    try {
+      await itemsApi.toggleFavorite(id);
+      setIsFavorite((prev) => !prev);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
 
   const [height, setHeight] = useState(165);
   const firstSize = item?.availableSizes?.[0] ?? 'M';
@@ -28,10 +48,15 @@ const Item = () => {
     );
   }
 
-  const measurement = item.measurements.find((m: { sizeLabel: string }) => m.sizeLabel === selectedSize);
+  const measurement = item.measurements.find(
+    (m: { sizeLabel: string }) => m.sizeLabel === selectedSize
+  );
   const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
   const hEnd = calculateHEnd(height, item.category, lengthCm);
-  const linePositionPct = Math.min(100, Math.max(0, getLinePositionPct(hEnd, height)));
+  const linePositionPct = Math.min(
+    100,
+    Math.max(0, getLinePositionPct(hEnd, height))
+  );
   const { text } = getResultLabel(hEnd);
 
   return (
@@ -39,6 +64,22 @@ const Item = () => {
       <h1>{item.name}</h1>
       <p>{item.brand}</p>
       <p style={{ fontSize: '20px', fontWeight: 'bold' }}>${item.price}</p>
+      <button
+        onClick={handleToggleFavorite}
+        disabled={favoriteLoading}
+        style={{
+          padding: '8px 20px',
+          borderRadius: '8px',
+          border: '1px solid #D4537E',
+          background: isFavorite ? '#D4537E' : 'white',
+          color: isFavorite ? 'white' : '#D4537E',
+          cursor: favoriteLoading ? 'not-allowed' : 'pointer',
+          fontSize: '14px',
+          marginTop: '8px',
+        }}
+      >
+        {isFavorite ? '♥ Saved' : '♡ Save'}
+      </button>
 
       <div style={{ margin: '16px 0' }}>
         <p>Size:</p>
