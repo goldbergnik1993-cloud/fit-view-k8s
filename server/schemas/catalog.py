@@ -48,7 +48,8 @@ class ItemFilterParams(BaseModel):
         None, description="Search by item's category"
     )
     name: Optional[str] = Field(None, description="Search by item's name")
-    size: Optional[str] = Field(None, description="Search by item's size label")
+    size: Optional[str] = Field(None,
+                                description="Search by item's size label")
     min_price: Optional[Decimal] = Field(
         None, description="Search by item's min price"
     )
@@ -145,4 +146,3 @@ class ItemCreateRequest(BaseModel):
     brand: str = Field(..., min_length=1, max_length=50)
     category: ItemCategoryEnum
     image_url: FileUrl
-

@@ -15,10 +15,16 @@ from schemas.catalog import (
     ItemsListSchema,
     ItemFilterParams,
     ItemDetailSchema,
-    ToggleFavoriteSchema, FittingRoomResponseSchema, FittingRoomRequestSchema
+    ToggleFavoriteSchema,
+    FittingRoomResponseSchema,
+    FittingRoomRequestSchema
 )
-from services.catalog import get_items_list, item_view, toggle_favorite, \
+from services.catalog import (
+    get_items_list,
+    item_view,
+    toggle_favorite,
     fitting_room
+)
 
 router = APIRouter(prefix="/items", tags=["item"])
 
