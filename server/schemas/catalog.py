@@ -113,11 +113,15 @@ class FittingRoomRequestSchema(BaseModel):
     hips_length_cm: Optional[int] = Field(None, ge=60, le=180)
     leg_length_cm: Optional[int] = Field(None, ge=50, le=120)
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class VisualMarkersSchema(BaseModel):
     h_end_cm: float
     line_position_pct: float
     reference_point: ItemRefPointEnum
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FitAnalysisSchema(BaseModel):
@@ -125,6 +129,8 @@ class FitAnalysisSchema(BaseModel):
     breast_fit: FitResultEnum | None
     hips_fit: FitResultEnum | None
     shoulders_fit: FitResultEnum | None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserBodySchema(BaseModel):
@@ -135,6 +141,8 @@ class UserBodySchema(BaseModel):
     waist_length_cm: Optional[int]
     breast_length_cm: Optional[int]
     shoulders_length_cm: Optional[int]
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FittingRoomResponseSchema(BaseModel):
@@ -150,21 +158,25 @@ class FittingRoomResponseSchema(BaseModel):
 
 # ============================= ITEM-CREATE ================================
 class SizeChartCreateSchema(BaseModel):
-    size_label: str = Field(..., min_length=1, max_length=10)
-    hips_min_cm: Optional[float] = Field(None, ge=85, le=115)
-    hips_max_cm: Optional[float] = Field(None, ge=89, le=123)
-    waist_min_cm: Optional[float] = Field(None, ge=57, le=97)
-    waist_max_cm: Optional[float] = Field(None, ge=60, le=105)
-    breast_min_cm: Optional[float] = Field(None, ge=81, le=113)
-    breast_max_cm: Optional[float] = Field(None, ge=84, le=121)
-    shoulders_min_cm: Optional[float] = Field(None, ge=34, le=51)
-    shoulders_max_cm: Optional[float] = Field(None, ge=36, le=54)
+    size_label: str = Field(..., min_length=0, max_length=10)
+    hips_min_cm: Optional[float] = Field(None, ge=0, le=115)
+    hips_max_cm: Optional[float] = Field(None, ge=0, le=123)
+    waist_min_cm: Optional[float] = Field(None, ge=0, le=97)
+    waist_max_cm: Optional[float] = Field(None, ge=0, le=105)
+    breast_min_cm: Optional[float] = Field(None, ge=0, le=113)
+    breast_max_cm: Optional[float] = Field(None, ge=0, le=121)
+    shoulders_min_cm: Optional[float] = Field(None, ge=0, le=51)
+    shoulders_max_cm: Optional[float] = Field(None, ge=0, le=54)
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MeasurementCreateSchema(BaseModel):
     size_label: str = Field(..., min_length=1, max_length=10)
-    total_length_cm: float = Field(..., ge=15, le=200)
-    inseam_cm: float = Field(..., ge=4, le=120)
+    total_length_cm: float = Field(..., ge=0, le=200)
+    inseam_cm: float = Field(..., ge=0, le=120)
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ItemCreateSchema(BaseModel):
@@ -179,6 +191,8 @@ class ItemCreateSchema(BaseModel):
 
     size_charts: List[SizeChartCreateSchema] = Field(default_factory=list)
     measurements: List[MeasurementCreateSchema] = Field(default_factory=list)
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ItemUpdateSchema(BaseModel):
@@ -199,3 +213,5 @@ class ItemUpdateSchema(BaseModel):
     measurements: Optional[List[MeasurementCreateSchema]] = Field(
         default_factory=list
     )
+
+    model_config = ConfigDict(from_attributes=True)

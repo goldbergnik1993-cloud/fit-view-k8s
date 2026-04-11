@@ -8,12 +8,15 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from core.settings import settings
 from database.models import UserModel, UserProfileModel, FitviewEventsModel
 from database.models.catalog import (
     ItemsModel,
     SizeChartModel,
     FavoritesModel,
-    ItemCategoryEnum, BrandsModel, ItemMeasurementsModel
+    ItemCategoryEnum,
+    BrandsModel,
+    ItemMeasurementsModel
 )
 from database.models.events import FitResultEnum, EventTypeEnum
 from schemas.catalog import (
@@ -24,7 +27,9 @@ from schemas.catalog import (
     FittingRoomResponseSchema,
     VisualMarkersSchema,
     FitAnalysisSchema,
-    UserBodySchema, ItemCreateSchema, ItemUpdateSchema
+    UserBodySchema,
+    ItemCreateSchema,
+    ItemUpdateSchema
 )
 from utils.service_helpers import pagination_helper
 
@@ -415,8 +420,13 @@ async def item_create(
         db.add(new_item)
         await db.commit()
 
-        await db.refresh(new_item)
-        return new_item
+        stmt = select(ItemsModel).where(ItemsModel.id == new_item.id).options(
+            selectinload(ItemsModel.brand),
+            selectinload(ItemsModel.size_charts),
+            selectinload(ItemsModel.measurements),
+            selectinload(ItemsModel.favorites)
+        )
+        return await db.scalar(stmt)
 
     except SQLAlchemyError as e:
         await db.rollback()
@@ -481,13 +491,21 @@ async def item_update(
                     item_id=item_db.id, **meas_data
                 )
                 db.add(new_meas)
-        for field, value in update_data.items():
-            setattr(item_db, field, value)
+    for field, value in update_data.items():
+        if field == "image_url" and value is not None:
+            value = str(value)
+        setattr(item_db, field, value)
 
     try:
         await db.commit()
-        await db.refresh(item_db)
-        return item_db
+        stmt = select(ItemsModel).where(ItemsModel.id == item_id).options(
+            selectinload(ItemsModel.brand),
+            selectinload(ItemsModel.size_charts),
+            selectinload(ItemsModel.measurements),
+            selectinload(ItemsModel.favorites)
+        )
+        return await db.scalar(stmt)
+
     except SQLAlchemyError:
         await db.rollback()
         raise HTTPException(
@@ -506,9 +524,21 @@ async def item_delete(item_id: int, db: AsyncSession) -> dict:
             detail=f"Item with ID {item_id} not found."
         )
 
+    image_url = item_db.image_url
+
     try:
         await db.delete(item_db)
         await db.commit()
+        if image_url:
+            filename = image_url.split("/")[-1]
+            file_path = os.path.join("static", "items_images", filename)
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except OSError as e:
+                    print(
+                        f"Warning: Failed to delete image file {file_path}: {e}"
+                    )
         return {
             "message": f"Item with ID {item_id} has been successfully deleted."
         }
@@ -589,10 +619,10 @@ async def upload_item_image_service(file: UploadFile) -> str:
     extension = file.filename.split(".")[-1]
     filename = f"item_{uuid.uuid4()}.{extension}"
 
-    file_path = os.path.join("server", "static", "items_images", filename)
+    file_path = os.path.join("static", "items_images", filename)
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    return f"/static/items_images/{filename}"
+    return f"{settings.BASE_URL}/static/items_images/{filename}"

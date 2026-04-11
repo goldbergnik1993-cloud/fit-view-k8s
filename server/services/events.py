@@ -13,7 +13,8 @@ async def log_fitview_event(
     if payload.event_type == EventTypeEnum.RESULT_SHOWN:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Result shown events are handled automatically by the calculation engine."
+            detail="Result shown events are handled automatically by the "
+                   "calculation engine."
         )
 
     new_event = FitviewEventsModel(
