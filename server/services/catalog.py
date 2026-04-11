@@ -1,5 +1,10 @@
-from fastapi import Request, HTTPException, status
-from sqlalchemy import select, desc, asc
+import os
+import shutil
+import uuid
+
+from fastapi import Request, HTTPException, status, UploadFile
+from sqlalchemy import select, desc, asc, func
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -8,8 +13,9 @@ from database.models.catalog import (
     ItemsModel,
     SizeChartModel,
     FavoritesModel,
-    ItemCategoryEnum
+    ItemCategoryEnum, BrandsModel, ItemMeasurementsModel
 )
+from database.models.events import FitResultEnum, EventTypeEnum
 from schemas.catalog import (
     ItemsListSchema,
     ItemListItemSchema,
@@ -18,7 +24,7 @@ from schemas.catalog import (
     FittingRoomResponseSchema,
     VisualMarkersSchema,
     FitAnalysisSchema,
-    UserBodySchema
+    UserBodySchema, ItemCreateSchema, ItemUpdateSchema
 )
 from utils.service_helpers import pagination_helper
 
@@ -73,6 +79,8 @@ async def get_items_list(
         stmt = stmt.join(ItemsModel.size_charts).where(
             SizeChartModel.size_label.ilike(f"%{filters['size']}%")
         )
+    if filters.get("gender"):
+        stmt = stmt.where(ItemsModel.gender == filters["gender"])
 
     if filters.get("min_price"):
         stmt = stmt.where(ItemsModel.price >= filters["min_price"])
@@ -99,18 +107,17 @@ async def get_items_list(
 
     items_response = []
     for piece in result["items"]:
-        is_favorite = False
-        if only_favorites:
-            is_favorite = True
-        elif user_id:
-            is_favorite = any(
-                fav.user_id == user_id for fav in piece.favorites)
+        is_favorite = only_favorites or (
+                bool(user_id) and any(
+            fav.user_id == user_id for fav in piece.favorites)
+        )
         items_response.append(
             ItemListItemSchema(
                 id=piece.id,
                 name=piece.name,
                 brand=piece.brand,
                 category=piece.category,
+                gender=piece.gender,
                 image_url=piece.image_url,
                 price=piece.price,
                 available_sizes=[
@@ -278,15 +285,17 @@ async def fitting_room(
     line_position_pct = (h_end_cm / active_body["height_cm"]) * 100
 
     def does_it_fit(
-            user_val: int,
+            user_val: int | None,
             min_val: float | None = None,
             max_val: float | None = None
-    ) -> str | None:
-        if not min_val or not max_val:
+    ) -> FitResultEnum | None:
+        if not user_val or not min_val or not max_val:
             return None
-        if user_val > max_val: return "tight"
-        if user_val < min_val: return "loose"
-        return "perfect"
+        if user_val > max_val:
+            return FitResultEnum.TIGHT
+        if user_val < min_val:
+            return FitResultEnum.LOOSE
+        return FitResultEnum.PERFECT
 
     hips_fit = does_it_fit(
         user_val=active_body["hips_length_cm"],
@@ -312,7 +321,7 @@ async def fitting_room(
     new_event = FitviewEventsModel(
         user_id=user.id,
         item_id=item_id,
-        event_type="result_shown",
+        event_type=EventTypeEnum.RESULT_SHOWN,
         height_used_cm=active_body["height_cm"],
         result_end_cm=h_end_cm,
         fit_shoulders=shoulders_fit,
@@ -322,11 +331,21 @@ async def fitting_room(
         ab_group=user.ab_group
     )
     db.add(new_event)
+    await db.flush()
+    fav_stmt = select(FavoritesModel).where(
+        FavoritesModel.user_id == user.id,
+        FavoritesModel.item_id == item_db.id
+    )
+    favorite = await db.scalar(fav_stmt)
+    if favorite:
+        favorite.used_fitview = True
+
     await db.commit()
 
     return FittingRoomResponseSchema(
         item_id=item_db.id,
         size_label=size_chart.size_label,
+        gender=item_db.gender,
         visual_markers=VisualMarkersSchema(
             h_end_cm=round(h_end_cm, 2),
             line_position_pct=round(line_position_pct, 2),
@@ -340,3 +359,240 @@ async def fitting_room(
         ),
         user_body=UserBodySchema(**active_body)
     )
+
+
+# CREATE / UPDATE / DELETE
+async def item_create(
+        payload: ItemCreateSchema,
+        db: AsyncSession
+) -> ItemsModel:
+    try:
+        brand_stmt = select(BrandsModel).where(
+            func.lower(BrandsModel.name) == payload.brand.lower()
+        )
+        brand_db = await db.scalar(brand_stmt)
+
+        if not brand_db:
+            brand_db = BrandsModel(name=payload.brand.title())
+            db.add(brand_db)
+            await db.flush()
+
+        existing_item_stmt = select(ItemsModel.id).where(
+            ItemsModel.name == payload.name,
+            ItemsModel.brand_id == brand_db.id,
+            ItemsModel.category == payload.category
+        )
+
+        if await db.scalar(existing_item_stmt):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="An item with this name, brand, and category already exists."
+            )
+
+        new_item = ItemsModel(
+            name=payload.name,
+            brand_id=brand_db.id,
+            category=payload.category,
+            gender=payload.gender,
+            image_url=str(payload.image_url),
+            price=payload.price,
+            reference_point=payload.reference_point,
+            ref_coefficient=payload.ref_coefficient
+        )
+
+        if payload.size_charts:
+            new_item.size_charts = [
+                SizeChartModel(**chart.model_dump())
+                for chart in payload.size_charts
+            ]
+
+        if payload.measurements:
+            new_item.measurements = [
+                ItemMeasurementsModel(**measurement.model_dump())
+                for measurement in payload.measurements
+            ]
+
+        db.add(new_item)
+        await db.commit()
+
+        await db.refresh(new_item)
+        return new_item
+
+    except SQLAlchemyError as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create item and associated records. Database rolled back."
+        )
+
+
+async def item_update(
+        payload: ItemUpdateSchema, item_id: int, db: AsyncSession
+):
+    item_stmt = select(ItemsModel).where(ItemsModel.id == item_id)
+    item_db = await db.scalar(item_stmt)
+    if not item_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Item with ID {item_id} not found."
+        )
+    update_data = payload.model_dump(exclude_unset=True)
+
+    if "brand" in update_data:
+        brand_name = update_data.pop("brand")
+        brand_stmt = select(BrandsModel).where(
+            func.lower(BrandsModel.name) == brand_name.lower()
+        )
+        brand_db = await db.scalar(brand_stmt)
+
+        if not brand_db:
+            brand_db = BrandsModel(name=brand_name.title())
+            db.add(brand_db)
+            await db.flush()
+        item_db.brand_id = brand_db.id
+
+    if "size_charts" in update_data:
+        incoming_charts = update_data.pop("size_charts")
+
+        existing_charts = {
+            chart.size_label: chart
+            for chart in item_db.size_charts
+        }
+
+        for chart_data in incoming_charts:
+            label = chart_data["size_label"]
+            if label in existing_charts:
+                for key, value in chart_data.items():
+                    setattr(existing_charts[label], key, value)
+            else:
+                new_chart = SizeChartModel(item_id=item_db.id, **chart_data)
+                db.add(new_chart)
+    if "measurements" in update_data:
+        incoming_measurements = update_data.pop("measurements")
+        existing_measurements = {m.size_label: m for m in item_db.measurements}
+
+        for meas_data in incoming_measurements:
+            label = meas_data["size_label"]
+            if label in existing_measurements:
+                for key, value in meas_data.items():
+                    setattr(existing_measurements[label], key, value)
+            else:
+                new_meas = ItemMeasurementsModel(
+                    item_id=item_db.id, **meas_data
+                )
+                db.add(new_meas)
+        for field, value in update_data.items():
+            setattr(item_db, field, value)
+
+    try:
+        await db.commit()
+        await db.refresh(item_db)
+        return item_db
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update item ID {item_id}. Database rolled back."
+        )
+
+
+async def item_delete(item_id: int, db: AsyncSession) -> dict:
+    item_stmt = select(ItemsModel).where(ItemsModel.id == item_id)
+    item_db = await db.scalar(item_stmt)
+
+    if not item_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Item with ID {item_id} not found."
+        )
+
+    try:
+        await db.delete(item_db)
+        await db.commit()
+        return {
+            "message": f"Item with ID {item_id} has been successfully deleted."
+        }
+
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while attempting to delete item ID "
+                   f"{item_id}. Database rolled back."
+        )
+
+
+async def size_chart_delete(item_id: int, size_chart_id: int, db: AsyncSession):
+    stmt = select(SizeChartModel).where(
+        SizeChartModel.id == size_chart_id,
+        SizeChartModel.item_id == item_id
+    )
+    size_chart_db = await db.scalar(stmt)
+    if not size_chart_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Size chart with ID {size_chart_id} not found."
+        )
+    try:
+        await db.delete(size_chart_db)
+        await db.commit()
+        return {
+            "message": f"Size chart with ID {size_chart_id} has been "
+                       f"successfully deleted."
+        }
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while attempting to delete the size "
+                   f"chart ID {size_chart_id}. Database rolled back."
+        )
+
+
+async def measurement_delete(
+        item_id: int, measurement_id: int, db: AsyncSession
+):
+    stmt = select(ItemMeasurementsModel).where(
+        ItemMeasurementsModel.id == measurement_id,
+        ItemMeasurementsModel.item_id == item_id
+    )
+    measurement_db = await db.scalar(stmt)
+    if not measurement_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Size chart with ID {measurement_id} not found."
+        )
+    try:
+        await db.delete(measurement_db)
+        await db.commit()
+        return {
+            "message": f"Item measurement with ID {measurement_id} has been "
+                       f"successfully deleted."
+        }
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while attempting to delete item "
+                   f"measurement ID {measurement_id}. Database rolled back."
+        )
+
+
+
+async def upload_item_image_service(file: UploadFile) -> str:
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File provided is not an image."
+        )
+
+    extension = file.filename.split(".")[-1]
+    filename = f"item_{uuid.uuid4()}.{extension}"
+
+    file_path = os.path.join("server", "static", "items_images", filename)
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    return f"/static/items_images/{filename}"
