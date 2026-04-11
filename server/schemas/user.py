@@ -53,7 +53,7 @@ class RefreshTokenRequest(BaseModel):
 
 class ProfileBaseSchema(BaseModel):
     height_cm: int = Field(..., ge=100, le=250)
-    gender: Optional[GenderEnum] = Field("unisex", max_length=6)
+    gender: Optional[GenderEnum] = Field("unisex")
     shoulders_length_cm: int = Field(..., ge=30, le=60)
     breast_length_cm: int = Field(..., ge=60, le=180)
     waist_length_cm: int = Field(..., ge=40, le=150)
@@ -74,7 +74,7 @@ class FavoritesListSchema(PaginatedResponse[ItemListItemSchema]):
 
 class ProfileUpdateSchema(BaseModel):
     height_cm: Optional[int] = Field(None, ge=100, le=250)
-    gender: Optional[GenderEnum] = Field(None, max_length=6)
+    gender: Optional[GenderEnum] = Field(None)
     shoulders_length_cm: Optional[int] = Field(None, ge=30, le=60)
     breast_length_cm: Optional[int] = Field(None, ge=60, le=180)
     waist_length_cm: Optional[int] = Field(None, ge=40, le=150)
