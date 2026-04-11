@@ -14,7 +14,8 @@ from schemas.user import (
     TokenPairResponse,
     RefreshTokenRequest,
     ProfileBaseSchema,
-    ProfileViewSchema, ProfileUpdateSchema,
+    ProfileViewSchema,
+    ProfileUpdateSchema,
 )
 from services.catalog import get_items_list
 from services.user import (
@@ -22,7 +23,9 @@ from services.user import (
     user_login,
     refresh_token_pair,
     profile_create,
-    get_user_profile, profile_update, profile_delete
+    get_user_profile,
+    profile_update,
+    profile_delete
 )
 
 router = APIRouter(prefix="/user", tags=["user"])
