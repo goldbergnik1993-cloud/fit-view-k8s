@@ -68,7 +68,9 @@ class ItemsModel(Base):
     price: Mapped[Decimal] = mapped_column(
         DECIMAL(10, 2), default=Decimal("0.00")
     )
-    reference_point: Mapped[ItemRefPointEnum] = mapped_column(Enum(ItemRefPointEnum))
+    reference_point: Mapped[ItemRefPointEnum] = mapped_column(
+        Enum(ItemRefPointEnum)
+    )
     ref_coefficient: Mapped[float] = mapped_column(Float)
 
     brand: Mapped["BrandsModel"] = relationship(

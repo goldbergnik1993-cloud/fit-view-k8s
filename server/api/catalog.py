@@ -38,7 +38,8 @@ from services.catalog import (
     item_update,
     item_delete,
     size_chart_delete,
-    measurement_delete, upload_item_image_service
+    measurement_delete,
+    upload_item_image_service
 )
 
 router = APIRouter(prefix="/items", tags=["item"])
@@ -118,7 +119,7 @@ async def update_item(
 async def delete_item(
         item_id: int,
         current_user: UserModel = Depends(allow_manager_plus),
-        db: AsyncSession = Depends(allow_manager_plus)
+        db: AsyncSession = Depends(get_db)
 ):
     return await item_delete(item_id=item_id, db=db)
 

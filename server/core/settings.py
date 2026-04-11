@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FitView"
-    BASE_URL: str = "http://127.0.0.1:8000/api/v1"
+    BASE_URL: str = "http://127.0.0.1:8000"
 
     DATABASE_URL: str
     SECRET_KEY: str

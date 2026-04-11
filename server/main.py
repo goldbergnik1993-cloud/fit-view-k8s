@@ -28,9 +28,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-os.makedirs(os.path.join("server", "static", "items_images"), exist_ok=True)
+os.makedirs(os.path.join("static", "items_images"), exist_ok=True)
 
-app.mount("/static", StaticFiles(directory="server/static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
