@@ -18,6 +18,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
+from database.models.user import GenderEnum
 
 
 class ItemCategoryEnum(str, enum.Enum):
@@ -27,6 +28,12 @@ class ItemCategoryEnum(str, enum.Enum):
     BLOUSE = "blouse"
     PANTS = "pants"
     SHIRT = "shirt"
+
+
+class ItemRefPointEnum(str, enum.Enum):
+    SHOULDERS = "shoulders"
+    WAIST = "waist"
+    CROTCH = "crotch"
 
 
 class BrandsModel(Base):
@@ -56,11 +63,12 @@ class ItemsModel(Base):
     category: Mapped[ItemCategoryEnum] = mapped_column(
         Enum(ItemCategoryEnum), index=True
     )
+    gender: Mapped[GenderEnum] = mapped_column(Enum(GenderEnum), index=True)
     image_url: Mapped[str] = mapped_column(String(255), nullable=True)
     price: Mapped[Decimal] = mapped_column(
         DECIMAL(10, 2), default=Decimal("0.00")
     )
-    reference_point: Mapped[str] = mapped_column(String(255))
+    reference_point: Mapped[ItemRefPointEnum] = mapped_column(Enum(ItemRefPointEnum))
     ref_coefficient: Mapped[float] = mapped_column(Float)
 
     brand: Mapped["BrandsModel"] = relationship(
