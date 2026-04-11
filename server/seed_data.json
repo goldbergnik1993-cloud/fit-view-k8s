@@ -1,0 +1,362 @@
+[
+  {
+    "name": "Midi Floral Dress",
+    "brand": "Zara",
+    "category": "dress",
+    "gender": "female",
+    "price": "80.00",
+    "image_url": "https://example.com/images/zara-midi-floral-dress.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 90, "hips_max_cm": 94, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 98, "hips_max_cm": 104, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 105, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 107, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 109, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Evening Wrap Dress",
+    "brand": "Mango",
+    "category": "dress",
+    "gender": "female",
+    "price": "95.00",
+    "image_url": "https://example.com/images/mango-wrap-dress.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 90, "hips_max_cm": 94, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 98, "hips_max_cm": 104, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 118, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 120, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 122, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Mini Denim Skirt",
+    "brand": "Cos",
+    "category": "skirt",
+    "gender": "female",
+    "price": "45.00",
+    "image_url": "/static/items_images/item_3efa5977-7012-4c87-8315-0e0150f9f0ed.jpg",
+    "reference_point": "waist",
+    "ref_coefficient": 0.618,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 90, "hips_max_cm": 94, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 98, "hips_max_cm": 104, "shoulders_min_cm": 0, "shoulders_max_cm": 0 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 38, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 39, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 40, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Pleated Midi Skirt",
+    "brand": "Zara",
+    "category": "skirt",
+    "gender": "female",
+    "price": "55.00",
+    "image_url": "https://example.com/images/zara-pleated-midi-skirt.jpg",
+    "reference_point": "waist",
+    "ref_coefficient": 0.618,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 90, "hips_max_cm": 94, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 98, "hips_max_cm": 104, "shoulders_min_cm": 0, "shoulders_max_cm": 0 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 68, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 70, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 72, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Basic Cotton T-Shirt",
+    "brand": "Uniqlo",
+    "category": "t_shirt",
+    "gender": "female",
+    "price": "25.00",
+    "image_url": "https://example.com/images/uniqlo-basic-tshirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 65, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 67, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 69, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Striped Oversized T-Shirt",
+    "brand": "H&M",
+    "category": "t_shirt",
+    "gender": "female",
+    "price": "20.00",
+    "image_url": "https://example.com/images/hm-striped-tshirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 68, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 70, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 72, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Satin Floral Blouse",
+    "brand": "Mango",
+    "category": "blouse",
+    "gender": "female",
+    "price": "48.00",
+    "image_url": "https://example.com/images/mango-satin-blouse.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 60, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 62, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 64, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Linen Relaxed Blouse",
+    "brand": "Cos",
+    "category": "blouse",
+    "gender": "female",
+    "price": "55.00",
+    "image_url": "https://example.com/images/cos-linen-blouse.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 63, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 65, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 67, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Classic Oxford Shirt",
+    "brand": "Ralph Lauren",
+    "category": "shirt",
+    "gender": "female",
+    "price": "75.00",
+    "image_url": "https://example.com/images/rl-oxford-shirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 72, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 74, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 76, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Denim Casual Shirt",
+    "brand": "Zara",
+    "category": "shirt",
+    "gender": "female",
+    "price": "50.00",
+    "image_url": "https://example.com/images/zara-denim-shirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 86, "breast_max_cm": 89, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 37, "shoulders_max_cm": 39 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 90, "breast_max_cm": 93, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 39, "shoulders_max_cm": 41 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 94, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 41, "shoulders_max_cm": 43 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 70, "inseam_cm": 0 },
+      { "size_label": "M",  "total_length_cm": 72, "inseam_cm": 0 },
+      { "size_label": "L",  "total_length_cm": 74, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Slim Fit Trousers",
+    "brand": "Cos",
+    "category": "pants",
+    "gender": "female",
+    "price": "65.00",
+    "image_url": "https://example.com/images/cos-slim-trousers.jpg",
+    "reference_point": "crotch",
+    "ref_coefficient": 0.470,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 90, "hips_max_cm": 94, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 98, "hips_max_cm": 104, "shoulders_min_cm": 0, "shoulders_max_cm": 0 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 98, "inseam_cm": 74 },
+      { "size_label": "M",  "total_length_cm": 100, "inseam_cm": 76 },
+      { "size_label": "L",  "total_length_cm": 102, "inseam_cm": 78 }
+    ]
+  },
+  {
+    "name": "Wide Leg Pants",
+    "brand": "Mango",
+    "category": "pants",
+    "gender": "female",
+    "price": "70.00",
+    "image_url": "https://example.com/images/mango-wide-leg-pants.jpg",
+    "reference_point": "crotch",
+    "ref_coefficient": 0.470,
+    "size_charts": [
+      { "size_label": "S",  "waist_min_cm": 62, "waist_max_cm": 65, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 90, "hips_max_cm": 94, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "M",  "waist_min_cm": 66, "waist_max_cm": 69, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "L",  "waist_min_cm": 70, "waist_max_cm": 75, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 98, "hips_max_cm": 104, "shoulders_min_cm": 0, "shoulders_max_cm": 0 }
+    ],
+    "measurements": [
+      { "size_label": "S",  "total_length_cm": 100, "inseam_cm": 76 },
+      { "size_label": "M",  "total_length_cm": 102, "inseam_cm": 78 },
+      { "size_label": "L",  "total_length_cm": 104, "inseam_cm": 80 }
+    ]
+  },
+  {
+    "name": "Slim Fit Chinos",
+    "brand": "Zara",
+    "category": "pants",
+    "gender": "male",
+    "price": "65.00",
+    "image_url": "https://example.com/images/zara-slim-chinos.jpg",
+    "reference_point": "crotch",
+    "ref_coefficient": 0.470,
+    "size_charts": [
+      { "size_label": "S", "waist_min_cm": 76, "waist_max_cm": 79, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "M", "waist_min_cm": 80, "waist_max_cm": 83, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 98, "hips_max_cm": 102, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "L", "waist_min_cm": 84, "waist_max_cm": 89, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 102, "hips_max_cm": 108, "shoulders_min_cm": 0, "shoulders_max_cm": 0 }
+    ],
+    "measurements": [
+      { "size_label": "S", "total_length_cm": 98,  "inseam_cm": 74 },
+      { "size_label": "M", "total_length_cm": 100, "inseam_cm": 76 },
+      { "size_label": "L", "total_length_cm": 102, "inseam_cm": 78 }
+    ]
+  },
+  {
+    "name": "Classic Cargo Pants",
+    "brand": "The North Face",
+    "category": "pants",
+    "gender": "male",
+    "price": "80.00",
+    "image_url": "https://example.com/images/tnf-cargo-pants.jpg",
+    "reference_point": "crotch",
+    "ref_coefficient": 0.470,
+    "size_charts": [
+      { "size_label": "S", "waist_min_cm": 76, "waist_max_cm": 79, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 94, "hips_max_cm": 98, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "M", "waist_min_cm": 80, "waist_max_cm": 83, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 98, "hips_max_cm": 102, "shoulders_min_cm": 0, "shoulders_max_cm": 0 },
+      { "size_label": "L", "waist_min_cm": 84, "waist_max_cm": 89, "breast_min_cm": 0, "breast_max_cm": 0, "hips_min_cm": 102, "hips_max_cm": 108, "shoulders_min_cm": 0, "shoulders_max_cm": 0 }
+    ],
+    "measurements": [
+      { "size_label": "S", "total_length_cm": 100, "inseam_cm": 76 },
+      { "size_label": "M", "total_length_cm": 102, "inseam_cm": 78 },
+      { "size_label": "L", "total_length_cm": 104, "inseam_cm": 80 }
+    ]
+  },
+  {
+    "name": "Basic Cotton T-Shirt",
+    "brand": "Uniqlo",
+    "category": "t_shirt",
+    "gender": "male",
+    "price": "25.00",
+    "image_url": "https://example.com/images/uniqlo-men-tshirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S", "waist_min_cm": 76, "waist_max_cm": 79, "breast_min_cm": 92, "breast_max_cm": 95, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 42, "shoulders_max_cm": 44 },
+      { "size_label": "M", "waist_min_cm": 80, "waist_max_cm": 83, "breast_min_cm": 96, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 44, "shoulders_max_cm": 46 },
+      { "size_label": "L", "waist_min_cm": 84, "waist_max_cm": 89, "breast_min_cm": 100, "breast_max_cm": 105, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 46, "shoulders_max_cm": 48 }
+    ],
+    "measurements": [
+      { "size_label": "S", "total_length_cm": 68, "inseam_cm": 0 },
+      { "size_label": "M", "total_length_cm": 70, "inseam_cm": 0 },
+      { "size_label": "L", "total_length_cm": 72, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Graphic Print T-Shirt",
+    "brand": "H&M",
+    "category": "t_shirt",
+    "gender": "male",
+    "price": "22.00",
+    "image_url": "https://example.com/images/hm-men-graphic-tshirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S", "waist_min_cm": 76, "waist_max_cm": 79, "breast_min_cm": 92, "breast_max_cm": 95, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 42, "shoulders_max_cm": 44 },
+      { "size_label": "M", "waist_min_cm": 80, "waist_max_cm": 83, "breast_min_cm": 96, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 44, "shoulders_max_cm": 46 },
+      { "size_label": "L", "waist_min_cm": 84, "waist_max_cm": 89, "breast_min_cm": 100, "breast_max_cm": 105, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 46, "shoulders_max_cm": 48 }
+    ],
+    "measurements": [
+      { "size_label": "S", "total_length_cm": 70, "inseam_cm": 0 },
+      { "size_label": "M", "total_length_cm": 72, "inseam_cm": 0 },
+      { "size_label": "L", "total_length_cm": 74, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Classic Oxford Shirt",
+    "brand": "Ralph Lauren",
+    "category": "shirt",
+    "gender": "male",
+    "price": "85.00",
+    "image_url": "https://example.com/images/rl-men-oxford-shirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S", "waist_min_cm": 76, "waist_max_cm": 79, "breast_min_cm": 92, "breast_max_cm": 95, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 42, "shoulders_max_cm": 44 },
+      { "size_label": "M", "waist_min_cm": 80, "waist_max_cm": 83, "breast_min_cm": 96, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 44, "shoulders_max_cm": 46 },
+      { "size_label": "L", "waist_min_cm": 84, "waist_max_cm": 89, "breast_min_cm": 100, "breast_max_cm": 105, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 46, "shoulders_max_cm": 48 }
+    ],
+    "measurements": [
+      { "size_label": "S", "total_length_cm": 74, "inseam_cm": 0 },
+      { "size_label": "M", "total_length_cm": 76, "inseam_cm": 0 },
+      { "size_label": "L", "total_length_cm": 78, "inseam_cm": 0 }
+    ]
+  },
+  {
+    "name": "Linen Summer Shirt",
+    "brand": "Zara",
+    "category": "shirt",
+    "gender": "male",
+    "price": "55.00",
+    "image_url": "https://example.com/images/zara-men-linen-shirt.jpg",
+    "reference_point": "shoulders",
+    "ref_coefficient": 0.818,
+    "size_charts": [
+      { "size_label": "S", "waist_min_cm": 76, "waist_max_cm": 79, "breast_min_cm": 92, "breast_max_cm": 95, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 42, "shoulders_max_cm": 44 },
+      { "size_label": "M", "waist_min_cm": 80, "waist_max_cm": 83, "breast_min_cm": 96, "breast_max_cm": 99, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 44, "shoulders_max_cm": 46 },
+      { "size_label": "L", "waist_min_cm": 84, "waist_max_cm": 89, "breast_min_cm": 100, "breast_max_cm": 105, "hips_min_cm": 0, "hips_max_cm": 0, "shoulders_min_cm": 46, "shoulders_max_cm": 48 }
+    ],
+    "measurements": [
+      { "size_label": "S", "total_length_cm": 72, "inseam_cm": 0 },
+      { "size_label": "M", "total_length_cm": 74, "inseam_cm": 0 },
+      { "size_label": "L", "total_length_cm": 76, "inseam_cm": 0 }
+    ]
+  }
+]

@@ -10,6 +10,7 @@ __pycache__/
 build/
 dist/
 .idea/
+static/
 
 
 # Node / React

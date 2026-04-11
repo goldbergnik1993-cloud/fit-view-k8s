@@ -1,9 +1,11 @@
 from decimal import Decimal
-from typing import List, Optional, Literal
+from typing import List, Optional
 
-from pydantic import BaseModel, Field, ConfigDict, FileUrl
+from pydantic import BaseModel, Field, ConfigDict, HttpUrl
 
-from database.models.catalog import ItemCategoryEnum
+from database.models.catalog import ItemCategoryEnum, ItemRefPointEnum
+from database.models.events import FitResultEnum
+from database.models.user import GenderEnum
 from schemas.base import PaginatedResponse
 
 
@@ -19,6 +21,7 @@ class ItemBaseSchema(BaseModel):
     name: str
     brand: BrandViewSchema
     category: ItemCategoryEnum
+    gender: GenderEnum
     image_url: str
     price: Decimal
     is_favorite: bool = False
@@ -48,8 +51,12 @@ class ItemFilterParams(BaseModel):
         None, description="Search by item's category"
     )
     name: Optional[str] = Field(None, description="Search by item's name")
-    size: Optional[str] = Field(None,
-                                description="Search by item's size label")
+    size: Optional[str] = Field(
+        None, description="Search by item's size label"
+    )
+    gender: Optional[GenderEnum] = Field(
+        None, description="Search by item's gender"
+    )
     min_price: Optional[Decimal] = Field(
         None, description="Search by item's min price"
     )
@@ -106,18 +113,24 @@ class FittingRoomRequestSchema(BaseModel):
     hips_length_cm: Optional[int] = Field(None, ge=60, le=180)
     leg_length_cm: Optional[int] = Field(None, ge=50, le=120)
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class VisualMarkersSchema(BaseModel):
     h_end_cm: float
     line_position_pct: float
-    reference_point: str
+    reference_point: ItemRefPointEnum
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FitAnalysisSchema(BaseModel):
-    waist_fit: Literal["tight", "perfect", "loose"] | None
-    breast_fit: Literal["tight", "perfect", "loose"] | None
-    hips_fit: Literal["tight", "perfect", "loose"] | None
-    shoulders_fit: Literal["tight", "perfect", "loose"] | None
+    waist_fit: FitResultEnum | None
+    breast_fit: FitResultEnum | None
+    hips_fit: FitResultEnum | None
+    shoulders_fit: FitResultEnum | None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserBodySchema(BaseModel):
@@ -129,10 +142,13 @@ class UserBodySchema(BaseModel):
     breast_length_cm: Optional[int]
     shoulders_length_cm: Optional[int]
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class FittingRoomResponseSchema(BaseModel):
     item_id: int
     size_label: str
+    gender: GenderEnum
     visual_markers: VisualMarkersSchema
     fit_analysis: FitAnalysisSchema
     user_body: UserBodySchema
@@ -141,8 +157,61 @@ class FittingRoomResponseSchema(BaseModel):
 
 
 # ============================= ITEM-CREATE ================================
-class ItemCreateRequest(BaseModel):
+class SizeChartCreateSchema(BaseModel):
+    size_label: str = Field(..., min_length=0, max_length=10)
+    hips_min_cm: Optional[float] = Field(None, ge=0, le=115)
+    hips_max_cm: Optional[float] = Field(None, ge=0, le=123)
+    waist_min_cm: Optional[float] = Field(None, ge=0, le=97)
+    waist_max_cm: Optional[float] = Field(None, ge=0, le=105)
+    breast_min_cm: Optional[float] = Field(None, ge=0, le=113)
+    breast_max_cm: Optional[float] = Field(None, ge=0, le=121)
+    shoulders_min_cm: Optional[float] = Field(None, ge=0, le=51)
+    shoulders_max_cm: Optional[float] = Field(None, ge=0, le=54)
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MeasurementCreateSchema(BaseModel):
+    size_label: str = Field(..., min_length=1, max_length=10)
+    total_length_cm: float = Field(..., ge=0, le=200)
+    inseam_cm: float = Field(..., ge=0, le=120)
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ItemCreateSchema(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     brand: str = Field(..., min_length=1, max_length=50)
-    category: ItemCategoryEnum
-    image_url: FileUrl
+    category: ItemCategoryEnum = Field(...)
+    gender: GenderEnum = Field(...)
+    image_url: HttpUrl
+    price: Decimal = Field(..., ge=0, max_digits=10, decimal_places=2)
+    reference_point: ItemRefPointEnum = Field(...)
+    ref_coefficient: float = Field(..., gt=0, lt=1)
+
+    size_charts: List[SizeChartCreateSchema] = Field(default_factory=list)
+    measurements: List[MeasurementCreateSchema] = Field(default_factory=list)
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ItemUpdateSchema(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    brand: Optional[str] = Field(None, min_length=1, max_length=50)
+    category: Optional[ItemCategoryEnum] = Field(None)
+    gender: Optional[GenderEnum] = Field(None)
+    image_url: Optional[HttpUrl]
+    price: Optional[Decimal] = Field(
+        None, ge=0, max_digits=10, decimal_places=2
+    )
+    reference_point: Optional[ItemRefPointEnum] = Field(None)
+    ref_coefficient: Optional[float] = Field(None, gt=0, lt=1)
+
+    size_charts: Optional[List[SizeChartCreateSchema]] = Field(
+        default_factory=list
+    )
+    measurements: Optional[List[MeasurementCreateSchema]] = Field(
+        default_factory=list
+    )
+
+    model_config = ConfigDict(from_attributes=True)

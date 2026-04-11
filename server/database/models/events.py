@@ -1,9 +1,23 @@
+import enum
 from datetime import datetime
+from typing import Optional
 
-from sqlalchemy import Integer, ForeignKey, String, Float, DateTime, func
+from sqlalchemy import Integer, ForeignKey, String, Float, DateTime, func, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
+
+
+class EventTypeEnum(enum.Enum):
+    WIDGET_SHOWN = "widget_shown"
+    HEIGHT_ENTERED = "height_entered"
+    RESULT_SHOWN = "result_shown"
+
+
+class FitResultEnum(str, enum.Enum):
+    TIGHT = "tight"
+    PERFECT = "perfect"
+    LOOSE = "loose"
 
 
 class FitviewEventsModel(Base):
@@ -16,13 +30,21 @@ class FitviewEventsModel(Base):
     item_id: Mapped[int] = mapped_column(
         ForeignKey("items.id", ondelete="CASCADE")
     )
-    event_type: Mapped[str] = mapped_column(String(50))
-    height_used_cm: Mapped[float] = mapped_column(Float)
-    result_end_cm: Mapped[float] = mapped_column(Float)
-    fit_shoulders: Mapped[str] = mapped_column(String(10))
-    fit_breast: Mapped[str] = mapped_column(String(10))
-    fit_waist: Mapped[str] = mapped_column(String(10))
-    fit_hips: Mapped[str] = mapped_column(String(10))
+    event_type: Mapped[EventTypeEnum] = mapped_column(Enum(EventTypeEnum))
+    height_used_cm: Mapped[Optional[float]] = mapped_column(Float)
+    result_end_cm: Mapped[Optional[float]] = mapped_column(Float)
+    fit_shoulders: Mapped[Optional[FitResultEnum]] = mapped_column(
+        Enum(FitResultEnum)
+    )
+    fit_breast: Mapped[Optional[FitResultEnum]] = mapped_column(
+        Enum(FitResultEnum)
+    )
+    fit_waist: Mapped[Optional[FitResultEnum]] = mapped_column(
+        Enum(FitResultEnum)
+    )
+    fit_hips: Mapped[Optional[FitResultEnum]] = mapped_column(
+        Enum(FitResultEnum)
+    )
     ab_group: Mapped[str] = mapped_column(String(1))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
