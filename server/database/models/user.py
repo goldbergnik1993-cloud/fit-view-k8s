@@ -25,17 +25,18 @@ class UserModel(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     email: Mapped[str] = mapped_column(
-        String(255), unique=True, index=True, nullable=False
+        String(255), unique=True, index=True
     )
-    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(255))
     role: Mapped[UserRoleEnum] = mapped_column(
-        Enum(UserRoleEnum), nullable=False, default=UserRoleEnum.BUYER
+        Enum(UserRoleEnum), default=UserRoleEnum.BUYER
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=func.now(),
         server_default=func.now()
     )
+    ab_group: Mapped[str] = mapped_column(String(1))
 
     profile: Mapped[Optional["UserProfileModel"]] = relationship(
         "UserProfileModel",
@@ -69,10 +70,13 @@ class UserProfileModel(Base):
     )
     height_cm: Mapped[int] = mapped_column(Integer)
     gender: Mapped[GenderEnum] = mapped_column(
-        Enum(GenderEnum), nullable=False, default=GenderEnum.UNISEX
+        Enum(GenderEnum), default=GenderEnum.UNISEX
     )
     leg_length_cm: Mapped[int] = mapped_column(Integer)
     waist_length_cm: Mapped[int] = mapped_column(Integer)
+    hips_length_cm: Mapped[int] = mapped_column(Integer)
+    breast_length_cm: Mapped[int] = mapped_column(Integer)
+    shoulders_length_cm: Mapped[int] = mapped_column(Integer)
 
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

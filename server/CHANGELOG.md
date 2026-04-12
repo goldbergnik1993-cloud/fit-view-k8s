@@ -1,34 +1,67 @@
-# Changelog
-All notable changes to this project will be documented in this file.
-
-## [Unreleased]
-
-## Added
-- **Models**: Add to `UserModel` relationships to `FitviewEventsModel` and `FavoriteModel`.
-- **Models & Migrations**: Implemented `ItemsModel`, `SizeChartModel`, `ItemMeasurementsModel`, `FavoritesModel`, `FitviewEventsModel`, made corresponding migrations.
-- **API**: Exposed profile management `GET/POST` endpoints via `/user/profile`
-- **Services**: Added `profile_create` and `get_user_profile` services. Added `get_current_user` dependency.
-- **Schemas**: Added `ProfileBaseSchema` and `ProfileViewSchema` featuring user's profile creation and retrieving.
-- **Models**: Introduced `RefreshTokenModel` for managing active user sessions.
-- **Services**: 
-    - `user_create`: Handles new user registration.
-    - `user_login`: Validates credentials and issues JWT pairs.
-    - `refresh_token_pair`: Manages secure token rotation and session extension.
-    - implemented `hash_password`, `create_refresh_token`, `verify_password`, `create_access_token`, `decode_access_token` utilities for handling authentication tokens.
-- **Schemas**: 
-    - Added `UserCreateSchema` featuring password complexity validation.
-    - Implemented `TokenPairResponse` and `RefreshTokenRequest` for standard JWT handling.
-- **API**: Exposed user management endpoints via `/user`.
-- **Migrations**: Generated and applied the initial Alembic migration to create `users` and `user_profiles` tables.
-- **Migrations**: Initialized **Alembic** for database migrations, including custom configuration in `env.py` for asynchronous support.
-- **Models**: Implemented `UserModel` and `UserProfileModel` with SQLAlchemy, establishing the core user data architecture.
-- **Infrastructure**: Initialized project with **Poetry** and defined a modular FastAPI directory structure.
-- **Configuration**: Implemented `BaseSettings` using `pydantic-settings` to handle environment variables for Database, Security, and App metadata.
-- **Database**: Configured asynchronous PostgreSQL connection using `SQLAlchemy` and `async_sessionmaker`.
-- **Environment**: Added `.env.sample` for team-wide configuration consistency and `.gitignore` to protect sensitive data.
-
-## Fixed
-### Infrastructure & DevOps
-- [cite_start]**Environment**: Fixed a bug where `.env` was ignored by Docker, preventing Pydantic from loading settings.
-- **Docker Compose**: Switched to explicit environment variable mapping for better security and configuration tracking.
-- [cite_start]**Database**: Corrected the `DATABASE_URL` driver to `postgresql+asyncpg` to support SQLAlchemy's asynchronous engine.
+76fc3e8 - Backend. refactor(catalog): implement dynamic measurement validation in fitting room - Update FittingRoomRequestSchema and UserBodySchema to make body measurements optional - Introduce active_body strategy to seamlessly merge request payload data with user profile data - Implement REQUIRED_FIELDS_BY_CATEGORY to dynamically validate only the measurements needed for specific clothing types - Unpack merged active_body data directly into the response schema (2026-04-10)
+eb2ea74 - Backend. feat(user): add 'ab_field' to UserModel and make corresponding changes in scemas and services (2026-04-10)
+498d889 - Backend. feat(catalog): implement fitting-room feature. - add FittingRoomRequestSchema, FittingRoomResponseSchema, VisualMarkersSchema, FitAnalysisSchema, UserBodySchema - add fitting_room service - implement POST /{item_id}/fitting-room route - add shoulders_length_cm, breast_length_cm, hips_length_cm fields to UserProfileModel - add fit_shoulders, fit_breast, fit_waist, fit_hips fields to FitViewEventModel - add shoulders_min_cm, shoulders_max_cm, hips_min_cm, hips_max_cm to the SizeChartModel - update corresponding schemas. (2026-04-09)
+01e2101 - fix: change node:22-alpine to node:22 in Dockerfile (2026-04-09)
+6fa6fa0 - feat: add hot reload for frontend development mode (2026-04-09)
+9a35e1f - feat: add reset filter button to Catalog (2026-04-09)
+35d10c0 - fix: clamp linePositionPct to 0-100 range (2026-04-09)
+c9370f0 - fix: handle object format for available_sizes in mapItem (2026-04-09)
+09d6a4a - fix: update BackendItem type to match real API response (2026-04-09)
+eb2dc52 - Merge pull request #9 from goldbergnik1993-cloud/feature/backend (2026-04-08)
+cb0fa3b - Backend. (chore): add database seed script with test data (2026-04-08)
+4e79604 - Merge pull request #8 from goldbergnik1993-cloud/feature/backend (2026-04-08)
+086497e - Backend. fix(catalog): cast category enum to string for ILIKE filter, use exact match instead. feat(catalog) add FittingRoomResultSchema (2026-04-08)
+d98d938 - Merge pull request #7 from goldbergnik1993-cloud/feature/backend (2026-04-08)
+d5140fb - Backend. feat: add CORS middleware for local development origins (2026-04-08)
+95f5a3c - feat: connect frontend to real API endpoints (2026-04-08)
+a2d177d - Merge remote-tracking branch 'origin/main' (2026-04-08)
+4e93a36 - Backend. feat(routes): implement /ready endpoint. chore: update CHANGELOG.md (2026-04-08)
+ce27d46 - Merge pull request #6 from goldbergnik1993-cloud/devops (2026-04-08)
+16b3125 - added automigrations (2026-04-08)
+2b14799 - Merge pull request #5 from goldbergnik1993-cloud/feature/backend (2026-04-07)
+6a05628 - Merge branch 'main' into feature/backend (2026-04-07)
+742e891 - feat: add Home page with navigation (2026-04-08)
+eb7fbf2 - feat: add Saved page with mock items (2026-04-08)
+3d888cc - feat: add Catalog page with item cards and filters (2026-04-08)
+0f06717 - Backend. chore: refine code, update CHANGELOG.md (2026-04-07)
+1c7eee0 - Backend. feat(catalog): implement toggle_favorite service and GET /favorites endpoint. Add 'is_favorite' boolean field to ItemBaseSchema (2026-04-07)
+34f8c26 - Backend. feat(catalog): implement item-detail endpoint. - add ItemDetailSchema with 'available_sizes' and 'available_measurements' fields - add item_view service - add GET /items/{item_id}/ endpoint. fix(catalog): fixed issue with multiple brands filtering. (2026-04-06)
+d8c5e79 - Backend. feat(catalog): implement Item-List endpoint with pagination, sorting and filtration - create ItemBaseSchema, ItemListItemSchema, ItemsListSchema, ItemFilterParams - add get_items_list service - add catalog router('/items') and items-list endpoint (2026-04-06)
+2c71b60 - feat: update types, mocks and fit calculator based on Veronika's spec (2026-04-06)
+50567c1 - feat: update fit calculator with Veronika formulas (2026-04-06)
+7e0e44f - Backend. feat(schemas): add PaginatedResponse schema for pagination handling (2026-04-06)
+dd009a5 - Backend. feat(catalog): add RoleChecker dependency for user access delimitation, add pagination_helper for pagination handling (2026-04-06)
+9e1fb3c - Backend. feat(database): add BrandsModel, add 'price' field to ItemsModel, define relationships between ItemsModel and BrandsModel (2026-04-06)
+aaca6bb - Backend. Chore(changelog): update CHANGELOG.md (2026-04-05)
+6d2b007 - Backend. feat(catalog): add to UserModel relationships to FitviewEventsModel and FavoriteModel (2026-04-05)
+445b2a9 - Backend. feat(catalog): implement ItemsModel, SizeChartModel, ItemMeasurementsModel, FavoritesModel, FitviewEventsModel, make corresponding migrations (2026-04-05)
+4fbf6e3 - Backend. feat(user): expose profile management endpoints (GET and POST) via /user/profile (2026-04-05)
+2b1b3bb - Backend. feat(user): add 'profile_create' and 'get_user_profile' services. Add 'get_current_user' dependency (2026-04-05)
+3176bb0 - Backend. feat(user): add `ProfileBaseSchema` and `ProfileViewSchema` featuring user's profile creation and retrieving. (2026-04-05)
+66060de - Backend. chore: update CHANGELOG.md (2026-04-05)
+fb40dd7 - Backend. Feat(api): register authentication and user management routes - Create dedicated api/user.py router. - Integrate the user router into the main FastAPI application. (2026-04-05)
+8258f64 - Backend. Feat(user): implement Pydantic schemas and auth service layer - Create UserCreateSchema with custom password field validation. - Define UserRetrieveSchema, LoginSchema, and TokenPairResponse. - Implement core services: user_create, user_login, and refresh_token_pair. - implement hash+password, create_refresh_token, verify_password, create_access_token, decode_access_token utilities for handling authentication tokens. (2026-04-05)
+b171826 - Backend. feat(auth): add RefreshToken model and database migrations. - Implement RefreshTokenModel to support secure, persistent token rotation. -Generate migration scripts to initialize the refresh tokens table. (2026-04-05)
+729e09c - Backend. Refactor (docker & settings): implement explicit environment variable mapping. - Remove .env from .dockerignore to allow Pydantic to access it within the container. - Update docker-compose.yaml to explicitly map all JWT and Database variables from the host to the container. Fix DATABASE_URL to use the postgresql+asyncpg driver for async compatibility (2026-04-05)
+3c152a6 - Merge pull request #4 from goldbergnik1993-cloud/devops (2026-04-04)
+2fc51e6 - test (2026-04-04)
+4110d17 - Backend. feat: initial database migration - Generate first migration script - Update CHANGELOG.md (2026-04-04)
+3b39472 - Merge branch 'refs/heads/main' into feature/backend (2026-04-04)
+8b56b19 - Merge pull request #3 from goldbergnik1993-cloud/devops (2026-04-04)
+c8df1b7 - backend switched/hot reload set up (2026-04-04)
+6f02611 - Backend. Database: Initialize Alembic for database migrations, including custom configuration in env.py for asynchronous support. (2026-04-03)
+d2e4338 - Backend. Feat: add Base, UserModel, UserProfileModel models to database schema - Define Base in server/database/models/base.py - Define UserModel and UserProfileModel in server/database/models/user.py - Set up relationships between UserModel and UserProfileModel - Update CHANGELOG.md (2026-04-03)
+4c3914d - Backend. Chore: initial project bootstrap - Set up Poetry dependency management - Created modular server structure (api, core, database, schemas, services) - Implement Pydantic-based settings management in core/settings.py - Set up asynchronous SQLAlchemy engine and session management in database/ - Added environment configuration templates - Initialized changelog (2026-04-03)
+cd5ac35 - Merge remote-tracking branch 'origin/feature/backend' into devops (2026-04-04)
+3ff0c73 - Merge pull request #2 from goldbergnik1993-cloud/devops (2026-04-04)
+a1d4330 - docker_compose + mockings (2026-04-04)
+4aa3e78 - docker+docker_compose with mockings (2026-04-04)
+18ab3dd - Backend. Database: Initialize Alembic for database migrations, including custom configuration in env.py for asynchronous support. (2026-04-03)
+f7ac901 - Backend. Feat: add Base, UserModel, UserProfileModel models to database schema - Define Base in server/database/models/base.py - Define UserModel and UserProfileModel in server/database/models/user.py - Set up relationships between UserModel and UserProfileModel - Update CHANGELOG.md (2026-04-03)
+1a761bf - Backend. Chore: initial project bootstrap - Set up Poetry dependency management - Created modular server structure (api, core, database, schemas, services) - Implement Pydantic-based settings management in core/settings.py - Set up asynchronous SQLAlchemy engine and session management in database/ - Added environment configuration templates - Initialized changelog (2026-04-03)
+b7ea0bd - Merge pull request #1 from goldbergnik1993-cloud/feature/frontend-setup (2026-04-03)
+7aee6de - feat: add frontend setup to client folder (2026-04-03)
+613b037 - simple workflow (2026-04-02)
+ab62e0b - chore: force track empty directories with .gitkeep (2026-04-02)
+6033745 - chore: initial repository structure (2026-04-02)
+e2f566e - Initial commit (2026-04-02)

@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import (
     Integer,
@@ -18,6 +18,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
+from database.models.user import GenderEnum
 
 
 class ItemCategoryEnum(str, enum.Enum):
@@ -27,6 +28,12 @@ class ItemCategoryEnum(str, enum.Enum):
     BLOUSE = "blouse"
     PANTS = "pants"
     SHIRT = "shirt"
+
+
+class ItemRefPointEnum(str, enum.Enum):
+    SHOULDERS = "shoulders"
+    WAIST = "waist"
+    CROTCH = "crotch"
 
 
 class BrandsModel(Base):
@@ -41,10 +48,13 @@ class BrandsModel(Base):
         cascade="all, delete-orphan"
     )
 
+
 class ItemsModel(Base):
     __tablename__ = "items"
     __table_args__ = (
-    UniqueConstraint("name", "brand_id", "category", name="uix_items"),
+        UniqueConstraint(
+            "name", "brand_id", "category", name="uix_items"
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -53,11 +63,14 @@ class ItemsModel(Base):
     category: Mapped[ItemCategoryEnum] = mapped_column(
         Enum(ItemCategoryEnum), index=True
     )
+    gender: Mapped[GenderEnum] = mapped_column(Enum(GenderEnum), index=True)
     image_url: Mapped[str] = mapped_column(String(255), nullable=True)
     price: Mapped[Decimal] = mapped_column(
         DECIMAL(10, 2), default=Decimal("0.00")
     )
-    reference_point: Mapped[str] = mapped_column(String(255))
+    reference_point: Mapped[ItemRefPointEnum] = mapped_column(
+        Enum(ItemRefPointEnum)
+    )
     ref_coefficient: Mapped[float] = mapped_column(Float)
 
     brand: Mapped["BrandsModel"] = relationship(
@@ -86,7 +99,9 @@ class ItemsModel(Base):
 class SizeChartModel(Base):
     __tablename__ = "size_charts"
     __table_args__ = (
-    UniqueConstraint("item_id", "size_label", name="uix_item_size_chart"),
+        UniqueConstraint(
+            "item_id", "size_label", name="uix_item_size_chart"
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -98,13 +113,17 @@ class SizeChartModel(Base):
     )
     size_label: Mapped[str] = mapped_column(String(10))
 
-    waist_min_cm: Mapped[float] = mapped_column(Float, index=True)
-    waist_max_cm: Mapped[float] = mapped_column(Float, index=True)
+    hips_min_cm: Mapped[Optional[float]] = mapped_column(Float)
+    hips_max_cm: Mapped[Optional[float]] = mapped_column(Float)
 
-    breast_min_cm: Mapped[float] = mapped_column(Float, index=True)
-    breast_max_cm: Mapped[float] = mapped_column(Float, index=True)
-    shoulders_min_cm: Mapped[float] = mapped_column(Float, index=True)
-    shoulders_max_cm: Mapped[float] = mapped_column(Float, index=True)
+    waist_min_cm: Mapped[Optional[float]] = mapped_column(Float)
+    waist_max_cm: Mapped[Optional[float]] = mapped_column(Float)
+
+    breast_min_cm: Mapped[Optional[float]] = mapped_column(Float)
+    breast_max_cm: Mapped[Optional[float]] = mapped_column(Float)
+
+    shoulders_min_cm: Mapped[Optional[float]] = mapped_column(Float)
+    shoulders_max_cm: Mapped[Optional[float]] = mapped_column(Float)
 
     item: Mapped["ItemsModel"] = relationship(
         "ItemsModel", back_populates="size_charts"
@@ -115,7 +134,9 @@ class ItemMeasurementsModel(Base):
     __tablename__ = "item_measurements"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    item_id: Mapped[int] = mapped_column(ForeignKey("items.id", ondelete="CASCADE"))
+    item_id: Mapped[int] = mapped_column(
+        ForeignKey("items.id", ondelete="CASCADE")
+    )
     size_label: Mapped[str] = mapped_column(String(10))
     total_length_cm: Mapped[float] = mapped_column(Float)
     inseam_cm: Mapped[float] = mapped_column(Float)
