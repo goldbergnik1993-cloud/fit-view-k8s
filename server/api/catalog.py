@@ -1,6 +1,14 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, Depends, Request, Query
+from fastapi import (
+    APIRouter,
+    Depends,
+    Request,
+    Query,
+    status,
+    UploadFile,
+    File
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import (
@@ -15,13 +23,28 @@ from schemas.catalog import (
     ItemsListSchema,
     ItemFilterParams,
     ItemDetailSchema,
-    ToggleFavoriteSchema
+    ToggleFavoriteSchema,
+    FittingRoomResponseSchema,
+    FittingRoomRequestSchema,
+    ItemCreateSchema,
+    ItemUpdateSchema
 )
-from services.catalog import get_items_list, item_view, toggle_favorite
+from services.catalog import (
+    get_items_list,
+    item_view,
+    toggle_favorite,
+    fitting_room,
+    item_create,
+    item_update,
+    item_delete,
+    size_chart_delete,
+    measurement_delete,
+    upload_item_image_service
+)
 
 router = APIRouter(prefix="/items", tags=["item"])
 
-allow_moderator_plus = RoleChecker(
+allow_manager_plus = RoleChecker(
     [UserRoleEnum.MANAGER, UserRoleEnum.ADMIN]
 )
 
@@ -54,6 +77,24 @@ async def list_items(
         user_id=user_id,
     )
 
+@router.post("/", response_model=ItemDetailSchema)
+async def create_item(
+        payload: ItemCreateSchema,
+        db: AsyncSession = Depends(get_db),
+        current_user: UserModel = Depends(allow_manager_plus)
+):
+    return await item_create(payload=payload, db=db)
+
+
+@router.post("/upload-image", summary="Upload an item image")
+async def upload_item_image(
+    file: UploadFile = File(...),
+    current_user = Depends(allow_manager_plus)
+):
+    image_path = await upload_item_image_service(file)
+    return {"image_url": image_path}
+
+
 @router.get("/{item_id}", response_model=ItemDetailSchema)
 async def get_item(
         item_id: int,
@@ -64,6 +105,55 @@ async def get_item(
     return await item_view(item_id=item_id, db=db, user_id=user_id)
 
 
+@router.patch("/{item_id}", response_model=ItemDetailSchema)
+async def update_item(
+        item_id: int,
+        payload: ItemUpdateSchema,
+        current_user: UserModel = Depends(allow_manager_plus),
+        db: AsyncSession = Depends(get_db),
+):
+    return await item_update(payload=payload, item_id=item_id, db=db)
+
+
+@router.delete("/{item_id}", status_code=status.HTTP_200_OK)
+async def delete_item(
+        item_id: int,
+        current_user: UserModel = Depends(allow_manager_plus),
+        db: AsyncSession = Depends(get_db)
+):
+    return await item_delete(item_id=item_id, db=db)
+
+
+@router.delete(
+    "/{item_id}/size_charts/{size_chart_id}",
+    status_code=status.HTTP_200_OK
+)
+async def delete_item_size_chart(
+        item_id: int,
+        size_chart_id: int,
+        db: AsyncSession = Depends(get_db),
+        current_user: UserModel = Depends(allow_manager_plus)
+):
+    return await size_chart_delete(
+        item_id=item_id, size_chart_id=size_chart_id, db=db
+    )
+
+
+@router.delete(
+    "/{item_id}/measurements/{measurement_id}",
+    status_code=status.HTTP_200_OK
+)
+async def delete_measurement(
+        item_id: int,
+        measurement_id: int,
+        current_user: UserModel = Depends(allow_manager_plus),
+        db: AsyncSession = Depends(get_db)
+):
+    return await measurement_delete(
+        item_id=item_id, measurement_id=measurement_id, db=db
+    )
+
+
 @router.post("/{item_id}/favorite", response_model=ToggleFavoriteSchema)
 async def favorite(
         item_id: int,
@@ -72,4 +162,18 @@ async def favorite(
 ):
     return await toggle_favorite(
         db=db, item_id=item_id, user_id=current_user.id
+    )
+
+
+@router.post(
+    "/{item_id}/fitting-room", response_model=FittingRoomResponseSchema
+)
+async def fit_it(
+        item_id: int,
+        payload: FittingRoomRequestSchema,
+        current_user: UserModel = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db)
+):
+    return await fitting_room(
+        user=current_user, item_id=item_id, payload=payload, db=db
     )

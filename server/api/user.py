@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, Depends, Request, Query
+from fastapi import APIRouter, Depends, Request, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import get_current_user
@@ -15,6 +15,7 @@ from schemas.user import (
     RefreshTokenRequest,
     ProfileBaseSchema,
     ProfileViewSchema,
+    ProfileUpdateSchema,
 )
 from services.catalog import get_items_list
 from services.user import (
@@ -22,7 +23,9 @@ from services.user import (
     user_login,
     refresh_token_pair,
     profile_create,
-    get_user_profile
+    get_user_profile,
+    profile_update,
+    profile_delete
 )
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -95,3 +98,20 @@ async def list_favorites(
         user_id=current_user.id,
         only_favorites=True
     )
+
+
+@router.patch("/profile", response_model=ProfileViewSchema)
+async def update_profile(
+        payload: ProfileUpdateSchema,
+        current_user: UserModel = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db)
+):
+    return await profile_update(payload=payload, user=current_user, db=db)
+
+
+@router.delete("/profile", status_code=status.HTTP_200_OK)
+async def delete_profile(
+        current_user: UserModel = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db)
+):
+    return await profile_delete(user=current_user, db=db)
