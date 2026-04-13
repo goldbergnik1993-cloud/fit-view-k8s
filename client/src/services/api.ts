@@ -45,7 +45,7 @@ export const tokenStorage = {
 
 // ─── Base fetch ───────────────────────────────────────────────────────────────
 
-async function request<T>(
+export async function request<T>(
   path: string,
   options: RequestInit = {},
   withAuth = false
@@ -66,7 +66,10 @@ async function request<T>(
     const refreshed = await tryRefreshToken();
     if (refreshed) {
       headers['Authorization'] = `Bearer ${tokenStorage.getAccess()}`;
-      const retryRes = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+      const retryRes = await fetch(`${BASE_URL}${path}`, {
+        ...options,
+        headers,
+      });
       if (!retryRes.ok) throw new Error('Unauthorized');
       return retryRes.json();
     }
@@ -76,7 +79,9 @@ async function request<T>(
   }
 
   if (!res.ok) {
-    const err: ApiError = await res.json().catch(() => ({ detail: 'Unknown error' }));
+    const err: ApiError = await res
+      .json()
+      .catch(() => ({ detail: 'Unknown error' }));
     const message =
       typeof err.detail === 'string'
         ? err.detail
@@ -117,7 +122,12 @@ export const authApi = {
       body: JSON.stringify(body),
     });
     tokenStorage.set(data.access_token, data.refresh_token);
-    return request<AuthResponse>('/user/profile', {}, true);
+    // Return minimal user data from login response if profile doesn't exist
+    return request<AuthResponse>('/user/profile', {}, true).catch(() => ({
+      email: body.email,
+      id: 0,
+      role: 'user',
+    }));
   },
 
   logout: () => {

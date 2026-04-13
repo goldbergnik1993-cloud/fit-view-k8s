@@ -5,6 +5,7 @@ import Catalog from './pages/Catalog';
 import Item from './pages/Item';
 import Saved from './pages/Saved';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/item/:id" element={<Item />} />
           <Route path="/saved" element={<Saved />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
