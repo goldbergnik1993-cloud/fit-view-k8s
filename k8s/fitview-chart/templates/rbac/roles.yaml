@@ -1,0 +1,25 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "fitview.fullname" . }}-app-role
+  labels:
+    {{- include "fitview.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "services"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "fitview.fullname" . }}-backend-binding
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "fitview.fullname" . }}-backend
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ include "fitview.fullname" . }}-app-role
+  apiGroup: rbac.authorization.k8s.io
