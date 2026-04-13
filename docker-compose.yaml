@@ -29,12 +29,11 @@ services:
       - "8000:8000"
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}?sslmode=${PGSSLMODE}
+      - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
       - PGHOST=${PGHOST}
       - PGDATABASE=${PGDATABASE}
       - PGUSER=${PGUSER}
       - PGPASSWORD=${PGPASSWORD}
-      - PGSSLMODE=${PGSSLMODE}
       - PGCHANNELBINDING=${PGCHANNELBINDING}
       - SECRET_KEY=${SECRET_KEY}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
