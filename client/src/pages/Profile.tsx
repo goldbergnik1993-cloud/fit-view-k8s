@@ -38,7 +38,7 @@ const Profile = () => {
     setSuccess(false);
     try {
       await request('/user/profile', {
-        method: 'POST',
+        method: 'PATCH',
         body: JSON.stringify(form),
       }, true);
       setSuccess(true);
