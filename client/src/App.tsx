@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './providers/AuthProvider';
-import Home from './pages/Home';
-import Catalog from './pages/Catalog';
-import Item from './pages/Item';
-import Saved from './pages/Saved';
-import Login from './pages/Login';
-import Profile from './pages/Profile';
+import Home from './pages/Home/Home';
+import Catalog from './pages/Catalog/Catalog';
+import Item from './pages/Item/Item';
+import Saved from './pages/Saved/Saved';
+import Login from './pages/Auth/Login';
+import Profile from './pages/Profile/Profile';
 
 const App = () => {
   return (

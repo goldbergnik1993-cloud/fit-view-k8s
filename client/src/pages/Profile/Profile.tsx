@@ -1,6 +1,6 @@
 import { useState} from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { request } from '../services/api';
+import { useAuth } from '../../hooks/useAuth';
+import { request } from '../../services/api';
 
 interface ProfileData {
   height_cm: number;

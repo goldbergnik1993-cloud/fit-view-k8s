@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userApi } from '../services/api';
-import { mapItem } from '../hooks/useItems';
-import type { ClothingItem } from '../types/clothing';
+import { userApi } from '../../services/api';
+import { mapItem } from '../../hooks/useItems';
+import type { ClothingItem } from '../../types/clothing';
  
 const Saved = () => {
   const navigate = useNavigate();

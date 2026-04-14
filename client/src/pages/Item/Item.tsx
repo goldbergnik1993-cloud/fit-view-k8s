@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { request } from '../services/api';
-import { itemsApi } from '../services/api';
+import { useAuth } from '../../hooks/useAuth';
+import { request } from '../../services/api';
+import { itemsApi } from '../../services/api';
 import { useParams } from 'react-router-dom';
-import Silhouette from '../components/Silhouette';
-import { useItem } from '../hooks/useItems';
+import Silhouette from '../../shared/components/Silhouette/Silhouette';
+import { useItem } from '../../hooks/useItems';
 import {
   calculateHEnd,
   getResultLabel,
   getLinePositionPct,
-} from '../utils/fitCalculator';
+} from '../../utils/fitCalculator';
 
 const Item = () => {
   const { id } = useParams<{ id: string }>();

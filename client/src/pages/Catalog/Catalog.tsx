@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useItems } from '../hooks/useItems';
+import { useItems } from '../../hooks/useItems';
 
 const FILTERS: { label: string; value: string }[] = [
   { label: 'All', value: 'All' },
