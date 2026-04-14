@@ -27,6 +27,7 @@ from database.models.catalog import (
     FavoritesModel
 ) # noqa: F401
 from database.models.events import FitviewEventsModel # noqa: F401
+from database.models.cart import CartModel, CartItemModel # noqa: F401
 
 
 load_dotenv()

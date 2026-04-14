@@ -7,7 +7,7 @@ from database.session_postgresql import get_db
 from schemas.admin import ChangeUserRoleSchema
 from services.admin import change_user_role
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(prefix="/admin", tags=["Admin"])
 
 allow_admin_only = RoleChecker([UserRoleEnum.ADMIN])
 allow_manager_plus = RoleChecker(

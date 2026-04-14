@@ -28,7 +28,7 @@ from services.user import (
     profile_delete
 )
 
-router = APIRouter(prefix="/user", tags=["user"])
+router = APIRouter(prefix="/user", tags=["User"])
 
 
 @router.post("/signup", response_model=UserRetrieveSchema)
