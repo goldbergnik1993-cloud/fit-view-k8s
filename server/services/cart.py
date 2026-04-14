@@ -1,8 +1,8 @@
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from fastapi import HTTPException, status
 
 from database.models.cart import CartModel, CartItemModel, CartStatusEnum
 from database.models.catalog import ItemsModel
@@ -84,7 +84,11 @@ async def add_item_to_cart(
     cart = await _get_or_create_active_cart(user_id, db)
 
     existing_cart_item = next(
-        (ci for ci in cart.cart_items if ci.item_id == payload.item_id),
+        (
+            ci for ci in cart.cart_items
+            if ci.item_id == payload.item_id
+               and ci.size_label == payload.size_label
+        ),
         None
     )
 
@@ -95,6 +99,7 @@ async def add_item_to_cart(
             new_cart_item = CartItemModel(
                 cart_id=cart.id,
                 item_id=payload.item_id,
+                size_label=payload.size_label,
                 quantity=payload.quantity
             )
             db.add(new_cart_item)
