@@ -42,7 +42,7 @@ from services.catalog import (
     upload_item_image_service
 )
 
-router = APIRouter(prefix="/items", tags=["item"])
+router = APIRouter(prefix="/items", tags=["Catalog"])
 
 allow_manager_plus = RoleChecker(
     [UserRoleEnum.MANAGER, UserRoleEnum.ADMIN]

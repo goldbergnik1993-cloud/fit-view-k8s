@@ -94,6 +94,11 @@ class ItemsModel(Base):
     events: Mapped[List["FitviewEventsModel"]] = relationship(
         "FitviewEventsModel", back_populates="item"
     )
+    cart_items: Mapped[List["CartItemModel"]] = relationship(
+        "CartItemModel",
+        back_populates="item",
+        cascade="all, delete-orphan"
+    )
 
 
 class SizeChartModel(Base):
