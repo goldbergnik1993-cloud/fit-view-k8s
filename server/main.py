@@ -10,6 +10,7 @@ from api.admin import router as admin_router
 from api.cart import router as cart_router
 from api.catalog import router as catalog_router
 from api.events import router as event_router
+from api.orders import router as orders_router
 from api.user import router as user_router
 from database.session_postgresql import get_db
 
@@ -58,4 +59,5 @@ app.include_router(admin_router)
 app.include_router(cart_router)
 app.include_router(catalog_router)
 app.include_router(event_router)
+app.include_router(orders_router)
 app.include_router(user_router)
