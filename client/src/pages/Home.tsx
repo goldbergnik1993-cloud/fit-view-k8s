@@ -145,7 +145,7 @@ const Home = () => {
         id="mobile-nav"
         className={`${styles['mobile-nav']} ${isMenuOpen ? styles['mobile-nav--open'] : ''}`}
         aria-label="Mobile navigation"
-        aria-hidden={!isMenuOpen}
+        inert={!isMenuOpen ? true : undefined}
       >
         <div className={styles['mobile-nav__header']}>
           <div className={styles['mobile-nav__header-left']}>
