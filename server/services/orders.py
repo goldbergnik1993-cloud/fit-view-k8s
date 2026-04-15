@@ -94,15 +94,25 @@ async def get_user_orders(user_id: int, db: AsyncSession) -> list[OrderModel]:
         .where(OrderModel.user_id == user_id)
         .order_by(OrderModel.created_at.desc())
         .options(
-            selectinload(OrderModel.order_items).selectinload(
-                OrderItemModel.item)
+            selectinload(OrderModel.order_items).selectinload(OrderItemModel.item)
             .options(
                 selectinload(ItemsModel.brand),
+                selectinload(ItemsModel.favorites) # <-- 1. ADD THIS
             )
         )
     )
     result = await db.scalars(stmt)
-    return list(result)
+    orders = list(result)
+
+    for order in orders:
+        for order_item in order.order_items:
+            if order_item.item:
+                is_favorite = any(
+                    fav.user_id == user_id for fav in order_item.item.favorites
+                )
+                order_item.item.is_favorite = is_favorite
+
+    return orders
 
 
 async def get_order_by_id(
@@ -115,10 +125,10 @@ async def get_order_by_id(
             OrderModel.user_id == user_id
         )
         .options(
-            selectinload(OrderModel.order_items).selectinload(
-                OrderItemModel.item)
+            selectinload(OrderModel.order_items).selectinload(OrderItemModel.item)
             .options(
                 selectinload(ItemsModel.brand),
+                selectinload(ItemsModel.favorites)
             )
         )
         .execution_options(populate_existing=True)
@@ -130,5 +140,12 @@ async def get_order_by_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Order not found."
         )
+
+    for order_item in order.order_items:
+        if order_item.item:
+            is_favorite = any(
+                fav.user_id == order.user_id for fav in order_item.item.favorites
+            )
+            order_item.item.is_favorite = is_favorite
 
     return order

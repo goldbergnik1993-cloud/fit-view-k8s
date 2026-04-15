@@ -5,7 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from database.models.orders import OrderStatusEnum
-from schemas.catalog import ItemListItemSchema
+from schemas.cart import ItemInCartSchema
 
 
 class DeliveryMethodEnum(str, enum.Enum):
@@ -65,7 +65,7 @@ class OrderItemRetrieveSchema(BaseModel):
     quantity: int
     price_at_purchase: float
 
-    item: Optional[ItemListItemSchema] = None
+    item: Optional[ItemInCartSchema] = None
 
     model_config = ConfigDict(from_attributes=True)
 

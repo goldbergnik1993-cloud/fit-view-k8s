@@ -8,7 +8,7 @@ from schemas.admin import ChangeUserRoleSchema
 from schemas.orders import OrderRetrieveSchema, OrderStatusUpdateSchema
 from services.admin import change_user_role, admin_update_order_status
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/admin", tags=["admin"])
 
 allow_admin_only = RoleChecker([UserRoleEnum.ADMIN])
 allow_manager_plus = RoleChecker(
