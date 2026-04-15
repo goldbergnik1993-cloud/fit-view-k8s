@@ -27,8 +27,9 @@ from schemas.catalog import (
     FittingRoomResponseSchema,
     FittingRoomRequestSchema,
     ItemCreateSchema,
-    ItemUpdateSchema, SearchSuggestionsSchema, UserSuggestionsSchema,
-    ItemSuggestionSchema, ItemListItemSchema
+    ItemUpdateSchema,
+    ItemSuggestionSchema, 
+    ItemListItemSchema
 )
 from services.catalog import (
     get_items_list,
@@ -40,7 +41,9 @@ from services.catalog import (
     item_delete,
     size_chart_delete,
     measurement_delete,
-    upload_item_image_service
+    upload_item_image_service,
+    get_search_autocomplete,
+    get_user_recommendations
 )
 
 router = APIRouter(prefix="/items", tags=["catalog"])
@@ -199,7 +202,8 @@ async def search_suggestions(
     status_code=status.HTTP_200_OK
 )
 async def personalized_recommendations(
-    current_user: UserModel = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+        current_user: Optional[UserModel] = Depends(get_optional_current_user),
+        db: AsyncSession = Depends(get_db)
 ):
-    return await get_user_recommendations(user_id=current_user.id, db=db)
+    user_id = current_user.id if current_user else None
+    return await get_user_recommendations(user_id=user_id, db=db)
