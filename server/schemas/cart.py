@@ -13,6 +13,7 @@ class CartBaseSchema(BaseModel):
 
 class CartItemCreateSchema(BaseModel):
     item_id: int
+    size_label: str
     quantity: int = Field(default=1, gt=0)
 
 
@@ -24,6 +25,7 @@ class ItemInCartSchema(ItemBaseSchema):
 
 class CartItemsListSchema(BaseModel):
     id: int
+    size_label: str
     quantity: int
     item: ItemInCartSchema
 

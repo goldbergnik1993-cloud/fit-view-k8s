@@ -62,6 +62,11 @@ class UserModel(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+    orders: Mapped["OrderModel"] = relationship(
+        "OrderModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
 
 class UserProfileModel(Base):

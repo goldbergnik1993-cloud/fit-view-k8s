@@ -25,10 +25,10 @@ class FitviewEventsModel(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE")
+        ForeignKey("users.id", ondelete="SET NULL")
     )
     item_id: Mapped[int] = mapped_column(
-        ForeignKey("items.id", ondelete="CASCADE")
+        ForeignKey("items.id", ondelete="SET NULL")
     )
     event_type: Mapped[EventTypeEnum] = mapped_column(Enum(EventTypeEnum))
     height_used_cm: Mapped[Optional[float]] = mapped_column(Float)

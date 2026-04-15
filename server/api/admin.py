@@ -5,9 +5,10 @@ from core.dependencies import RoleChecker, get_user_by_email
 from database.models.user import UserRoleEnum, UserModel
 from database.session_postgresql import get_db
 from schemas.admin import ChangeUserRoleSchema
-from services.admin import change_user_role
+from schemas.orders import OrderRetrieveSchema, OrderStatusUpdateSchema
+from services.admin import change_user_role, admin_update_order_status
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/admin", tags=["admin"])
 
 allow_admin_only = RoleChecker([UserRoleEnum.ADMIN])
 allow_manager_plus = RoleChecker(
@@ -43,3 +44,18 @@ async def change_user_status(
         "message": f"User with ID {updated_user.id} (email: {updated_user.email}"
                    f") has been assigned to {updated_user.role.value}"
     }
+
+@router.patch(
+    "/{order_id}/status",
+    response_model=OrderRetrieveSchema,
+    status_code=status.HTTP_200_OK
+)
+async def update_order_status(
+    order_id: int,
+    payload: OrderStatusUpdateSchema,
+    admin_user = Depends(allow_manager_plus),
+    db: AsyncSession = Depends(get_db)
+):
+    return await admin_update_order_status(
+        order_id=order_id, payload=payload, db=db
+    )

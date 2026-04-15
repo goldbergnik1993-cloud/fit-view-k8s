@@ -1,8 +1,8 @@
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from fastapi import HTTPException, status
 
 from database.models.cart import CartModel, CartItemModel, CartStatusEnum
 from database.models.catalog import ItemsModel
@@ -84,7 +84,11 @@ async def add_item_to_cart(
     cart = await _get_or_create_active_cart(user_id, db)
 
     existing_cart_item = next(
-        (ci for ci in cart.cart_items if ci.item_id == payload.item_id),
+        (
+            ci for ci in cart.cart_items
+            if ci.item_id == payload.item_id
+               and ci.size_label == payload.size_label
+        ),
         None
     )
 
@@ -95,6 +99,7 @@ async def add_item_to_cart(
             new_cart_item = CartItemModel(
                 cart_id=cart.id,
                 item_id=payload.item_id,
+                size_label=payload.size_label,
                 quantity=payload.quantity
             )
             db.add(new_cart_item)
@@ -113,19 +118,17 @@ async def add_item_to_cart(
 
 
 async def update_cart_item_quantity(
-        user_id: int, item_id: int, quantity: int, db: AsyncSession
+        user_id: int, cart_item_id: int, quantity: int, db: AsyncSession
 ) -> dict:
     cart = await _get_or_create_active_cart(user_id, db)
-
     cart_item = next(
-        (ci for ci in cart.cart_items if ci.item_id == item_id),
+        (ci for ci in cart.cart_items if ci.id == cart_item_id),
         None
     )
-
     if not cart_item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Item not found in your cart."
+            detail="Cart item not found in your cart."
         )
 
     try:
@@ -133,14 +136,13 @@ async def update_cart_item_quantity(
             await db.delete(cart_item)
         else:
             cart_item.quantity = quantity
-
         await db.commit()
-
         updated_cart = await _get_or_create_active_cart(user_id, db)
         return _format_cart_response(updated_cart)
 
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         await db.rollback()
+        print(f"DATABASE ERROR in update_cart_item_quantity: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update cart item."
@@ -148,9 +150,9 @@ async def update_cart_item_quantity(
 
 
 async def remove_item_from_cart(
-        user_id: int, item_id: int, db: AsyncSession
+        user_id: int, cart_item_id: int, db: AsyncSession
 ) -> dict:
-    return await update_cart_item_quantity(user_id, item_id, 0, db)
+    return await update_cart_item_quantity(user_id, cart_item_id, 0, db)
 
 
 async def clear_cart(user_id: int, db: AsyncSession) -> dict:

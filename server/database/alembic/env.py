@@ -28,6 +28,7 @@ from database.models.catalog import (
 ) # noqa: F401
 from database.models.events import FitviewEventsModel # noqa: F401
 from database.models.cart import CartModel, CartItemModel # noqa: F401
+from database.models.orders import OrderModel, OrderItemModel # noqa: F401
 
 
 load_dotenv()

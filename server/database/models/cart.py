@@ -7,7 +7,7 @@ from sqlalchemy import (
     DateTime,
     func,
     UniqueConstraint,
-    Enum
+    Enum, String
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -51,7 +51,9 @@ class CartModel(Base):
 class CartItemModel(Base):
     __tablename__ = "cart_items"
     __table_args__ = (
-        UniqueConstraint("cart_id", "item_id", name="uix_cart_item"),
+        UniqueConstraint(
+            "cart_id", "item_id", "size_label", name="uix_cart_item_size"
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -61,6 +63,7 @@ class CartItemModel(Base):
     item_id: Mapped[int] = mapped_column(
         ForeignKey("items.id", ondelete="CASCADE")
     )
+    size_label: Mapped[str] = mapped_column(String(10))
     quantity: Mapped[int] = mapped_column(Integer, default=1)
 
     created_at: Mapped[datetime] = mapped_column(
