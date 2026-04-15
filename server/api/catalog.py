@@ -27,7 +27,8 @@ from schemas.catalog import (
     FittingRoomResponseSchema,
     FittingRoomRequestSchema,
     ItemCreateSchema,
-    ItemUpdateSchema
+    ItemUpdateSchema, SearchSuggestionsSchema, UserSuggestionsSchema,
+    ItemSuggestionSchema, ItemListItemSchema
 )
 from services.catalog import (
     get_items_list,
@@ -42,7 +43,7 @@ from services.catalog import (
     upload_item_image_service
 )
 
-router = APIRouter(prefix="/items", tags=["Catalog"])
+router = APIRouter(prefix="/items", tags=["catalog"])
 
 allow_manager_plus = RoleChecker(
     [UserRoleEnum.MANAGER, UserRoleEnum.ADMIN]
@@ -177,3 +178,28 @@ async def fit_it(
     return await fitting_room(
         user=current_user, item_id=item_id, payload=payload, db=db
     )
+
+
+
+@router.get(
+    "/search/suggestions",
+    response_model=List[ItemSuggestionSchema],
+    status_code=status.HTTP_200_OK
+)
+async def search_suggestions(
+    q: str = Query(..., min_length=3, description="Search query string"),
+    db: AsyncSession = Depends(get_db)
+):
+    return await get_search_autocomplete(query=q, db=db)
+
+
+@router.get(
+    "/recommendations/personalized",
+    response_model=List[ItemListItemSchema],
+    status_code=status.HTTP_200_OK
+)
+async def personalized_recommendations(
+    current_user: UserModel = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    return await get_user_recommendations(user_id=current_user.id, db=db)

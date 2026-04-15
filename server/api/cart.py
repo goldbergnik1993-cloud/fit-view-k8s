@@ -14,7 +14,7 @@ from services.cart import (
     clear_cart
 )
 
-router = APIRouter(prefix="/cart", tags=["Cart"])
+router = APIRouter(prefix="/cart", tags=["cart"])
 
 
 @router.get(
@@ -45,12 +45,12 @@ async def add_cart_item(
 
 
 @router.patch(
-    "/items/{item_id}",
+    "/items/{cart_item_id}",
     response_model=CartRetrieveSchema,
     status_code=status.HTTP_200_OK
 )
 async def update_item_quantity(
-    item_id: int,
+    cart_item_id: int,
     quantity: int = Body(
         ..., ge=0, description="The new quantity for the item"
     ),
@@ -59,24 +59,24 @@ async def update_item_quantity(
 ):
     return await update_cart_item_quantity(
         user_id=current_user.id,
-        item_id=item_id,
+        cart_item_id=cart_item_id,
         quantity=quantity,
         db=db
     )
 
 
 @router.delete(
-    "/items/{item_id}",
+    "/items/{cart_item_id}",
     response_model=CartRetrieveSchema,
     status_code=status.HTTP_200_OK
 )
 async def remove_cart_item(
-    item_id: int,
+    cart_item_id: int,
     current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
     return await remove_item_from_cart(
-        user_id=current_user.id, item_id=item_id, db=db
+        user_id=current_user.id, cart_item_id=cart_item_id, db=db
     )
 
 

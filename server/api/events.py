@@ -6,7 +6,7 @@ from core.dependencies import get_current_user
 from schemas.events import FitViewEventCreateSchema
 from services.events import log_fitview_event
 
-router = APIRouter(prefix="/events", tags=["Analytics"])
+router = APIRouter(prefix="/events", tags=["analytics"])
 
 @router.post("/fitview", status_code=status.HTTP_201_CREATED)
 async def track_fitview_interaction(
