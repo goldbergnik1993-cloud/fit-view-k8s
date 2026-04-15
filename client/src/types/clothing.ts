@@ -24,11 +24,11 @@ export interface ClothingItem {
   category: ItemCategory;
   imageUrl: string;
   price: number;
+  isFavorite: boolean;
   availableSizes: string[];
   sizeCharts: SizeChart[];
   measurements: Measurement[];
 }
-
 export interface UserProfile {
   heightCm: number;
   gender: GenderType;

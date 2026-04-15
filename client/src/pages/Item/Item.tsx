@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { request } from '../../services/api';
-import { itemsApi } from '../../services/api';
+import { request, itemsApi } from '../../services/api';
 import { useParams } from 'react-router-dom';
 import Silhouette from '../../shared/components/Silhouette/Silhouette';
 import { useItem } from '../../hooks/useItems';
@@ -28,6 +27,12 @@ const Item = () => {
   }, [user, profileLoaded]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
+
+  useEffect(() => {
+    if (!item) return;
+    setIsFavorite(item.isFavorite);
+    setSelectedSize(item.availableSizes?.[0] ?? 'M');
+  }, [item]);
 
   const handleToggleFavorite = async () => {
     if (!id) return;
