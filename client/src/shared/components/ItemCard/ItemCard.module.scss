@@ -1,0 +1,115 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.card {
+  border: 1px solid #e8e8e8;
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: pointer;
+  background: $color-white;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  @include focus-visible;
+
+  &--active {
+    border: 2px solid $color-black;
+  }
+}
+
+// ─── Image ───────────────────────────────────────────────────────────────────
+
+.card__image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: $color-card-bg;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover & img {
+    transform: scale(1.03);
+  }
+}
+
+// ─── Info ─────────────────────────────────────────────────────────────────────
+
+.card__info {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 12px 14px 14px;
+  gap: 8px;
+}
+
+.card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.card__name {
+  @include text(15px, 600, 1.3);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card__meta {
+  @include text(13px, 400, 1.4);
+  color: #666;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card__price {
+  @include text(16px, 700, 1.2);
+  margin: 4px 0 0;
+}
+
+// ─── Favorite ────────────────────────────────────────────────────────────────
+
+.card__favorite {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #b0b0b0;
+  padding: 0;
+  border-radius: 50%;
+  transition: color 0.2s ease;
+  align-self: flex-end;
+  margin-bottom: 2px;
+
+  &:hover {
+    color: $color-black;
+  }
+
+  &--active {
+    color: $color-black;
+  }
+
+  @include focus-visible;
+}

@@ -1,0 +1,257 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.catalog {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.catalog__main {
+  flex: 1;
+  padding: 24px 16px 48px;
+
+  @include tablet {
+    padding: 32px 40px 64px;
+  }
+
+  @include desktop {
+    padding: 40px 120px 80px;
+  }
+}
+
+// ─── Back ────────────────────────────────────────────────────────────────────
+
+.catalog__back {
+  display: none;
+  color: $color-black;
+  text-decoration: none;
+  margin-bottom: 20px;
+  width: fit-content;
+
+  @include tablet {
+    display: flex;
+    align-items: center;
+  }
+
+  @include hover-opacity;
+}
+
+// ─── Title ───────────────────────────────────────────────────────────────────
+
+.catalog__title {
+  @include text(28px, 700, 1.2);
+  margin: 0 0 20px;
+
+  @include tablet {
+    font-size: 32px;
+    margin-bottom: 24px;
+  }
+}
+
+// ─── Controls ────────────────────────────────────────────────────────────────
+
+.catalog__controls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @include tablet {
+    margin-bottom: 28px;
+  }
+}
+
+// ─── Filter pills ────────────────────────────────────────────────────────────
+
+.catalog__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+}
+
+.catalog__pill {
+  @include text(13px, 400, 1);
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #d0d0d0;
+  background: $color-white;
+  color: $color-black;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    border-color: $color-black;
+  }
+
+  &--active {
+    background: $color-black;
+    border-color: $color-black;
+    color: $color-white;
+  }
+
+  @include focus-visible;
+}
+
+// ─── View controls ───────────────────────────────────────────────────────────
+
+.catalog__viewControls {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  @include desktop {
+    display: flex;
+  }
+}
+
+.catalog__viewBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  color: #b0b0b0;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    color: $color-black;
+  }
+
+  &--active {
+    color: $color-black;
+    border-color: #d0d0d0;
+  }
+
+  @include focus-visible;
+}
+
+.catalog__filterBtn {
+  @include text(13px, 400, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: none;
+  border: 1px solid #d0d0d0;
+  border-radius: 2px;
+  cursor: pointer;
+  color: $color-black;
+  white-space: nowrap;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: $color-black;
+  }
+
+  @include focus-visible;
+}
+
+// ─── Grid ────────────────────────────────────────────────────────────────────
+
+.catalog__grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  &--large {
+    @include desktop {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+  }
+
+  &--small {
+    @include desktop {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+  }
+}
+
+// ─── Skeleton ────────────────────────────────────────────────────────────────
+
+.catalog__skeleton {
+  aspect-ratio: 3 / 4;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ─── Error ───────────────────────────────────────────────────────────────────
+
+.catalog__error {
+  @include flex-center;
+  padding: 48px 24px;
+  text-align: center;
+
+  p {
+    @include text(14px, 400, 1.5);
+    color: #666;
+    margin: 0;
+  }
+}
+
+// ─── Pagination ──────────────────────────────────────────────────────────────
+
+.catalog__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 40px;
+}
+
+.catalog__pageBtn {
+  @include text(14px, 400, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  background: $color-white;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  cursor: pointer;
+  color: $color-black;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $color-black;
+  }
+
+  &--active {
+    background: $color-black;
+    border-color: $color-black;
+    color: $color-white;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  @include focus-visible;
+}
