@@ -211,6 +211,13 @@ export interface FittingRoomResponse {
   };
 }
 
+export interface SearchSuggestion {
+  id: number;
+  name: string;
+  image_url: string;
+  price: number;
+}
+
 export const itemsApi = {
   getAll: (params?: GetItemsParams) => {
     const query = new URLSearchParams();
@@ -239,12 +246,52 @@ export const itemsApi = {
       method: 'POST',
       body: JSON.stringify(body),
     }, true),
+
+  getSearchSuggestions: (q: string) =>
+    request<SearchSuggestion[]>(
+      `/items/search/suggestions?q=${encodeURIComponent(q)}`,
+      {},
+      true
+    ),
+
+  getPersonalizedRecommendations: () =>
+    request<BackendItem[]>('/items/recommendations/personalized', {}, true),
 };
 
 // ─── User ─────────────────────────────────────────────────────────────────────
+export interface ProfileData {
+  height_cm: number;
+  gender: 'male' | 'female' | 'unisex' | null;
+  shoulders_length_cm: number;
+  breast_length_cm: number;
+  waist_length_cm: number;
+  hips_length_cm: number;
+  leg_length_cm: number;
+}
+
+export interface ProfileResponse extends ProfileData {
+  id: number;
+  user_id: number;
+}
 
 export const userApi = {
-  getFavorites: () => request<BackendItem[]>('/user/favorites', {}, true),
+  getFavorites: () =>
+    request<BackendItem[]>('/user/favorites', {}, true),
+
+  getProfile: () =>
+    request<ProfileResponse>('/user/profile', {}, true),
+
+  createProfile: (body: ProfileData) =>
+    request<ProfileResponse>('/user/profile', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }, true),
+
+  updateProfile: (body: ProfileData) =>
+    request<ProfileResponse>('/user/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }, true),
 };
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────
