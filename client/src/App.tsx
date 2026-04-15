@@ -4,6 +4,7 @@ import Home from './pages/Home/Home';
 import Catalog from './pages/Catalog/Catalog';
 import Item from './pages/Item/Item';
 import Saved from './pages/Saved/Saved';
+import MyBag from './pages/MyBag/MyBag';
 import Login from './pages/Auth/Login';
 import Profile from './pages/Profile/Profile';
 
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/item/:id" element={<Item />} />
           <Route path="/saved" element={<Saved />} />
+          <Route path="/my-bag" element={<MyBag />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
