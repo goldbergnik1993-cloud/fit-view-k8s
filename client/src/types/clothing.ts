@@ -17,6 +17,11 @@ export interface Measurement {
   inseamCm?: number;
 }
 
+export interface SizeOption {
+  id: number;
+  sizeLabel: string;
+}
+
 export interface ClothingItem {
   id: string;
   name: string;
@@ -25,7 +30,8 @@ export interface ClothingItem {
   imageUrl: string;
   price: number;
   isFavorite: boolean;
-  availableSizes: string[];
+  gender?: string;
+  availableSizes: SizeOption[];
   sizeCharts: SizeChart[];
   measurements: Measurement[];
 }
