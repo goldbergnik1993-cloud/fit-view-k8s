@@ -36,7 +36,7 @@ export const ItemsSection = () => {
             >
               <div className={styles['item-card__placeholder']}>
                 <img
-                  src={`/src/assets/icons/icon-clothes/${item.icon}.svg`}
+                  src={`/icons/icon-clothes/${item.icon}.svg`}
                   alt=""
                   aria-hidden="true"
                   className={styles['item-card__icon']}
