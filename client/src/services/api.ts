@@ -122,7 +122,6 @@ export const authApi = {
       body: JSON.stringify(body),
     });
     tokenStorage.set(data.access_token, data.refresh_token);
-    // Return minimal user data from login response if profile doesn't exist
     return request<AuthResponse>('/user/profile', {}, true).catch(() => ({
       email: body.email,
       id: 0,
@@ -144,11 +143,12 @@ export interface BackendItem {
   name: string;
   brand: { id: number; name: string } | string;
   category: string;
+  gender?: string;
   image_url: string;
   price: number | string;
   is_favorite?: boolean;
-  available_sizes: string[];
-  available_measurements: string[];
+  available_sizes: { id: number; size_label: string }[];
+  available_measurements: { id: number; size_label: string }[];
 }
 
 export interface PaginatedResponse {
@@ -159,12 +159,78 @@ export interface PaginatedResponse {
   items: BackendItem[];
 }
 
+export interface GetItemsParams {
+  brands?: number[];
+  page?: number;
+  per_page?: number;
+  category?: string;
+  name?: string;
+  size?: string;
+  gender?: 'male' | 'female' | 'unisex';
+  min_price?: number;
+  max_price?: number;
+  sort_by?: 'price_asc' | 'price_desc';
+}
+
+// ─── Fitting Room ─────────────────────────────────────────────────────────────
+
+export interface FittingRoomRequest {
+  measurement_id?: number;
+  size_chart_id?: number;
+  height_cm: number;
+  shoulders_length_cm?: number;
+  breast_length_cm?: number;
+  waist_length_cm?: number;
+  hips_length_cm?: number;
+  leg_length_cm?: number;
+}
+
+export interface FittingRoomResponse {
+  item_id: number;
+  size_label: string;
+  gender: string;
+  visual_markers: {
+    h_end_cm: number;
+    line_position_pct: number;
+    reference_point: string;
+  };
+  fit_analysis: {
+    waist_fit: string;
+    breast_fit: string;
+    hips_fit: string;
+    shoulders_fit: string;
+  };
+  user_body: {
+    gender: string;
+    height_cm: number;
+    leg_length_cm: number;
+    hips_length_cm: number;
+    waist_length_cm: number;
+    breast_length_cm: number;
+    shoulders_length_cm: number;
+  };
+}
+
+export interface SearchSuggestion {
+  id: number;
+  name: string;
+  image_url: string;
+  price: number;
+}
+
 export const itemsApi = {
-  getAll: (params?: { category?: string; page?: number; limit?: number }) => {
+  getAll: (params?: GetItemsParams) => {
     const query = new URLSearchParams();
-    if (params?.category) query.set('category', params.category);
-    if (params?.page) query.set('page', String(params.page));
-    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.page)      query.set('page', String(params.page));
+    if (params?.per_page)  query.set('per_page', String(params.per_page));
+    if (params?.category)  query.set('category', params.category);
+    if (params?.name)      query.set('name', params.name);
+    if (params?.size)      query.set('size', params.size);
+    if (params?.gender)    query.set('gender', params.gender);
+    if (params?.min_price) query.set('min_price', String(params.min_price));
+    if (params?.max_price) query.set('max_price', String(params.max_price));
+    if (params?.sort_by)   query.set('sort_by', params.sort_by);
+    params?.brands?.forEach(id => query.append('brands', String(id)));
     const qs = query.toString() ? `?${query.toString()}` : '';
     return request<PaginatedResponse>(`/items/${qs}`, {}, true);
   },
@@ -174,10 +240,107 @@ export const itemsApi = {
 
   toggleFavorite: (itemId: string | number) =>
     request(`/items/${itemId}/favorite`, { method: 'POST' }, true),
+
+  fitItem: (itemId: number, body: FittingRoomRequest) =>
+    request<FittingRoomResponse>(`/items/${itemId}/fitting-room`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }, true),
+
+  getSearchSuggestions: (q: string) =>
+    request<SearchSuggestion[]>(
+      `/items/search/suggestions?q=${encodeURIComponent(q)}`,
+      {},
+      true
+    ),
+
+  getPersonalizedRecommendations: () =>
+    request<BackendItem[]>('/items/recommendations/personalized', {}, true),
 };
 
 // ─── User ─────────────────────────────────────────────────────────────────────
+export interface ProfileData {
+  height_cm: number;
+  gender: 'male' | 'female' | 'unisex' | null;
+  shoulders_length_cm: number;
+  breast_length_cm: number;
+  waist_length_cm: number;
+  hips_length_cm: number;
+  leg_length_cm: number;
+}
+
+export interface ProfileResponse extends ProfileData {
+  id: number;
+  user_id: number;
+}
 
 export const userApi = {
-  getFavorites: () => request<BackendItem[]>('/user/favorites', {}, true),
+  getFavorites: () =>
+    request<BackendItem[]>('/user/favorites', {}, true),
+
+  getProfile: () =>
+    request<ProfileResponse>('/user/profile', {}, true),
+
+  createProfile: (body: ProfileData) =>
+    request<ProfileResponse>('/user/profile', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }, true),
+
+  updateProfile: (body: ProfileData) =>
+    request<ProfileResponse>('/user/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }, true),
+};
+
+// ─── Cart ─────────────────────────────────────────────────────────────────────
+
+export interface CartItem {
+  id: number;
+  quantity: number;
+  item: {
+    id: number;
+    name: string;
+    brand: { id: number; name: string };
+    category: string;
+    gender: string;
+    image_url: string;
+    price: string;
+    is_favorite: boolean;
+  };
+}
+
+export interface Cart {
+  user_id: number;
+  id: number;
+  status: 'Active' | 'Converted' | 'Abandoned';
+  cart_items: CartItem[];
+  created_at: string;
+  updated_at: string;
+  total_items: number;
+  total_price: number;
+}
+
+export const cartApi = {
+  getCart: () =>
+    request<Cart>('/cart/', {}, true),
+
+  clearCart: () =>
+    request<Cart>('/cart/', { method: 'DELETE' }, true),
+
+  addItem: (item_id: number, quantity = 1) =>
+    request<Cart>('/cart/items', {
+      method: 'POST',
+      body: JSON.stringify({ item_id, quantity }),
+    }, true),
+
+  updateQuantity: (item_id: number, quantity: number) =>
+    request<Cart>(`/cart/items/${item_id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(quantity),
+    }, true),
+
+  removeItem: (item_id: number) =>
+    request<Cart>(`/cart/items/${item_id}`, { method: 'DELETE' }, true),
 };
