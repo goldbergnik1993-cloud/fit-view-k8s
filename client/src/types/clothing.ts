@@ -17,6 +17,11 @@ export interface Measurement {
   inseamCm?: number;
 }
 
+export interface SizeOption {
+  id: number;
+  sizeLabel: string;
+}
+
 export interface ClothingItem {
   id: string;
   name: string;
@@ -24,11 +29,12 @@ export interface ClothingItem {
   category: ItemCategory;
   imageUrl: string;
   price: number;
-  availableSizes: string[];
+  isFavorite: boolean;
+  gender?: string;
+  availableSizes: SizeOption[];
   sizeCharts: SizeChart[];
   measurements: Measurement[];
 }
-
 export interface UserProfile {
   heightCm: number;
   gender: GenderType;

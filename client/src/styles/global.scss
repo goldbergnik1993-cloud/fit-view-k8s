@@ -1,0 +1,78 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+@import 'normalize.css';
+
+// ─── CSS Custom Properties (для .module.css файлов) ──────────────────────────
+:root {
+  --color-black: #{$color-black};
+  --color-white: #{$color-white};
+  --color-card-bg: #{$color-card-bg};
+  --color-btn-bg: #{$color-btn-bg};
+  --font-family: #{$font-family};
+  --spacing-4: #{$spacing-4};
+  --spacing-8: #{$spacing-8};
+  --spacing-16: #{$spacing-16};
+  --spacing-24: #{$spacing-24};
+  --spacing-32: #{$spacing-32};
+  --spacing-48: #{$spacing-48};
+  --spacing-88: #{$spacing-88};
+  --container-padding: #{$container-padding-mobile};
+  --container-max-width: #{$container-max-width};
+  --card-height: #{$card-height};
+  --card-gap: #{$card-gap-mobile};
+}
+
+// ─── Reset ────────────────────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+ul, ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+body {
+  font-family: $font-family;
+  color: $color-black;
+  background-color: $color-white;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
+@include tablet {
+  :root {
+    --container-padding: #{$container-padding-mobile};
+    --card-gap: #{$card-gap-mobile};
+  }
+}
+
+// ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
+@include desktop {
+  :root {
+    --container-padding: #{$container-padding-desktop};
+    --card-gap: #{$card-gap-desktop};
+  }
+}
