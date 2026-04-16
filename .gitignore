@@ -53,4 +53,6 @@ Thumbs.db
 
 # Poetry
 .venv/
-"celerybeat-schedule*" 
+
+# Celerybeat
+celerybeat-schedule*
