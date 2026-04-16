@@ -28,7 +28,7 @@ from schemas.catalog import (
     FittingRoomRequestSchema,
     ItemCreateSchema,
     ItemUpdateSchema,
-    ItemSuggestionSchema, 
+    ItemSuggestionSchema,
     ItemListItemSchema
 )
 from services.catalog import (

@@ -17,7 +17,10 @@ from database.session_postgresql import get_db
 app = FastAPI()
 
 
+FRONTEND_URL = (os.getenv("FRONTEND_URL", "http://localhost:3000"))
+
 origins = [
+    FRONTEND_URL,
     "http://localhost:3000",
     "http://localhost:8080"
 ]
