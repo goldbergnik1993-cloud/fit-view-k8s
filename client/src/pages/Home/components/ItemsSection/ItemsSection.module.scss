@@ -1,0 +1,89 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+// ─── Mobile ───────────────────────────────────────────────────────────────────
+
+.section {
+  padding: 0 var(--container-padding) $spacing-32;
+  box-sizing: border-box;
+}
+
+.section__header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+}
+
+.section__title {
+  @include text(18px, 600, 100%);
+  margin: 0;
+}
+
+.section__see-all {
+  @include text(12px, 400, 100%);
+  @include hover-opacity;
+  white-space: nowrap;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $card-gap-mobile;
+}
+
+.item-card {
+  @include flex-center;
+  @include focus-visible;
+  background: $color-card-bg;
+  width: 100%;
+  height: $card-height;
+  color: $color-black;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+}
+
+.item-card__placeholder {
+  @include flex-center;
+  gap: $spacing-8;
+  width: 100%;
+  height: 100%;
+}
+
+.item-card__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.item-card__name {
+  @include text(18px, 400, 100%);
+  margin: 0;
+}
+
+// ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
+
+@include tablet {
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $card-gap-mobile;
+  }
+}
+
+// ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
+
+@include desktop {
+  .items-grid {
+    grid-template-columns: repeat(4, 330px);
+    justify-content: center;
+    gap: $card-gap-desktop;
+  }
+
+  .section__header {
+    max-width: calc(4 * 330px + 3 * #{$card-gap-desktop});
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

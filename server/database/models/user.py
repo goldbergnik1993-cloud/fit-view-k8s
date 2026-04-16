@@ -57,6 +57,16 @@ class UserModel(Base):
     events: Mapped[List["FitviewEventsModel"]] = relationship(
         "FitviewEventsModel", back_populates="user"
     )
+    carts: Mapped["CartModel"] = relationship(
+        "CartModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    orders: Mapped["OrderModel"] = relationship(
+        "OrderModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
 
 class UserProfileModel(Base):
@@ -85,7 +95,7 @@ class UserProfileModel(Base):
         onupdate=func.now(),
     )
 
-    user: Mapped["UserModel"] = relationship(
+    user: Mapped[List["UserModel"]] = relationship(
         "UserModel", back_populates="profile"
     )
 

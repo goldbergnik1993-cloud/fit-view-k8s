@@ -1,9 +1,10 @@
 import os
 import shutil
 import uuid
+from typing import Optional
 
 from fastapi import Request, HTTPException, status, UploadFile
-from sqlalchemy import select, desc, asc, func
+from sqlalchemy import select, desc, asc, func, or_, String, cast
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -626,3 +627,75 @@ async def upload_item_image_service(file: UploadFile) -> str:
         shutil.copyfileobj(file.file, buffer)
 
     return f"{settings.BASE_URL}/static/items_images/{filename}"
+
+
+async def get_search_autocomplete(
+        query: str, db: AsyncSession
+) -> list[ItemsModel]:
+    if not query or len(query) < 2:
+        return []
+
+    stmt = (
+        select(ItemsModel)
+        .where(
+            or_(
+                ItemsModel.name.ilike(f"%{query}%"),
+                cast(ItemsModel.category, String).ilike(f"%{query}%")
+            )
+        )
+        .limit(5)
+    )
+    result = await db.scalars(stmt)
+    return list(result)
+
+
+async def get_user_recommendations(
+        user_id: Optional[int], db: AsyncSession
+) -> list[ItemsModel]:
+    base_stmt = select(ItemsModel).options(
+        selectinload(ItemsModel.brand),
+        selectinload(ItemsModel.size_charts),
+        selectinload(ItemsModel.measurements),
+        selectinload(ItemsModel.favorites)
+    )
+    profile = None
+    if user_id:
+        profile_stmt = select(UserProfileModel).where(
+            UserProfileModel.user_id == user_id
+        )
+        profile = await db.scalar(profile_stmt)
+
+    if profile and profile.gender:
+        stmt = (
+            base_stmt
+            .where(
+                or_(
+                    ItemsModel.gender == profile.gender,
+                    ItemsModel.gender == "unisex"
+                )
+            )
+            .order_by(func.random())
+            .limit(10)
+        )
+
+    else:
+        stmt = (
+            base_stmt
+            .order_by(desc(ItemsModel.id))
+            .limit(10)
+        )
+
+    result = await db.scalars(stmt)
+    items = list(result)
+
+    for item in items:
+        if user_id:
+            item.is_favorite = any(
+                fav.user_id == user_id for fav in item.favorites)
+        else:
+            item.is_favorite = False
+
+        item.available_sizes = [size.size_label for size in item.size_charts]
+        item.available_measurements = [m.size_label for m in item.measurements]
+
+    return items
