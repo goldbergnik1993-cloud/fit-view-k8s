@@ -1,9 +1,12 @@
 from typing import Optional, List
 
 from fastapi import APIRouter, Depends, Request, Query, status
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import get_current_user
+from core.settings import settings
 from database.models.user import UserModel
 from database.session_postgresql import get_db
 from schemas.catalog import ItemFilterParams, ItemsListSchema
@@ -25,10 +28,12 @@ from services.user import (
     profile_create,
     get_user_profile,
     profile_update,
-    profile_delete
+    profile_delete,
+    verify_email
 )
 
 router = APIRouter(prefix="/user", tags=["user"])
+templates = Jinja2Templates(directory="templates")
 
 
 @router.post("/signup", response_model=UserRetrieveSchema)
@@ -115,3 +120,22 @@ async def delete_profile(
         db: AsyncSession = Depends(get_db)
 ):
     return await profile_delete(user=current_user, db=db)
+
+
+
+@router.get("/confirm-email", response_class=HTMLResponse)
+async def confirm_email(
+        request: Request,
+        token: str = Query(...),
+        db: AsyncSession = Depends(get_db)
+):
+    user_email = await verify_email(request=request, token=token, db=db)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="email_confirmed.html",
+        context={
+            "username": user_email,
+            "login_url": f"{settings.FRONTEND_URL}/login"
+        }
+    )
