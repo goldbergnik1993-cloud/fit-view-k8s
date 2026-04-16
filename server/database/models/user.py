@@ -2,7 +2,8 @@ import enum
 from datetime import datetime
 from typing import Optional, List
 
-from sqlalchemy import Integer, String, func, DateTime, Enum, ForeignKey
+from sqlalchemy import Integer, String, func, DateTime, Enum, ForeignKey, \
+    Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
@@ -37,6 +38,7 @@ class UserModel(Base):
         server_default=func.now()
     )
     ab_group: Mapped[str] = mapped_column(String(1))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False)
 
     profile: Mapped[Optional["UserProfileModel"]] = relationship(
         "UserProfileModel",
