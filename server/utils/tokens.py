@@ -60,7 +60,9 @@ def decode_access_token(token: str):
 
 
 def create_email_verification_token(email: str):
-    expire = datetime.now(UTC) + timedelta(hours=24)
+    expire = datetime.now(UTC) + timedelta(
+        hours=settings.ACTIVATION_TOKEN_EXPIRE_HOURS
+    )
     to_encode = {
         "sub": email,
         "purpose": "email_verification",

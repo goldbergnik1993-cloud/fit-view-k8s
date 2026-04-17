@@ -1,4 +1,3 @@
-import os
 from celery import Celery
 from celery.schedules import crontab
 
@@ -10,7 +9,7 @@ celery_app = Celery(
     "fitview_worker",
     broker=redis_url,
     backend=redis_url,
-    include=["tasks.email_tasks"]
+    include=["tasks.email_tasks", "tasks.cleanup_tasks"]
 )
 
 celery_app.conf.update(
@@ -20,13 +19,14 @@ celery_app.conf.update(
     timezone="UTC",
     enable_utc=True,
 )
+
 celery_app.conf.beat_schedule = {
     "delete-expired-tokens-daily": {
         "task": "tasks.cleanup_tasks.cleanup_expired_tokens",
         "schedule": crontab(hour=3, minute=0),
     },
     "mark-carts-abandoned-hourly": {
-        "task": "tasks.cleanup_tasks.mark-carts-abandoned",
+        "task": "tasks.cleanup_tasks.mark_carts_abandoned",
         "schedule": crontab(minute=0),
     },
 }
