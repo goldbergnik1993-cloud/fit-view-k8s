@@ -9,8 +9,9 @@ import BurgerCloseIcon from '../../../assets/icons/burger-close.svg';
 import LogoIcon from '../../../assets/icons/logo.svg';
 import ChevronRightIcon from '../../../assets/icons/chevron-right.svg';
 import ChevronUpIcon from '../../../assets/icons/chevron-up.svg';
-
-// ─── Constants ────────────────────────────────────────────────────────────────
+import { SearchOverlay } from '../SearchOverlay/SearchOverlay';
+import { SearchBar } from '../SearchOverlay/SearchBar';
+import { useBreakpoint } from '../../../hooks/useBreakpoint';
 
 const NAV_ITEMS = [
   { label: 'New', children: ['New for Man', 'New for Woman'] },
@@ -19,11 +20,11 @@ const NAV_ITEMS = [
   { label: 'Woman' },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState<string | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { isMobile } = useBreakpoint();
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const closeMenu = () => {
@@ -35,108 +36,217 @@ export const Header = () => {
     setExpandedNav((prev) => (prev === label ? null : label));
   };
 
+  const openSearch = () => setIsSearchOpen(true);
+  const closeSearch = () => setIsSearchOpen(false);
+
   return (
     <>
       <header className={styles.header} role="banner">
-        <div className={styles['header__left']}>
-          <button
-            className={styles['header__burger']}
-            onClick={toggleMenu}
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-nav"
-          >
-            <img
-              src={isMenuOpen ? BurgerCloseIcon : BurgerMenuIcon}
-              alt=""
-              aria-hidden="true"
-              width={24}
-              height={24}
-            />
-          </button>
+        {/* Tablet/Desktop — active search: show SearchBar inside header */}
+        {!isMobile && isSearchOpen ? (
+          <>
+            <div className={styles['header__left']}>
+              {/* burger for tablet  */}
+              <button
+                className={styles['header__burger']}
+                onClick={toggleMenu}
+                aria-label="Open menu"
+                aria-controls="mobile-nav"
+              >
+                <img
+                  src={BurgerMenuIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </button>
 
-          <a
-            href="/"
-            className={styles['header__logo']}
-            aria-label="FitView home"
-          >
-            <img src={LogoIcon} alt="FitView" width={44} height={44} />
-          </a>
+              <a
+                href="/"
+                className={styles['header__logo']}
+                aria-label="FitView home"
+              >
+                <img src={LogoIcon} alt="FitView" width={44} height={44} />
+              </a>
 
-          <nav
-            className={styles['header__nav-desktop']}
-            aria-label="Main navigation"
-          >
-            <ul className={styles['header__nav-desktop-list']} role="list">
-              {NAV_ITEMS.map((item) => (
-                <li
-                  key={item.label}
-                  className={styles['header__nav-desktop-item']}
-                >
-                  <a href="/catalog">{item.label}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
+              {/* desktop navigation */}
+              <nav
+                className={styles['header__nav-desktop']}
+                aria-label="Main navigation"
+              >
+                <ul className={styles['header__nav-desktop-list']} role="list">
+                  {NAV_ITEMS.map((item) => (
+                    <li
+                      key={item.label}
+                      className={styles['header__nav-desktop-item']}
+                    >
+                      <a href="/catalog">{item.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
 
-        <div
-          className={styles['header__icons']}
-          role="group"
-          aria-label="User actions"
-        >
-          <button className={styles['header__icon-btn']} aria-label="Search">
-            <img
-              src={SearchIcon}
-              alt=""
-              aria-hidden="true"
-              width={24}
-              height={24}
-            />
-            <span className={styles['header__search-text']}>Search</span>
-          </button>
-          <a
-            href="/saved"
-            className={styles['header__icon-btn']}
-            aria-label="Saved items"
-          >
-            <img
-              src={SavedIcon}
-              alt=""
-              aria-hidden="true"
-              width={24}
-              height={24}
-            />
-          </a>
-          <a
-            href="/my-bag"
-            className={styles['header__icon-btn']}
-            aria-label="Shopping bag"
-          >
-            <img
-              src={BagIcon}
-              alt=""
-              aria-hidden="true"
-              width={24}
-              height={24}
-            />
-          </a>
-          <a
-            href="/profile"
-            className={`${styles['header__icon-btn']} ${styles['header__icon-btn--desktop']}`}
-            aria-label="Profile"
-          >
-            <img
-              src={ProfileIcon}
-              alt=""
-              aria-hidden="true"
-              width={24}
-              height={24}
-            />
-          </a>
-        </div>
+            {/* SearchBar centered */}
+            <div className={styles['header__search-active']}>
+              <SearchBar onClose={closeSearch} />
+            </div>
+
+            <div
+              className={styles['header__icons']}
+              role="group"
+              aria-label="User actions"
+            >
+              <a
+                href="/saved"
+                className={styles['header__icon-btn']}
+                aria-label="Saved items"
+              >
+                <img
+                  src={SavedIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </a>
+              <a
+                href="/my-bag"
+                className={styles['header__icon-btn']}
+                aria-label="Shopping bag"
+              >
+                <img
+                  src={BagIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </a>
+              <a
+                href="/profile"
+                className={`${styles['header__icon-btn']} ${styles['header__icon-btn--desktop']}`}
+                aria-label="Profile"
+              >
+                <img
+                  src={ProfileIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </a>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={styles['header__left']}>
+              <button
+                className={styles['header__burger']}
+                onClick={toggleMenu}
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-nav"
+              >
+                <img
+                  src={isMenuOpen ? BurgerCloseIcon : BurgerMenuIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </button>
+
+              <a
+                href="/"
+                className={styles['header__logo']}
+                aria-label="FitView home"
+              >
+                <img src={LogoIcon} alt="FitView" width={44} height={44} />
+              </a>
+
+              <nav
+                className={styles['header__nav-desktop']}
+                aria-label="Main navigation"
+              >
+                <ul className={styles['header__nav-desktop-list']} role="list">
+                  {NAV_ITEMS.map((item) => (
+                    <li
+                      key={item.label}
+                      className={styles['header__nav-desktop-item']}
+                    >
+                      <a href="/catalog">{item.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+
+            <div
+              className={styles['header__icons']}
+              role="group"
+              aria-label="User actions"
+            >
+              <button
+                className={styles['header__icon-btn']}
+                aria-label="Search"
+                onClick={openSearch}
+              >
+                <img
+                  src={SearchIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+                <span className={styles['header__search-text']}>Search</span>
+              </button>
+              <a
+                href="/saved"
+                className={styles['header__icon-btn']}
+                aria-label="Saved items"
+              >
+                <img
+                  src={SavedIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </a>
+              <a
+                href="/my-bag"
+                className={styles['header__icon-btn']}
+                aria-label="Shopping bag"
+              >
+                <img
+                  src={BagIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </a>
+              <a
+                href="/profile"
+                className={`${styles['header__icon-btn']} ${styles['header__icon-btn--desktop']}`}
+                aria-label="Profile"
+              >
+                <img
+                  src={ProfileIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+              </a>
+            </div>
+          </>
+        )}
       </header>
 
+      {/* Mobile menu */}
       <nav
         id="mobile-nav"
         className={`${styles['mobile-nav']} ${isMenuOpen ? styles['mobile-nav--open'] : ''}`}
@@ -167,7 +277,14 @@ export const Header = () => {
             </a>
           </div>
           <div className={styles['header__icons']}>
-            <button className={styles['header__icon-btn']} aria-label="Search">
+            <button
+              className={styles['header__icon-btn']}
+              aria-label="Search"
+              onClick={() => {
+                closeMenu();
+                openSearch();
+              }}
+            >
               <img
                 src={SearchIcon}
                 alt=""
@@ -210,9 +327,14 @@ export const Header = () => {
             <li key={item.label} className={styles['mobile-nav__item']}>
               <button
                 className={styles['mobile-nav__link']}
-                onClick={() =>
-                  item.children ? toggleNavItem(item.label) : closeMenu()
-                }
+                onClick={() => {
+                  if (item.children) {
+                    toggleNavItem(item.label);
+                  } else {
+                    window.location.href = '/catalog';
+                    closeMenu();
+                  }
+                }}
                 aria-expanded={
                   item.children ? expandedNav === item.label : undefined
                 }
@@ -279,6 +401,11 @@ export const Header = () => {
           </li>
         </ul>
       </nav>
+
+      {/* Mobile search — fullscreen */}
+      {isMobile && (
+        <SearchOverlay isOpen={isSearchOpen} onClose={closeSearch} />
+      )}
     </>
   );
 };
