@@ -1,13 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
+import {
+  FilterPanel,
+  type FilterState,
+} from '../../shared/components/FilterPanel/FilterPanel';
 import { useItems } from '../../hooks/useItems';
+import FilterIcon from '../../assets/icons/filter.svg';
+import GridLargeIcon from '../../assets/icons/grid-large.svg';
+import GridSmallIcon from '../../assets/icons/grid-small.svg';
 import styles from './Catalog.module.scss';
 
-const FILTERS = [
+const CATEGORIES = [
   { label: 'All',     value: 'All' },
   { label: 'Dress',   value: 'dress' },
   { label: 'Pants',   value: 'pants' },
@@ -19,19 +26,71 @@ const FILTERS = [
   { label: 'Sweater', value: 'sweater' },
 ];
 
+const GENDER_LABELS: Record<string, string> = {
+  male: 'Man',
+  female: 'Woman',
+  unisex: 'Unisex',
+};
+
+const BRAND_NAMES: Record<number, string> = {
+  1: 'Zara', 2: 'Patagonia', 3: "Levi's",
+  4: 'The North Face', 5: 'Mango',
+  6: 'Cos', 7: 'Ralph Lauren', 8: 'Superdry',
+};
+
 type GridView = 'large' | 'small';
 
+const EMPTY_FILTERS: FilterState = {
+  sort_by: '',
+  gender: [],
+  size: [],
+  brands: [],
+};
+
 const Catalog = () => {
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [page, setPage]                 = useState(1);
-  const [gridView, setGridView]         = useState<GridView>('large');
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [page, setPage] = useState(1);
+  const [gridView, setGridView] = useState<GridView>('large');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
 
-  const { items, loading, error, totalPages } = useItems({ category: activeFilter, page });
+  const itemsParams = useMemo(
+    () => ({
+      category: activeCategory,
+      page,
+      per_page: 12,
+      sort_by: filters.sort_by || undefined,
+      gender: filters.gender[0] as 'male' | 'female' | 'unisex' | undefined,
+      size: filters.size[0] || undefined,
+      brands: filters.brands.length > 0 ? filters.brands : undefined,
+    }),
+    [activeCategory, page, filters]
+  );
 
-  const handleFilterChange = (value: string) => {
-    setActiveFilter(value);
+  const { items, loading, error, totalPages } = useItems(itemsParams);
+
+  const handleCategoryChange = (value: string) => {
+    setActiveCategory(value);
     setPage(1);
   };
+
+  const handleApplyFilters = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
+
+  const handleClearAll = () => {
+    setFilters(EMPTY_FILTERS);
+    setPage(1);
+  };
+
+  const activeFiltersCount =
+    filters.gender.length +
+    filters.size.length +
+    filters.brands.length +
+    (filters.sort_by ? 1 : 0);
+
+  const hasActiveFilters = activeFiltersCount > 0;
 
   return (
     <div className={styles.catalog}>
@@ -45,66 +104,144 @@ const Catalog = () => {
           </svg>
         </Link>
 
-        <h1 className={styles.catalog__title}>Catalog</h1>
+        {/* Title row */}
+        <div className={styles.catalog__titleRow}>
+          <h1 className={styles.catalog__title}>Catalog</h1>
+
+          {/* Filter button — mobile only */}
+          <button
+            type="button"
+            className={styles.catalog__filterBtnMobile}
+            onClick={() => setIsFilterOpen(true)}
+            aria-label="Filter"
+          >
+            <img src={FilterIcon} alt="" aria-hidden="true" width={20} height={20} />
+            {activeFiltersCount > 0 && (
+              <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
+            )}
+          </button>
+        </div>
 
         {/* Controls */}
         <div className={styles.catalog__controls}>
+          {/* Category pills */}
           <div className={styles.catalog__filters}>
-            {FILTERS.map(({ label, value }) => (
+            {CATEGORIES.map(({ label, value }) => (
               <button
                 key={value}
                 type="button"
-                className={`${styles.catalog__pill} ${activeFilter === value ? styles['catalog__pill--active'] : ''}`}
-                onClick={() => handleFilterChange(value)}
+                className={`${styles.catalog__pill} ${activeCategory === value ? styles['catalog__pill--active'] : ''}`}
+                onClick={() => handleCategoryChange(value)}
               >
                 {label}
               </button>
             ))}
           </div>
 
-          {/* View toggle + Filter — desktop only */}
-          <div className={styles.catalog__viewControls}>
+          {/* Filter only — tablet */}
+          <div className={styles.catalog__viewControlsTablet}>
             <button
               type="button"
-              className={`${styles.catalog__viewBtn} ${gridView === 'large' ? styles['catalog__viewBtn--active'] : ''}`}
-              onClick={() => setGridView('large')}
-              aria-label="Large grid"
+              className={styles.catalog__filterBtn}
+              onClick={() => setIsFilterOpen((prev) => !prev)}
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                <rect x="1"  y="1"  width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="11" y="1"  width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="1"  y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
+              <span>Filter</span>
+              <img src={FilterIcon} alt="" aria-hidden="true" width={16} height={16} />
+              {activeFiltersCount > 0 && (
+                <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
+              )}
             </button>
+          </div>
 
+          {/* Grid + Filter — desktop */}
+          <div className={styles.catalog__viewControlsDesktop}>
             <button
               type="button"
               className={`${styles.catalog__viewBtn} ${gridView === 'small' ? styles['catalog__viewBtn--active'] : ''}`}
               onClick={() => setGridView('small')}
               aria-label="Small grid"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                <rect x="1"  y="1"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="7"  y="1"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="13" y="1"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="1"  y="7"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="7"  y="7"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="13" y="7"  width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="1"  y="13" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="7"  y="13" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="13" y="13" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
+              <img src={GridSmallIcon} alt="" aria-hidden="true" width={18} height={18} />
             </button>
 
-            <button type="button" className={styles.catalog__filterBtn}>
+            <button
+              type="button"
+              className={`${styles.catalog__viewBtn} ${gridView === 'large' ? styles['catalog__viewBtn--active'] : ''}`}
+              onClick={() => setGridView('large')}
+              aria-label="Large grid"
+            >
+              <img src={GridLargeIcon} alt="" aria-hidden="true" width={18} height={18} />
+            </button>
+
+            <button
+              type="button"
+              className={styles.catalog__filterBtn}
+              onClick={() => setIsFilterOpen((prev) => !prev)}
+            >
               <span>Filter</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              <img src={FilterIcon} alt="" aria-hidden="true" width={16} height={16} />
+              {activeFiltersCount > 0 && (
+                <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
+              )}
             </button>
           </div>
         </div>
+
+        {/* Active filters tags */}
+        {hasActiveFilters && (
+          <div className={styles.catalog__activeTags}>
+            {filters.gender.map((g) => (
+              <button
+                key={g}
+                className={styles.catalog__activeTag}
+                onClick={() => {
+                  setFilters(prev => ({ ...prev, gender: prev.gender.filter(x => x !== g) }));
+                  setPage(1);
+                }}
+              >
+                × {GENDER_LABELS[g]}
+              </button>
+            ))}
+            {filters.size.map((s) => (
+              <button
+                key={s}
+                className={styles.catalog__activeTag}
+                onClick={() => {
+                  setFilters(prev => ({ ...prev, size: prev.size.filter(x => x !== s) }));
+                  setPage(1);
+                }}
+              >
+                × {s}
+              </button>
+            ))}
+            {filters.brands.map((b) => (
+              <button
+                key={b}
+                className={styles.catalog__activeTag}
+                onClick={() => {
+                  setFilters(prev => ({ ...prev, brands: prev.brands.filter(x => x !== b) }));
+                  setPage(1);
+                }}
+              >
+                × {BRAND_NAMES[b]}
+              </button>
+            ))}
+            {filters.sort_by && (
+              <button
+                className={styles.catalog__activeTag}
+                onClick={() => {
+                  setFilters(prev => ({ ...prev, sort_by: '' }));
+                  setPage(1);
+                }}
+              >
+                × {filters.sort_by === 'price_asc' ? 'Price (Low - High)' : 'Price (High - Low)'}
+              </button>
+            )}
+            <button className={styles.catalog__activeTag} onClick={handleClearAll}>
+              × Clear All
+            </button>
+          </div>
+        )}
 
         {/* Skeleton */}
         {loading && (
@@ -149,9 +286,7 @@ const Catalog = () => {
               className={styles.catalog__pageBtn}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-            >
-              ←
-            </button>
+            >←</button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
@@ -159,9 +294,7 @@ const Catalog = () => {
                 type="button"
                 className={`${styles.catalog__pageBtn} ${page === p ? styles['catalog__pageBtn--active'] : ''}`}
                 onClick={() => setPage(p)}
-              >
-                {p}
-              </button>
+              >{p}</button>
             ))}
 
             <button
@@ -169,12 +302,17 @@ const Catalog = () => {
               className={styles.catalog__pageBtn}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-            >
-              →
-            </button>
+            >→</button>
           </div>
         )}
       </main>
+
+      <FilterPanel
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        onApply={handleApplyFilters}
+      />
 
       <Footer />
     </div>
