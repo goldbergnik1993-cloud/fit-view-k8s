@@ -13,6 +13,7 @@
   border-bottom: 1px solid $color-card-bg;
   box-sizing: border-box;
   width: 100%;
+  position: relative;
 }
 
 .header__left {
@@ -80,6 +81,13 @@
   white-space: nowrap;
 }
 
+.header__search-active {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 $spacing-16;
+}
+
 // ─── Mobile Nav ───────────────────────────────────────────────────────────────
 
 .mobile-nav {
@@ -119,6 +127,10 @@
 
 .mobile-nav__item {
   border-bottom: 1px solid $color-card-bg;
+
+    &:last-child {
+    border-bottom: none;
+  }
 }
 
 .mobile-nav__link {
