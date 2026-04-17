@@ -15,8 +15,8 @@ class Settings(BaseSettings):
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REFRESH_TOKEN_EXPIRE_DAYS: int
+    ACTIVATION_TOKEN_EXPIRE_HOURS: int
 
-    RESEND_API_KEY: str
     REDIS_URL: str
 
     model_config = SettingsConfigDict(

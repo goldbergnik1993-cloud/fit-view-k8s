@@ -36,6 +36,6 @@ def cleanup_expired_tokens():
     asyncio.run(_cleanup_logic())
 
 
-@celery_app.task(name="tasks.cleanup_tasks.mark-carts-abandoned")
+@celery_app.task(name="tasks.cleanup_tasks.mark_carts_abandoned")
 def mark_carts_abandoned():
     asyncio.run(_change_cart_status_logic())
