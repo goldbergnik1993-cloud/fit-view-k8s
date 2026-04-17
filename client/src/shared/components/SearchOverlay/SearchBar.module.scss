@@ -112,7 +112,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -132,30 +131,31 @@
 }
 
 .itemInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  flex-shrink: 0;
 }
 
 .itemName {
-  @include text(13px, 500);
+  @include text(16px, 400);
+  display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 4px;
 }
 
 .itemBrand {
-  @include text(11px, 400);
+  @include text(12px, 400);
   opacity: 0.6;
+  display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 4px;
 }
 
 .itemPrice {
-  @include text(13px, 400);
-  margin-top: auto;
+  @include text(16px, 400);
+  display: block;
 }
 
 .seeAll {
@@ -188,5 +188,27 @@
     width: 766px;
     max-height: 552px;
     top: calc(48px + 12px);
+  }
+
+  .itemsRow {
+    gap: 24px;
+  }
+
+  .itemCard {
+    width: 228.66px;
+    min-width: 228.66px;
+  }
+
+  .itemName {
+    font-size: 18px;
+  }
+
+  .itemPrice {
+    font-size: 18px;
+  }
+
+  .seeAll {
+    width: 228.66px;
+    height: 51px;
   }
 }
