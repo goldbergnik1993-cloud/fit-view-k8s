@@ -12,12 +12,13 @@ from api.catalog import router as catalog_router
 from api.events import router as event_router
 from api.orders import router as orders_router
 from api.user import router as user_router
+from core.settings import settings
 from database.session_postgresql import get_db
 
 app = FastAPI()
 
 
-FRONTEND_URL = (os.getenv("FRONTEND_URL", "http://localhost:3000"))
+FRONTEND_URL = settings.FRONTEND_URL
 
 origins = [
     FRONTEND_URL,

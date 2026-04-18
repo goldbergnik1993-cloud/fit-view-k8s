@@ -58,7 +58,7 @@ async def seed():
                 name=entry["name"],
                 brand_id=brand.id,
                 category=entry["category"],
-                gender=entry.get("gender", "unisex"),
+                gender=entry.get("gender", "female"),
                 price=entry["price"],
                 image_url=entry["image_url"],
                 reference_point=entry["reference_point"],
