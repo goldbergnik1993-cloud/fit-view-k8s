@@ -1,15 +1,7 @@
 global:
-  scrape_interval: 5s
+  scrape_interval: 15s
 
 scrape_configs:
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
-
-  - job_name: 'backend'
-    static_configs:
-      - targets: ['fitview_backend:8000']
-
-  - job_name: 'frontend'
-    static_configs:
-      - targets: ['frontend:5173']
