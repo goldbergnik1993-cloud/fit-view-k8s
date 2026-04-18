@@ -228,7 +228,7 @@ async def fitting_room(
         UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
     active_body = {
-        "gender": profile_db.gender if profile_db else "unisex",
+        "gender": profile_db.gender if profile_db else "female",
         "height_cm": payload.height_cm or (
             profile_db.height_cm if profile_db else None
         ),
@@ -402,6 +402,7 @@ async def item_create(
             gender=payload.gender,
             image_url=str(payload.image_url),
             price=payload.price,
+            description=payload.description,
             reference_point=payload.reference_point,
             ref_coefficient=payload.ref_coefficient
         )
@@ -671,7 +672,7 @@ async def get_user_recommendations(
             .where(
                 or_(
                     ItemsModel.gender == profile.gender,
-                    ItemsModel.gender == "unisex"
+                    ItemsModel.gender == "female"
                 )
             )
             .order_by(func.random())

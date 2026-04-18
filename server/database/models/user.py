@@ -18,7 +18,6 @@ class UserRoleEnum(str, enum.Enum):
 class GenderEnum(str, enum.Enum):
     MALE = "male"
     FEMALE = "female"
-    UNISEX = "unisex"
 
 
 class UserModel(Base):
@@ -82,7 +81,7 @@ class UserProfileModel(Base):
     )
     height_cm: Mapped[int] = mapped_column(Integer)
     gender: Mapped[GenderEnum] = mapped_column(
-        Enum(GenderEnum), default=GenderEnum.UNISEX
+        Enum(GenderEnum), default=GenderEnum.FEMALE
     )
     leg_length_cm: Mapped[int] = mapped_column(Integer)
     waist_length_cm: Mapped[int] = mapped_column(Integer)
