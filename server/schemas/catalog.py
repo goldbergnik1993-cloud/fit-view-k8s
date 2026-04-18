@@ -88,6 +88,7 @@ class MeasurementListSchema(SizeMixin, BaseModel):
 
 class ItemDetailSchema(ItemBaseSchema):
     id: int
+    description: Optional[str] = None
     available_sizes: List[SizeChartListSchema] = Field(
         validation_alias="size_charts")
     available_measurements: List[MeasurementListSchema] = Field(
@@ -186,6 +187,7 @@ class ItemCreateSchema(BaseModel):
     gender: GenderEnum = Field(...)
     image_url: HttpUrl
     price: Decimal = Field(..., ge=0, max_digits=10, decimal_places=2)
+    description: Optional[str] = Field(None, min_length=1, max_length=255)
     reference_point: ItemRefPointEnum = Field(...)
     ref_coefficient: float = Field(..., gt=0, lt=1)
 
@@ -204,6 +206,7 @@ class ItemUpdateSchema(BaseModel):
     price: Optional[Decimal] = Field(
         None, ge=0, max_digits=10, decimal_places=2
     )
+    description: Optional[str] = Field(None, min_length=1, max_length=255)
     reference_point: Optional[ItemRefPointEnum] = Field(None)
     ref_coefficient: Optional[float] = Field(None, gt=0, lt=1)
 
