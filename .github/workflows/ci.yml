@@ -36,30 +36,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- BACKEND (Python 3.12 + Poetry) ---
+      - name: Install Poetry
+        if: matrix.project.type == 'python'
+        run: pipx install poetry
+
       - name: Set up Python 3.12
         if: matrix.project.type == 'python'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'poetry'
-
-      - name: Install Poetry
-        if: matrix.project.type == 'python'
-        run: pipx install poetry
+          cache-dependency-path: server/poetry.lock
 
       - name: Install Python Dependencies
         if: matrix.project.type == 'python'
         run: poetry install --sync
 
-      - name: Python Quality (Ruff + Mypy)
+      - name: Python Quality
         if: matrix.project.type == 'python'
         run: |
           poetry run ruff check .
           poetry run ruff format --check .
           poetry run mypy .
 
-      # --- FRONTEND (Node.js 22 + NPM) ---
+      # --- FRONTEND ---
       - name: Set up Node.js 22
         if: matrix.project.type == 'node'
         uses: actions/setup-node@v4
@@ -72,7 +72,7 @@ jobs:
         if: matrix.project.type == 'node'
         run: npm ci
 
-      - name: Node Quality (Lint + Build)
+      - name: Node Quality
         if: matrix.project.type == 'node'
         run: |
           npm run lint
