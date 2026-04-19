@@ -36,7 +36,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- BACKEND (Исправленный порядок установки) ---
       - name: Install Poetry
         if: matrix.project.type == 'python'
         run: pipx install poetry
@@ -47,7 +46,6 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'poetry'
-          # Добавляем путь к конфигу, чтобы кэш работал корректно
           cache-dependency-path: server/poetry.lock
 
       - name: Install Python Dependencies
