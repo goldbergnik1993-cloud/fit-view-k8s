@@ -40,7 +40,7 @@ services:
       - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
       - ACTIVATION_TOKEN_EXPIRE_HOURS=${ACTIVATION_TOKEN_EXPIRE_HOURS}
       - RESEND_API_KEY=${RESEND_API_KEY}
-      - REDIS_URL=redis://redis:6379/0
+      - REDIS_URL=${REDIS_URL}
     depends_on:
       - redis
     networks:
@@ -74,7 +74,7 @@ services:
       - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
       - ACTIVATION_TOKEN_EXPIRE_HOURS=${ACTIVATION_TOKEN_EXPIRE_HOURS}
       - RESEND_API_KEY=${RESEND_API_KEY}
-      - REDIS_URL=redis://redis:6379/0
+      - REDIS_URL=${REDIS_URL}
       - ENV=development
     depends_on:
       - redis
@@ -120,7 +120,7 @@ services:
       - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
       - ACTIVATION_TOKEN_EXPIRE_HOURS=${ACTIVATION_TOKEN_EXPIRE_HOURS}
       - RESEND_API_KEY=${RESEND_API_KEY}
-      - REDIS_URL=redis://redis:6379/0
+      - REDIS_URL=${REDIS_URL}
       - ENV=development
     depends_on:
       - redis
