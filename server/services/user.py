@@ -2,11 +2,13 @@ import secrets
 from datetime import datetime, UTC, timedelta
 from random import choice
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Request
+from jinja2 import Environment, FileSystemLoader
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.dependencies import get_user_by_email
 from core.settings import settings
 from database.models.user import (
     UserModel,
@@ -23,12 +25,17 @@ from schemas.user import (
     ProfileUpdateSchema,
     ProfileViewSchema
 )
+from tasks.email_tasks import send_email
 from utils.tokens import (
     hash_password,
     verify_password,
     create_access_token,
-    create_refresh_token
+    create_refresh_token,
+    decode_email_verification_token,
+    create_email_verification_token
 )
+
+env = Environment(loader=FileSystemLoader("templates"))
 
 
 async def user_create(
@@ -46,11 +53,25 @@ async def user_create(
         email=user.email,
         hashed_password=hash_password(user.password),
         role=UserRoleEnum.BUYER,
-        ab_group=choice(("A", "B"))
+        ab_group=choice(("A", "B")),
+        is_active=False
     )
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
+
+    token = create_email_verification_token(email=new_user.email)
+    template = env.get_template("activation_email.html")
+    html_content = template.render(
+        activation_url=f"{settings.BASE_URL}/user/confirm-email?token={token}",
+        expires_in=24,
+    )
+    send_email.delay(
+        email=user.email,
+        body_data={"html": html_content},
+        msg_type="activation",
+    )
+
     return UserRetrieveSchema.model_validate(new_user)
 
 
@@ -60,7 +81,7 @@ async def user_login(payload: LoginSchema, db: AsyncSession):
     )
     user = result.scalar_one_or_none()
 
-    if not user or not verify_password(
+    if not user or not user.is_active or not verify_password(
             payload.password, user.hashed_password
     ):
         raise HTTPException(
@@ -208,3 +229,22 @@ async def profile_delete(user: UserModel, db: AsyncSession) -> dict:
     await db.delete(profile_db)
     await db.commit()
     return {"message": "Your profile has been deleted."}
+
+
+async def verify_email(request: Request, token: str, db: AsyncSession) -> str:
+    email = decode_email_verification_token(token)
+    user = await get_user_by_email(email=email, db=db)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid token."
+        )
+    if user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You are already active."
+        )
+    user.is_active = True
+    await db.commit()
+    await db.refresh(user)
+    return user.email

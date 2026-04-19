@@ -1,0 +1,214 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.searchBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-8;
+  width: 100%;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 472px;
+  height: 36px;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $color-card-bg;
+  border-radius: 50px;
+  @include text(14px, 400);
+  outline: none;
+
+  &:focus {
+    border-color: $color-black;
+  }
+}
+
+.clear {
+  @include flex-center;
+  position: absolute;
+  right: $spacing-16;
+  width: 24px;
+  height: 24px;
+  @include hover-opacity;
+}
+
+.cancel {
+  @include text(14px, 400);
+  @include hover-opacity;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(36px + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 472px;
+  max-height: 549px;
+  overflow-y: auto;
+  background: $color-white;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  padding: $spacing-16;
+  z-index: 400;
+}
+
+.section {
+  margin-bottom: $spacing-16;
+}
+
+.sectionTitle {
+  @include text(12px, 400);
+  opacity: 0.5;
+  margin-bottom: $spacing-8;
+}
+
+.suggestionItem {
+  @include text(16px, 400);
+  @include hover-opacity;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: $spacing-8 0;
+}
+
+.itemsAndButton {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-8;
+}
+
+.itemsRow {
+  display: flex;
+  gap: 8px;
+}
+
+.itemCard {
+  @include hover-opacity;
+  text-align: left;
+  width: 212px;
+  min-width: 212px;
+  border: 1px solid $color-card-bg;
+  border-radius: 4px;
+  padding: $spacing-16;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.itemImg {
+  width: 100%;
+  height: 112px;
+  background: $color-card-bg;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.itemInfo {
+  flex-shrink: 0;
+}
+
+.itemName {
+  @include text(16px, 400);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.itemBrand {
+  @include text(12px, 400);
+  opacity: 0.6;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.itemPrice {
+  @include text(16px, 400);
+  display: block;
+}
+
+.seeAll {
+  @include text(13px, 400);
+  @include hover-opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 212px;
+  height: 51px;
+  border: 1px solid $color-black;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.loading {
+  @include text(14px, 400);
+  opacity: 0.5;
+  text-align: center;
+  padding: $spacing-16;
+}
+
+@include desktop {
+  .input {
+    width: 766px;
+    height: 48px;
+  }
+
+  .dropdown {
+    width: 766px;
+    max-height: 552px;
+    top: calc(48px + 12px);
+  }
+
+  .itemsRow {
+    gap: 24px;
+  }
+
+  .itemCard {
+    width: 228.66px;
+    min-width: 228.66px;
+  }
+
+  .itemName {
+    font-size: 18px;
+  }
+
+  .itemPrice {
+    font-size: 18px;
+  }
+
+  .seeAll {
+    width: 228.66px;
+    height: 51px;
+  }
+}

@@ -15,6 +15,20 @@ class DeliveryMethodEnum(str, enum.Enum):
 
 
 class DeliveryInfoSchema(BaseModel):
+    first_name: str = Field(
+        ...,
+        min_length=3,
+        max_length=20,
+        description="First name",
+        example="John"
+    )
+    last_name: str = Field(
+        ...,
+        min_length=3,
+        max_length=20,
+        description="Last name",
+        example="Smith"
+    )
     country: str = Field(
         ..., description="Two-letter country code", example="US"
     )
