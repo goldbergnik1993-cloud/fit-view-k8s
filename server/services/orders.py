@@ -80,7 +80,7 @@ async def create_order_from_cart(
             user_id=user_id, order_id=new_order.id, db=db
         )
 
-    except SQLAlchemyError as e:
+    except SQLAlchemyError:
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
