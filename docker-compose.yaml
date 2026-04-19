@@ -38,6 +38,11 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
       - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
+      - ACTIVATION_TOKEN_EXPIRE_HOURS=${ACTIVATION_TOKEN_EXPIRE_HOURS}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
     networks:
       - fit-network
 
@@ -49,37 +54,92 @@ services:
     networks:
       - fit-network
 
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
+  celery_worker:
+    build:
+      context: ./server
+    container_name: fitview_worker
+    command: celery -A core.celery_app worker --loglevel=info
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
+      - ./server:/app
+      - /app/.venv
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
+      - PGHOST=${PGHOST}
+      - PGDATABASE=${PGDATABASE}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGCHANNELBINDING=${PGCHANNELBINDING}
+      - SECRET_KEY=${SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
+      - ACTIVATION_TOKEN_EXPIRE_HOURS=${ACTIVATION_TOKEN_EXPIRE_HOURS}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - ENV=development
+    depends_on:
+      - redis
     networks:
       - fit-network
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
+  redis:
+    image: redis:7-alpine
+    container_name: fitview_redis
     ports:
-      - "3001:3000"
+      - "6379:6379"
+    restart: always
     networks:
       - fit-network
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: fitview_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: always
+    networks:
+      - fit-network
+
+  celery_beat:
+    build:
+      context: ./server
+    container_name: fitview_beat
+    command: celery -A core.celery_app beat --loglevel=info
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
+      - ./server:/app
+      - /app/.venv
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
+      - PGHOST=${PGHOST}
+      - PGDATABASE=${PGDATABASE}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGCHANNELBINDING=${PGCHANNELBINDING}
+      - SECRET_KEY=${SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
+      - ACTIVATION_TOKEN_EXPIRE_HOURS=${ACTIVATION_TOKEN_EXPIRE_HOURS}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - ENV=development
+    depends_on:
+      - redis
     networks:
       - fit-network
 
+  flower:
+    image: mher/flower:latest
+    container_name: fitview_flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery_worker
+    networks:
+      - fit-network
 
 networks:
   fit-network:

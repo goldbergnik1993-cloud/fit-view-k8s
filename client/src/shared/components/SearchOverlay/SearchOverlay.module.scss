@@ -1,0 +1,208 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+// ─── Shared ───────────────────────────────────────────────────────────────────
+
+.inputWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-8;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.input {
+  flex: 1;
+  height: 44px;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $color-card-bg;
+  border-radius: 50px;
+  @include text(14px, 400);
+  outline: none;
+
+  &:focus {
+    border-color: $color-black;
+  }
+}
+
+.clear {
+  @include flex-center;
+  position: absolute;
+  right: 80px;
+  width: 24px;
+  height: 24px;
+  @include hover-opacity;
+}
+
+.cancel {
+  @include text(14px, 400);
+  @include hover-opacity;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.section {
+  margin-top: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.sectionTitle {
+  @include text(12px, 400);
+  opacity: 0.5;
+  margin-bottom: $spacing-8;
+}
+
+.suggestionItem {
+  @include text(16px, 400);
+  @include hover-opacity;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: $spacing-8 0;
+}
+
+.itemsRow {
+  display: flex;
+  gap: $spacing-16;
+}
+
+.itemCard {
+  @include hover-opacity;
+  text-align: left;
+  flex: 1;
+  cursor: pointer;
+}
+
+.itemImg {
+  width: 100%;
+  aspect-ratio: 1;
+  background: $color-card-bg;
+  margin-bottom: $spacing-8;
+  border-radius: 4px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.itemName {
+  @include text(14px, 400);
+  margin-bottom: 2px;
+}
+
+.itemBrand {
+  @include text(12px, 400);
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+
+.itemPrice {
+  @include text(14px, 400);
+}
+
+.seeAll {
+  @include text(14px, 400);
+  @include hover-opacity;
+  display: block;
+  width: 100%;
+  padding: $spacing-16;
+  border: 1px solid $color-black;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: $spacing-16;
+}
+
+.loading {
+  @include text(14px, 400);
+  opacity: 0.5;
+  text-align: center;
+  padding: $spacing-16;
+}
+
+// ─── Mobile: fullscreen ───────────────────────────────────────────────────────
+
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: $color-white;
+  z-index: 300;
+  overflow-y: auto;
+}
+
+.mobilePanel {
+  padding: $spacing-16 var(--container-padding);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// ─── Tablet: dropdown ────────────────────────────────────────────────────────
+
+.dropdown {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  background: $color-white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-16 var(--container-padding);
+  border-bottom: 1px solid $color-card-bg;
+
+  .input {
+    width: 472px;
+    height: 36px;
+  }
+
+  .clear {
+    right: 56px;
+  }
+}
+
+.dropdownContent {
+  width: 472px;
+  max-height: 549px;
+  overflow-y: auto;
+  background: $color-white;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  padding: $spacing-16;
+  margin-top: 12px;
+}
+
+// ─── Overlay за дропдауном (закрывает при клике вне) ─────────────────────────
+
+.backdropOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 299;
+  background: transparent;
+}
+
+// ─── Desktop ──────────────────────────────────────────────────────────────────
+
+@include desktop {
+  .dropdown {
+    .input {
+      width: 766px;
+      height: 48px;
+    }
+
+    .clear {
+      right: 56px;
+    }
+  }
+
+  .dropdownContent {
+    width: 766px;
+    max-height: 552px;
+  }
+}
