@@ -15,7 +15,6 @@ VITE_API_URL=http://localhost:8000
 Run the following command in your terminal:
 bash
 docker-compose up -d --build
-
 3. Service Access Points
 Service	URL	Info
 Frontend	http://localhost:3000	Vite/React App
