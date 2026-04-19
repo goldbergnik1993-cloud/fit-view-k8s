@@ -144,3 +144,4 @@ services:
 networks:
   fit-network:
     driver: bridge
+
