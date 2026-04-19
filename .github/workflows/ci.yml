@@ -1,23 +1,79 @@
-name: CI Check
+name: CI Quality Control
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'server/**'
+      - 'client/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'server/**'
+      - 'client/**'
+      - '.github/workflows/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  check-structure:
+  quality-check:
+    name: ${{ matrix.project.name }} Check
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - { name: "Backend", path: "server", type: "python" }
+          - { name: "Frontend", path: "client", type: "node" }
+
+    defaults:
+      run:
+        working-directory: ./${{ matrix.project.path }}
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check Directories
-        run: |
-          ls -R client/
-          ls -R server/
-          echo "Structure is OK"
+      # --- BACKEND (Python 3.12 + Poetry) ---
+      - name: Set up Python 3.12
+        if: matrix.project.type == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'poetry'
 
-      - name: Secrets Scan (Basic)
+      - name: Install Poetry
+        if: matrix.project.type == 'python'
+        run: pipx install poetry
+
+      - name: Install Python Dependencies
+        if: matrix.project.type == 'python'
+        run: poetry install --sync
+
+      - name: Python Quality (Ruff + Mypy)
+        if: matrix.project.type == 'python'
         run: |
-          if [ -f .env ]; then echo ".env file found! Fix it!"; exit 1; fi
+          poetry run ruff check .
+          poetry run ruff format --check .
+          poetry run mypy .
+
+      # --- FRONTEND (Node.js 22 + NPM) ---
+      - name: Set up Node.js 22
+        if: matrix.project.type == 'node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install JS Dependencies
+        if: matrix.project.type == 'node'
+        run: npm ci
+
+      - name: Node Quality (Lint + Build)
+        if: matrix.project.type == 'node'
+        run: |
+          npm run lint
+          npm run build
