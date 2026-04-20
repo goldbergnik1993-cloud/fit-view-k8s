@@ -14,7 +14,7 @@ from database.models.user import (
     UserModel,
     UserRoleEnum,
     RefreshTokenModel,
-    UserProfileModel
+    UserProfileModel,
 )
 from schemas.user import (
     UserCreateSchema,
@@ -23,7 +23,7 @@ from schemas.user import (
     RefreshTokenRequest,
     ProfileBaseSchema,
     ProfileUpdateSchema,
-    ProfileViewSchema
+    ProfileViewSchema,
 )
 from tasks.email_tasks import send_email
 from utils.tokens import (
@@ -32,29 +32,26 @@ from utils.tokens import (
     create_access_token,
     create_refresh_token,
     decode_email_verification_token,
-    create_email_verification_token
+    create_email_verification_token,
 )
 
 env = Environment(loader=FileSystemLoader("templates"))
 
 
-async def user_create(
-        user: UserCreateSchema, db: AsyncSession
-) -> UserRetrieveSchema:
-    existing_user_stmt = select(UserModel).where(
-        UserModel.email == user.email)
+async def user_create(user: UserCreateSchema, db: AsyncSession) -> UserRetrieveSchema:
+    existing_user_stmt = select(UserModel).where(UserModel.email == user.email)
     existing_user = await db.scalar(existing_user_stmt)
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A user with this email already exists."
+            detail="A user with this email already exists.",
         )
     new_user = UserModel(
         email=user.email,
         hashed_password=hash_password(user.password),
         role=UserRoleEnum.BUYER,
         ab_group=choice(("A", "B")),
-        is_active=False
+        is_active=False,
     )
     db.add(new_user)
     await db.commit()
@@ -76,22 +73,20 @@ async def user_create(
 
 
 async def user_login(payload: LoginSchema, db: AsyncSession):
-    result = await db.execute(
-        select(UserModel).where(UserModel.email == payload.email)
-    )
+    result = await db.execute(select(UserModel).where(UserModel.email == payload.email))
     user = result.scalar_one_or_none()
 
-    if not user or not user.is_active or not verify_password(
-            payload.password, user.hashed_password
+    if (
+        not user
+        or not user.is_active
+        or not verify_password(payload.password, user.hashed_password)
     ):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            detail="Incorrect email or password",
         )
 
-    access_token = create_access_token(
-        data={"sub": str(user.id), "email": user.email}
-    )
+    access_token = create_access_token(data={"sub": str(user.id), "email": user.email})
 
     refresh_token = await create_refresh_token(db, user.id)
     await db.commit()
@@ -99,23 +94,20 @@ async def user_login(payload: LoginSchema, db: AsyncSession):
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
     }
 
 
-async def refresh_token_pair(
-        payload: RefreshTokenRequest,
-        db: AsyncSession
-):
+async def refresh_token_pair(payload: RefreshTokenRequest, db: AsyncSession):
     stmt = select(RefreshTokenModel).where(
-        RefreshTokenModel.token == payload.refresh_token)
+        RefreshTokenModel.token == payload.refresh_token
+    )
     result = await db.execute(stmt)
     db_token = result.scalar_one_or_none()
 
     if not db_token:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token"
         )
 
     if db_token.expires_at.replace(tzinfo=UTC) < datetime.now(UTC):
@@ -123,7 +115,7 @@ async def refresh_token_pair(
         await db.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token expired. Please login again."
+            detail="Refresh token expired. Please login again.",
         )
 
     user_stmt = select(UserModel).where(UserModel.id == db_token.user_id)
@@ -131,13 +123,12 @@ async def refresh_token_pair(
     user = user_result.scalar_one_or_none()
 
     new_access_token = create_access_token(
-        data={"sub": str(user.id), "email": user.email})
+        data={"sub": str(user.id), "email": user.email}
+    )
 
     new_refresh_token_str = secrets.token_urlsafe(64)
     db_token.token = new_refresh_token_str
-    exp_date = datetime.now(UTC) + timedelta(
-        days=settings.REFRESH_TOKEN_EXPIRE_DAYS
-    )
+    exp_date = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     db_token.expires_at = exp_date.replace(tzinfo=None)
 
     await db.commit()
@@ -145,14 +136,12 @@ async def refresh_token_pair(
     return {
         "access_token": new_access_token,
         "refresh_token": new_refresh_token_str,
-        "token_type": "bearer"
+        "token_type": "bearer",
     }
 
 
 async def profile_create(
-        payload: ProfileBaseSchema,
-        user: UserModel,
-        db: AsyncSession
+    payload: ProfileBaseSchema, user: UserModel, db: AsyncSession
 ) -> UserProfileModel:
     existing_profile = await db.scalar(
         select(UserProfileModel).where(UserProfileModel.user_id == user.id)
@@ -161,14 +150,11 @@ async def profile_create(
     if existing_profile:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You already have a profile."
+            detail="You already have a profile.",
         )
 
     data = payload.model_dump(exclude={"user_id"})
-    new_profile = UserProfileModel(
-        user_id=user.id,
-        **data
-    )
+    new_profile = UserProfileModel(user_id=user.id, **data)
 
     db.add(new_profile)
     await db.commit()
@@ -177,27 +163,23 @@ async def profile_create(
 
 
 async def get_user_profile(db: AsyncSession, user: UserModel):
-    profile_stmt = select(UserProfileModel).where(
-        UserProfileModel.user_id == user.id
-    )
+    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile = await db.scalar(profile_stmt)
     if not profile:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You don't have a profile."
+            status_code=status.HTTP_400_BAD_REQUEST, detail="You don't have a profile."
         )
     return profile
 
 
 async def profile_update(
-        payload: ProfileUpdateSchema, user: UserModel, db: AsyncSession
+    payload: ProfileUpdateSchema, user: UserModel, db: AsyncSession
 ) -> ProfileViewSchema:
     profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
     if not profile_db:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="You don't have a profile."
+            status_code=status.HTTP_404_NOT_FOUND, detail="You don't have a profile."
         )
     update_data = payload.model_dump(exclude_unset=True)
 
@@ -211,14 +193,15 @@ async def profile_update(
     except SQLAlchemyError:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Something went wrong. Try again later."
+            detail="Something went wrong. Try again later.",
         )
     return ProfileViewSchema.model_validate(profile_db)
 
 
 async def profile_delete(user: UserModel, db: AsyncSession) -> dict:
-    profile_stmt = select(UserProfileModel).where(
-        UserProfileModel.user_id == user.id
+    profile_stmt = (
+        select(UserProfileModel)
+        .where(UserProfileModel.user_id == user.id)
     )
     profile_db = await db.scalar(profile_stmt)
     if not profile_db:

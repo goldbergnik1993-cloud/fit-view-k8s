@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import get_current_user
-from database.session_postgresql import get_db
 from database.models.user import UserModel
-
+from database.session_postgresql import get_db
 from schemas.cart import CartRetrieveSchema, CartItemCreateSchema
 from services.cart import (
     get_cart,

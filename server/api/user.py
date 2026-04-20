@@ -1,8 +1,8 @@
 from typing import Optional, List
 
 from fastapi import APIRouter, Depends, Request, Query, status
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import get_current_user
@@ -85,7 +85,7 @@ async def list_favorites(
         db: AsyncSession = Depends(get_db),
         params: ItemFilterParams = Depends(),
         brands: Optional[List[int]] = Query(None),
-        current_user: UserModel = Depends(get_current_user) # STRICT dependency
+        current_user: UserModel = Depends(get_current_user)
 ):
     filters = params.model_dump(
         exclude={"page", "per_page", "sort_by"}, exclude_none=True

@@ -13,7 +13,8 @@ from sqlalchemy import (
     DateTime,
     func,
     DECIMAL,
-    UniqueConstraint, Text
+    UniqueConstraint,
+    Text
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

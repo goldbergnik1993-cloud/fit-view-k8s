@@ -3,29 +3,15 @@ import sys
 from logging.config import fileConfig
 from pathlib import Path
 
+from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
-from alembic import context
-
 
 root_dir = Path(__file__).resolve().parents[2]
 sys.path.append(str(root_dir))
 
 from database.models.base import Base
-from database.models.user import (
-    UserModel,
-    UserProfileModel,
-    RefreshTokenModel
-) # noqa: F401
-from database.models.catalog import (
-    BrandsModel,
-    ItemsModel,
-    SizeChartModel,
-    ItemMeasurementsModel,
-    FavoritesModel
-) # noqa: F401
 from database.models.events import FitviewEventsModel # noqa: F401
 from database.models.cart import CartModel, CartItemModel # noqa: F401
 from database.models.orders import OrderModel, OrderItemModel # noqa: F401

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from core.dependencies import get_current_user
 from database.models import UserModel
 from database.session_postgresql import get_db
-from core.dependencies import get_current_user
 from schemas.events import FitViewEventCreateSchema
 from services.events import log_fitview_event
 

@@ -21,11 +21,9 @@ class UserCreateSchema(UserBaseSchema):
         if not re.search(r"\d", v):
             raise ValueError("Password must contain at least one number.")
         if not re.search(r"[A-Z]", v):
-            raise ValueError(
-                "Password must contain at least one uppercase letter.")
+            raise ValueError("Password must contain at least one uppercase letter.")
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
-            raise ValueError(
-                "Password must contain at least one special character.")
+            raise ValueError("Password must contain at least one special character.")
         return v
 
 

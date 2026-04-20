@@ -1,7 +1,5 @@
 from .base import Base
 from .cart import CartModel, CartItemModel
-from .orders import OrderModel, OrderItemModel
-from .user import UserModel, UserProfileModel, RefreshTokenModel
 from .catalog import (
     ItemsModel,
     SizeChartModel,
@@ -10,7 +8,8 @@ from .catalog import (
     BrandsModel
 )
 from .events import FitviewEventsModel
-
+from .orders import OrderModel, OrderItemModel
+from .user import UserModel, UserProfileModel, RefreshTokenModel
 
 __all__ = [
     "Base",
