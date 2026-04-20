@@ -188,7 +188,10 @@ async def toggle_favorite(db: AsyncSession, user_id: int, item_id: int) -> dict:
 
 
 async def fitting_room(
-    user: UserModel, item_id: int, payload: FittingRoomRequestSchema, db: AsyncSession
+        user: UserModel,
+        item_id: int,
+        payload: FittingRoomRequestSchema,
+        db: AsyncSession
 ) -> FittingRoomResponseSchema:
     item_stmt = (
         select(ItemsModel)

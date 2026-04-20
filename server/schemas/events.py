@@ -1,5 +1,7 @@
 from typing import Optional
+
 from pydantic import BaseModel, Field, ConfigDict, model_validator
+
 from database.models.events import EventTypeEnum
 
 

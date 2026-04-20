@@ -2,15 +2,8 @@ import enum
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import (
-    Integer,
-    ForeignKey,
-    Enum,
-    String,
-    Numeric,
-    DateTime,
+from sqlalchemy import Integer, ForeignKey, Enum, String, Numeric, DateTime, \
     func
-)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -49,9 +42,7 @@ class OrderModel(Base):
         "UserModel", back_populates="orders"
     )
     order_items: Mapped[list["OrderItemModel"]] = relationship(
-        "OrderItemModel",
-        back_populates="order",
-        cascade="all, delete-orphan"
+        "OrderItemModel", back_populates="order", cascade="all, delete-orphan"
     )
 
 
@@ -59,21 +50,15 @@ class OrderItemModel(Base):
     __tablename__ = "order_items"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    order_id: Mapped[int] = mapped_column(
-        ForeignKey("orders.id", ondelete="CASCADE")
-    )
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id", ondelete="CASCADE"))
     item_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("items.id", ondelete="SET NULL"), nullable=True
     )
     size_label: Mapped[str] = mapped_column(String(10))
     quantity: Mapped[int] = mapped_column(Integer, default=1)
-    price_at_purchase: Mapped[float] = mapped_column(
-        Numeric(10, 2)
-    )
+    price_at_purchase: Mapped[float] = mapped_column(Numeric(10, 2))
 
     order: Mapped["OrderModel"] = relationship(
         "OrderModel", back_populates="order_items"
     )
-    item: Mapped[Optional["ItemsModel"]] = relationship(
-        "ItemsModel"
-    )
+    item: Mapped[Optional["ItemsModel"]] = relationship("ItemsModel")

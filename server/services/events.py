@@ -1,5 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from database.models import UserModel
 from database.models.events import FitviewEventsModel, EventTypeEnum
 from schemas.events import FitViewEventCreateSchema

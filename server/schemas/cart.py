@@ -3,8 +3,8 @@ from typing import List
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from database.models.cart import CartStatusEnum, CartItemModel
-from schemas.catalog import ItemListItemSchema, ItemBaseSchema
+from database.models.cart import CartStatusEnum
+from schemas.catalog import ItemBaseSchema
 
 
 class CartBaseSchema(BaseModel):
