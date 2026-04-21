@@ -2,6 +2,7 @@ import secrets
 from datetime import datetime, timezone, timedelta, UTC
 from typing import Optional
 
+from fastapi import HTTPException, status
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -59,25 +60,37 @@ def decode_access_token(token: str):
         return None
 
 
-def create_email_verification_token(email: str):
+def create_token(email: str, purpose: str) -> str:
     expire = datetime.now(UTC) + timedelta(
         hours=settings.ACTIVATION_TOKEN_EXPIRE_HOURS
     )
     to_encode = {
         "sub": email,
-        "purpose": "email_verification",
+        "purpose": purpose,
         "exp": expire
     }
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
 
 
-def decode_email_verification_token(token: str) -> Optional[str]:
+def decode_token(token: str, purpose: str):
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY,
-                             algorithms=[ALGORITHM])
-        if payload.get("purpose") != "email_verification":
-            return None
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[ALGORITHM]
+        )
+        if payload.get("purpose") != purpose:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token purpose."
+            )
+        return payload
 
-        return payload.get("sub")
-    except JWTError:
-        return None
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token has expired."
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid token."
+        )

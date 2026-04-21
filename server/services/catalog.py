@@ -291,7 +291,6 @@ async def fitting_room(
         min_val=size_chart.shoulders_min_cm,
         max_val=size_chart.shoulders_max_cm,
     )
-
     new_event = FitviewEventsModel(
         user_id=user.id,
         item_id=item_id,
@@ -314,7 +313,6 @@ async def fitting_room(
         favorite.used_fitview = True
 
     await db.commit()
-
     return FittingRoomResponseSchema(
         item_id=item_db.id,
         size_label=size_chart.size_label,

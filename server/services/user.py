@@ -24,6 +24,8 @@ from schemas.user import (
     ProfileBaseSchema,
     ProfileUpdateSchema,
     ProfileViewSchema,
+    PasswordResetCompleteSchema,
+    MessageSchema,
 )
 from tasks.email_tasks import send_email
 from utils.tokens import (
@@ -31,8 +33,8 @@ from utils.tokens import (
     verify_password,
     create_access_token,
     create_refresh_token,
-    decode_email_verification_token,
-    create_email_verification_token,
+    decode_token,
+    create_token,
 )
 
 env = Environment(loader=FileSystemLoader("templates"))
@@ -57,11 +59,11 @@ async def user_create(user: UserCreateSchema, db: AsyncSession) -> UserRetrieveS
     await db.commit()
     await db.refresh(new_user)
 
-    token = create_email_verification_token(email=new_user.email)
+    token = create_token(email=new_user.email, purpose="email_verification")
     template = env.get_template("activation_email.html")
     html_content = template.render(
-        activation_url=f"{settings.BASE_URL}/user/confirm-email?token={token}",
-        expires_in=24,
+        activation_url=f"{settings.FRONTEND_URL}/user/confirm-email?token={token}",
+        expires_in=settings.ACTIVATION_TOKEN_EXPIRE_HOURS,
     )
     send_email.delay(
         email=user.email,
@@ -199,15 +201,11 @@ async def profile_update(
 
 
 async def profile_delete(user: UserModel, db: AsyncSession) -> dict:
-    profile_stmt = (
-        select(UserProfileModel)
-        .where(UserProfileModel.user_id == user.id)
-    )
+    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
     if not profile_db:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="You don't have a profile."
+            status_code=status.HTTP_404_NOT_FOUND, detail="You don't have a profile."
         )
     await db.delete(profile_db)
     await db.commit()
@@ -215,19 +213,69 @@ async def profile_delete(user: UserModel, db: AsyncSession) -> dict:
 
 
 async def verify_email(request: Request, token: str, db: AsyncSession) -> str:
-    email = decode_email_verification_token(token)
-    user = await get_user_by_email(email=email, db=db)
+    payload = decode_token(token=token, purpose="email_verification")
+    user = await get_user_by_email(email=payload.get("sub"), db=db)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Invalid token."
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid token."
         )
     if user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You are already active."
+            status_code=status.HTTP_400_BAD_REQUEST, detail="You are already active."
         )
     user.is_active = True
     await db.commit()
     await db.refresh(user)
     return user.email
+
+
+async def reset_password(email: str, db: AsyncSession) -> MessageSchema:
+    user = await get_user_by_email(email=email, db=db)
+    if user:
+        reset_token = create_token(email=email, purpose="password_reset")
+        template = env.get_template("reset_password.html")
+        body_data = {
+            "html": template.render(
+                reset_url=f"{settings.FRONTEND_URL}/password-reset-confirm?token={reset_token}",
+                expires_in=settings.RESET_TOKEN_EXPIRE_MINUTES,
+            )
+        }
+        send_email.delay(
+            email=user.email,
+            body_data=body_data,
+            msg_type="reset_pass",
+        )
+    return MessageSchema(message="If the account exists, a reset email has been sent.")
+
+
+async def reset_password_confirm(
+    data: PasswordResetCompleteSchema, db: AsyncSession
+) -> MessageSchema:
+    payload = decode_token(token=data.token, purpose="password_reset")
+    user_email = payload.get("sub")
+    if not user_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reset token."
+        )
+
+    user = await get_user_by_email(email=user_email, db=db)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+        )
+    user.hashed_password = hash_password(data.password)
+    await db.commit()
+
+    template = env.get_template("reset_password_success.html")
+    body_data = {
+        "html": template.render(
+            login_url=f"{settings.FRONTEND_URL}/login",
+        )
+    }
+    send_email.delay(
+        email=user.email,
+        body_data=body_data,
+        msg_type="reset_pass_success",
+    )
+
+    return MessageSchema(message="Your password has been changed successfully.")
