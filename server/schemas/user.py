@@ -12,7 +12,7 @@ class UserBaseSchema(BaseModel):
     email: EmailStr
 
 
-class UserCreateSchema(UserBaseSchema):
+class PasswordMixin:
     password: str = Field(..., min_length=8, max_length=100)
 
     @field_validator("password")
@@ -21,10 +21,16 @@ class UserCreateSchema(UserBaseSchema):
         if not re.search(r"\d", v):
             raise ValueError("Password must contain at least one number.")
         if not re.search(r"[A-Z]", v):
-            raise ValueError("Password must contain at least one uppercase letter.")
+            raise ValueError(
+                "Password must contain at least one uppercase letter.")
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
-            raise ValueError("Password must contain at least one special character.")
+            raise ValueError(
+                "Password must contain at least one special character.")
         return v
+
+
+class UserCreateSchema(PasswordMixin, UserBaseSchema):
+    pass
 
 
 class UserRetrieveSchema(UserBaseSchema):
@@ -37,6 +43,10 @@ class UserRetrieveSchema(UserBaseSchema):
 
 class LoginSchema(UserBaseSchema):
     password: str
+
+
+class PasswordResetCompleteSchema(PasswordMixin, BaseModel):
+    token: str
 
 
 class TokenPairResponse(BaseModel):
@@ -78,3 +88,7 @@ class ProfileUpdateSchema(BaseModel):
     waist_length_cm: Optional[int] = Field(None, ge=40, le=150)
     hips_length_cm: Optional[int] = Field(None, ge=60, le=180)
     leg_length_cm: Optional[int] = Field(None, ge=50, le=120)
+
+
+class MessageSchema(BaseModel):
+    message: str

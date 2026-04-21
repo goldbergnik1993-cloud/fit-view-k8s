@@ -1,3 +1,4 @@
+import time
 from typing import Optional, List
 
 from fastapi import (
@@ -192,7 +193,6 @@ async def fit_it(
     return await fitting_room(
         user=current_user, item_id=item_id, payload=payload, db=db
     )
-
 
 
 @router.get(

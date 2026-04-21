@@ -18,7 +18,8 @@ from schemas.user import (
     RefreshTokenRequest,
     ProfileBaseSchema,
     ProfileViewSchema,
-    ProfileUpdateSchema,
+    ProfileUpdateSchema, PasswordResetCompleteSchema, UserBaseSchema,
+    MessageSchema,
 )
 from services.catalog import get_items_list
 from services.user import (
@@ -29,7 +30,7 @@ from services.user import (
     get_user_profile,
     profile_update,
     profile_delete,
-    verify_email
+    verify_email, reset_password_confirm, reset_password
 )
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -139,3 +140,31 @@ async def confirm_email(
             "login_url": f"{settings.FRONTEND_URL}/login"
         }
     )
+
+
+@router.post(
+    "/password-reset-request",
+    response_model=MessageSchema,
+    summary="Initiate Password Recovery",
+    description="Sends a password reset link to the user's email if the "
+                "account exists."
+)
+async def request_password_reset(
+        payload: UserBaseSchema,
+        db: AsyncSession = Depends(get_db)
+):
+    return await reset_password(email=payload.email, db=db)
+
+
+@router.post(
+    "/password-reset-confirm",
+    response_model=MessageSchema,
+    summary="Complete Password Recovery",
+    description="Updates the user password using a valid reset token provided"
+                " in the recovery email."
+)
+async def confirm_password_reset(
+        data: PasswordResetCompleteSchema,
+        db: AsyncSession = Depends(get_db)
+):
+    return await reset_password_confirm(data=data, db=db)
