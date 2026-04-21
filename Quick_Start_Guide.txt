@@ -1,29 +1,47 @@
 🚀 Quick Start: Development Environment
-This project uses Docker Compose to orchestrate Frontend (Vite), Backend (Python), and PostgreSQL.
+This project uses Docker Compose to orchestrate Frontend (Vite), Backend (FastAPI), Nginx (Reverse Proxy), PostgreSQL, Redis, and Celery.
 1. Setup Environment Variables
-Create a .env file in the project root (the .gitignore will keep it safe):
+Create a .env file in the project root. Since we are now using Nginx as a reverse proxy, the communication flow has changed:
 ini
-# Database Credentials
-POSTGRES_USER=admin
-POSTGRES_PASSWORD=your_secure_password
-POSTGRES_DB=fitview_db
+# Database Credentials (PostgreSQL)
+PGUSER=admin
+PGPASSWORD=your_secure_password
+PGDATABASE=fitview_db
+PGHOST=db
+PGPORT=5432
+
+# Backend Connection
+DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
+REDIS_URL=redis://redis:6379/0
 
 # Frontend API Connection (Vite)
-VITE_API_URL=http://localhost:8000
+# Requests now go through Nginx on port 80 with the /api prefix
+VITE_API_URL=http://localhost/api
+
+# Frontend URL (For Backend CORS settings)
+FRONTEND_URL=http://localhost
+
 
 2. Launch Infrastructure
-Run the following command in your terminal:
+Run the following command to build and start all services in detached mode:
 bash
 docker-compose up -d --build
 3. Service Access Points
+With Nginx integrated, most services are now accessible via the standard HTTP port (80):
 Service	URL	Info
-Frontend	http://localhost:3000	Vite/React App
-Backend	http://localhost:8000	Python API (Mock)
-Database	localhost:5432	PostgreSQL
+Frontend	http://localhost	Vite/React App
+Backend API	http://localhost/api/docs	Swagger UI
 Adminer	http://localhost:8080	DB Web Interface
+Flower	http://localhost:5555	Celery Monitoring
+MailHog	http://localhost:8025	Email Testing Tool
 4. Database Login (Adminer)
-To manage the DB via browser, use these credentials:
+To manage the database via the browser, use these credentials:
 System: PostgreSQL
 Server: db
 Username/Password: (Values from your .env)
 Database: fitview_db
+5. Troubleshooting & Logs
+If you encounter a "blank page" or connection errors, check the logs:
+Nginx Routing: docker-compose logs -f nginx
+Backend Errors: docker-compose logs -f backend
+Worker Issues: docker-compose logs -f celery_worker
