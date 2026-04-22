@@ -1,4 +1,4 @@
-import type { ClothingItem } from '../types/clothing';
+import type { ClothingItem, SizeOption } from '../types/clothing';
 
 export const mockClothingItems: ClothingItem[] = [
   {
@@ -8,7 +8,8 @@ export const mockClothingItems: ClothingItem[] = [
     category: 'dress',
     imageUrl: 'https://placehold.co/400x500?text=Dress',
     price: 80,
-    availableSizes: ['S', 'M', 'L'],
+    isFavorite: false,
+    availableSizes: ['S', 'M', 'L'] as unknown as SizeOption[],
     sizeCharts: [
       { id: '1', itemId: '1', sizeLabel: 'S' },
       { id: '2', itemId: '1', sizeLabel: 'M' },
@@ -27,7 +28,8 @@ export const mockClothingItems: ClothingItem[] = [
     category: 'pants',
     imageUrl: 'https://placehold.co/400x500?text=Jeans',
     price: 50,
-    availableSizes: ['S', 'M', 'L'],
+    isFavorite: false,
+    availableSizes: ['S', 'M', 'L'] as unknown as SizeOption[],
     sizeCharts: [
       { id: '4', itemId: '2', sizeLabel: 'S' },
       { id: '5', itemId: '2', sizeLabel: 'M' },
@@ -46,7 +48,8 @@ export const mockClothingItems: ClothingItem[] = [
     category: 't_shirt',
     imageUrl: 'https://placehold.co/400x500?text=Sweater',
     price: 60,
-    availableSizes: ['S', 'M', 'L'],
+    isFavorite: false,
+    availableSizes: ['S', 'M', 'L'] as unknown as SizeOption[],
     sizeCharts: [
       { id: '7', itemId: '3', sizeLabel: 'S' },
       { id: '8', itemId: '3', sizeLabel: 'M' },

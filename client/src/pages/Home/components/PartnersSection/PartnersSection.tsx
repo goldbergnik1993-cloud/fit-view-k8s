@@ -17,9 +17,6 @@ export const PartnersSection = () => (
       <h2 id="partners-heading" className={styles['section__title']}>
         Our partners
       </h2>
-      <button className={styles['section__see-all']} aria-label="See all partners">
-        See all
-      </button>
     </div>
 
     <ul className={styles['items-grid']} role="list">
