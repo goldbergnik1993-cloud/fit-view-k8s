@@ -21,11 +21,7 @@ app = FastAPI(root_path="/api")
 
 FRONTEND_URL = settings.FRONTEND_URL
 
-origins = [
-    FRONTEND_URL,
-    "http://localhost:3000",
-    "http://localhost:8080"
-]
+origins = [FRONTEND_URL, "http://localhost:3000", "http://localhost:8080"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -49,14 +45,11 @@ async def hello():
 async def readiness_check(db: AsyncSession = Depends(get_db)):
     try:
         await db.execute(text("SELECT 1"))
-        return {
-            "status": "ready",
-            "database": "online"
-        }
+        return {"status": "ready", "database": "online"}
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Database connection failed or is unresponsive."
+            detail="Database connection failed or is unresponsive.",
         )
 
 

@@ -37,8 +37,9 @@ from utils.tokens import (
 
 env = Environment(loader=FileSystemLoader("templates"))
 
+
 async def user_create(
-        user: UserCreateSchema, db: AsyncSession, redis_client: Redis
+    user: UserCreateSchema, db: AsyncSession, redis_client: Redis
 ) -> UserRetrieveSchema:
     existing_user_stmt = select(UserModel).where(UserModel.email == user.email)
     existing_user = await db.scalar(existing_user_stmt)
@@ -63,7 +64,7 @@ async def user_create(
         first_name=user.first_name,
         last_name=user.last_name,
         phone_number=user.phone_number,
-        birth_date=user.birth_date
+        birth_date=user.birth_date,
     )
     db.add(new_profile)
 
@@ -74,7 +75,7 @@ async def user_create(
     await redis_client.setex(
         name=f"otp:{new_user.email}",
         time=settings.ACTIVATION_CODE_EXPIRE_MINUTES * 60,
-        value=activation_code
+        value=activation_code,
     )
 
     template = env.get_template("activation_email.html")
@@ -93,21 +94,18 @@ async def user_create(
 
 
 async def verify_email(
-        payload: EmailVerificationSchema,
-        db: AsyncSession,
-        redis_client: Redis
+    payload: EmailVerificationSchema, db: AsyncSession, redis_client: Redis
 ) -> MessageSchema:
     stored_code = await redis_client.get(f"otp:{payload.email}")
     if not stored_code or stored_code != payload.code:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid or expired activation code."
+            detail="Invalid or expired activation code.",
         )
     user = await get_user_by_email(email=payload.email, db=db)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Invalid code."
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid code."
         )
     user.is_active = True
     await db.commit()
@@ -129,9 +127,7 @@ async def user_login(payload: LoginSchema, db: AsyncSession):
             detail="Incorrect email or password",
         )
 
-    access_token = create_access_token(
-        data={"sub": str(user.id), "email": user.email}
-    )
+    access_token = create_access_token(data={"sub": str(user.id), "email": user.email})
 
     refresh_token = await create_refresh_token(db, user.id)
     await db.commit()

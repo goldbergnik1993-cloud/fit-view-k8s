@@ -2,15 +2,8 @@ import enum
 from datetime import datetime, date
 from typing import Optional, List
 
-from sqlalchemy import (
-    Integer,
-    String,
-    func,
-    DateTime,
-    Enum,
-    ForeignKey,
+from sqlalchemy import Integer, String, func, DateTime, Enum, ForeignKey, \
     Boolean, Date
-)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
@@ -31,18 +24,14 @@ class UserModel(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(
-        String(255), unique=True, index=True
-    )
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255))
 
     role: Mapped[UserRoleEnum] = mapped_column(
         Enum(UserRoleEnum), default=UserRoleEnum.BUYER
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=func.now(),
-        server_default=func.now()
+        DateTime(timezone=True), default=func.now(), server_default=func.now()
     )
     ab_group: Mapped[str] = mapped_column(String(1))
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -51,30 +40,22 @@ class UserModel(Base):
         "UserProfileModel",
         back_populates="user",
         uselist=False,
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
     refresh_tokens: Mapped[List["RefreshTokenModel"]] = relationship(
-        "RefreshTokenModel",
-        back_populates="user",
-        cascade="all, delete-orphan"
+        "RefreshTokenModel", back_populates="user", cascade="all, delete-orphan"
     )
     favorites: Mapped[List["FavoritesModel"]] = relationship(
-        "FavoritesModel",
-        back_populates="user",
-        cascade="all, delete-orphan"
+        "FavoritesModel", back_populates="user", cascade="all, delete-orphan"
     )
     events: Mapped[List["FitviewEventsModel"]] = relationship(
         "FitviewEventsModel", back_populates="user"
     )
     carts: Mapped["CartModel"] = relationship(
-        "CartModel",
-        back_populates="user",
-        cascade="all, delete-orphan"
+        "CartModel", back_populates="user", cascade="all, delete-orphan"
     )
     orders: Mapped["OrderModel"] = relationship(
-        "OrderModel",
-        back_populates="user",
-        cascade="all, delete-orphan"
+        "OrderModel", back_populates="user", cascade="all, delete-orphan"
     )
 
 
@@ -83,9 +64,7 @@ class UserProfileModel(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("users.id", ondelete="CASCADE"),
-        unique=True
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True
     )
     first_name: Mapped[str] = mapped_column(String(50))
     last_name: Mapped[str] = mapped_column(String(50))
@@ -117,13 +96,10 @@ class RefreshTokenModel(Base):
     __tablename__ = "refresh_tokens"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    token: Mapped[str] = mapped_column(
-        String(255), unique=True, nullable=False
-    )
+    token: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
 
     user: Mapped["UserModel"] = relationship(

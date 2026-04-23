@@ -199,10 +199,7 @@ async def toggle_favorite(db: AsyncSession, user_id: int, item_id: int) -> dict:
 
 
 async def fitting_room(
-        user: UserModel,
-        item_id: int,
-        payload: FittingRoomRequestSchema,
-        db: AsyncSession
+    user: UserModel, item_id: int, payload: FittingRoomRequestSchema, db: AsyncSession
 ) -> FittingRoomResponseSchema:
     item_stmt = (
         select(ItemsModel)
@@ -248,14 +245,20 @@ async def fitting_room(
             f"{', '.join(readable_missing)}.",
         )
     measurement = next(
-        (m for m in item_db.measurements if
-         m.size_label.upper() == payload.size_label.upper()),
-        None
+        (
+            m
+            for m in item_db.measurements
+            if m.size_label.upper() == payload.size_label.upper()
+        ),
+        None,
     )
     size_chart = next(
-        (s for s in item_db.size_charts if
-         s.size_label.upper() == payload.size_label.upper()),
-        None
+        (
+            s
+            for s in item_db.size_charts
+            if s.size_label.upper() == payload.size_label.upper()
+        ),
+        None,
     )
 
     if not measurement or not size_chart:
