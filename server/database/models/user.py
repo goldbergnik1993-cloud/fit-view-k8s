@@ -1,5 +1,5 @@
 import enum
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional, List
 
 from sqlalchemy import (
@@ -9,7 +9,7 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
-    Boolean
+    Boolean, Date
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -35,6 +35,7 @@ class UserModel(Base):
         String(255), unique=True, index=True
     )
     hashed_password: Mapped[str] = mapped_column(String(255))
+
     role: Mapped[UserRoleEnum] = mapped_column(
         Enum(UserRoleEnum), default=UserRoleEnum.BUYER
     )
@@ -86,15 +87,19 @@ class UserProfileModel(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         unique=True
     )
-    height_cm: Mapped[int] = mapped_column(Integer)
+    first_name: Mapped[str] = mapped_column(String(50))
+    last_name: Mapped[str] = mapped_column(String(50))
+    phone_number: Mapped[str] = mapped_column(String(50))
+    birth_date: Mapped[date] = mapped_column(Date, nullable=True)
+    height_cm: Mapped[int] = mapped_column(Integer, nullable=True)
     gender: Mapped[GenderEnum] = mapped_column(
         Enum(GenderEnum), default=GenderEnum.FEMALE
     )
-    leg_length_cm: Mapped[int] = mapped_column(Integer)
-    waist_length_cm: Mapped[int] = mapped_column(Integer)
-    hips_length_cm: Mapped[int] = mapped_column(Integer)
-    breast_length_cm: Mapped[int] = mapped_column(Integer)
-    shoulders_length_cm: Mapped[int] = mapped_column(Integer)
+    leg_length_cm: Mapped[int] = mapped_column(Integer, nullable=True)
+    waist_length_cm: Mapped[int] = mapped_column(Integer, nullable=True)
+    hips_length_cm: Mapped[int] = mapped_column(Integer, nullable=True)
+    breast_length_cm: Mapped[int] = mapped_column(Integer, nullable=True)
+    shoulders_length_cm: Mapped[int] = mapped_column(Integer, nullable=True)
 
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
