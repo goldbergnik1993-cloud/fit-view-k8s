@@ -12,6 +12,7 @@ import ChevronUpIcon from '../../../assets/icons/chevron-up.svg';
 import { SearchOverlay } from '../SearchOverlay/SearchOverlay';
 import { SearchBar } from '../SearchOverlay/SearchBar';
 import { useBreakpoint } from '../../../hooks/useBreakpoint';
+import { useAuth } from '../../../hooks/useAuth';
 
 const NAV_ITEMS = [
   { label: 'New', children: ['New for Man', 'New for Woman'] },
@@ -24,7 +25,11 @@ export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   const { isMobile } = useBreakpoint();
+  const { user } = useAuth();
+
+  const profileHref = user ? '/profile' : '/login';
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const closeMenu = () => {
@@ -125,7 +130,7 @@ export const Header = () => {
                 />
               </a>
               <a
-                href="/profile"
+                href={profileHref}
                 className={`${styles['header__icon-btn']} ${styles['header__icon-btn--desktop']}`}
                 aria-label="Profile"
               >
@@ -229,7 +234,7 @@ export const Header = () => {
                 />
               </a>
               <a
-                href="/profile"
+                href={profileHref}
                 className={`${styles['header__icon-btn']} ${styles['header__icon-btn--desktop']}`}
                 aria-label="Profile"
               >
@@ -385,7 +390,7 @@ export const Header = () => {
         <ul className={styles['mobile-nav__secondary']} role="list">
           <li>
             <a
-              href="/profile"
+              href={profileHref}
               className={styles['mobile-nav__secondary-link']}
               onClick={closeMenu}
             >

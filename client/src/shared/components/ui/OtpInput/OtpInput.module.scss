@@ -1,0 +1,47 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.wrapper {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+.cell {
+  flex: 1;
+  max-width: 65.75px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid $color-input-border;
+  @include text(20px, 500);
+  color: $color-text;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+  background: $color-white;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: #a8a8b2;
+  }
+  &:focus {
+    border-color: $color-primary;
+  }
+  &--error {
+    border-color: $color-error;
+    color: $color-error;
+  }
+  &--success {
+    border-color: $color-success;
+    color: $color-success;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

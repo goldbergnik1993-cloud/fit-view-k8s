@@ -7,6 +7,7 @@
 :root {
   --color-black: #{$color-black};
   --color-white: #{$color-white};
+  --color-text: #{$color-text};
   --color-card-bg: #{$color-card-bg};
   --color-btn-bg: #{$color-btn-bg};
   --font-family: #{$font-family};
@@ -56,7 +57,7 @@ img {
 
 body {
   font-family: $font-family;
-  color: $color-black;
+  color: $color-text;
   background-color: $color-white;
   -webkit-font-smoothing: antialiased;
 }

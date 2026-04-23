@@ -1,0 +1,36 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.label {
+  @include text(13px, 400);
+  color: $color-black;
+}
+
+.input {
+  width: 100%;
+  padding: 14px $spacing-16;
+  border-radius: 8px;
+  border: 1px solid $color-input-border;
+  @include text(14px, 400);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  background: $color-white;
+
+  &::placeholder { color: #AAAAAA; }
+  &:focus { border-color: $color-primary; }
+
+  &--error   { border-color: $color-error;   color: $color-error; }
+  &--success { border-color: $color-success; color: $color-success; }
+}
+
+.hint {
+  @include text(11px, 400);
+  color: $color-error;
+}

@@ -19,7 +19,7 @@
   font-size: $size;
   font-weight: $weight;
   line-height: $line-height;
-  color: $color-black;
+  color: $color-text;
 }
 
 // ─── Flex ─────────────────────────────────────────────────────────────────────
@@ -53,11 +53,11 @@
 
 @mixin btn-primary {
   background-color: $color-primary;
-  color: $color-white;
   border-radius: 8px;
   padding: $spacing-16;
   width: 100%;
   @include text(16px, 500);
+  color: $color-white;
   transition: background-color 0.2s ease;
 
   &:hover:not(:disabled)   { background-color: $color-primary-hover; }
