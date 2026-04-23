@@ -1,10 +1,7 @@
 from typing import List, Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import (
-    HTTPBearer,
-    HTTPAuthorizationCredentials
-)
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,39 +12,35 @@ from utils.tokens import decode_access_token
 security = HTTPBearer()
 optional_security = HTTPBearer(auto_error=False)
 
+
 async def get_current_user(
-        credentials: HTTPAuthorizationCredentials = Depends(security),
-        db: AsyncSession = Depends(get_db)
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_db),
 ):
     token = credentials.credentials
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials"
+            detail="Could not validate credentials",
         )
 
     user_id = payload.get("sub")
-    user_stmt = (
-        select(UserModel).where(UserModel.id == int(user_id))
-    )
+    user_stmt = select(UserModel).where(UserModel.id == int(user_id))
     result = await db.execute(user_stmt)
     user = result.scalar_one_or_none()
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
         )
 
     return user
 
 
 async def get_optional_current_user(
-        credentials: Optional[HTTPAuthorizationCredentials] = Depends(
-            optional_security
-        ),
-        db: AsyncSession = Depends(get_db)
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security),
+    db: AsyncSession = Depends(get_db),
 ) -> Optional[UserModel]:
     if not credentials:
         return None
@@ -67,10 +60,7 @@ async def get_optional_current_user(
     return result.scalar_one_or_none()
 
 
-async def get_user_by_email(
-        email: str,
-        db: AsyncSession
-) -> UserModel:
+async def get_user_by_email(email: str, db: AsyncSession) -> Optional[UserModel]:
     stmt = select(UserModel).where(UserModel.email == email)
     return await db.scalar(stmt)
 
@@ -83,6 +73,6 @@ class RoleChecker:
         if user.role not in self.allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have enough permissions to access this resource."
+                detail="You do not have enough permissions to access this resource.",
             )
         return user

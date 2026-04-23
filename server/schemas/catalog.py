@@ -51,22 +51,14 @@ class ItemFilterParams(BaseModel):
         None, description="Search by item's category"
     )
     name: Optional[str] = Field(None, description="Search by item's name")
-    size: Optional[str] = Field(
-        None, description="Search by item's size label"
-    )
-    gender: Optional[GenderEnum] = Field(
-        None, description="Search by item's gender"
-    )
-    min_price: Optional[Decimal] = Field(
-        None, description="Search by item's min price"
-    )
-    max_price: Optional[Decimal] = Field(
-        None, description="Search by item's max price"
-    )
+    size: Optional[str] = Field(None, description="Search by item's size label")
+    gender: Optional[GenderEnum] = Field(None, description="Search by item's gender")
+    min_price: Optional[Decimal] = Field(None, description="Search by item's min price")
+    max_price: Optional[Decimal] = Field(None, description="Search by item's max price")
     sort_by: str = Field(
-        "price_asc",
-        pattern="^(price_asc|price_desc)$",
-        description="Options: price_asc (default), price_desc"
+        "new",
+        pattern="^(price_asc|price_desc|new|popular)$",
+        description="Options: price_asc, price_desc, new (default), popular",
     )
 
 
@@ -89,10 +81,12 @@ class MeasurementListSchema(SizeMixin, BaseModel):
 class ItemDetailSchema(ItemBaseSchema):
     id: int
     description: Optional[str] = None
-    available_sizes: List[SizeChartListSchema] = Field(
-        validation_alias="size_charts")
+    available_sizes: List[SizeChartListSchema] = Field(validation_alias="size_charts")
     available_measurements: List[MeasurementListSchema] = Field(
-        validation_alias="measurements")
+        validation_alias="measurements"
+    )
+
+    mandatory_fields: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -105,8 +99,9 @@ class ToggleFavoriteSchema(BaseModel):
 
 # ============================ FITTING-ROOM ================================
 class FittingRoomRequestSchema(BaseModel):
-    measurement_id: int
-    size_chart_id: int
+    size_label: str = Field(
+        ..., min_length=1, max_length=4, description="e.g., 'M', 'L'"
+    )
     height_cm: Optional[int] = Field(None, ge=100, le=250)
     shoulders_length_cm: Optional[int] = Field(None, ge=30, le=60)
     breast_length_cm: Optional[int] = Field(None, ge=60, le=180)
@@ -203,19 +198,13 @@ class ItemUpdateSchema(BaseModel):
     category: Optional[ItemCategoryEnum] = Field(None)
     gender: Optional[GenderEnum] = Field(None)
     image_url: Optional[HttpUrl]
-    price: Optional[Decimal] = Field(
-        None, ge=0, max_digits=10, decimal_places=2
-    )
+    price: Optional[Decimal] = Field(None, ge=0, max_digits=10, decimal_places=2)
     description: Optional[str] = Field(None, min_length=1, max_length=255)
     reference_point: Optional[ItemRefPointEnum] = Field(None)
     ref_coefficient: Optional[float] = Field(None, gt=0, lt=1)
 
-    size_charts: Optional[List[SizeChartCreateSchema]] = Field(
-        default_factory=list
-    )
-    measurements: Optional[List[MeasurementCreateSchema]] = Field(
-        default_factory=list
-    )
+    size_charts: Optional[List[SizeChartCreateSchema]] = Field(default_factory=list)
+    measurements: Optional[List[MeasurementCreateSchema]] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 

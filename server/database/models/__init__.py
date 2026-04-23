@@ -1,16 +1,16 @@
 from .base import Base
 from .cart import CartModel, CartItemModel
-from .orders import OrderModel, OrderItemModel
-from .user import UserModel, UserProfileModel, RefreshTokenModel
 from .catalog import (
     ItemsModel,
     SizeChartModel,
     ItemMeasurementsModel,
     FavoritesModel,
-    BrandsModel
+    BrandsModel,
 )
 from .events import FitviewEventsModel
-
+from .orders import OrderModel, OrderItemModel
+from .payments import PaymentsModel
+from .user import UserModel, UserProfileModel, RefreshTokenModel
 
 __all__ = [
     "Base",
@@ -27,4 +27,5 @@ __all__ = [
     "CartItemModel",
     "OrderModel",
     "OrderItemModel",
+    "PaymentsModel",
 ]
