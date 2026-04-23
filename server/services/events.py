@@ -1,20 +1,19 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from database.models import UserModel
 from database.models.events import FitviewEventsModel, EventTypeEnum
 from schemas.events import FitViewEventCreateSchema
 
 
 async def log_fitview_event(
-        payload: FitViewEventCreateSchema,
-        user: UserModel,
-        db: AsyncSession
+    payload: FitViewEventCreateSchema, user: UserModel, db: AsyncSession
 ) -> None:
     if payload.event_type == EventTypeEnum.RESULT_SHOWN:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Result shown events are handled automatically by the "
-                   "calculation engine."
+            "calculation engine.",
         )
 
     new_event = FitviewEventsModel(
@@ -27,7 +26,7 @@ async def log_fitview_event(
         fit_breast=None,
         fit_waist=None,
         fit_hips=None,
-        ab_group=user.ab_group
+        ab_group=user.ab_group,
     )
 
     db.add(new_event)

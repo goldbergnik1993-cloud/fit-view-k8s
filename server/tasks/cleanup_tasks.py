@@ -1,6 +1,8 @@
 import asyncio
 from datetime import datetime, timezone, timedelta
+
 from sqlalchemy import delete, update
+
 from core.celery_app import celery_app
 from database.models import RefreshTokenModel, CartModel
 from database.models.cart import CartStatusEnum
@@ -11,8 +13,7 @@ async def _cleanup_logic():
     async with SessionLocal() as db:
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         await db.execute(
-            delete(RefreshTokenModel).where(
-                RefreshTokenModel.expires_at < now)
+            delete(RefreshTokenModel).where(RefreshTokenModel.expires_at < now)
         )
         await db.commit()
 
@@ -24,7 +25,7 @@ async def _change_cart_status_logic():
             update(CartModel)
             .where(
                 CartModel.created_at < now - timedelta(hours=24),
-                CartModel.status == CartStatusEnum.ACTIVE
+                CartModel.status == CartStatusEnum.ACTIVE,
             )
             .values(status=CartStatusEnum.ABANDONED)
         )

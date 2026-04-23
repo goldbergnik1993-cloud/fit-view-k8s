@@ -1,3 +1,9 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from database.models.user import UserModel
+    from database.models.events import FitviewEventsModel
+    from database.models.cart import CartItemModel
 import enum
 from datetime import datetime
 from decimal import Decimal
@@ -13,7 +19,8 @@ from sqlalchemy import (
     DateTime,
     func,
     DECIMAL,
-    UniqueConstraint, Text
+    UniqueConstraint,
+    Text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -43,18 +50,14 @@ class BrandsModel(Base):
     name: Mapped[String] = mapped_column(String(50), unique=True, index=True)
 
     items: Mapped[List["ItemsModel"]] = relationship(
-        "ItemsModel",
-        back_populates="brand",
-        cascade="all, delete-orphan"
+        "ItemsModel", back_populates="brand", cascade="all, delete-orphan"
     )
 
 
 class ItemsModel(Base):
     __tablename__ = "items"
     __table_args__ = (
-        UniqueConstraint(
-            "name", "brand_id", "category", name="uix_items"
-        ),
+        UniqueConstraint("name", "brand_id", "category", name="uix_items"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -67,57 +70,42 @@ class ItemsModel(Base):
         Enum(GenderEnum), index=True, default=GenderEnum.FEMALE
     )
     image_url: Mapped[str] = mapped_column(String(255), nullable=True)
-    price: Mapped[Decimal] = mapped_column(
-        DECIMAL(10, 2), default=Decimal("0.00")
-    )
+    price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), default=Decimal("0.00"))
     description: Mapped[str] = mapped_column(Text, nullable=True)
-    reference_point: Mapped[ItemRefPointEnum] = mapped_column(
-        Enum(ItemRefPointEnum)
-    )
+    reference_point: Mapped[ItemRefPointEnum] = mapped_column(Enum(ItemRefPointEnum))
     ref_coefficient: Mapped[float] = mapped_column(Float)
-
-    brand: Mapped["BrandsModel"] = relationship(
-        "BrandsModel", back_populates="items"
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=func.now(), server_default=func.now()
     )
+
+    brand: Mapped["BrandsModel"] = relationship("BrandsModel", back_populates="items")
     size_charts: Mapped[List["SizeChartModel"]] = relationship(
-        "SizeChartModel",
-        back_populates="item",
-        cascade="all, delete-orphan"
+        "SizeChartModel", back_populates="item", cascade="all, delete-orphan"
     )
     measurements: Mapped[List["ItemMeasurementsModel"]] = relationship(
-        "ItemMeasurementsModel",
-        back_populates="item",
-        cascade="all, delete-orphan"
+        "ItemMeasurementsModel", back_populates="item", cascade="all, delete-orphan"
     )
     favorites: Mapped[List["FavoritesModel"]] = relationship(
-        "FavoritesModel",
-        back_populates="item",
-        cascade="all, delete-orphan"
+        "FavoritesModel", back_populates="item", cascade="all, delete-orphan"
     )
     events: Mapped[List["FitviewEventsModel"]] = relationship(
         "FitviewEventsModel", back_populates="item"
     )
     cart_items: Mapped[List["CartItemModel"]] = relationship(
-        "CartItemModel",
-        back_populates="item",
-        cascade="all, delete-orphan"
+        "CartItemModel", back_populates="item", cascade="all, delete-orphan"
     )
 
 
 class SizeChartModel(Base):
     __tablename__ = "size_charts"
     __table_args__ = (
-        UniqueConstraint(
-            "item_id", "size_label", name="uix_item_size_chart"
-        ),
+        UniqueConstraint("item_id", "size_label", name="uix_item_size_chart"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
     item_id: Mapped[int] = mapped_column(
-        ForeignKey("items.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        ForeignKey("items.id", ondelete="CASCADE"), nullable=False, index=True
     )
     size_label: Mapped[str] = mapped_column(String(10))
 
@@ -142,9 +130,7 @@ class ItemMeasurementsModel(Base):
     __tablename__ = "item_measurements"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    item_id: Mapped[int] = mapped_column(
-        ForeignKey("items.id", ondelete="CASCADE")
-    )
+    item_id: Mapped[int] = mapped_column(ForeignKey("items.id", ondelete="CASCADE"))
     size_label: Mapped[str] = mapped_column(String(10))
     total_length_cm: Mapped[float] = mapped_column(Float)
     inseam_cm: Mapped[float] = mapped_column(Float)
@@ -159,28 +145,16 @@ class FavoritesModel(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     item_id: Mapped[int] = mapped_column(
-        ForeignKey("items.id", ondelete="CASCADE"),
-        nullable=False
+        ForeignKey("items.id", ondelete="CASCADE"), nullable=False
     )
-    used_fitview: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
-    converted: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
+    used_fitview: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    converted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=func.now(),
-        server_default=func.now()
+        DateTime(timezone=True), default=func.now(), server_default=func.now()
     )
 
-    user: Mapped["UserModel"] = relationship(
-        "UserModel", back_populates="favorites"
-    )
-    item: Mapped["ItemsModel"] = relationship(
-        "ItemsModel", back_populates="favorites"
-    )
+    user: Mapped["UserModel"] = relationship("UserModel", back_populates="favorites")
+    item: Mapped["ItemsModel"] = relationship("ItemsModel", back_populates="favorites")
