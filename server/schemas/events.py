@@ -1,5 +1,7 @@
 from typing import Optional
+
 from pydantic import BaseModel, Field, ConfigDict, model_validator
+
 from database.models.events import EventTypeEnum
 
 
@@ -12,11 +14,16 @@ class FitViewEventCreateSchema(BaseModel):
 
     @model_validator(mode="after")
     def enforce_analytics_rules(self) -> "FitViewEventCreateSchema":
-        if self.event_type == EventTypeEnum.WIDGET_SHOWN and self.height_used_cm is not None:
+        if (
+            self.event_type == EventTypeEnum.WIDGET_SHOWN
+            and self.height_used_cm is not None
+        ):
             self.height_used_cm = None
 
-        if self.event_type == EventTypeEnum.HEIGHT_ENTERED and self.height_used_cm is None:
-            raise ValueError(
-                "height_used_cm is required for the height_entered event.")
+        if (
+            self.event_type == EventTypeEnum.HEIGHT_ENTERED
+            and self.height_used_cm is None
+        ):
+            raise ValueError("height_used_cm is required for the height_entered event.")
 
         return self

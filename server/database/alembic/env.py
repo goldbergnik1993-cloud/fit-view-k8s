@@ -3,32 +3,19 @@ import sys
 from logging.config import fileConfig
 from pathlib import Path
 
+from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from alembic import context
-
-
 root_dir = Path(__file__).resolve().parents[2]
 sys.path.append(str(root_dir))
 
-from database.models.base import Base
-from database.models.user import (
-    UserModel,
-    UserProfileModel,
-    RefreshTokenModel
-) # noqa: F401
-from database.models.catalog import (
-    BrandsModel,
-    ItemsModel,
-    SizeChartModel,
-    ItemMeasurementsModel,
-    FavoritesModel
-) # noqa: F401
-from database.models.events import FitviewEventsModel # noqa: F401
-from database.models.cart import CartModel, CartItemModel # noqa: F401
-from database.models.orders import OrderModel, OrderItemModel # noqa: F401
+from database.models.base import Base  # noqa: E402
+from database.models.events import FitviewEventsModel  # noqa: E402, F401
+from database.models.cart import CartModel, CartItemModel  # noqa: E402, F401
+from database.models.orders import OrderModel, OrderItemModel  # noqa: E402, F401
+from database.models.payments import PaymentsModel  # noqa: E402, F401
 
 
 load_dotenv()
@@ -100,9 +87,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

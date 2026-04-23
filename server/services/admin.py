@@ -9,21 +9,21 @@ from schemas.orders import OrderStatusUpdateSchema
 
 
 async def change_user_role(
-        target_user: UserModel,
-        new_role: UserRoleEnum,
-        current_admin: UserModel,
-        db: AsyncSession
+    target_user: UserModel,
+    new_role: UserRoleEnum,
+    current_admin: UserModel,
+    db: AsyncSession,
 ) -> UserModel:
     if target_user.id == current_admin.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cannot modify your own administrative role."
+            detail="You cannot modify your own administrative role.",
         )
 
     if target_user.role == new_role:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User is already assigned to the '{new_role.value}' role."
+            detail=f"User is already assigned to the '{new_role.value}' role.",
         )
 
     target_user.role = new_role
@@ -35,24 +35,21 @@ async def change_user_role(
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while updating the user role."
+            detail="An error occurred while updating the user role.",
         )
 
     return target_user
 
 
 async def admin_update_order_status(
-        order_id: int,
-        payload: OrderStatusUpdateSchema,
-        db: AsyncSession
+    order_id: int, payload: OrderStatusUpdateSchema, db: AsyncSession
 ) -> OrderModel:
     stmt = select(OrderModel).where(OrderModel.id == order_id)
     order = await db.scalar(stmt)
 
     if not order:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Order not found."
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found."
         )
 
     try:
@@ -65,5 +62,5 @@ async def admin_update_order_status(
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to update order status."
+            detail="Failed to update order status.",
         )

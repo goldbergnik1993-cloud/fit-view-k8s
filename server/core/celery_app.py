@@ -1,5 +1,5 @@
-from celery import Celery
-from celery.schedules import crontab
+from celery import Celery  # type: ignore
+from celery.schedules import crontab  # type: ignore
 
 from core.settings import settings
 
@@ -9,7 +9,7 @@ celery_app = Celery(
     "fitview_worker",
     broker=redis_url,
     backend=redis_url,
-    include=["tasks.email_tasks", "tasks.cleanup_tasks"]
+    include=["tasks.email_tasks", "tasks.cleanup_tasks"],
 )
 
 celery_app.conf.update(

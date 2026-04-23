@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from database.models.orders import OrderStatusEnum
 from schemas.cart import ItemInCartSchema
+from schemas.payments import PaymentRetrieveSchema
 
 
 class DeliveryMethodEnum(str, enum.Enum):
@@ -15,35 +16,22 @@ class DeliveryMethodEnum(str, enum.Enum):
 
 
 class DeliveryInfoSchema(BaseModel):
-    first_name: str = Field(
-        ...,
-        min_length=3,
-        max_length=20,
-        description="First name",
-        example="John"
-    )
-    last_name: str = Field(
-        ...,
-        min_length=3,
-        max_length=20,
-        description="Last name",
-        example="Smith"
-    )
     country: str = Field(
-        ..., description="Two-letter country code", example="US"
+        ..., description="Two-letter country code", json_schema_extra={"example": "US"}
     )
-    city: str = Field(..., example="New York")
-    phone_number: str = Field(..., example="+12345678901")
+    city: str = Field(..., json_schema_extra={"example": "New York"})
     delivery_method: DeliveryMethodEnum
-    zip_code: Optional[str] = Field(None, example="NY 10011")
-    address_line: Optional[str] = Field(None, example="123 Main St, Apt 4B")
+    zip_code: Optional[str] = Field(None, json_schema_extra={"example": "NY 10011"})
+    address_line: Optional[str] = Field(
+        None, json_schema_extra={"example": "123 Main St, Apt 4B"}
+    )
     delivery_point_id: Optional[str] = Field(
         None,
         description="ID of the delivery service office or post machine",
-        example="NP-8492"
+        json_schema_extra={"example": "NP-8492"},
     )
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def validate_delivery_requirements(self) -> "DeliveryInfoSchema":
         if self.delivery_method == DeliveryMethodEnum.COURIER:
             if not self.zip_code or not self.address_line:
@@ -52,8 +40,9 @@ class DeliveryInfoSchema(BaseModel):
                 )
 
         elif self.delivery_method in (
-                DeliveryMethodEnum.POST_OFFICE,
-                DeliveryMethodEnum.POST_MACHINE):
+            DeliveryMethodEnum.POST_OFFICE,
+            DeliveryMethodEnum.PARCEL_LOCKER,
+        ):
             if not self.delivery_point_id:
                 raise ValueError(
                     f"{self.delivery_method.value} requires a 'delivery_point_id'."
@@ -72,6 +61,16 @@ class OrderCreateSchema(BaseModel):
     delivery_info: DeliveryInfoSchema
 
 
+class OrderBaseSchema(BaseModel):
+    id: int
+    user_id: Optional[int]
+    total_amount: float
+    status: OrderStatusEnum
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class OrderItemRetrieveSchema(BaseModel):
     id: int
     item_id: Optional[int]
@@ -84,16 +83,11 @@ class OrderItemRetrieveSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OrderRetrieveSchema(BaseModel):
-    id: int
-    user_id: Optional[int]
-    total_amount: float
-    status: OrderStatusEnum
+class OrderRetrieveSchema(OrderBaseSchema):
     delivery_info: DeliveryInfoSchema
-    created_at: datetime
     updated_at: datetime
-
     order_items: List[OrderItemRetrieveSchema]
+    payment: Optional[PaymentRetrieveSchema] = None
 
     model_config = ConfigDict(from_attributes=True)
 
