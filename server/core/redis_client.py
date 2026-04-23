@@ -1,6 +1,6 @@
 import redis.asyncio as redis
-from core.settings import settings
 
+from core.settings import settings
 
 redis_pool = redis.from_url(
     settings.REDIS_URL,
