@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.staticfiles import StaticFiles
 
 from api.admin import router as admin_router
+from api.auth import router as auth_router
 from api.cart import router as cart_router
 from api.catalog import router as catalog_router
 from api.events import router as event_router
@@ -60,6 +61,7 @@ async def readiness_check(db: AsyncSession = Depends(get_db)):
 
 
 app.include_router(admin_router)
+app.include_router(auth_router)
 app.include_router(cart_router)
 app.include_router(catalog_router)
 app.include_router(event_router)
