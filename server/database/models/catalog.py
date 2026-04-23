@@ -76,6 +76,11 @@ class ItemsModel(Base):
         Enum(ItemRefPointEnum)
     )
     ref_coefficient: Mapped[float] = mapped_column(Float)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=func.now(),
+        server_default=func.now()
+    )
 
     brand: Mapped["BrandsModel"] = relationship(
         "BrandsModel", back_populates="items"
