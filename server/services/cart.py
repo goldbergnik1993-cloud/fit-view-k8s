@@ -21,7 +21,7 @@ def _format_cart_response(cart: CartModel) -> dict:
             fav.user_id == cart.user_id for fav in cart_item.item.favorites
         )
 
-        cart_item.item.is_favorite = is_favorite
+        cart_item.item.is_favorite = is_favorite  # type: ignore
 
     return {
         "id": cart.id,

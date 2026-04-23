@@ -162,6 +162,11 @@ async def refresh_token_pair(payload: RefreshTokenRequest, db: AsyncSession):
     user_stmt = select(UserModel).where(UserModel.id == db_token.user_id)
     user_result = await db.execute(user_stmt)
     user = user_result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found"
+        )
 
     new_access_token = create_access_token(
         data={"sub": str(user.id), "email": user.email}

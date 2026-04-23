@@ -1,3 +1,7 @@
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from database.models.user import UserModel
+    from database.models.catalog import ItemsModel
 import enum
 from datetime import datetime
 

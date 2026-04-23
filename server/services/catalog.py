@@ -163,11 +163,13 @@ async def item_view(item_id: int, db: AsyncSession, user_id: int | None = None):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Item is not found",
         )
-    db_item.is_favorite = False
+    db_item.is_favorite = False  # type: ignore
     if user_id:
-        db_item.is_favorite = any(fav.user_id == user_id for fav in db_item.favorites)
+        db_item.is_favorite = any(  # type: ignore[attr-defined]
+            fav.user_id == user_id for fav in db_item.favorites
+        )
 
-    db_item.mandatory_fields = REQUIRED_FIELDS_BY_CATEGORY.get(
+    db_item.mandatory_fields = REQUIRED_FIELDS_BY_CATEGORY.get(  # type: ignore[attr-defined]
         db_item.category, ["height_cm"]
     )
 
@@ -182,7 +184,8 @@ async def toggle_favorite(db: AsyncSession, user_id: int, item_id: int) -> dict:
         )
 
     stmt = select(FavoritesModel).where(
-        FavoritesModel.user_id == user_id, FavoritesModel.item_id == item_id
+        FavoritesModel.user_id == user_id,
+        FavoritesModel.item_id == item_id
     )
     favorite = await db.scalar(stmt)
 
@@ -214,7 +217,9 @@ async def fitting_room(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
         )
-    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
+    profile_stmt = select(UserProfileModel).where(
+        UserProfileModel.user_id == user.id
+    )
     profile_db = await db.scalar(profile_stmt)
     active_body = {
         "gender": profile_db.gender if profile_db else "female",
@@ -231,8 +236,12 @@ async def fitting_room(
         "leg_length_cm": payload.leg_length_cm
         or (profile_db.leg_length_cm if profile_db else None),
     }
-    required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(item_db.category, ["height_cm"])
-    missing_fields = [field for field in required_fields if active_body[field] is None]
+    required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(
+        item_db.category, ["height_cm"]
+    )
+    missing_fields = [
+        field for field in required_fields if active_body[field] is None
+    ]
 
     if missing_fields:
         readable_missing = [
@@ -267,16 +276,17 @@ async def fitting_room(
             detail=f"Size '{payload.size_label}' is not available for this item.",
         )
 
+    user_height = float(active_body["height_cm"])  # type: ignore
+
     if item_db.category == ItemCategoryEnum.PANTS:
         h_end_cm = (
-            item_db.ref_coefficient * active_body["height_cm"] - measurement.inseam_cm
+            item_db.ref_coefficient * user_height - measurement.inseam_cm
         )
     else:
         h_end_cm = (
-            item_db.ref_coefficient * active_body["height_cm"]
-            - measurement.total_length_cm
+            item_db.ref_coefficient * user_height - measurement.total_length_cm
         )
-    line_position_pct = (h_end_cm / active_body["height_cm"]) * 100
+    line_position_pct = (h_end_cm / user_height) * 100
 
     def does_it_fit(
         user_val: int | None, min_val: float | None = None, max_val: float | None = None
@@ -290,22 +300,22 @@ async def fitting_room(
         return FitResultEnum.PERFECT
 
     hips_fit = does_it_fit(
-        user_val=active_body["hips_length_cm"],
+        user_val=active_body["hips_length_cm"],  # type: ignore
         min_val=size_chart.hips_min_cm,
         max_val=size_chart.hips_max_cm,
     )
     waist_fit = does_it_fit(
-        user_val=active_body["waist_length_cm"],
+        user_val=active_body["waist_length_cm"],  # type: ignore
         min_val=size_chart.waist_min_cm,
         max_val=size_chart.waist_max_cm,
     )
     breast_fit = does_it_fit(
-        user_val=active_body["breast_length_cm"],
+        user_val=active_body["breast_length_cm"],  # type: ignore
         min_val=size_chart.breast_min_cm,
         max_val=size_chart.breast_max_cm,
     )
     shoulders_fit = does_it_fit(
-        user_val=active_body["shoulders_length_cm"],
+        user_val=active_body["shoulders_length_cm"],  # type: ignore
         min_val=size_chart.shoulders_min_cm,
         max_val=size_chart.shoulders_max_cm,
     )
@@ -346,7 +356,7 @@ async def fitting_room(
             breast_fit=breast_fit,
             shoulders_fit=shoulders_fit,
         ),
-        user_body=UserBodySchema(**active_body),
+        user_body=UserBodySchema(**active_body),  # type: ignore
     )
 
 
@@ -411,7 +421,7 @@ async def item_create(payload: ItemCreateSchema, db: AsyncSession) -> ItemsModel
                 selectinload(ItemsModel.favorites),
             )
         )
-        return await db.scalar(stmt)
+        return await db.scalar(stmt)  # type: ignore
 
     except SQLAlchemyError:
         await db.rollback()
@@ -584,6 +594,11 @@ async def measurement_delete(item_id: int, measurement_id: int, db: AsyncSession
 
 
 async def upload_item_image_service(file: UploadFile) -> str:
+    if not file.content_type or not file.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file data."
+        )
     if not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -653,11 +668,17 @@ async def get_user_recommendations(
 
     for item in items:
         if user_id:
-            item.is_favorite = any(fav.user_id == user_id for fav in item.favorites)
+            item.is_favorite = any(  # type: ignore[attr-defined]
+                fav.user_id == user_id for fav in item.favorites
+            )
         else:
-            item.is_favorite = False
+            item.is_favorite = False  # type: ignore[attr-defined]
 
-        item.available_sizes = [size.size_label for size in item.size_charts]
-        item.available_measurements = [m.size_label for m in item.measurements]
+        item.available_sizes = [  # type: ignore[attr-defined]
+            size.size_label for size in item.size_charts
+        ]
+        item.available_measurements = [  # type: ignore[attr-defined]
+            m.size_label for m in item.measurements
+        ]
 
     return items

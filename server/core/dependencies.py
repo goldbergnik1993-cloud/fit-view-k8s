@@ -60,7 +60,9 @@ async def get_optional_current_user(
     return result.scalar_one_or_none()
 
 
-async def get_user_by_email(email: str, db: AsyncSession) -> UserModel:
+async def get_user_by_email(
+        email: str, db: AsyncSession
+) -> Optional[UserModel]:
     stmt = select(UserModel).where(UserModel.email == email)
     return await db.scalar(stmt)
 

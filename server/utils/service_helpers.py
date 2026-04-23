@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 async def generate_page_link(request: Request, page_number: int, per_page: int) -> str:
     params = dict(request.query_params)
-    params["page"] = page_number
-    params["per_page"] = per_page
+    params["page"] = page_number  # type: ignore
+    params["per_page"] = per_page  # type: ignore
 
     return f"{request.url.path}?{urlencode(params)}"
 

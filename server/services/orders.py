@@ -16,8 +16,13 @@ async def create_order_from_cart(
 ) -> OrderModel:
     stmt = (
         select(CartModel)
-        .where(CartModel.user_id == user_id, CartModel.status == CartStatusEnum.ACTIVE)
-        .options(selectinload(CartModel.cart_items).selectinload(CartItemModel.item))
+        .where(
+            CartModel.user_id == user_id,
+            CartModel.status == CartStatusEnum.ACTIVE
+        )
+        .options(
+            selectinload(CartModel.cart_items).selectinload(CartItemModel.item)
+        )
     )
     cart = await db.scalar(stmt)
 
@@ -101,7 +106,7 @@ async def get_user_orders(user_id: int, db: AsyncSession) -> list[OrderModel]:
                 is_favorite = any(
                     fav.user_id == user_id for fav in order_item.item.favorites
                 )
-                order_item.item.is_favorite = is_favorite
+                order_item.item.is_favorite = is_favorite  # type: ignore
 
     return orders
 
@@ -129,6 +134,6 @@ async def get_order_by_id(user_id: int, order_id: int, db: AsyncSession) -> Orde
             is_favorite = any(
                 fav.user_id == order.user_id for fav in order_item.item.favorites
             )
-            order_item.item.is_favorite = is_favorite
+            order_item.item.is_favorite = is_favorite  # type: ignore
 
     return order

@@ -20,7 +20,7 @@ async def get_user_profile(
     profile_stmt = select(UserProfileModel).where(
         UserProfileModel.user_id == user.id)
     profile = await db.scalar(profile_stmt)
-    profile.email = user.email
+    profile.email = user.email  # type: ignore
 
     return ProfileViewSchema.model_validate(profile)
 
@@ -58,6 +58,6 @@ async def profile_update(
             detail="Something went wrong while saving your profile. Try again later.",
         )
 
-    profile_db.email = new_email if new_email else user.email
+    profile_db.email = new_email if new_email else user.email  # type: ignore
 
     return ProfileViewSchema.model_validate(profile_db)
