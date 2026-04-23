@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from database.models.user import UserModel
     from database.models.catalog import ItemsModel
@@ -28,37 +29,19 @@ class FitviewEventsModel(Base):
     __tablename__ = "fitview_events"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL")
-    )
-    item_id: Mapped[int] = mapped_column(
-        ForeignKey("items.id", ondelete="SET NULL")
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    item_id: Mapped[int] = mapped_column(ForeignKey("items.id", ondelete="SET NULL"))
     event_type: Mapped[EventTypeEnum] = mapped_column(Enum(EventTypeEnum))
     height_used_cm: Mapped[Optional[float]] = mapped_column(Float)
     result_end_cm: Mapped[Optional[float]] = mapped_column(Float)
-    fit_shoulders: Mapped[Optional[FitResultEnum]] = mapped_column(
-        Enum(FitResultEnum)
-    )
-    fit_breast: Mapped[Optional[FitResultEnum]] = mapped_column(
-        Enum(FitResultEnum)
-    )
-    fit_waist: Mapped[Optional[FitResultEnum]] = mapped_column(
-        Enum(FitResultEnum)
-    )
-    fit_hips: Mapped[Optional[FitResultEnum]] = mapped_column(
-        Enum(FitResultEnum)
-    )
+    fit_shoulders: Mapped[Optional[FitResultEnum]] = mapped_column(Enum(FitResultEnum))
+    fit_breast: Mapped[Optional[FitResultEnum]] = mapped_column(Enum(FitResultEnum))
+    fit_waist: Mapped[Optional[FitResultEnum]] = mapped_column(Enum(FitResultEnum))
+    fit_hips: Mapped[Optional[FitResultEnum]] = mapped_column(Enum(FitResultEnum))
     ab_group: Mapped[str] = mapped_column(String(1))
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=func.now(),
-        server_default=func.now()
+        DateTime(timezone=True), default=func.now(), server_default=func.now()
     )
 
-    user: Mapped["UserModel"] = relationship(
-        "UserModel", back_populates="events"
-    )
-    item: Mapped["ItemsModel"] = relationship(
-        "ItemsModel", back_populates="events"
-    )
+    user: Mapped["UserModel"] = relationship("UserModel", back_populates="events")
+    item: Mapped["ItemsModel"] = relationship("ItemsModel", back_populates="events")

@@ -9,7 +9,7 @@ celery_app = Celery(
     "fitview_worker",
     broker=redis_url,
     backend=redis_url,
-    include=["tasks.email_tasks", "tasks.cleanup_tasks"]
+    include=["tasks.email_tasks", "tasks.cleanup_tasks"],
 )
 
 celery_app.conf.update(

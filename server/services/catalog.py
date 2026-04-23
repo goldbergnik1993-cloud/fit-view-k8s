@@ -184,8 +184,7 @@ async def toggle_favorite(db: AsyncSession, user_id: int, item_id: int) -> dict:
         )
 
     stmt = select(FavoritesModel).where(
-        FavoritesModel.user_id == user_id,
-        FavoritesModel.item_id == item_id
+        FavoritesModel.user_id == user_id, FavoritesModel.item_id == item_id
     )
     favorite = await db.scalar(stmt)
 
@@ -217,9 +216,7 @@ async def fitting_room(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
         )
-    profile_stmt = select(UserProfileModel).where(
-        UserProfileModel.user_id == user.id
-    )
+    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
     active_body = {
         "gender": profile_db.gender if profile_db else "female",
@@ -236,12 +233,8 @@ async def fitting_room(
         "leg_length_cm": payload.leg_length_cm
         or (profile_db.leg_length_cm if profile_db else None),
     }
-    required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(
-        item_db.category, ["height_cm"]
-    )
-    missing_fields = [
-        field for field in required_fields if active_body[field] is None
-    ]
+    required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(item_db.category, ["height_cm"])
+    missing_fields = [field for field in required_fields if active_body[field] is None]
 
     if missing_fields:
         readable_missing = [
@@ -279,13 +272,9 @@ async def fitting_room(
     user_height = float(active_body["height_cm"])  # type: ignore
 
     if item_db.category == ItemCategoryEnum.PANTS:
-        h_end_cm = (
-            item_db.ref_coefficient * user_height - measurement.inseam_cm
-        )
+        h_end_cm = item_db.ref_coefficient * user_height - measurement.inseam_cm
     else:
-        h_end_cm = (
-            item_db.ref_coefficient * user_height - measurement.total_length_cm
-        )
+        h_end_cm = item_db.ref_coefficient * user_height - measurement.total_length_cm
     line_position_pct = (h_end_cm / user_height) * 100
 
     def does_it_fit(
@@ -596,8 +585,7 @@ async def measurement_delete(item_id: int, measurement_id: int, db: AsyncSession
 async def upload_item_image_service(file: UploadFile) -> str:
     if not file.content_type or not file.filename:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid file data."
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file data."
         )
     if not file.content_type.startswith("image/"):
         raise HTTPException(

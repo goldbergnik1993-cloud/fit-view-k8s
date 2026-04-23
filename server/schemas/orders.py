@@ -16,8 +16,7 @@ class DeliveryMethodEnum(str, enum.Enum):
 
 class DeliveryInfoSchema(BaseModel):
     country: str = Field(
-        ..., description="Two-letter country code",
-        json_schema_extra={"example": "US"}
+        ..., description="Two-letter country code", json_schema_extra={"example": "US"}
     )
     city: str = Field(..., json_schema_extra={"example": "New York"})
     delivery_method: DeliveryMethodEnum
@@ -28,10 +27,10 @@ class DeliveryInfoSchema(BaseModel):
     delivery_point_id: Optional[str] = Field(
         None,
         description="ID of the delivery service office or post machine",
-        json_schema_extra={"example": "NP-8492"}
+        json_schema_extra={"example": "NP-8492"},
     )
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def validate_delivery_requirements(self) -> "DeliveryInfoSchema":
         if self.delivery_method == DeliveryMethodEnum.COURIER:
             if not self.zip_code or not self.address_line:
@@ -40,8 +39,9 @@ class DeliveryInfoSchema(BaseModel):
                 )
 
         elif self.delivery_method in (
-                DeliveryMethodEnum.POST_OFFICE,
-                DeliveryMethodEnum.PARCEL_LOCKER):
+            DeliveryMethodEnum.POST_OFFICE,
+            DeliveryMethodEnum.PARCEL_LOCKER,
+        ):
             if not self.delivery_point_id:
                 raise ValueError(
                     f"{self.delivery_method.value} requires a 'delivery_point_id'."

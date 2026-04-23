@@ -16,13 +16,8 @@ async def create_order_from_cart(
 ) -> OrderModel:
     stmt = (
         select(CartModel)
-        .where(
-            CartModel.user_id == user_id,
-            CartModel.status == CartStatusEnum.ACTIVE
-        )
-        .options(
-            selectinload(CartModel.cart_items).selectinload(CartItemModel.item)
-        )
+        .where(CartModel.user_id == user_id, CartModel.status == CartStatusEnum.ACTIVE)
+        .options(selectinload(CartModel.cart_items).selectinload(CartItemModel.item))
     )
     cart = await db.scalar(stmt)
 

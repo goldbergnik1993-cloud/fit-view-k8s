@@ -5,7 +5,7 @@ from .catalog import (
     SizeChartModel,
     ItemMeasurementsModel,
     FavoritesModel,
-    BrandsModel
+    BrandsModel,
 )
 from .events import FitviewEventsModel
 from .orders import OrderModel, OrderItemModel

@@ -18,19 +18,19 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/profile", response_model=ProfileViewSchema)
 async def my_profile(
-        db: AsyncSession = Depends(get_db),
-        current_user: UserModel = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return await get_user_profile(db=db, user=current_user)
 
 
 @router.get("/favorites", response_model=ItemsListSchema)
 async def list_favorites(
-        request: Request,
-        db: AsyncSession = Depends(get_db),
-        params: ItemFilterParams = Depends(),
-        brands: Optional[List[int]] = Query(None),
-        current_user: UserModel = Depends(get_current_user)
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    params: ItemFilterParams = Depends(),
+    brands: Optional[List[int]] = Query(None),
+    current_user: UserModel = Depends(get_current_user),
 ):
     filters = params.model_dump(
         exclude={"page", "per_page", "sort_by"}, exclude_none=True
@@ -46,14 +46,14 @@ async def list_favorites(
         per_page=params.per_page,
         sort_by=params.sort_by,
         user_id=current_user.id,
-        only_favorites=True
+        only_favorites=True,
     )
 
 
 @router.patch("/profile", response_model=ProfileViewSchema)
 async def update_profile(
-        payload: ProfileUpdateSchema,
-        current_user: UserModel = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db)
+    payload: ProfileUpdateSchema,
+    current_user: UserModel = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     return await profile_update(payload=payload, user=current_user, db=db)
