@@ -5,6 +5,7 @@ if TYPE_CHECKING:
     from database.models.catalog import FavoritesModel
     from database.models.events import FitviewEventsModel
     from database.models.orders import OrderModel
+    from database.models.payments import PaymentsModel
 import enum
 from datetime import datetime, date
 from typing import Optional, List
@@ -62,6 +63,9 @@ class UserModel(Base):
     )
     orders: Mapped["OrderModel"] = relationship(
         "OrderModel", back_populates="user", cascade="all, delete-orphan"
+    )
+    payments: Mapped[List["PaymentsModel"]] = relationship(
+        "PaymentsModel", back_populates="user"
     )
 
 

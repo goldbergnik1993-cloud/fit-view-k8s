@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from database.models.user import UserModel
     from database.models.catalog import ItemsModel
+    from database.models.payments import PaymentsModel
 import enum
 from datetime import datetime
 from typing import Optional
@@ -47,6 +48,9 @@ class OrderModel(Base):
     )
     order_items: Mapped[list["OrderItemModel"]] = relationship(
         "OrderItemModel", back_populates="order", cascade="all, delete-orphan"
+    )
+    payment: Mapped[Optional["PaymentsModel"]] = relationship(
+        "PaymentsModel", back_populates="order"
     )
 
 
