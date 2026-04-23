@@ -1,15 +1,43 @@
 import re
-from typing import Optional
+from datetime import date
+from typing import Optional, Annotated
 
-from pydantic import BaseModel, EmailStr, ConfigDict, field_validator, Field
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    ConfigDict,
+    field_validator,
+    Field,
+    AfterValidator
+)
 
 from database.models.user import GenderEnum
 from schemas.base import PaginatedResponse
 from schemas.catalog import ItemListItemSchema
 
 
-class UserBaseSchema(BaseModel):
-    email: EmailStr
+def validate_age_limit(value: Optional[date]) -> Optional[date]:
+    if value is None:
+        return value
+
+    today = date.today()
+    try:
+        min_age_date = today.replace(year=today.year - 14)
+        max_age_date = today.replace(year=today.year - 100)
+    except ValueError:
+        min_age_date = today.replace(year=today.year - 14, month=2, day=28)
+        max_age_date = today.replace(year=today.year - 100, month=2, day=28)
+
+    if value > min_age_date:
+        raise ValueError("User must be at least 14 years old.")
+    if value < max_age_date:
+        raise ValueError("User cannot be older than 100 years.")
+
+    return value
+
+
+AgeValidatedDate = Annotated[
+    Optional[date], AfterValidator(validate_age_limit)]
 
 
 class PasswordMixin:
@@ -23,22 +51,11 @@ class PasswordMixin:
         if not re.search(r"[A-Z]", v):
             raise ValueError(
                 "Password must contain at least one uppercase letter.")
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
-            raise ValueError(
-                "Password must contain at least one special character.")
         return v
 
 
-class UserCreateSchema(PasswordMixin, UserBaseSchema):
-    pass
-
-
-class UserRetrieveSchema(UserBaseSchema):
-    id: int
-    role: str
-    ab_group: str
-
-    model_config = ConfigDict(from_attributes=True)
+class UserBaseSchema(BaseModel):
+    email: EmailStr
 
 
 class LoginSchema(UserBaseSchema):
@@ -59,28 +76,29 @@ class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
 
-class ProfileBaseSchema(BaseModel):
-    height_cm: int = Field(..., ge=100, le=250)
-    gender: Optional[GenderEnum] = Field("female")
-    shoulders_length_cm: int = Field(..., ge=30, le=60)
-    breast_length_cm: int = Field(..., ge=60, le=180)
-    waist_length_cm: int = Field(..., ge=40, le=150)
-    hips_length_cm: int = Field(..., ge=60, le=180)
-    leg_length_cm: int = Field(..., ge=50, le=120)
+class UserCreateSchema(PasswordMixin, UserBaseSchema):
+    first_name: str = Field(..., min_length=2, max_length=50)
+    last_name: str = Field(..., min_length=2, max_length=50)
+    phone_number: str = Field(..., min_length=5, max_length=50)
+    birth_date: AgeValidatedDate = Field(None)
 
 
-class ProfileViewSchema(ProfileBaseSchema):
+class UserRetrieveSchema(UserBaseSchema):
     id: int
-    user_id: int
+    role: str
+    ab_group: str
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class FavoritesListSchema(PaginatedResponse[ItemListItemSchema]):
-    pass
+class ProfileUpdateSchema(PasswordMixin, BaseModel):
+    first_name: Optional[str] = Field(None, min_length=2, max_length=50)
+    last_name: Optional[str] = Field(None, min_length=2, max_length=50)
+    phone_number: Optional[str] = Field(None, min_length=5, max_length=50)
+    birth_date: AgeValidatedDate = Field(None)
+    email: Optional[EmailStr] = Field(None)
+    password: Optional[str] = Field(None, min_length=8, max_length=100)
 
-
-class ProfileUpdateSchema(BaseModel):
     height_cm: Optional[int] = Field(None, ge=100, le=250)
     gender: Optional[GenderEnum] = Field(None)
     shoulders_length_cm: Optional[int] = Field(None, ge=30, le=60)
@@ -90,5 +108,33 @@ class ProfileUpdateSchema(BaseModel):
     leg_length_cm: Optional[int] = Field(None, ge=50, le=120)
 
 
+class ProfileViewSchema(BaseModel):
+    id: int
+    user_id: int
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: str
+    birth_date: Optional[date]
+    height_cm: Optional[int]
+    gender: Optional[GenderEnum]
+    shoulders_length_cm: Optional[int]
+    breast_length_cm: Optional[int]
+    waist_length_cm: Optional[int]
+    hips_length_cm: Optional[int]
+    leg_length_cm: Optional[int]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class FavoritesListSchema(PaginatedResponse[ItemListItemSchema]):
+    pass
+
+
 class MessageSchema(BaseModel):
     message: str
+
+
+class EmailVerificationSchema(BaseModel):
+    email: str
+    code: str
