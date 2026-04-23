@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from database.models.orders import OrderStatusEnum
 from schemas.cart import ItemInCartSchema
+from schemas.payments import PaymentRetrieveSchema
 
 
 class DeliveryMethodEnum(str, enum.Enum):
@@ -86,6 +87,7 @@ class OrderRetrieveSchema(OrderBaseSchema):
     delivery_info: DeliveryInfoSchema
     updated_at: datetime
     order_items: List[OrderItemRetrieveSchema]
+    payment: Optional[PaymentRetrieveSchema] = None
 
     model_config = ConfigDict(from_attributes=True)
 
