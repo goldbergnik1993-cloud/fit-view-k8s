@@ -16,7 +16,7 @@ from api.user import router as user_router
 from core.settings import settings
 from database.session_postgresql import get_db
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 
 FRONTEND_URL = settings.FRONTEND_URL

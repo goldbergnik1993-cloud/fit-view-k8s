@@ -73,7 +73,7 @@ async def user_create(
     activation_code = f"{randint(0, 9999):04d}"
     await redis_client.setex(
         name=f"otp:{new_user.email}",
-        time=settings.ACTIVATION_TOKEN_EXPIRE_HOURS * 3600,
+        time=settings.ACTIVATION_CODE_EXPIRE_MINUTES * 60,
         value=activation_code
     )
 
@@ -81,7 +81,7 @@ async def user_create(
     html_content = template.render(
         verification_code=str(activation_code),
         activation_url=f"{settings.FRONTEND_URL}/auth/verify",
-        expires_in=settings.ACTIVATION_TOKEN_EXPIRE_HOURS * 60,
+        expires_in=settings.ACTIVATION_CODE_EXPIRE_MINUTES,
     )
     send_email.delay(
         email=user.email,

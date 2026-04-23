@@ -62,7 +62,7 @@ def decode_access_token(token: str):
 
 def create_token(email: str, purpose: str) -> str:
     expire = datetime.now(UTC) + timedelta(
-        hours=settings.ACTIVATION_TOKEN_EXPIRE_HOURS
+        hours=settings.ACTIVATION_CODE_EXPIRE_MINUTES
     )
     to_encode = {
         "sub": email,
