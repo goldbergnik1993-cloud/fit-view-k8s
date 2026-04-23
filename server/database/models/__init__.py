@@ -9,6 +9,7 @@ from .catalog import (
 )
 from .events import FitviewEventsModel
 from .orders import OrderModel, OrderItemModel
+from .payments import PaymentsModel
 from .user import UserModel, UserProfileModel, RefreshTokenModel
 
 __all__ = [
@@ -26,4 +27,5 @@ __all__ = [
     "CartItemModel",
     "OrderModel",
     "OrderItemModel",
+    "PaymentsModel",
 ]

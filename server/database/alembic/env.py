@@ -15,6 +15,7 @@ from database.models.base import Base  # noqa: E402
 from database.models.events import FitviewEventsModel  # noqa: E402, F401
 from database.models.cart import CartModel, CartItemModel  # noqa: E402, F401
 from database.models.orders import OrderModel, OrderItemModel  # noqa: E402, F401
+from database.models.payments import PaymentsModel  # noqa: E402, F401
 
 
 load_dotenv()
