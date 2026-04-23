@@ -3,8 +3,8 @@ from datetime import datetime, timezone, timedelta, UTC
 from typing import Optional
 
 from fastapi import HTTPException, status
-from jose import jwt, JWTError
-from passlib.context import CryptContext
+from jose import jwt, JWTError  # type: ignore
+from passlib.context import CryptContext  # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import settings

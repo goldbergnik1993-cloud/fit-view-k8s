@@ -25,7 +25,7 @@ async def change_user_status(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(allow_admin_only),
 ):
-    user_db = await get_user_by_email(payload.email, db=db)
+    user_db = await get_user_by_email(payload.user_email, db=db)
     if not user_db:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
