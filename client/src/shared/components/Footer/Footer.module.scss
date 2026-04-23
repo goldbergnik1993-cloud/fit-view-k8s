@@ -12,6 +12,11 @@
   box-sizing: border-box;
 }
 
+.footer__text {
+  @include text(16px, 500);
+  margin: 0;
+}
+
 .footer__logo {
   @include flex-center;
   @include hover-opacity;
@@ -29,14 +34,23 @@
 .footer__links {
   display: flex;
   gap: $spacing-16;
+
+  a {
+    @include text(12px, 400);
+    color: #888;
+    @include hover-opacity;
+  }
 }
+
 
 .footer__link {
   @include text(12px, 400);
+  color: #888;
   @include hover-opacity;
 }
 
 .footer__contact {
   @include text(12px, 400);
+  color: #888;
   margin: 0;
 }

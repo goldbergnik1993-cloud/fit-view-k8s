@@ -1,30 +1,244 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { Header } from '../../shared/components/Header/Header';
+import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
+import { TextInput } from '../../shared/components/ui/TextInput/TextInput';
+import { PasswordInput } from '../../shared/components/ui/PasswordInput/PasswordInput';
+import { OtpInput } from '../../shared/components/ui/OtpInput/OtpInput';
+import ArrowLeftIcon from '../../assets/icons/arrow-left.svg';
+import styles from './Login.module.scss';
+import GoogleIcon from '../../assets/icons/google.svg';
+import XIcon from '../../assets/icons/x.svg';
+import AppleIcon from '../../assets/icons/apple.svg';
+import { Footer } from '../../shared/components/Footer/Footer';
 
-type Mode = 'login' | 'signup';
+type Tab = 'signup' | 'signin';
+type SignupStep = 1 | 2 | 3;
 
-const Login = () => {
+const RESEND_TIMEOUT = 60;
+
+export const Login = () => {
   const navigate = useNavigate();
   const { login, signup } = useAuth();
 
-  const [mode, setMode] = useState<Mode>('login');
+  const [tab, setTab] = useState<Tab>('signup');
+
+  // Sign Up fields
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [birthday, setBirthday] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [otp, setOtp] = useState<string[]>(['', '', '', '']);
+  const [step, setStep] = useState<SignupStep>(1);
+
+  // Sign In fields
+  const [signInEmail, setSignInEmail] = useState('');
+  const [signInPassword, setSignInPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // UI state
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(RESEND_TIMEOUT);
+  const [canResend, setCanResend] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // ─── Validation state ─────────────────────────────────────────────────────────
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [firstNameError, setFirstNameError] = useState<string | null>(null);
+  const [firstNameSuccess, setFirstNameSuccess] = useState(false);
+  const [lastNameError, setLastNameError] = useState<string | null>(null);
+  const [lastNameSuccess, setLastNameSuccess] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [phoneSuccess, setPhoneSuccess] = useState(false);
+
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<
+    string | null
+  >(null);
+  const [confirmPasswordSuccess, setConfirmPasswordSuccess] = useState(false);
+
+  const [otpError, setOtpError] = useState(false);
+  const [otpSuccess, setOtpSuccess] = useState(false);
+
+  // ─── Validators ───────────────────────────────────────────────────────────────
+  const validateEmail = (val: string) => {
+    if (!val) {
+      setEmailError('Email is required');
+      setEmailSuccess(false);
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+      setEmailError('Invalid email');
+      setEmailSuccess(false);
+    } else {
+      setEmailError(null);
+      setEmailSuccess(true);
+    }
+  };
+
+  const validateFirstName = (val: string) => {
+    if (!val.trim()) {
+      setFirstNameError('First name is required');
+      setFirstNameSuccess(false);
+    } else {
+      setFirstNameError(null);
+      setFirstNameSuccess(true);
+    }
+  };
+
+  const validateLastName = (val: string) => {
+    if (!val.trim()) {
+      setLastNameError('Last name is required');
+      setLastNameSuccess(false);
+    } else {
+      setLastNameError(null);
+      setLastNameSuccess(true);
+    }
+  };
+
+  const validatePhone = (val: string) => {
+    if (!val.trim()) {
+      setPhoneError('Phone is required');
+      setPhoneSuccess(false);
+    } else if (!/^\+?[\d\s-]{7,}$/.test(val)) {
+      setPhoneError('Invalid phone number');
+      setPhoneSuccess(false);
+    } else {
+      setPhoneError(null);
+      setPhoneSuccess(true);
+    }
+  };
+
+  const validatePassword = (val: string) => {
+    if (val.length < 8) {
+      setPasswordError('Minimum 8 characters');
+      setPasswordSuccess(false);
+    } else if (!/[A-Z]/.test(val)) {
+      setPasswordError('At least one upper case letter');
+      setPasswordSuccess(false);
+    } else if (!/\d/.test(val)) {
+      setPasswordError('At least one number');
+      setPasswordSuccess(false);
+    } else {
+      setPasswordError(null);
+      setPasswordSuccess(true);
+    }
+  };
+
+  const validateConfirmPassword = (val: string) => {
+    if (!val) {
+      setConfirmPasswordError('Please confirm password');
+      setConfirmPasswordSuccess(false);
+    } else if (val !== password) {
+      setConfirmPasswordError('Passwords do not match');
+      setConfirmPasswordSuccess(false);
+    } else {
+      setConfirmPasswordError(null);
+      setConfirmPasswordSuccess(true);
+    }
+  };
+
+  // Countdown timer for OTP
+  useEffect(() => {
+    if (step !== 3) return;
+    setCountdown(RESEND_TIMEOUT);
+    setCanResend(false);
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [step]);
+
+  const handleResend = () => {
+    if (!canResend) return;
+    setCountdown(RESEND_TIMEOUT);
+    setCanResend(false);
+    setOtp(['', '', '', '']);
+    // TODO: вызов API resend когда будет готов бэкенд
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleSignupStep1 = () => {
+    validateEmail(email);
+    validateFirstName(firstName);
+    validateLastName(lastName);
+    validatePhone(phone);
+
+    if (
+      !emailError &&
+      emailSuccess &&
+      !firstNameError &&
+      firstNameSuccess &&
+      !lastNameError &&
+      lastNameSuccess &&
+      !phoneError &&
+      phoneSuccess
+    ) {
+      setError(null);
+      setStep(2);
+    }
+  };
+
+  const handleSignupStep2 = async () => {
+    validatePassword(password);
+    validateConfirmPassword(confirmPassword);
+
+    if (
+      !passwordError &&
+      passwordSuccess &&
+      !confirmPasswordError &&
+      confirmPasswordSuccess
+    ) {
+      setLoading(true);
+      try {
+        // await signup(email, password);
+        setStep(3);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleOtpConfirm = () => {
+    const code = otp.join('');
+    if (code.length < 4) {
+      setOtpError(true);
+      return;
+    }
+    // TODO: API confirm — когда бэкенд готов проверяем код
+    // если ошибка: setOtpError(true); setOtpSuccess(false);
+    // если успех:
+    setOtpError(false);
+    setOtpSuccess(true);
+    navigate('/profile');
+  };
+
+  const handleSignIn = async () => {
     setError(null);
     setLoading(true);
     try {
-      if (mode === 'login') {
-        await login(email, password);
-      } else {
-        await signup(email, password);
-      }
-      navigate('/catalog');
+      await login(signInEmail, signInPassword);
+      navigate('/profile');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
@@ -32,139 +246,391 @@ const Login = () => {
     }
   };
 
+  const switchTab = (t: Tab) => {
+    setTab(t);
+    setError(null);
+    setStep(1);
+  };
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#f9f9f9',
-    }}>
-      <div style={{
-        background: 'white',
-        borderRadius: '16px',
-        padding: '40px',
-        width: '100%',
-        maxWidth: '400px',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-      }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: '24px' }}>
-          {mode === 'login' ? 'Welcome back' : 'Create account'}
-        </h2>
-        <p style={{ color: '#888', margin: '0 0 28px', fontSize: '14px' }}>
-          {mode === 'login' ? 'Sign in to FitView' : 'Join FitView today'}
-        </p>
+    <>
+      <Header />
+      <main className={styles.page}>
+        <div className={styles.card}>
+          {/* ── Sign Up Step 1 ── */}
+          {tab === 'signup' && step === 1 && (
+            <>
+              <div className={styles.card__heading}>
+                <h1 className={styles.card__title}>Let's Get Started!</h1>
+                <p className={styles.card__subtitle}>
+                  Create your account at seconds on FitView
+                </p>
+              </div>
 
-        {/* Toggle */}
-        <div style={{
-          display: 'flex',
-          background: '#f0f0f0',
-          borderRadius: '8px',
-          padding: '4px',
-          marginBottom: '24px',
-        }}>
-          {(['login', 'signup'] as Mode[]).map(m => (
-            <button
-              key={m}
-              onClick={() => { setMode(m); setError(null); }}
-              style={{
-                flex: 1,
-                padding: '8px',
-                borderRadius: '6px',
-                border: 'none',
-                background: mode === m ? 'white' : 'transparent',
-                fontWeight: mode === m ? 600 : 400,
-                color: mode === m ? '#534AB7' : '#888',
-                cursor: 'pointer',
-                boxShadow: mode === m ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
-                transition: 'all 0.2s',
-              }}
-            >
-              {m === 'login' ? 'Log In' : 'Sign Up'}
-            </button>
-          ))}
-        </div>
+              <div className={styles.tabs}>
+                <button
+                  className={`${styles.tab} ${styles['tab--active']}`}
+                  onClick={() => switchTab('signup')}
+                >
+                  Sign Up
+                </button>
+                <button
+                  className={styles.tab}
+                  onClick={() => switchTab('signin')}
+                >
+                  Sign In
+                </button>
+              </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              placeholder="you@example.com"
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                borderRadius: '8px',
-                border: '1px solid #e0e0e0',
-                fontSize: '14px',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
+              <div className={styles.card__fields}>
+                <TextInput
+                  label="Email *"
+                  type="email"
+                  placeholder="mailbox@gmail.com"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (emailSuccess || emailError)
+                      validateEmail(e.target.value);
+                  }}
+                  onBlur={() => validateEmail(email)}
+                  error={emailError ?? undefined}
+                  success={emailSuccess}
+                />
+                <TextInput
+                  label="First Name *"
+                  placeholder="John"
+                  value={firstName}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    if (firstNameSuccess || firstNameError)
+                      validateFirstName(e.target.value);
+                  }}
+                  onBlur={() => validateFirstName(firstName)}
+                  error={firstNameError ?? undefined}
+                  success={firstNameSuccess}
+                />
+                <TextInput
+                  label="Last Name *"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    if (lastNameSuccess || lastNameError)
+                      validateLastName(e.target.value);
+                  }}
+                  onBlur={() => validateLastName(lastName)}
+                  error={lastNameError ?? undefined}
+                  success={lastNameSuccess}
+                />
+                <TextInput
+                  label="Phone Number *"
+                  type="tel"
+                  placeholder="453 338 494"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (phoneSuccess || phoneError)
+                      validatePhone(e.target.value);
+                  }}
+                  onBlur={() => validatePhone(phone)}
+                  error={phoneError ?? undefined}
+                  success={phoneSuccess}
+                />
+                <TextInput
+                  label="Birthday"
+                  placeholder="01-01-2000"
+                  value={birthday}
+                  onChange={(e) => setBirthday(e.target.value)}
+                />
+              </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                borderRadius: '8px',
-                border: '1px solid #e0e0e0',
-                fontSize: '14px',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
+              {error && <p className={styles.error}>{error}</p>}
 
-          {error && (
-            <div style={{
-              padding: '12px',
-              background: '#fff0f0',
-              border: '1px solid #ffcccc',
-              borderRadius: '8px',
-              color: '#cc0000',
-              fontSize: '13px',
-              marginBottom: '16px',
-            }}>
-              {error}
-            </div>
+              <PrimaryButton onClick={handleSignupStep1}>Next</PrimaryButton>
+
+              <div className={styles.dots}>
+                <span className={`${styles.dot} ${styles['dot--active']}`} />
+                <span className={styles.dot} />
+              </div>
+
+              <div className={styles.divider}>
+                <span>Or</span>
+              </div>
+              <p className={styles.social__label}>
+                Get Started with social media
+              </p>
+              <div className={styles.social}>
+                <button
+                  className={styles.social__btn}
+                  aria-label="Continue with Google"
+                >
+                  <img
+                    src={GoogleIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
+                </button>
+                <button
+                  className={styles.social__btn}
+                  aria-label="Continue with X"
+                >
+                  <img
+                    src={XIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
+                </button>
+                <button className={styles.social__btn} aria-label="Apple">
+                  <img
+                    src={AppleIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
+            </>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '8px',
-              border: 'none',
-              background: '#534AB7',
-              color: 'white',
-              fontSize: '15px',
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-            }}
-          >
-            {loading ? 'Loading...' : mode === 'login' ? 'Log In' : 'Sign Up'}
-          </button>
-        </form>
-      </div>
-    </div>
+          {/* ── Sign Up Step 2 ── */}
+          {tab === 'signup' && step === 2 && (
+            <>
+              <button
+                className={styles.back}
+                onClick={() => {
+                  setStep(1);
+                  setError(null);
+                }}
+                aria-label="Back"
+              >
+                <img
+                  src={ArrowLeftIcon}
+                  alt=""
+                  width={20}
+                  height={20}
+                  aria-hidden="true"
+                />
+              </button>
+
+              <div className={styles.card__heading}>
+                <h1 className={styles.card__title}>Create Password</h1>
+                <ul className={styles.rules}>
+                  <li>Minimum 8 characters</li>
+                  <li>At least one upper case letter</li>
+                  <li>At least one number</li>
+                </ul>
+              </div>
+
+              <div className={styles.card__fields}>
+                <PasswordInput
+                  label="Password *"
+                  placeholder="••••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordSuccess || passwordError)
+                      validatePassword(e.target.value);
+                  }}
+                  onBlur={() => validatePassword(password)}
+                  error={passwordError ?? undefined}
+                />
+                <PasswordInput
+                  label="Confirm Password *"
+                  placeholder="••••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    if (confirmPasswordSuccess || confirmPasswordError)
+                      validateConfirmPassword(e.target.value);
+                  }}
+                  onBlur={() => validateConfirmPassword(confirmPassword)}
+                  error={confirmPasswordError ?? undefined}
+                />
+              </div>
+
+              {error && <p className={styles.error}>{error}</p>}
+
+              <PrimaryButton onClick={handleSignupStep2} loading={loading}>
+                Get Started
+              </PrimaryButton>
+
+              <div className={styles.dots}>
+                <span className={styles.dot} />
+                <span className={`${styles.dot} ${styles['dot--active']}`} />
+              </div>
+            </>
+          )}
+
+          {/* ── Sign Up Step 3 — Confirm Email ── */}
+          {tab === 'signup' && step === 3 && (
+            <>
+              <button
+                className={styles.back}
+                onClick={() => {
+                  setStep(2);
+                  setError(null);
+                }}
+                aria-label="Back"
+              >
+                <img
+                  src={ArrowLeftIcon}
+                  alt=""
+                  width={20}
+                  height={20}
+                  aria-hidden="true"
+                />
+              </button>
+
+              <div className={styles.card__heading}>
+                <h1 className={styles.card__title}>Confirm your email</h1>
+                <p className={styles.card__subtitle}>We sent code to {email}</p>
+              </div>
+
+              <p className={styles.otp__label}>Enter code from your email</p>
+              <OtpInput
+                value={otp}
+                onChange={(val) => {
+                  setOtp(val);
+                  setOtpError(false);
+                  setOtpSuccess(val.every(v => v !== ''));
+                }}
+                error={otpError}
+                success={otpSuccess}
+              />
+
+              <p className={styles.resend}>
+                {canResend ? (
+                  <>
+                    Don't receive the code?{' '}
+                    <button
+                      className={styles.resend__btn}
+                      onClick={handleResend}
+                    >
+                      Try send again
+                    </button>
+                  </>
+                ) : (
+                  <>Resend code in {String(countdown).padStart(2, '0')} s</>
+                )}
+              </p>
+
+              <PrimaryButton
+                onClick={handleOtpConfirm}
+                disabled={otp.some((v) => !v)}
+              >
+                Continue
+              </PrimaryButton>
+            </>
+          )}
+
+          {/* ── Sign In ── */}
+          {tab === 'signin' && (
+            <>
+              <div className={styles.card__heading}>
+                <h1 className={styles.card__title}>Welcome back!</h1>
+                <p className={styles.card__subtitle}>
+                  Sign in to pick up where you left off
+                </p>
+              </div>
+
+              <div className={styles.tabs}>
+                <button
+                  className={styles.tab}
+                  onClick={() => switchTab('signup')}
+                >
+                  Sign Up
+                </button>
+                <button
+                  className={`${styles.tab} ${styles['tab--active']}`}
+                  onClick={() => switchTab('signin')}
+                >
+                  Sign In
+                </button>
+              </div>
+
+              <div className={styles.card__fields}>
+                <TextInput
+                  label="Enter your email"
+                  type="email"
+                  placeholder="mailbox@gmail.com"
+                  value={signInEmail}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSignInEmail(e.target.value)
+                  }
+                />
+                <PasswordInput
+                  label="Enter your password"
+                  placeholder="••••••••••"
+                  value={signInPassword}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSignInPassword(e.target.value)
+                  }
+                />
+              </div>
+
+              <div className={styles.signin__row}>
+                <label className={styles.remember}>
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  Remember me
+                </label>
+                <button className={styles.forgot}>Forgot your password?</button>
+              </div>
+
+              {error && <p className={styles.error}>{error}</p>}
+
+              <PrimaryButton onClick={handleSignIn} loading={loading}>
+                Continue
+              </PrimaryButton>
+
+              <div className={styles.divider}>
+                <span>Or</span>
+              </div>
+              <p className={styles.social__label}>Continue with social media</p>
+              <div className={styles.social}>
+                <button className={styles.social__btn} aria-label="Google">
+                  <img
+                    src={GoogleIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
+                </button>
+                <button className={styles.social__btn} aria-label="X">
+                  <img
+                    src={XIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
+                </button>
+                <button className={styles.social__btn} aria-label="Apple">
+                  <img
+                    src={AppleIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+        <Footer />
+      </main>
+    </>
   );
 };
 
