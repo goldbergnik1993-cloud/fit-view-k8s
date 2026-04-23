@@ -46,7 +46,7 @@ async def readiness_check(db: AsyncSession = Depends(get_db)):
     try:
         await db.execute(text("SELECT 1"))
         return {"status": "ready", "database": "online"}
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Database connection failed or is unresponsive.",
