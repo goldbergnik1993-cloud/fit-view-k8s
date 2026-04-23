@@ -90,13 +90,20 @@ async def get_items_list(
         stmt = stmt.where(ItemsModel.price >= filters["min_price"])
     if filters.get("max_price"):
         stmt = stmt.where(ItemsModel.price <= filters["max_price"])
-    stmt = stmt.distinct()
-    sort_options = {
-        "price_asc": asc(ItemsModel.price),
-        "price_desc": desc(ItemsModel.price),
-    }
+    stmt = stmt.group_by(ItemsModel.id)
 
-    stmt = stmt.order_by(sort_options.get(sort_by, asc(ItemsModel.price)))
+    if sort_by == "popular":
+        if not (only_favorites and user_id):
+            stmt = stmt.outerjoin(ItemsModel.favorites)
+        stmt = stmt.order_by(desc(func.count(FavoritesModel.id)))
+    elif sort_by == "new":
+        stmt = stmt.order_by(desc(ItemsModel.created_at))
+    elif sort_by == "price_asc":
+        stmt = stmt.order_by(asc(ItemsModel.price))
+    elif sort_by == "price_desc":
+        stmt = stmt.order_by(desc(ItemsModel.price))
+    else:
+        stmt = stmt.order_by(desc(ItemsModel.created_at))
     stmt = stmt.options(
         selectinload(ItemsModel.brand),
         selectinload(ItemsModel.size_charts),
@@ -159,6 +166,10 @@ async def item_view(item_id: int, db: AsyncSession, user_id: int | None = None):
     db_item.is_favorite = False
     if user_id:
         db_item.is_favorite = any(fav.user_id == user_id for fav in db_item.favorites)
+
+    db_item.mandatory_fields = REQUIRED_FIELDS_BY_CATEGORY.get(
+        db_item.category, ["height_cm"]
+    )
 
     return ItemDetailSchema.model_validate(db_item)
 
@@ -237,16 +248,20 @@ async def fitting_room(
             f"{', '.join(readable_missing)}.",
         )
     measurement = next(
-        (m for m in item_db.measurements if m.id == payload.measurement_id), None
+        (m for m in item_db.measurements if
+         m.size_label.upper() == payload.size_label.upper()),
+        None
     )
     size_chart = next(
-        (s for s in item_db.size_charts if s.id == payload.size_chart_id), None
+        (s for s in item_db.size_charts if
+         s.size_label.upper() == payload.size_label.upper()),
+        None
     )
 
     if not measurement or not size_chart:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid measurement or size chart ID for this item.",
+            detail=f"Size '{payload.size_label}' is not available for this item.",
         )
 
     if item_db.category == ItemCategoryEnum.PANTS:
