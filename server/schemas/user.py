@@ -91,7 +91,7 @@ class UserRetrieveSchema(UserBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ProfileUpdateSchema(PasswordMixin, BaseModel):
+class ProfileUpdateSchema(BaseModel):
     first_name: Optional[str] = Field(None, min_length=2, max_length=50)
     last_name: Optional[str] = Field(None, min_length=2, max_length=50)
     phone_number: Optional[str] = Field(None, min_length=5, max_length=50)
@@ -106,6 +106,16 @@ class ProfileUpdateSchema(PasswordMixin, BaseModel):
     waist_length_cm: Optional[int] = Field(None, ge=40, le=150)
     hips_length_cm: Optional[int] = Field(None, ge=60, le=180)
     leg_length_cm: Optional[int] = Field(None, ge=50, le=120)
+
+    @field_validator("password")
+    @classmethod
+    def optional_password_complexity(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if not re.search(r"\d", v) or not re.search(r"[A-Z]", v):
+            raise ValueError(
+                "Password must contain a number and uppercase letter.")
+        return v
 
 
 class ProfileViewSchema(BaseModel):
