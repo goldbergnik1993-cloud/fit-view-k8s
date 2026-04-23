@@ -5,9 +5,7 @@ from core.settings import settings
 SQLALCHEMY_DATABASE_URI = settings.DATABASE_URL
 
 engine = create_async_engine(
-    SQLALCHEMY_DATABASE_URI,
-    echo=True,
-    connect_args={"ssl": True}
+    SQLALCHEMY_DATABASE_URI, echo=True, connect_args={"ssl": True}
 )
 
 SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)

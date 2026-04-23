@@ -15,16 +15,21 @@ class Settings(BaseSettings):
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REFRESH_TOKEN_EXPIRE_DAYS: int
-    ACTIVATION_TOKEN_EXPIRE_HOURS: int
+    ACTIVATION_CODE_EXPIRE_MINUTES: int
+    RESET_TOKEN_EXPIRE_MINUTES: int
 
     REDIS_URL: str
+
+    STRIPE_SECRET_KEY: str
+    STRIPE_PUBLISHABLE_KEY: str
+    STRIPE_WEBHOOK_SECRET: str
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
-        case_sensitive=False
+        case_sensitive=False,
     )
 
 
-settings = Settings()
+settings = Settings()  # type: ignore

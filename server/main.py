@@ -7,24 +7,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.staticfiles import StaticFiles
 
 from api.admin import router as admin_router
+from api.auth import router as auth_router
 from api.cart import router as cart_router
 from api.catalog import router as catalog_router
 from api.events import router as event_router
 from api.orders import router as orders_router
+from api.payments import router as payments_router
 from api.user import router as user_router
 from core.settings import settings
 from database.session_postgresql import get_db
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 
 FRONTEND_URL = settings.FRONTEND_URL
 
-origins = [
-    FRONTEND_URL,
-    "http://localhost:3000",
-    "http://localhost:8080"
-]
+origins = [FRONTEND_URL, "http://localhost:3000", "http://localhost:8080"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -48,20 +46,19 @@ async def hello():
 async def readiness_check(db: AsyncSession = Depends(get_db)):
     try:
         await db.execute(text("SELECT 1"))
-        return {
-            "status": "ready",
-            "database": "online"
-        }
-    except Exception as e:
+        return {"status": "ready", "database": "online"}
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Database connection failed or is unresponsive."
+            detail="Database connection failed or is unresponsive.",
         )
 
 
 app.include_router(admin_router)
+app.include_router(auth_router)
 app.include_router(cart_router)
 app.include_router(catalog_router)
 app.include_router(event_router)
 app.include_router(orders_router)
+app.include_router(payments_router)
 app.include_router(user_router)
