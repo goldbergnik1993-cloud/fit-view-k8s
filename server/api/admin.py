@@ -47,13 +47,11 @@ async def change_user_status(
     "/{order_id}/status",
     response_model=OrderRetrieveSchema,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(allow_manager_plus)]
+    dependencies=[Depends(allow_manager_plus)],
 )
 async def update_order_status(
     order_id: int,
     payload: OrderStatusUpdateSchema,
     db: AsyncSession = Depends(get_db),
 ):
-    return await admin_update_order_status(
-        order_id=order_id, payload=payload, db=db
-    )
+    return await admin_update_order_status(order_id=order_id, payload=payload, db=db)

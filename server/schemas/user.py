@@ -8,7 +8,7 @@ from pydantic import (
     ConfigDict,
     field_validator,
     Field,
-    AfterValidator
+    AfterValidator,
 )
 
 from database.models.user import GenderEnum
@@ -36,8 +36,7 @@ def validate_age_limit(value: Optional[date]) -> Optional[date]:
     return value
 
 
-AgeValidatedDate = Annotated[
-    Optional[date], AfterValidator(validate_age_limit)]
+AgeValidatedDate = Annotated[Optional[date], AfterValidator(validate_age_limit)]
 
 
 class PasswordMixin:
@@ -49,8 +48,7 @@ class PasswordMixin:
         if not re.search(r"\d", v):
             raise ValueError("Password must contain at least one number.")
         if not re.search(r"[A-Z]", v):
-            raise ValueError(
-                "Password must contain at least one uppercase letter.")
+            raise ValueError("Password must contain at least one uppercase letter.")
         return v
 
 
@@ -113,8 +111,7 @@ class ProfileUpdateSchema(BaseModel):
         if v is None:
             return v
         if not re.search(r"\d", v) or not re.search(r"[A-Z]", v):
-            raise ValueError(
-                "Password must contain a number and uppercase letter.")
+            raise ValueError("Password must contain a number and uppercase letter.")
         return v
 
 

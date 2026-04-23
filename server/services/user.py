@@ -14,11 +14,8 @@ from schemas.user import (
 from utils.tokens import hash_password
 
 
-async def get_user_profile(
-        db: AsyncSession, user: UserModel
-) -> ProfileViewSchema:
-    profile_stmt = select(UserProfileModel).where(
-        UserProfileModel.user_id == user.id)
+async def get_user_profile(db: AsyncSession, user: UserModel) -> ProfileViewSchema:
+    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile = await db.scalar(profile_stmt)
     profile.email = user.email  # type: ignore
 
@@ -26,12 +23,9 @@ async def get_user_profile(
 
 
 async def profile_update(
-        payload: ProfileUpdateSchema,
-        user: UserModel,
-        db: AsyncSession
+    payload: ProfileUpdateSchema, user: UserModel, db: AsyncSession
 ) -> ProfileViewSchema:
-    profile_stmt = select(UserProfileModel).where(
-        UserProfileModel.user_id == user.id)
+    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
 
     update_data = payload.model_dump(exclude_unset=True)

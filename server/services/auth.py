@@ -164,8 +164,7 @@ async def refresh_token_pair(payload: RefreshTokenRequest, db: AsyncSession):
     user = user_result.scalar_one_or_none()
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
         )
 
     new_access_token = create_access_token(

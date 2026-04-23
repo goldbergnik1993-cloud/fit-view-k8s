@@ -12,9 +12,9 @@ root_dir = Path(__file__).resolve().parents[2]
 sys.path.append(str(root_dir))
 
 from database.models.base import Base  # noqa: E402
-from database.models.events import FitviewEventsModel # noqa: E402, F401
-from database.models.cart import CartModel, CartItemModel # noqa: E402, F401
-from database.models.orders import OrderModel, OrderItemModel # noqa: E402, F401
+from database.models.events import FitviewEventsModel  # noqa: E402, F401
+from database.models.cart import CartModel, CartItemModel  # noqa: E402, F401
+from database.models.orders import OrderModel, OrderItemModel  # noqa: E402, F401
 
 
 load_dotenv()
@@ -86,9 +86,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

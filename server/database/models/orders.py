@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from database.models.user import UserModel
     from database.models.catalog import ItemsModel
@@ -6,15 +7,7 @@ import enum
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import (
-    Integer,
-    ForeignKey,
-    Enum,
-    String,
-    Numeric,
-    DateTime,
-    func
-)
+from sqlalchemy import Integer, ForeignKey, Enum, String, Numeric, DateTime, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

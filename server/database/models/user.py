@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from database.models.cart import CartModel
     from database.models.catalog import FavoritesModel
@@ -8,16 +9,7 @@ import enum
 from datetime import datetime, date
 from typing import Optional, List
 
-from sqlalchemy import (
-    Integer,
-    String,
-    func,
-    DateTime,
-    Enum,
-    ForeignKey,
-    Boolean,
-    Date
-)
+from sqlalchemy import Integer, String, func, DateTime, Enum, ForeignKey, Boolean, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
