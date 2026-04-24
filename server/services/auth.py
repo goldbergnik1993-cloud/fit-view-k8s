@@ -81,7 +81,6 @@ async def user_create(
     template = env.get_template("activation_email.html")
     html_content = template.render(
         verification_code=str(activation_code),
-        activation_url=f"{settings.FRONTEND_URL}/auth/verify",
         expires_in=settings.ACTIVATION_CODE_EXPIRE_MINUTES,
     )
     send_email.delay(

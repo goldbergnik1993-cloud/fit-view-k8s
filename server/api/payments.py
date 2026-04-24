@@ -25,13 +25,11 @@ async def stripe_webhook(
         )
     except ValueError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid payload"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid payload"
         )
     except stripe.error.SignatureVerificationError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid signature"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid signature"
         )
 
     if event["type"] == "checkout.session.completed":
@@ -48,9 +46,7 @@ async def stripe_webhook(
             order_stmt = select(OrderModel).where(OrderModel.id == payment_db.order_id)
             order_db = await db.scalar(order_stmt)
             if order_db:
-                order_db.status = (
-                    OrderStatusEnum.PAID
-                )
+                order_db.status = OrderStatusEnum.PAID
 
             await db.commit()
 
