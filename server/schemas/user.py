@@ -142,6 +142,11 @@ class MessageSchema(BaseModel):
     message: str
 
 
-class EmailVerificationSchema(BaseModel):
+class EmailChangeVerificationSchema(BaseModel):
+    code: str = Field(
+        ..., min_length=4, max_length=4, description="The 4-digit OTP code"
+    )
+
+
+class EmailVerificationSchema(EmailChangeVerificationSchema):
     email: str
-    code: str
