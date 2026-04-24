@@ -71,6 +71,12 @@ export const Header = () => {
                 href="/"
                 className={styles['header__logo']}
                 aria-label="FitView home"
+                onClick={(e) => {
+                  if (window.location.pathname === '/') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
               >
                 <img src={LogoIcon} alt="FitView" width={44} height={44} />
               </a>
@@ -167,6 +173,12 @@ export const Header = () => {
                 href="/"
                 className={styles['header__logo']}
                 aria-label="FitView home"
+                onClick={(e) => {
+                  if (window.location.pathname === '/') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
               >
                 <img src={LogoIcon} alt="FitView" width={44} height={44} />
               </a>
@@ -277,6 +289,12 @@ export const Header = () => {
               href="/"
               className={styles['header__logo']}
               aria-label="FitView home"
+              onClick={(e) => {
+                if (window.location.pathname === '/') {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
             >
               <img src={LogoIcon} alt="FitView" width={44} height={44} />
             </a>
