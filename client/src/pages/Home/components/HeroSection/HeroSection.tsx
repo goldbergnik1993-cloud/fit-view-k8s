@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import styles from './HeroSection.module.scss';
 import SilhouetteManImg from '../../../../assets/images/silhouette-man.svg';
 import SilhouetteWomanImg from '../../../../assets/images/silhouette-woman.svg';
+import { OnboardingModal } from '../OnboardingModal/OnboardingModal';
 
 export const HeroSection = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
@@ -10,10 +13,20 @@ export const HeroSection = () => {
         <div className={styles['hero__content']}>
           <div className={styles['hero__media']} aria-hidden="true">
             <div className={styles['hero__silhouette']}>
-              <img src={SilhouetteManImg} alt="" aria-hidden="true" className={styles['hero__silhouette-img']} />
+              <img
+                src={SilhouetteManImg}
+                alt=""
+                aria-hidden="true"
+                className={styles['hero__silhouette-img']}
+              />
             </div>
             <div className={styles['hero__silhouette']}>
-              <img src={SilhouetteWomanImg} alt="" aria-hidden="true" className={styles['hero__silhouette-img']} />
+              <img
+                src={SilhouetteWomanImg}
+                alt=""
+                aria-hidden="true"
+                className={styles['hero__silhouette-img']}
+              />
             </div>
           </div>
 
@@ -22,18 +35,17 @@ export const HeroSection = () => {
               Find your new favorite style without the hassle
             </h1>
             <p className={styles['hero__description']}>
-              Browse, measure, and virtually try on in seconds.{' '}
-              Check out these brief{' '}
+              Browse, measure, and virtually try on in seconds. Check out these
+              brief{' '}
               <button
                 className={styles['hero__instructions-link']}
-
+                onClick={() => setIsModalOpen(true)}
                 aria-haspopup="dialog"
               >
                 instructions
-              </button>
-              {' '}before you get started
+              </button>{' '}
+              before you get started
             </p>
-            
             <a
               href="/catalog"
               className={styles['hero__cta']}
@@ -44,6 +56,12 @@ export const HeroSection = () => {
           </div>
         </div>
       </section>
+
+      <OnboardingModal
+        key={isModalOpen ? 'open' : 'closed'}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };
