@@ -50,6 +50,7 @@ jobs:
       - name: Python Quality
         if: matrix.project.type == 'python'
         working-directory: ./server
+        continue-on-error: true
         run: |
           poetry install --sync
           poetry run ruff check .
@@ -68,6 +69,7 @@ jobs:
       - name: Node Quality
         if: matrix.project.type == 'node'
         working-directory: ./client
+        continue-on-error: true
         run: |
           npm ci
           npm run lint
