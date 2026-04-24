@@ -10,8 +10,12 @@ from core.redis_client import get_redis
 from database.models.user import UserModel
 from database.session_postgresql import get_db
 from schemas.catalog import ItemFilterParams, ItemsListSchema
-from schemas.user import ProfileViewSchema, ProfileUpdateSchema, MessageSchema, \
-    EmailChangeVerificationSchema
+from schemas.user import (
+    ProfileViewSchema,
+    ProfileUpdateSchema,
+    MessageSchema,
+    EmailChangeVerificationSchema,
+)
 from services.catalog import get_items_list
 from services.user import get_user_profile, profile_update, verify_email_change
 
@@ -55,10 +59,10 @@ async def list_favorites(
 
 @router.patch("/profile", response_model=ProfileViewSchema)
 async def update_profile(
-        payload: ProfileUpdateSchema,
-        current_user: UserModel = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
-        redis_client: Redis = Depends(get_redis),
+    payload: ProfileUpdateSchema,
+    current_user: UserModel = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ):
     return await profile_update(
         payload=payload, user=current_user, db=db, redis_client=redis_client
@@ -67,10 +71,10 @@ async def update_profile(
 
 @router.post("/change-email", response_model=MessageSchema)
 async def change_email(
-        payload: EmailChangeVerificationSchema,
-        current_user: UserModel = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
-        redis_client: Redis = Depends(get_redis)
+    payload: EmailChangeVerificationSchema,
+    current_user: UserModel = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ):
     return await verify_email_change(
         payload=payload, user=current_user, db=db, redis_client=redis_client

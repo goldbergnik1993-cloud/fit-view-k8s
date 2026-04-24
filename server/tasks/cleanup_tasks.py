@@ -21,7 +21,7 @@ async def _cleanup_logic():
 async def _change_cart_status_logic():
     async with SessionLocal() as db:
         now = datetime.now(timezone.utc).replace(tzinfo=None)
-        await db.execute(
+        update_stmt = (
             update(CartModel)
             .where(
                 CartModel.created_at < now - timedelta(hours=24),
@@ -29,6 +29,7 @@ async def _change_cart_status_logic():
             )
             .values(status=CartStatusEnum.ABANDONED)
         )
+        await db.execute(update_stmt)
         await db.commit()
 
 

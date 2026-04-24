@@ -44,16 +44,14 @@ async def change_user_role(
 
 async def admin_update_order_status(
     order_id: int, payload: OrderStatusUpdateSchema, db: AsyncSession
-) -> OrderModel:
+) -> OrderModel | None:
     stmt = (
-        select(OrderModel).where(OrderModel.id == order_id)
+        select(OrderModel)
+        .where(OrderModel.id == order_id)
         .options(
             selectinload(OrderModel.order_items)
             .selectinload(OrderItemModel.item)
-            .options(
-                selectinload(ItemsModel.brand),
-                 selectinload(ItemsModel.favorites)
-            )
+            .options(selectinload(ItemsModel.brand), selectinload(ItemsModel.favorites))
         )
     )
     order = await db.scalar(stmt)

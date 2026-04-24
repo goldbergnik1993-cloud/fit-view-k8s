@@ -50,17 +50,16 @@ async def retrieve_order_details(
 @router.post(
     "/{order_id}/checkout",
     response_model=CheckoutSessionResponseSchema,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def trigger_checkout(
-        order_id: int,
-        user: UserModel = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db)
+    order_id: int,
+    user: UserModel = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     order = await get_order_by_id(user_id=user.id, order_id=order_id, db=db)
     if order.payment and order.payment.status == PaymentStatusEnum.SUCCESSFUL:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Order is already paid."
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Order is already paid."
         )
     return await create_checkout_session(order=order, db=db)
