@@ -14,6 +14,10 @@ export interface LoginRequest {
 export interface SignupRequest {
   email: string;
   password: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  birth_date?: string | null;
 }
 
 export interface AuthResponse {
@@ -26,6 +30,11 @@ export interface TokenResponse {
   access_token: string;
   refresh_token: string;
   token_type: string;
+}
+
+export interface VerifyEmailRequest {
+  email: string;
+  code: string;
 }
 
 // ─── Token storage ────────────────────────────────────────────────────────────
@@ -96,7 +105,7 @@ async function tryRefreshToken(): Promise<boolean> {
   const refresh = tokenStorage.getRefresh();
   if (!refresh) return false;
   try {
-    const data = await request<TokenResponse>('/user/refresh', {
+    const data = await request<TokenResponse>('/auth/refresh', {
       method: 'POST',
       body: JSON.stringify({ refresh_token: refresh }),
     });
@@ -111,13 +120,19 @@ async function tryRefreshToken(): Promise<boolean> {
 
 export const authApi = {
   signup: (body: SignupRequest) =>
-    request<AuthResponse>('/user/signup', {
+    request<AuthResponse>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
+  verifyEmail: (body: VerifyEmailRequest) =>
+    request<{ message: string }>('/auth/verify', {
       method: 'POST',
       body: JSON.stringify(body),
     }),
 
   login: async (body: LoginRequest): Promise<AuthResponse> => {
-    const data = await request<TokenResponse>('/user/login', {
+    const data = await request<TokenResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(body),
     });
@@ -221,16 +236,16 @@ export interface SearchSuggestion {
 export const itemsApi = {
   getAll: (params?: GetItemsParams) => {
     const query = new URLSearchParams();
-    if (params?.page)      query.set('page', String(params.page));
-    if (params?.per_page)  query.set('per_page', String(params.per_page));
-    if (params?.category)  query.set('category', params.category);
-    if (params?.name)      query.set('name', params.name);
-    if (params?.size)      query.set('size', params.size);
-    if (params?.gender)    query.set('gender', params.gender);
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.per_page) query.set('per_page', String(params.per_page));
+    if (params?.category) query.set('category', params.category);
+    if (params?.name) query.set('name', params.name);
+    if (params?.size) query.set('size', params.size);
+    if (params?.gender) query.set('gender', params.gender);
     if (params?.min_price) query.set('min_price', String(params.min_price));
     if (params?.max_price) query.set('max_price', String(params.max_price));
-    if (params?.sort_by)   query.set('sort_by', params.sort_by);
-    params?.brands?.forEach(id => query.append('brands', String(id)));
+    if (params?.sort_by) query.set('sort_by', params.sort_by);
+    params?.brands?.forEach((id) => query.append('brands', String(id)));
     const qs = query.toString() ? `?${query.toString()}` : '';
     return request<PaginatedResponse>(`/items/${qs}`, {}, true);
   },
@@ -242,10 +257,14 @@ export const itemsApi = {
     request(`/items/${itemId}/favorite`, { method: 'POST' }, true),
 
   fitItem: (itemId: number, body: FittingRoomRequest) =>
-    request<FittingRoomResponse>(`/items/${itemId}/fitting-room`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    }, true),
+    request<FittingRoomResponse>(
+      `/items/${itemId}/fitting-room`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      true
+    ),
 
   getSearchSuggestions: (q: string) =>
     request<SearchSuggestion[]>(
@@ -275,23 +294,29 @@ export interface ProfileResponse extends ProfileData {
 }
 
 export const userApi = {
-  getFavorites: () =>
-    request<BackendItem[]>('/user/favorites', {}, true),
+  getFavorites: () => request<BackendItem[]>('/user/favorites', {}, true),
 
-  getProfile: () =>
-    request<ProfileResponse>('/user/profile', {}, true),
+  getProfile: () => request<ProfileResponse>('/user/profile', {}, true),
 
   createProfile: (body: ProfileData) =>
-    request<ProfileResponse>('/user/profile', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    }, true),
+    request<ProfileResponse>(
+      '/user/profile',
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      true
+    ),
 
   updateProfile: (body: ProfileData) =>
-    request<ProfileResponse>('/user/profile', {
-      method: 'PATCH',
-      body: JSON.stringify(body),
-    }, true),
+    request<ProfileResponse>(
+      '/user/profile',
+      {
+        method: 'PATCH',
+        body: JSON.stringify(body),
+      },
+      true
+    ),
 };
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────
@@ -323,23 +348,29 @@ export interface Cart {
 }
 
 export const cartApi = {
-  getCart: () =>
-    request<Cart>('/cart/', {}, true),
+  getCart: () => request<Cart>('/cart/', {}, true),
 
-  clearCart: () =>
-    request<Cart>('/cart/', { method: 'DELETE' }, true),
+  clearCart: () => request<Cart>('/cart/', { method: 'DELETE' }, true),
 
   addItem: (item_id: number, quantity = 1) =>
-    request<Cart>('/cart/items', {
-      method: 'POST',
-      body: JSON.stringify({ item_id, quantity }),
-    }, true),
+    request<Cart>(
+      '/cart/items',
+      {
+        method: 'POST',
+        body: JSON.stringify({ item_id, quantity }),
+      },
+      true
+    ),
 
   updateQuantity: (item_id: number, quantity: number) =>
-    request<Cart>(`/cart/items/${item_id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(quantity),
-    }, true),
+    request<Cart>(
+      `/cart/items/${item_id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(quantity),
+      },
+      true
+    ),
 
   removeItem: (item_id: number) =>
     request<Cart>(`/cart/items/${item_id}`, { method: 'DELETE' }, true),

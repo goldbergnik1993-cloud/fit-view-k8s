@@ -17,14 +17,13 @@ services:
       - fit-network
 
   frontend:
+    platform: linux/amd64
     build:
       context: ./client
+      dockerfile: Dockerfile
       target: development
       args:
         - VITE_API_URL=${VITE_API_URL}
-    volumes:
-      - ./client:/app
-      - /app/node_modules
     networks:
       - fit-network
     depends_on:
@@ -35,9 +34,6 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: fitview_backend
-    volumes:
-      - ./server:/app
-      - /app/.venv
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     environment:
       - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
@@ -79,9 +75,6 @@ services:
       context: ./server
     container_name: fitview_worker
     command: celery -A core.celery_app worker --loglevel=info
-    volumes:
-      - ./server:/app
-      - /app/.venv
     environment:
       - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
       - PGHOST=${PGHOST}
@@ -133,9 +126,6 @@ services:
       context: ./server
     container_name: fitview_beat
     command: celery -A core.celery_app beat --loglevel=info
-    volumes:
-      - ./server:/app
-      - /app/.venv
     environment:
       - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
       - PGHOST=${PGHOST}

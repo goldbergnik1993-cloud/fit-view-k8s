@@ -12,6 +12,7 @@ import GoogleIcon from '../../assets/icons/google.svg';
 import XIcon from '../../assets/icons/x.svg';
 import AppleIcon from '../../assets/icons/apple.svg';
 import { Footer } from '../../shared/components/Footer/Footer';
+import { authApi } from '../../services/api';
 
 type Tab = 'signup' | 'signin';
 type SignupStep = 1 | 2 | 3;
@@ -160,40 +161,18 @@ export const Login = () => {
     return () => clearInterval(interval);
   }, [step]);
 
-  const handleResend = () => {
-    if (!canResend) return;
-    setCountdown(RESEND_TIMEOUT);
-    setCanResend(false);
-    setOtp(['', '', '', '']);
-    // TODO: вызов API resend когда будет готов бэкенд
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setCanResend(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
   const handleSignupStep1 = () => {
     validateEmail(email);
     validateFirstName(firstName);
     validateLastName(lastName);
     validatePhone(phone);
 
-    if (
-      !emailError &&
-      emailSuccess &&
-      !firstNameError &&
-      firstNameSuccess &&
-      !lastNameError &&
-      lastNameSuccess &&
-      !phoneError &&
-      phoneSuccess
-    ) {
+    const isEmailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isFirstNameOk = firstName.trim().length > 0;
+    const isLastNameOk = lastName.trim().length > 0;
+    const isPhoneOk = /^\+?[\d\s-]{7,}$/.test(phone);
+
+    if (isEmailOk && isFirstNameOk && isLastNameOk && isPhoneOk) {
       setError(null);
       setStep(2);
     }
@@ -203,34 +182,66 @@ export const Login = () => {
     validatePassword(password);
     validateConfirmPassword(confirmPassword);
 
-    if (
-      !passwordError &&
-      passwordSuccess &&
-      !confirmPasswordError &&
-      confirmPasswordSuccess
-    ) {
-      setLoading(true);
-      try {
-        // await signup(email, password);
-        setStep(3);
-      } finally {
-        setLoading(false);
-      }
+    const isPasswordOk =
+      password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password);
+    const isConfirmOk =
+      confirmPassword === password && confirmPassword.length > 0;
+
+    if (!isPasswordOk || !isConfirmOk) return;
+
+    setLoading(true);
+    try {
+      await signup(
+        email,
+        password,
+        firstName,
+        lastName,
+        phone,
+        birthday || undefined
+      );
+      setStep(3);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleOtpConfirm = () => {
+    const handleResend = () => {
+    if (!canResend) return;
+    setCountdown(RESEND_TIMEOUT);
+    setCanResend(false);
+    setOtp(['', '', '', '']);
+    setOtpError(false);
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) { clearInterval(interval); setCanResend(true); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleOtpConfirm = async () => {
     const code = otp.join('');
     if (code.length < 4) {
       setOtpError(true);
       return;
     }
-    // TODO: API confirm — когда бэкенд готов проверяем код
-    // если ошибка: setOtpError(true); setOtpSuccess(false);
-    // если успех:
-    setOtpError(false);
-    setOtpSuccess(true);
-    navigate('/profile');
+
+    setLoading(true);
+    try {
+      await authApi.verifyEmail({ email, code });
+      setOtpError(false);
+      setOtpSuccess(true);
+      navigate('/profile');
+    } catch (err: unknown) {
+      setOtpError(true);
+      setOtpSuccess(false);
+      setError(err instanceof Error ? err.message : 'Invalid code');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSignIn = async () => {
@@ -498,7 +509,7 @@ export const Login = () => {
                 onChange={(val) => {
                   setOtp(val);
                   setOtpError(false);
-                  setOtpSuccess(val.every(v => v !== ''));
+                  setOtpSuccess(val.every((v) => v !== ''));
                 }}
                 error={otpError}
                 success={otpSuccess}
