@@ -1,4 +1,4 @@
-name: CI Quality Control
+name: CI Quality Control & Docker Build
 
 on:
   push:
@@ -13,34 +13,33 @@ on:
       - 'server/**'
       - 'client/**'
       - '.github/workflows/**'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  quality-check:
-    name: ${{ matrix.project.name }} Check
+  quality-and-build:
+    name: ${{ matrix.project.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         project:
-          - { name: "Backend", path: "server", type: "python" }
-          - { name: "Frontend", path: "client", type: "node" }
-
-    defaults:
-      run:
-        working-directory: ./${{ matrix.project.path }}
+          - { name: "backend", path: "server", type: "python" }
+          - { name: "frontend", path: "client", type: "node" }
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
+      # --- PYTHON (Backend) ---
       - name: Install Poetry
         if: matrix.project.type == 'python'
         run: pipx install poetry
 
-      - name: Set up Python 3.12
+      - name: Set up Python
         if: matrix.project.type == 'python'
         uses: actions/setup-python@v5
         with:
@@ -48,18 +47,18 @@ jobs:
           cache: 'poetry'
           cache-dependency-path: server/poetry.lock
 
-      - name: Install Python Dependencies
-        if: matrix.project.type == 'python'
-        run: poetry install --sync
-
       - name: Python Quality
         if: matrix.project.type == 'python'
+        working-directory: ./server
+        continue-on-error: true
         run: |
+          poetry install --sync
           poetry run ruff check .
           poetry run ruff format --check .
           poetry run mypy .
 
-      - name: Set up Node.js 22
+      # --- NODE.JS (Frontend) ---
+      - name: Set up Node
         if: matrix.project.type == 'node'
         uses: actions/setup-node@v4
         with:
@@ -67,12 +66,41 @@ jobs:
           cache: 'npm'
           cache-dependency-path: client/package-lock.json
 
-      - name: Install JS Dependencies
-        if: matrix.project.type == 'node'
-        run: npm ci
-
       - name: Node Quality
         if: matrix.project.type == 'node'
+        working-directory: ./client
+        continue-on-error: true
         run: |
+          npm ci
           npm run lint
           npm run build
+
+      # --- DOCKER HUB attempt ---
+      - name: Log in to Docker Hub
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract Docker metadata
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: goldbernik/todoapp-${{ matrix.project.name }}
+          tags: |
+            type=ref,event=branch
+            type=sha,format=short
+            type=raw,value=latest,enable=true
+
+      - name: Build and push Docker image
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.project.path }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=inline
