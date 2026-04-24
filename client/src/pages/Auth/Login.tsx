@@ -41,6 +41,14 @@ export const Login = () => {
   const [signInPassword, setSignInPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
+  // Sign In validation
+  const [signInEmailError, setSignInEmailError] = useState<string | null>(null);
+  const [signInEmailSuccess, setSignInEmailSuccess] = useState(false);
+  const [signInPasswordError, setSignInPasswordError] = useState<string | null>(
+    null
+  );
+  const [signInPasswordSuccess, setSignInPasswordSuccess] = useState(false);
+
   // UI state
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -143,6 +151,29 @@ export const Login = () => {
     }
   };
 
+  const validateSignInEmail = (val: string) => {
+    if (!val) {
+      setSignInEmailError('Email is required');
+      setSignInEmailSuccess(false);
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+      setSignInEmailError('Invalid email');
+      setSignInEmailSuccess(false);
+    } else {
+      setSignInEmailError(null);
+      setSignInEmailSuccess(true);
+    }
+  };
+
+  const validateSignInPassword = (val: string) => {
+    if (!val) {
+      setSignInPasswordError('Password is required');
+      setSignInPasswordSuccess(false);
+    } else {
+      setSignInPasswordError(null);
+      setSignInPasswordSuccess(true);
+    }
+  };
+
   // Countdown timer for OTP
   useEffect(() => {
     if (step !== 3) return;
@@ -207,7 +238,7 @@ export const Login = () => {
     }
   };
 
-    const handleResend = () => {
+  const handleResend = () => {
     if (!canResend) return;
     setCountdown(RESEND_TIMEOUT);
     setCanResend(false);
@@ -216,7 +247,11 @@ export const Login = () => {
 
     const interval = setInterval(() => {
       setCountdown((prev) => {
-        if (prev <= 1) { clearInterval(interval); setCanResend(true); return 0; }
+        if (prev <= 1) {
+          clearInterval(interval);
+          setCanResend(true);
+          return 0;
+        }
         return prev - 1;
       });
     }, 1000);
@@ -245,6 +280,16 @@ export const Login = () => {
   };
 
   const handleSignIn = async () => {
+    validateSignInEmail(signInEmail);
+    validateSignInPassword(signInPassword);
+
+    if (
+      !signInEmail ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signInEmail) ||
+      !signInPassword
+    )
+      return;
+
     setError(null);
     setLoading(true);
     try {
@@ -571,17 +616,27 @@ export const Login = () => {
                   type="email"
                   placeholder="mailbox@gmail.com"
                   value={signInEmail}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSignInEmail(e.target.value)
-                  }
+                  onChange={(e) => {
+                    setSignInEmail(e.target.value);
+                    if (signInEmailSuccess || signInEmailError)
+                      validateSignInEmail(e.target.value);
+                  }}
+                  onBlur={() => validateSignInEmail(signInEmail)}
+                  error={signInEmailError ?? undefined}
+                  success={signInEmailSuccess}
                 />
                 <PasswordInput
                   label="Enter your password"
                   placeholder="••••••••••"
                   value={signInPassword}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSignInPassword(e.target.value)
-                  }
+                  onChange={(e) => {
+                    setSignInPassword(e.target.value);
+                    if (signInPasswordSuccess || signInPasswordError)
+                      validateSignInPassword(e.target.value);
+                  }}
+                  onBlur={() => validateSignInPassword(signInPassword)}
+                  error={signInPasswordError ?? undefined}
+                  success={signInPasswordSuccess}
                 />
               </div>
 

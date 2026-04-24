@@ -9,11 +9,13 @@ interface PasswordInputProps extends Omit<
 > {
   label: string;
   error?: string;
+  success?: boolean;
 }
 
 export const PasswordInput = ({
   label,
   error,
+  success,
   id,
   ...props
 }: PasswordInputProps) => {
@@ -25,11 +27,15 @@ export const PasswordInput = ({
       <label htmlFor={inputId} className={styles.label}>
         {label}
       </label>
-      <div className={`${styles.field} ${error ? styles['field--error'] : ''}`}>
+      <div
+        className={`${styles.field} ${error ? styles['field--error'] : ''} ${success ? styles['field--success'] : ''}`}
+      >
         <input
           id={inputId}
           type={visible ? 'text' : 'password'}
           className={styles.input}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${inputId}-hint` : undefined}
           {...props}
         />
         <button
@@ -47,7 +53,11 @@ export const PasswordInput = ({
           />
         </button>
       </div>
-      {error && <span className={styles.hint}>{error}</span>}
+      {error && (
+        <span id={`${inputId}-hint`} className={styles.hint} role="alert">
+          {error}
+        </span>
+      )}
     </div>
   );
 };
