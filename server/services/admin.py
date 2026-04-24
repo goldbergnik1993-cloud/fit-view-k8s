@@ -2,8 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from database.models import UserModel, OrderModel
+from database.models import UserModel, OrderModel, OrderItemModel, ItemsModel
 from database.models.user import UserRoleEnum
 from schemas.orders import OrderStatusUpdateSchema
 
@@ -44,7 +45,17 @@ async def change_user_role(
 async def admin_update_order_status(
     order_id: int, payload: OrderStatusUpdateSchema, db: AsyncSession
 ) -> OrderModel:
-    stmt = select(OrderModel).where(OrderModel.id == order_id)
+    stmt = (
+        select(OrderModel).where(OrderModel.id == order_id)
+        .options(
+            selectinload(OrderModel.order_items)
+            .selectinload(OrderItemModel.item)
+            .options(
+                selectinload(ItemsModel.brand),
+                 selectinload(ItemsModel.favorites)
+            )
+        )
+    )
     order = await db.scalar(stmt)
 
     if not order:
@@ -56,7 +67,9 @@ async def admin_update_order_status(
         order.status = payload.status
         await db.commit()
 
-        return order
+        fresh_order = await db.scalar(stmt)
+
+        return fresh_order
 
     except SQLAlchemyError:
         await db.rollback()
