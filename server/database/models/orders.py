@@ -50,7 +50,7 @@ class OrderModel(Base):
         "OrderItemModel",
         back_populates="order",
         cascade="all, delete-orphan",
-        lazy="selectin"
+        lazy="selectin",
     )
     payment: Mapped[Optional["PaymentsModel"]] = relationship(
         "PaymentsModel", back_populates="order", lazy="selectin"

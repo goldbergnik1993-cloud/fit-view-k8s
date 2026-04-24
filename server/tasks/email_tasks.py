@@ -10,7 +10,7 @@ def send_email(self, email: str, body_data: dict, msg_type: str):
         "activation": "Welcome to FitView! Please verify your email",
         "reset_pass": "Reset your password",
         "reset_pass_success": "Your password has been changed",
-        "changing_email": "Please confirm your new email"
+        "changing_email": "Please confirm your new email",
     }
     subject = subjects.get(msg_type, "Notification").format(**body_data)
     html_content = body_data.get("html", f"<p>Action required: {msg_type}</p>")

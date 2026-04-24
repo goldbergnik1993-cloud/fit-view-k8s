@@ -14,7 +14,9 @@ from database.models.user import (
 )
 from schemas.user import (
     ProfileUpdateSchema,
-    ProfileViewSchema, EmailChangeVerificationSchema, MessageSchema,
+    ProfileViewSchema,
+    EmailChangeVerificationSchema,
+    MessageSchema,
 )
 from services.auth import env
 from tasks.email_tasks import send_email
@@ -30,10 +32,7 @@ async def get_user_profile(db: AsyncSession, user: UserModel) -> ProfileViewSche
 
 
 async def profile_update(
-        payload: ProfileUpdateSchema,
-        user: UserModel,
-        db: AsyncSession,
-        redis_client: Redis
+    payload: ProfileUpdateSchema, user: UserModel, db: AsyncSession, redis_client: Redis
 ) -> ProfileViewSchema:
     profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
     profile_db = await db.scalar(profile_stmt)
@@ -46,11 +45,10 @@ async def profile_update(
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email is already in use."
+                detail="Email is already in use.",
             )
         activation_code = f"{randint(0, 9999):04d}"
-        redis_payload = json.dumps(
-            {"new_email": new_email, "code": activation_code})
+        redis_payload = json.dumps({"new_email": new_email, "code": activation_code})
 
         await redis_client.setex(
             name=f"pending_email:{user.id}",
@@ -105,10 +103,10 @@ async def profile_update(
 
 
 async def verify_email_change(
-        payload: EmailChangeVerificationSchema,
-        user: UserModel,
-        db: AsyncSession,
-        redis_client: Redis
+    payload: EmailChangeVerificationSchema,
+    user: UserModel,
+    db: AsyncSession,
+    redis_client: Redis,
 ):
     redis_key = f"pending_email:{user.id}"
     stored_data_str = await redis_client.get(redis_key)
@@ -116,7 +114,7 @@ async def verify_email_change(
     if not stored_data_str:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Verification code is invalid or has expired. Please request a new one."
+            detail="Verification code is invalid or has expired. Please request a new one.",
         )
 
     stored_data = json.loads(stored_data_str)
@@ -124,7 +122,7 @@ async def verify_email_change(
     if stored_data.get("code") != payload.code:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect verification code."
+            detail="Incorrect verification code.",
         )
 
     new_email = stored_data.get("new_email")
@@ -134,7 +132,7 @@ async def verify_email_change(
         await redis_client.delete(redis_key)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="This email is no longer available."
+            detail="This email is no longer available.",
         )
 
     user.email = new_email
@@ -147,10 +145,9 @@ async def verify_email_change(
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Something went wrong while updating your email. Try again later."
+            detail="Something went wrong while updating your email. Try again later.",
         )
 
     await redis_client.delete(redis_key)
 
-    return MessageSchema(
-        message="Your email address has been successfully updated!")
+    return MessageSchema(message="Your email address has been successfully updated!")

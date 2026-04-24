@@ -49,12 +49,12 @@ async def create_checkout_session(
         if not checkout_session.url:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Stripe did not return a checkout URL."
+                detail="Stripe did not return a checkout URL.",
             )
 
         return CheckoutSessionResponseSchema(
             checkout_url=checkout_session.url,  # type: ignore[arg-type]
-            payment_intent_id=checkout_session.id
+            payment_intent_id=checkout_session.id,
         )
 
     except Exception as e:
