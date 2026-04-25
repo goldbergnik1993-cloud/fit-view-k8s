@@ -57,7 +57,8 @@ export const tokenStorage = {
 export async function request<T>(
   path: string,
   options: RequestInit = {},
-  withAuth = false
+  withAuth = false,
+  silentOn401 = false
 ): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -72,6 +73,7 @@ export async function request<T>(
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
   if (res.status === 401 && withAuth) {
+    if (silentOn401) throw new Error('Unauthorized'); 
     const refreshed = await tryRefreshToken();
     if (refreshed) {
       headers['Authorization'] = `Bearer ${tokenStorage.getAccess()}`;
@@ -254,7 +256,7 @@ export const itemsApi = {
     request<BackendItem>(`/items/${id}`, {}, true),
 
   toggleFavorite: (itemId: string | number) =>
-    request(`/items/${itemId}/favorite`, { method: 'POST' }, true),
+    request(`/items/${itemId}/favorite`, { method: 'POST' }, true, true),
 
   fitItem: (itemId: number, body: FittingRoomRequest) =>
     request<FittingRoomResponse>(
