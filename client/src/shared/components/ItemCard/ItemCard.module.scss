@@ -2,8 +2,8 @@
 @use '../../../styles/mixins' as *;
 
 .card {
-  border: 1px solid #e8e8e8;
-  border-radius: 2px;
+  border: 1px solid $color-toggle-bg;
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
   background: $color-white;
@@ -11,6 +11,10 @@
   transition: box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  padding: $spacing-16;
+  gap: $spacing-8;
+  box-sizing: border-box;
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -27,10 +31,11 @@
 
 .card__image {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   background-color: $color-card-bg;
   overflow: hidden;
   flex-shrink: 0;
+  border-radius: 8px;
 
   img {
     width: 100%;
@@ -51,7 +56,6 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 12px 14px 14px;
   gap: 8px;
 }
 
@@ -74,9 +78,6 @@
   @include text(13px, 400, 1.4);
   color: #666;
   margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .card__price {
@@ -96,19 +97,18 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #b0b0b0;
+  color: $color-card-bg;
   padding: 0;
   border-radius: 50%;
   transition: color 0.2s ease;
   align-self: flex-end;
-  margin-bottom: 2px;
 
   &:hover {
     color: $color-black;
   }
 
   &--active {
-    color: $color-black;
+    color: $color-primary-pressed;
   }
 
   @include focus-visible;
