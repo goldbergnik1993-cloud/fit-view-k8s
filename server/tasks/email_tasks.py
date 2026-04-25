@@ -2,6 +2,7 @@ import smtplib
 from email.message import EmailMessage
 
 from core.celery_app import celery_app
+from core.settings import settings
 
 
 @celery_app.task(name="tasks.email_tasks.send_email", bind=True, max_retries=3)
@@ -23,7 +24,7 @@ def send_email(self, email: str, body_data: dict, msg_type: str):
         msg.set_content("Please enable HTML to view this email.")
         msg.add_alternative(html_content, subtype="html")
 
-        with smtplib.SMTP("mailhog", 1025) as server:
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
             server.send_message(msg)
         return f"Sent email via Mailhog to {email}"
 
