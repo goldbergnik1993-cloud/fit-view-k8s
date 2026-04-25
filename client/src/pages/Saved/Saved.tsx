@@ -8,13 +8,20 @@ import { userApi } from '../../services/api';
 import { mapItem } from '../../hooks/useItems';
 import type { ClothingItem } from '../../types/clothing';
 import styles from './Saved.module.scss';
+import { useAuth } from '../../hooks/useAuth';
 
 const Saved = () => {
+  const { user, loading: authLoading } = useAuth();
   const [savedItems, setSavedItems] = useState<ClothingItem[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchFavorites = useCallback(async () => {
+     if (!user) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -25,9 +32,11 @@ const Saved = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
-  useEffect(() => { fetchFavorites(); }, [fetchFavorites]);
+  useEffect(() => {
+    if (!authLoading) fetchFavorites();
+  }, [fetchFavorites, authLoading]);
 
   const isEmpty = !loading && !error && savedItems.length === 0;
 
@@ -36,7 +45,6 @@ const Saved = () => {
       <Header />
 
       <main className={styles.saved__main}>
-
         {loading && (
           <div className={styles.saved__skeletonWrap}>
             {Array.from({ length: 3 }).map((_, i) => (
@@ -48,7 +56,9 @@ const Saved = () => {
         {error && !loading && (
           <div className={styles.saved__error}>
             <p>Something went wrong.</p>
-            <button type="button" onClick={fetchFavorites}>Retry</button>
+            <button type="button" onClick={fetchFavorites}>
+              Retry
+            </button>
           </div>
         )}
 
@@ -64,17 +74,34 @@ const Saved = () => {
         {!loading && !error && savedItems.length > 0 && (
           <div className={styles.saved__content}>
             <Link to="/" className={styles.saved__back} aria-label="Go back">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="1.5"
-                  strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 4L6 10L12 16"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </Link>
 
             <div className={styles.saved__heading}>
               <div className={styles.saved__headingRow}>
                 <h1 className={styles.saved__title}>Saved</h1>
-                <button type="button" className={styles.saved__moreBtn} aria-label="More options">
-                  <span /><span /><span />
+                <button
+                  type="button"
+                  className={styles.saved__moreBtn}
+                  aria-label="More options"
+                >
+                  <span />
+                  <span />
+                  <span />
                 </button>
               </div>
               <p className={styles.saved__count}>{savedItems.length} items</p>

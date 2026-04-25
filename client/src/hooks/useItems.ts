@@ -41,7 +41,7 @@ interface UseItemsOptions {
   brands?: number[];
   name?: string;
   size?: string;
-  gender?: 'male' | 'female' | 'unisex';
+  gender?: 'male' | 'female';
   min_price?: number;
   max_price?: number;
   sort_by?: 'price_asc' | 'price_desc' | 'new' | 'popular';

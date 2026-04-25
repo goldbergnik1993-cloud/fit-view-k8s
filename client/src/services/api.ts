@@ -183,7 +183,7 @@ export interface GetItemsParams {
   category?: string;
   name?: string;
   size?: string;
-  gender?: 'male' | 'female' | 'unisex';
+  gender?: 'male' | 'female';
   min_price?: number;
   max_price?: number;
   sort_by?: 'price_asc' | 'price_desc' | 'new' | 'popular';
@@ -296,7 +296,9 @@ export interface ProfileResponse extends ProfileData {
 }
 
 export const userApi = {
-  getFavorites: () => request<BackendItem[]>('/user/favorites', {}, true),
+ getFavorites: () =>
+  request<{ items: BackendItem[] }>('/user/favorites', {}, false)
+    .then(data => data.items),
 
   getProfile: () => request<ProfileResponse>('/user/profile', {}, true),
 
