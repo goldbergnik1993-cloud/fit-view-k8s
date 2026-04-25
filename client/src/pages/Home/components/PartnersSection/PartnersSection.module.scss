@@ -28,20 +28,30 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: $card-gap-mobile;
+  justify-items: center;
 }
 
 .partner-card {
   @include flex-center;
   @include focus-visible;
-  background: $color-card-bg;
-  height: $card-height;
-  width: 100%;
+  width: 343px;
+  height: 343px;
+  border: 1px solid $color-toggle-bg;
+  border-radius: 8px;
+  background: $color-white;
+  cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
 
   &:hover {
     opacity: 0.85;
     transform: translateY(-2px);
   }
+}
+
+.partner-card__logo {
+  width: 311px;
+  height: 311px;
+  object-fit: contain;
 }
 
 .partner-card__name {
