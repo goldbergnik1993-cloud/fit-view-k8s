@@ -44,17 +44,32 @@ class ItemsListSchema(PaginatedResponse[ItemListItemSchema]):
 class ItemFilterParams(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    page: int = Field(1, ge=1)
-    per_page: int = Field(20, ge=1, le=100)
+    page: int = Field(1, ge=1, description="Page number")
+    per_page: int = Field(
+        20,
+        ge=1,
+        le=100,
+        description="Number of items per page. Default is 20, maximum is 100."
+    )
 
     category: Optional[ItemCategoryEnum] = Field(
-        None, description="Search by item's category"
+        None, description="Search by item's category (e.g. '?category=skirt')"
     )
-    name: Optional[str] = Field(None, description="Search by item's name")
-    size: Optional[str] = Field(None, description="Search by item's size label")
-    gender: Optional[GenderEnum] = Field(None, description="Search by item's gender")
-    min_price: Optional[Decimal] = Field(None, description="Search by item's min price")
-    max_price: Optional[Decimal] = Field(None, description="Search by item's max price")
+    name: Optional[str] = Field(
+        None, description="Search by item's name (e.g. '?name=floral')"
+    )
+    size: Optional[str] = Field(
+        None, description="Search by item's size label (e.g. '?size=m')"
+    )
+    gender: Optional[GenderEnum] = Field(
+        None, description="Search by item's gender (e.g. '?gender=female')"
+    )
+    min_price: Optional[Decimal] = Field(
+        None, description="Search by item's min price (e.g. '?min_price=20')"
+    )
+    max_price: Optional[Decimal] = Field(
+        None, description="Search by item's max price (e.g. '?max_price=100')"
+    )
     sort_by: str = Field(
         "new",
         pattern="^(price_asc|price_desc|new|popular)$",
