@@ -1,3 +1,7 @@
+935ae8a - Backend. docs(api): comprehensively populate Swagger/OpenAPI documentation (2026-04-25)
+1b3f946 - Backend. refactor(payments): extract webhook logic to service layer and fix event handling (2026-04-25)
+5b13881 - Backend. fix(infra): resolve Celery DB concurrency crashes and clean up configurations (2026-04-25)
+347556e - Backend. chore: updated CHANGELOG.md, clenaed up, refactored and reformatted code (2026-04-24)
 18ed66c - Backend. feat(profile): implement secure email change flow with Redis OTP verification (2026-04-24)
 6748350 - Backend. fix(admin): resolve MissingGreenlet error during order status updates (2026-04-24)
 71817f4 - Backend. refactor(templates): refactored html templates for email notifications. Added changed_email.html template. (2026-04-24)
