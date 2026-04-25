@@ -4,7 +4,7 @@ import styles from './FilterPanel.module.scss';
 import CloseIcon from '../../../assets/icons/burger-close.svg';
 
 export interface FilterState {
-  sort_by: 'price_asc' | 'price_desc' | '';
+  sort_by: 'price_asc' | 'price_desc' | 'new' | 'popular' | '';
   gender: string[];
   size: string[];
   brands: number[];
@@ -20,10 +20,9 @@ interface FilterPanelProps {
 const GENDER_OPTIONS = [
   { label: 'Man', value: 'male' },
   { label: 'Woman', value: 'female' },
-  { label: 'Unisex', value: 'unisex' },
 ];
 
-const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const SIZE_OPTIONS = ['S', 'M', 'L'];
 
 const BRAND_OPTIONS = [
   { label: 'Zara', value: 1 },
@@ -37,6 +36,8 @@ const BRAND_OPTIONS = [
 ];
 
 const SORT_OPTIONS = [
+  { label: 'New', value: 'new' },
+  { label: 'Popular', value: 'popular' },
   { label: 'Price (Low - High)', value: 'price_asc' },
   { label: 'Price (High - Low)', value: 'price_desc' },
 ];
@@ -292,13 +293,20 @@ export const FilterPanel = ({
             </div>
           )}
         </div>
+
+        <div className={styles.section}>
+          <button className={styles.sectionHeader} disabled>
+            <span>Color</span>
+            <span>∨</span>
+          </button>
+        </div>
       </div>
 
       {/* Apply button — only if changes */}
       {hasChanges && (
         <div className={styles.footer}>
           <button className={styles.applyBtn} onClick={handleApply}>
-            Apply
+            Apply Filters
           </button>
         </div>
       )}
