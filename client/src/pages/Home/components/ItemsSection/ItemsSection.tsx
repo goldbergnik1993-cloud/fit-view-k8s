@@ -1,12 +1,20 @@
 import { useItems } from '../../../../hooks/useItems';
 import { itemsApi } from '../../../../services/api';
+import { useAuth } from '../../../../hooks/useAuth';
+import { useBreakpoint } from '../../../../hooks/useBreakpoint';
 import ItemCard from '../../../../shared/components/ItemCard/ItemCard';
 import styles from './ItemsSection.module.scss';
 
 export const ItemsSection = () => {
-  const { items, loading } = useItems({ sort_by: 'popular', per_page: 8 });
+  const { user } = useAuth();
+  const { isMobile } = useBreakpoint();
+  const { items, loading } = useItems({
+    sort_by: 'popular',
+    per_page: isMobile ? 4 : 8,
+  });
 
   const handleFavoriteToggle = async (id: string) => {
+    if (!user) return;
     try {
       await itemsApi.toggleFavorite(id);
     } catch {
@@ -20,7 +28,11 @@ export const ItemsSection = () => {
         <h2 id="popular-items-heading" className={styles['section__title']}>
           Popular Items
         </h2>
-        <a href="/catalog" className={styles['section__see-all']} aria-label="See all popular items">
+        <a
+          href="/catalog"
+          className={styles['section__see-all']}
+          aria-label="See all popular items"
+        >
           See all
         </a>
       </div>
@@ -35,7 +47,7 @@ export const ItemsSection = () => {
 
       {!loading && (
         <ul className={styles['items-grid']} role="list">
-          {items.map(item => (
+          {items.map((item) => (
             <li key={item.id}>
               <ItemCard
                 item={item}
