@@ -1,7 +1,9 @@
 from celery import Celery  # type: ignore
 from celery.schedules import crontab  # type: ignore
+from celery.signals import worker_process_init  # type: ignore
 
 from core.settings import settings
+from database.session_postgresql import engine
 
 redis_url = settings.REDIS_URL
 
@@ -30,3 +32,13 @@ celery_app.conf.beat_schedule = {
         "schedule": crontab(minute=0),
     },
 }
+
+@worker_process_init.connect
+def dispose_sqlalchemy_engine(**kwargs):
+    """
+    Forces the new Celery worker to drop the pre-forked database
+    connection pool and create a fresh one.
+    """
+    import asyncio
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(engine.dispose())
