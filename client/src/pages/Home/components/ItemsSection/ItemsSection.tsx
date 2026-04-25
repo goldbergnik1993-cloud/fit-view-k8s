@@ -1,20 +1,24 @@
+import { useState } from 'react';
 import { useItems } from '../../../../hooks/useItems';
 import { itemsApi } from '../../../../services/api';
-import { useAuth } from '../../../../hooks/useAuth';
 import { useBreakpoint } from '../../../../hooks/useBreakpoint';
 import ItemCard from '../../../../shared/components/ItemCard/ItemCard';
 import styles from './ItemsSection.module.scss';
 
 export const ItemsSection = () => {
-  const { user } = useAuth();
   const { isMobile } = useBreakpoint();
   const { items, loading } = useItems({
     sort_by: 'popular',
     per_page: isMobile ? 4 : 8,
   });
 
+  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
+
   const handleFavoriteToggle = async (id: string) => {
-    if (!user) return;
+    setFavorites((prev) => ({
+      ...prev,
+      [id]: !(prev[id] ?? items.find((i) => i.id === id)?.isFavorite ?? false),
+    }));
     try {
       await itemsApi.toggleFavorite(id);
     } catch {
@@ -51,7 +55,7 @@ export const ItemsSection = () => {
             <li key={item.id}>
               <ItemCard
                 item={item}
-                isFavorite={item.isFavorite}
+                isFavorite={favorites[item.id] ?? item.isFavorite}
                 onFavoriteToggle={handleFavoriteToggle}
               />
             </li>
