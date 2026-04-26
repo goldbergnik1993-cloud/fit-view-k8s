@@ -11,24 +11,28 @@ import cosLogo from '../../../../assets/brands/cos.svg';
 import balenciagaLogo from '../../../../assets/brands/balenciaga.svg';
 
 const PARTNERS = [
-  { id: 1,   name: 'Zara',           logo: zaraLogo },
-  { id: 5,   name: 'H&M',            logo: hmLogo },
-  { id: 7,   name: 'The North Face', logo: northFaceLogo },
-  { id: 4,   name: 'Uniqlo',         logo: uniqloLogo },
-  { id: 6,   name: 'Ralph Lauren',   logo: ralphLaurenLogo },
-  { id: 2,   name: 'Mango',          logo: mangoLogo },
-  { id: 3,   name: 'Cos',            logo: cosLogo },
-  { id: null, name: 'Balenciaga',    logo: balenciagaLogo },
+  { id: 1, name: 'Zara', logo: zaraLogo },
+  { id: 5, name: 'H&M', logo: hmLogo },
+  { id: 7, name: 'The North Face', logo: northFaceLogo },
+  { id: 4, name: 'Uniqlo', logo: uniqloLogo },
+  { id: 6, name: 'Ralph Lauren', logo: ralphLaurenLogo },
+  { id: 2, name: 'Mango', logo: mangoLogo },
+  { id: 3, name: 'Cos', logo: cosLogo },
+  { id: null, name: 'Balenciaga', logo: balenciagaLogo },
 ];
 
 export const PartnersSection = () => {
   const navigate = useNavigate();
 
-  const handleClick = (partner: typeof PARTNERS[number]) => {
+  const handleClick = (partner: (typeof PARTNERS)[number]) => {
     if (partner.id === null) {
-      navigate('/catalog?brand_name=Balenciaga&empty=true');
+      navigate(
+        `/catalog?brand_name=${encodeURIComponent(partner.name)}&empty=true`
+      );
     } else {
-      navigate(`/catalog?brands=${partner.id}`);
+      navigate(
+        `/catalog?brands=${partner.id}&brand_name=${encodeURIComponent(partner.name)}`
+      );
     }
   };
 
@@ -41,7 +45,7 @@ export const PartnersSection = () => {
       </div>
 
       <ul className={styles['items-grid']} role="list">
-        {PARTNERS.map(partner => (
+        {PARTNERS.map((partner) => (
           <li key={partner.name}>
             <button
               className={styles['partner-card']}
