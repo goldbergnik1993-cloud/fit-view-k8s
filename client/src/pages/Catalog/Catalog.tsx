@@ -405,7 +405,7 @@ const Catalog = () => {
         )}
 
         {/* Load More — mobile only */}
-        {!loading && totalPages > 1 && (
+        {!loading && page < totalPages && (
           <div className={styles.catalog__loadMore}>
             <p className={styles.catalog__loadMoreText}>
               You have viewed {items.length} of {totalItems} items
@@ -413,8 +413,7 @@ const Catalog = () => {
             <button
               type="button"
               className={styles.catalog__loadMoreBtn}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
             >
               Load More
             </button>
