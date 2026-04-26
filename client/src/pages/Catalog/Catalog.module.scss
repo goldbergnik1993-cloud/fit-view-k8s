@@ -196,12 +196,17 @@
 
 .catalog__filterCount {
   @include flex-center;
+  position: absolute;
+  top: 0;
+  right: 0;
   width: 14px;
   height: 14px;
-  background: $color-primary;
-  color: $color-white;
+  background: $color-white;
+  color: $color-primary;
+  border: 1.5px solid $color-primary;
   border-radius: 50%;
   font-size: 12px;
+  font-weight: 400;
 }
 
 // ─── Active filter tags ───────────────────────────────────────────────────────
