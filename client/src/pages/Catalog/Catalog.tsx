@@ -1,5 +1,5 @@
-import { useState, useMemo} from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
@@ -29,7 +29,6 @@ const CATEGORIES = [
 const GENDER_LABELS: Record<string, string> = {
   male: 'Man',
   female: 'Woman',
-  unisex: 'Unisex',
 };
 
 const BRAND_NAMES: Record<number, string> = {
@@ -59,6 +58,7 @@ const Catalog = () => {
   const [gridView, setGridView] = useState<GridView>('large');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  const urlName = searchParams.get('name');
   const urlBrandId = searchParams.get('brands');
   const urlBrandName = searchParams.get('brand_name');
   const isEmptyBrand = searchParams.get('empty') === 'true';
@@ -74,14 +74,15 @@ const Catalog = () => {
       page,
       per_page: 12,
       sort_by: filters.sort_by || undefined,
-      gender: filters.gender[0] as 'male' | 'female' | 'unisex' | undefined,
+      gender: filters.gender[0] as 'male' | 'female' | undefined,
       size: filters.size[0] || undefined,
       brands: filters.brands.length > 0 ? filters.brands : undefined,
+      name: urlName || undefined,
     }),
-    [activeCategory, page, filters]
+    [activeCategory, page, filters, urlName]
   );
 
-  const { items, loading, error, totalPages } = useItems(itemsParams);
+  const { items, loading, error, totalPages, totalItems } = useItems(itemsParams);
 
   const handleCategoryChange = (value: string) => {
     setActiveCategory(value);
@@ -111,46 +112,37 @@ const Catalog = () => {
       <Header />
 
       <main className={styles.catalog__main}>
-        <Link to="/" className={styles.catalog__back} aria-label="Go back">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M12 4L6 10L12 16"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Link>
-
-        {/* Title row */}
+        {/* Breadcrumbs + filter button mobile */}
         <div className={styles.catalog__titleRow}>
-          <h1 className={styles.catalog__title}>Catalog</h1>
+          <nav className={styles.catalog__breadcrumbs} aria-label="Breadcrumb">
+            <a href="/" className={styles.catalog__breadcrumbLink}>Home</a>
+            <span className={styles.catalog__breadcrumbSep}>/</span>
+            {urlName ? (
+              <>
+                <a href="/catalog" className={styles.catalog__breadcrumbLink}>Catalog</a>
+                <span className={styles.catalog__breadcrumbSep}>/</span>
+                <span>Search results for "{urlName}"</span>
+              </>
+            ) : urlBrandName ? (
+              <>
+                <a href="/catalog" className={styles.catalog__breadcrumbLink}>Catalog</a>
+                <span className={styles.catalog__breadcrumbSep}>/</span>
+                <span>{urlBrandName}</span>
+              </>
+            ) : (
+              <span>Catalog</span>
+            )}
+          </nav>
 
-          {/* Filter button — mobile only */}
           <button
             type="button"
             className={styles.catalog__filterBtnMobile}
             onClick={() => setIsFilterOpen(true)}
             aria-label="Filter"
           >
-            <img
-              src={FilterIcon}
-              alt=""
-              aria-hidden="true"
-              width={20}
-              height={20}
-            />
+            <img src={FilterIcon} alt="" aria-hidden="true" width={20} height={20} />
             {activeFiltersCount > 0 && (
-              <span className={styles.catalog__filterCount}>
-                {activeFiltersCount}
-              </span>
+              <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
             )}
           </button>
         </div>
@@ -166,7 +158,7 @@ const Catalog = () => {
                 className={`${styles.catalog__pill} ${activeCategory === value ? styles['catalog__pill--active'] : ''}`}
                 onClick={() => handleCategoryChange(value)}
               >
-                {label}
+                {value === 'All' ? `All (${totalItems})` : label}
               </button>
             ))}
           </div>
@@ -179,17 +171,9 @@ const Catalog = () => {
               onClick={() => setIsFilterOpen((prev) => !prev)}
             >
               <span>Filter</span>
-              <img
-                src={FilterIcon}
-                alt=""
-                aria-hidden="true"
-                width={16}
-                height={16}
-              />
+              <img src={FilterIcon} alt="" aria-hidden="true" width={16} height={16} />
               {activeFiltersCount > 0 && (
-                <span className={styles.catalog__filterCount}>
-                  {activeFiltersCount}
-                </span>
+                <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
               )}
             </button>
           </div>
@@ -202,13 +186,7 @@ const Catalog = () => {
               onClick={() => setGridView('small')}
               aria-label="Small grid"
             >
-              <img
-                src={GridSmallIcon}
-                alt=""
-                aria-hidden="true"
-                width={18}
-                height={18}
-              />
+              <img src={GridSmallIcon} alt="" aria-hidden="true" width={18} height={18} />
             </button>
 
             <button
@@ -217,13 +195,7 @@ const Catalog = () => {
               onClick={() => setGridView('large')}
               aria-label="Large grid"
             >
-              <img
-                src={GridLargeIcon}
-                alt=""
-                aria-hidden="true"
-                width={18}
-                height={18}
-              />
+              <img src={GridLargeIcon} alt="" aria-hidden="true" width={18} height={18} />
             </button>
 
             <button
@@ -232,17 +204,9 @@ const Catalog = () => {
               onClick={() => setIsFilterOpen((prev) => !prev)}
             >
               <span>Filter</span>
-              <img
-                src={FilterIcon}
-                alt=""
-                aria-hidden="true"
-                width={16}
-                height={16}
-              />
+              <img src={FilterIcon} alt="" aria-hidden="true" width={16} height={16} />
               {activeFiltersCount > 0 && (
-                <span className={styles.catalog__filterCount}>
-                  {activeFiltersCount}
-                </span>
+                <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
               )}
             </button>
           </div>
@@ -256,10 +220,7 @@ const Catalog = () => {
                 key={g}
                 className={styles.catalog__activeTag}
                 onClick={() => {
-                  setFilters((prev) => ({
-                    ...prev,
-                    gender: prev.gender.filter((x) => x !== g),
-                  }));
+                  setFilters((prev) => ({ ...prev, gender: prev.gender.filter((x) => x !== g) }));
                   setPage(1);
                 }}
               >
@@ -271,10 +232,7 @@ const Catalog = () => {
                 key={s}
                 className={styles.catalog__activeTag}
                 onClick={() => {
-                  setFilters((prev) => ({
-                    ...prev,
-                    size: prev.size.filter((x) => x !== s),
-                  }));
+                  setFilters((prev) => ({ ...prev, size: prev.size.filter((x) => x !== s) }));
                   setPage(1);
                 }}
               >
@@ -286,10 +244,7 @@ const Catalog = () => {
                 key={b}
                 className={styles.catalog__activeTag}
                 onClick={() => {
-                  setFilters((prev) => ({
-                    ...prev,
-                    brands: prev.brands.filter((x) => x !== b),
-                  }));
+                  setFilters((prev) => ({ ...prev, brands: prev.brands.filter((x) => x !== b) }));
                   setPage(1);
                 }}
               >
@@ -304,16 +259,10 @@ const Catalog = () => {
                   setPage(1);
                 }}
               >
-                ×{' '}
-                {filters.sort_by === 'price_asc'
-                  ? 'Price (Low - High)'
-                  : 'Price (High - Low)'}
+                × {filters.sort_by === 'price_asc' ? 'Price (Low - High)' : filters.sort_by === 'price_desc' ? 'Price (High - Low)' : filters.sort_by === 'new' ? 'New' : 'Popular'}
               </button>
             )}
-            <button
-              className={styles.catalog__activeTag}
-              onClick={handleClearAll}
-            >
+            <button className={styles.catalog__activeTag} onClick={handleClearAll}>
               × Clear All
             </button>
           </div>
@@ -321,9 +270,7 @@ const Catalog = () => {
 
         {/* Skeleton */}
         {loading && (
-          <div
-            className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}
-          >
+          <div className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}>
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className={styles.catalog__skeleton} />
             ))}
@@ -340,15 +287,8 @@ const Catalog = () => {
         {/* Empty — without items (Balenciaga) */}
         {isEmptyBrand && !loading && (
           <div className={styles.catalog__brandEmpty}>
-            <img
-              src="/icons/hangers.svg"
-              alt=""
-              aria-hidden="true"
-              className={styles.catalog__brandEmptyIcon}
-            />
-            <h2 className={styles.catalog__brandEmptyTitle}>
-              Coming back soon
-            </h2>
+            <img src="/icons/hangers.svg" alt="" aria-hidden="true" className={styles.catalog__brandEmptyIcon} />
+            <h2 className={styles.catalog__brandEmptyTitle}>Coming back soon</h2>
             <p className={styles.catalog__brandEmptyText}>
               We're currently out of stock for {urlBrandName ?? 'this brand'}
             </p>
@@ -374,9 +314,7 @@ const Catalog = () => {
 
         {/* Grid */}
         {!isEmptyBrand && !loading && !error && items.length > 0 && (
-          <div
-            className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}
-          >
+          <div className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}>
             {items.map((item) => (
               <ItemCard key={item.id} item={item} />
             ))}
@@ -394,7 +332,6 @@ const Catalog = () => {
             >
               ←
             </button>
-
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
@@ -405,7 +342,6 @@ const Catalog = () => {
                 {p}
               </button>
             ))}
-
             <button
               type="button"
               className={styles.catalog__pageBtn}

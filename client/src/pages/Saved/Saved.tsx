@@ -4,21 +4,42 @@ import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
-import { userApi } from '../../services/api';
+import { userApi, itemsApi } from '../../services/api';
 import { mapItem } from '../../hooks/useItems';
 import type { ClothingItem } from '../../types/clothing';
 import styles from './Saved.module.scss';
 import { useAuth } from '../../hooks/useAuth';
+import { useFavorites } from '../../hooks/useFavorites';
 
 const Saved = () => {
   const { user, loading: authLoading } = useAuth();
+  const { favorites, toggleFavorite, isFavorite } = useFavorites(!!user);
   const [savedItems, setSavedItems] = useState<ClothingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchFavorites = useCallback(async () => {
-     if (!user) {
-      setLoading(false);
+    if (!user) {
+      const guestIds = Object.entries(favorites)
+        .filter(([, v]) => v)
+        .map(([id]) => id);
+
+      if (guestIds.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const results = await Promise.all(
+          guestIds.map(id => itemsApi.getById(id))
+        );
+        setSavedItems(results.map(mapItem));
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
       return;
     }
 
@@ -32,7 +53,7 @@ const Saved = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, favorites]);
 
   useEffect(() => {
     if (!authLoading) fetchFavorites();
@@ -56,9 +77,7 @@ const Saved = () => {
         {error && !loading && (
           <div className={styles.saved__error}>
             <p>Something went wrong.</p>
-            <button type="button" onClick={fetchFavorites}>
-              Retry
-            </button>
+            <button type="button" onClick={fetchFavorites}>Retry</button>
           </div>
         )}
 
@@ -74,34 +93,17 @@ const Saved = () => {
         {!loading && !error && savedItems.length > 0 && (
           <div className={styles.saved__content}>
             <Link to="/" className={styles.saved__back} aria-label="Go back">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M12 4L6 10L12 16"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="1.5"
+                  strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
 
             <div className={styles.saved__heading}>
               <div className={styles.saved__headingRow}>
                 <h1 className={styles.saved__title}>Saved</h1>
-                <button
-                  type="button"
-                  className={styles.saved__moreBtn}
-                  aria-label="More options"
-                >
-                  <span />
-                  <span />
-                  <span />
+                <button type="button" className={styles.saved__moreBtn} aria-label="More options">
+                  <span /><span /><span />
                 </button>
               </div>
               <p className={styles.saved__count}>{savedItems.length} items</p>
@@ -109,7 +111,12 @@ const Saved = () => {
 
             <div className={styles.saved__grid}>
               {savedItems.map((item) => (
-                <ItemCard key={item.id} item={item} />
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  isFavorite={isFavorite(item.id)}
+                  onFavoriteToggle={toggleFavorite}
+                />
               ))}
             </div>
           </div>

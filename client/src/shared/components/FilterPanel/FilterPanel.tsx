@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useBreakpoint } from '../../../hooks/useBreakpoint';
 import styles from './FilterPanel.module.scss';
 import CloseIcon from '../../../assets/icons/burger-close.svg';
+import ChevronRightIcon from '../../../assets/icons/chevron-right.svg';
+import ChevronUpIcon from '../../../assets/icons/chevron-up.svg';
 
 export interface FilterState {
   sort_by: 'price_asc' | 'price_desc' | 'new' | 'popular' | '';
@@ -110,12 +112,6 @@ export const FilterPanel = ({
     local.brands.length > 0 ||
     local.sort_by !== '';
 
-  const hasChanges =
-    local.sort_by !== filters.sort_by ||
-    JSON.stringify(local.gender) !== JSON.stringify(filters.gender) ||
-    JSON.stringify(local.size) !== JSON.stringify(filters.size) ||
-    JSON.stringify(local.brands) !== JSON.stringify(filters.brands);
-
   if (!isOpen) return null;
 
   const content = (
@@ -190,7 +186,14 @@ export const FilterPanel = ({
             onClick={() => toggle('sort_by')}
           >
             <span>Sort by</span>
-            <span>{expanded.includes('sort_by') ? '∧' : '∨'}</span>
+            <img
+              src={
+                expanded.includes('sort_by') ? ChevronUpIcon : ChevronRightIcon
+              }
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('sort_by') && (
             <div className={styles.sectionBody}>
@@ -223,7 +226,14 @@ export const FilterPanel = ({
             onClick={() => toggle('gender')}
           >
             <span>Gender</span>
-            <span>{expanded.includes('gender') ? '∧' : '∨'}</span>
+            <img
+              src={
+                expanded.includes('gender') ? ChevronUpIcon : ChevronRightIcon
+              }
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('gender') && (
             <div className={styles.sectionBody}>
@@ -249,7 +259,14 @@ export const FilterPanel = ({
             onClick={() => toggle('size')}
           >
             <span>Size</span>
-            <span>{expanded.includes('size') ? '∧' : '∨'}</span>
+            <img
+              src={
+                expanded.includes('size') ? ChevronUpIcon : ChevronRightIcon
+              }
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('size') && (
             <div className={styles.sectionBody}>
@@ -275,7 +292,14 @@ export const FilterPanel = ({
             onClick={() => toggle('brands')}
           >
             <span>Brand</span>
-            <span>{expanded.includes('brands') ? '∧' : '∨'}</span>
+            <img
+              src={
+                expanded.includes('brands') ? ChevronUpIcon : ChevronRightIcon
+              }
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('brands') && (
             <div className={styles.sectionBody}>
@@ -297,19 +321,22 @@ export const FilterPanel = ({
         <div className={styles.section}>
           <button className={styles.sectionHeader} disabled>
             <span>Color</span>
-            <span>∨</span>
+            <img
+              src={ChevronRightIcon}
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
         </div>
       </div>
 
-      {/* Apply button — only if changes */}
-      {hasChanges && (
-        <div className={styles.footer}>
-          <button className={styles.applyBtn} onClick={handleApply}>
-            Apply Filters
-          </button>
-        </div>
-      )}
+      {/* Apply button */}
+      <div className={styles.footer}>
+        <button className={styles.applyBtn} onClick={handleApply}>
+          Apply Filters
+        </button>
+      </div>
     </div>
   );
 

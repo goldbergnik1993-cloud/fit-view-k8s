@@ -1,30 +1,19 @@
-import { useState } from 'react';
 import { useItems } from '../../../../hooks/useItems';
-import { itemsApi } from '../../../../services/api';
 import { useBreakpoint } from '../../../../hooks/useBreakpoint';
 import ItemCard from '../../../../shared/components/ItemCard/ItemCard';
+import { useAuth } from '../../../../hooks/useAuth';
+import { useFavorites } from '../../../../hooks/useFavorites';
 import styles from './ItemsSection.module.scss';
 
 export const ItemsSection = () => {
+  const { user } = useAuth();
   const { isMobile } = useBreakpoint();
   const { items, loading } = useItems({
     sort_by: 'popular',
     per_page: isMobile ? 4 : 8,
   });
 
-  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
-
-  const handleFavoriteToggle = async (id: string) => {
-    setFavorites((prev) => ({
-      ...prev,
-      [id]: !(prev[id] ?? items.find((i) => i.id === id)?.isFavorite ?? false),
-    }));
-    try {
-      await itemsApi.toggleFavorite(id);
-    } catch {
-      // ignore
-    }
-  };
+  const {toggleFavorite, isFavorite } = useFavorites(!!user);
 
   return (
     <section className={styles.section} aria-labelledby="popular-items-heading">
@@ -55,8 +44,8 @@ export const ItemsSection = () => {
             <li key={item.id}>
               <ItemCard
                 item={item}
-                isFavorite={favorites[item.id] ?? item.isFavorite}
-                onFavoriteToggle={handleFavoriteToggle}
+                isFavorite={isFavorite(item.id)}
+                onFavoriteToggle={toggleFavorite}
               />
             </li>
           ))}
