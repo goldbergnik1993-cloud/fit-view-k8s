@@ -284,6 +284,8 @@
   cursor: pointer;
   outline: none;
   display: block;
+  position: relative;
+  z-index: 1;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -294,7 +296,15 @@
     background: $color-white;
     border: 3px solid #676767;
     cursor: pointer;
-    margin-top: 0;
+    position: relative;
+    z-index: 2;
+    margin-top: -9px;
+  }
+
+  &::-webkit-slider-runnable-track {
+    height: 2px;
+    background: #676767;
+    border-radius: 2px;
   }
 
   &::-moz-range-thumb {
@@ -304,12 +314,6 @@
     background: $color-white;
     border: 3px solid #676767;
     cursor: pointer;
-  }
-
-  &::-webkit-slider-runnable-track {
-    height: 2px;
-    background: #676767;
-    border-radius: 2px;
   }
 
   &::-moz-range-track {
