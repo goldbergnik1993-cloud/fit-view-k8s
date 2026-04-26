@@ -56,6 +56,7 @@ const Item = () => {
   const [gender, setGender] = useState<'male' | 'female'>('female');
   const [fitResult, setFitResult] = useState<FittingRoomResponse | null>(null);
   const [fitLoading, setFitLoading] = useState(false);
+  const [debouncedHeight, setDebouncedHeight] = useState(height);
 
   useEffect(() => {
     if (!item) return;
@@ -75,13 +76,18 @@ const Item = () => {
       .catch(() => {});
   }, [user, profileLoaded]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedHeight(height), 400);
+    return () => clearTimeout(timer);
+  }, [height]);
+
   const runFitting = useCallback(async () => {
     if (!item || !id || !selectedSizeLabel) return;
     setFitLoading(true);
     try {
       const result = await itemsApi.fitItem(Number(id), {
         size_label: selectedSizeLabel,
-        height_cm: height,
+        height_cm: debouncedHeight,
       });
       setFitResult(result);
     } catch {
@@ -89,7 +95,7 @@ const Item = () => {
     } finally {
       setFitLoading(false);
     }
-  }, [id, item, height, selectedSizeLabel]);
+  }, [id, item, debouncedHeight, selectedSizeLabel]);
 
   useEffect(() => {
     if (view === 'fitting') runFitting();
