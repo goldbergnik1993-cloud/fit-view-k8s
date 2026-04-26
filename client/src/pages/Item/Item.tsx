@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import {
   request,
@@ -18,6 +18,7 @@ import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
 import SavedIcon from '../../assets/icons/saved.svg';
 import InfoIcon from '../../assets/icons/info.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
+import EditMeasurementsModal from '../../shared/components/EditMeasurementsModal/EditMeasurementsModal';
 
 // Mock colors — not in DB, display only
 const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
@@ -31,7 +32,6 @@ const GENDER_TOGGLE: { value: 'male' | 'female'; label: string }[] = [
 
 const Item = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { item, loading, error } = useItem(id);
   const { items: similarItems } = useItems({
@@ -40,6 +40,7 @@ const Item = () => {
   });
 
   const [view, setView] = useState<View>('card');
+  const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
 
   // Card state
   const [isFavorite, setIsFavorite] = useState(false);
@@ -308,18 +309,29 @@ const Item = () => {
 
           <button
             className={styles.editBtn}
-            onClick={() => navigate('/profile')}
+            onClick={() => setIsMeasurementsOpen(true)}
           >
             Edit Measurements
             <img src={ChevronRightIcon} alt="" width={16} height={16} />
           </button>
         </div>
 
+        <EditMeasurementsModal
+          isOpen={isMeasurementsOpen}
+          onClose={() => setIsMeasurementsOpen(false)}
+          onSave={() => {
+            runFitting();
+          }}
+        />
+
         {/* Silhouette */}
         <Silhouette
           linePositionPct={fitLoading ? 50 : linePositionPct}
           label={fitLoading ? 'Calculating...' : fitLabel}
           heightCm={height}
+          itemLengthCm={
+            fitResult ? Math.round(fitResult.visual_markers.h_end_cm) : null
+          }
           gender={gender}
           loading={fitLoading}
         />

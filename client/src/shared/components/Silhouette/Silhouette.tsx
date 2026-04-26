@@ -3,17 +3,18 @@ import womanSvg from '../../../assets/images/silhouette-woman.svg';
 import manSvg from '../../../assets/images/silhouette-man.svg';
 
 interface SilhouetteProps {
-  linePositionPct: number; // % from bottom
-  label: string; // e.g. "Ends 0 cm from floor"
-  heightCm: number; // e.g. 170
-  gender?: 'male' | 'female' | 'unisex';
+  linePositionPct: number;
+  label: string;
+  heightCm: number;
+  itemLengthCm?: number | null;
+  gender?: 'male' | 'female';
   loading?: boolean;
 }
 
 const Silhouette = ({
   linePositionPct,
   label,
-  heightCm,
+  itemLengthCm,
   gender = 'female',
   loading = false,
 }: SilhouetteProps) => {
@@ -51,7 +52,9 @@ const Silhouette = ({
 
       {/* Right labels */}
       <div className={styles.silhouette__right}>
-        <span className={styles.silhouette__heightLabel}>{heightCm} cm</span>
+        <span className={styles.silhouette__heightLabel}>
+          {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
+        </span>
         <span className={styles.silhouette__itemLabel}>Item length</span>
       </div>
     </div>
