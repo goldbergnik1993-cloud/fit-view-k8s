@@ -15,10 +15,25 @@ import { useBreakpoint } from '../../../hooks/useBreakpoint';
 import { useAuth } from '../../../hooks/useAuth';
 
 const NAV_ITEMS = [
-  { label: 'New', children: ['New for Man', 'New for Woman'] },
-  { label: 'Popular' },
-  { label: 'Man' },
-  { label: 'Woman' },
+  {
+    label: 'New',
+    children: [
+      {
+        label: 'New for Man',
+        href: '/catalog?sort_by=new&gender=male&breadcrumb_name=New+for+Man',
+      },
+      {
+        label: 'New for Woman',
+        href: '/catalog?sort_by=new&gender=female&breadcrumb_name=New+for+Woman',
+      },
+    ],
+  },
+  {
+    label: 'Popular',
+    href: '/catalog?sort_by=popular&breadcrumb_name=Popular',
+  },
+  { label: 'Man', href: '/catalog?gender=male&breadcrumb_name=Man' },
+  { label: 'Woman', href: '/catalog?gender=female&breadcrumb_name=Woman' },
 ];
 
 export const Header = () => {
@@ -92,7 +107,7 @@ export const Header = () => {
                       key={item.label}
                       className={styles['header__nav-desktop-item']}
                     >
-                      <a href="/catalog">{item.label}</a>
+                      <a href={item.href ?? '/catalog'}>{item.label}</a>
                     </li>
                   ))}
                 </ul>
@@ -193,7 +208,7 @@ export const Header = () => {
                       key={item.label}
                       className={styles['header__nav-desktop-item']}
                     >
-                      <a href="/catalog">{item.label}</a>
+                      <a href={item.href ?? '/catalog'}>{item.label}</a>
                     </li>
                   ))}
                 </ul>
@@ -354,7 +369,7 @@ export const Header = () => {
                   if (item.children) {
                     toggleNavItem(item.label);
                   } else {
-                    window.location.href = '/catalog';
+                    window.location.href = item.href ?? '/catalog';
                     closeMenu();
                   }
                 }}
@@ -386,14 +401,14 @@ export const Header = () => {
                   }}
                 >
                   {item.children.map((child) => (
-                    <li key={child}>
+                    <li key={child.href}>
                       <a
-                        href={`/catalog?category=${child.toLowerCase().replace(/ /g, '-')}`}
+                        href={child.href}
                         className={styles['mobile-nav__link']}
                         style={{ fontSize: '14px', paddingLeft: 0 }}
                         onClick={closeMenu}
                       >
-                        {child}
+                        {child.label}
                       </a>
                     </li>
                   ))}

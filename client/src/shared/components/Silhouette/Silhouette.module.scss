@@ -1,0 +1,106 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.silhouette {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-8;
+  width: 100%;
+  min-height: 280px;
+  padding: $spacing-16 0;
+}
+
+// ─── Left column ─────────────────────────────────────────────────────────────
+
+.silhouette__left {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+
+.silhouette__endLabel {
+  @include text(12px, 400);
+  color: $color-text;
+  white-space: nowrap;
+}
+
+// ─── Center ───────────────────────────────────────────────────────────────────
+
+.silhouette__center {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.silhouette__imageWrap {
+  position: relative;
+  width: 120px;
+  height: 280px;
+}
+
+.silhouette__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.silhouette__line {
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  height: 1.5px;
+  background: $color-text;
+  transition: bottom 0.4s ease;
+
+  // small tick on left
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -4px;
+    width: 1.5px;
+    height: 9px;
+    background: $color-text;
+  }
+
+  // small tick on right
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -4px;
+    width: 1.5px;
+    height: 9px;
+    background: $color-text;
+  }
+}
+
+// ─── Right column ─────────────────────────────────────────────────────────────
+
+.silhouette__right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-4;
+  padding-bottom: 0;
+
+  // vertically align to top of image
+  align-self: flex-start;
+  padding-top: 0;
+  justify-content: flex-start;
+}
+
+.silhouette__heightLabel {
+  @include text(14px, 400);
+  color: $color-text;
+  white-space: nowrap;
+}
+
+.silhouette__itemLabel {
+  @include text(12px, 400);
+  color: $color-text;
+  white-space: nowrap;
+}
