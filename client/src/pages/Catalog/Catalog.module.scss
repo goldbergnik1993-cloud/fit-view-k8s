@@ -20,39 +20,32 @@
   }
 }
 
-// ─── Back ─────────────────────────────────────────────────────────────────────
 
-.catalog__back {
-  display: none;
-  color: $color-black;
-  margin-bottom: 20px;
-  width: fit-content;
-  @include hover-opacity;
-
-  @include tablet {
-    display: flex;
-    align-items: center;
-  }
-}
-
-// ─── Title row ────────────────────────────────────────────────────────────────
+// ─── Title row and Breadcrumbs ─────────────────────────────────────────────────
 
 .catalog__titleRow {
-  @include flex-between;
-  margin-bottom: 20px;
-
-  @include tablet {
-    margin-bottom: 24px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-16;
 }
 
-.catalog__title {
-  @include text(28px, 700, 1.2);
-  margin: 0;
+.catalog__breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  @include text(14px, 500);
+  flex-wrap: wrap;
+}
 
-  @include tablet {
-    font-size: 32px;
-  }
+.catalog__breadcrumbLink {
+  text-decoration: underline;
+  @include hover-opacity;
+}
+
+.catalog__breadcrumbSep {
+  color: $color-text;
+  opacity: 0.4;
 }
 
 // ─── Filter button mobile ─────────────────────────────────────────────────────
@@ -103,7 +96,7 @@
   border-radius: 20px;
   border: 1px solid #d0d0d0;
   background: $color-white;
-  color: $color-black;
+  color: #A8A8B2;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
@@ -113,12 +106,12 @@
     border-color 0.15s ease;
 
   &:hover {
-    border-color: $color-black;
+    border-color: $color-input-border;
   }
 
   &--active {
-    background: $color-black;
-    border-color: $color-black;
+    background: $color-input-border;
+    border-color: $color-input-border;
     color: $color-white;
   }
 
@@ -203,12 +196,12 @@
 
 .catalog__filterCount {
   @include flex-center;
-  width: 18px;
-  height: 18px;
-  background: $color-black;
+  width: 14px;
+  height: 14px;
+  background: $color-primary;
   color: $color-white;
   border-radius: 50%;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 // ─── Active filter tags ───────────────────────────────────────────────────────
@@ -240,7 +233,7 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  border: 1px solid $color-black;
+  border: 1px solid $color-text;
   border-radius: 20px;
   cursor: pointer;
   white-space: nowrap;
