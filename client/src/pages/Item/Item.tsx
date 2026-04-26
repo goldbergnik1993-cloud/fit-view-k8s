@@ -1,9 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { request, itemsApi, cartApi, type FittingRoomResponse } from '../../services/api';
+import {
+  request,
+  itemsApi,
+  cartApi,
+  type FittingRoomResponse,
+} from '../../services/api';
 import { useItem } from '../../hooks/useItems';
 import { Header } from '../../shared/components/Header/Header';
+import { Footer } from '../../shared/components/Footer/Footer';
 import Silhouette from '../../shared/components/Silhouette/Silhouette';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
@@ -62,7 +68,9 @@ const Item = () => {
   // Card state
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
-  const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
+  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(
+    null
+  );
   const [cartLoading, setCartLoading] = useState(false);
   const [cartAdded, setCartAdded] = useState(false);
 
@@ -76,7 +84,7 @@ const Item = () => {
   useEffect(() => {
     if (!item) return;
     setIsFavorite(item.isFavorite);
-    setSelectedSizeId(item.availableSizes?.[0]?.id ?? null);
+    setSelectedSizeLabel(item.availableSizes?.[0]?.sizeLabel ?? null);
     if (item.gender === 'male') setGender('male');
   }, [item]);
 
@@ -92,12 +100,12 @@ const Item = () => {
   }, [user, profileLoaded]);
 
   const runFitting = useCallback(async () => {
-    if (!item || !id || selectedSizeId === null) return;
+    if (!item || !id || !selectedSizeLabel) return;
     setFitLoading(true);
     try {
       const result = await itemsApi.fitItem(Number(id), {
+        size_label: selectedSizeLabel,
         height_cm: height,
-        size_chart_id: selectedSizeId,
       });
       setFitResult(result);
     } catch {
@@ -105,7 +113,7 @@ const Item = () => {
     } finally {
       setFitLoading(false);
     }
-  }, [id, item, height, selectedSizeId]);
+  }, [id, item, height, selectedSizeLabel]);
 
   useEffect(() => {
     if (view === 'fitting') runFitting();
@@ -119,7 +127,9 @@ const Item = () => {
       setIsFavorite((prev) => !prev);
     } catch {
       // ignore
-    } finally { setFavoriteLoading(false); }
+    } finally {
+      setFavoriteLoading(false);
+    }
   };
 
   const handleAddToCart = async () => {
@@ -131,7 +141,9 @@ const Item = () => {
       setTimeout(() => setCartAdded(false), 2000);
     } catch {
       // ignore
-    } finally { setCartLoading(false); }
+    } finally {
+      setCartLoading(false);
+    }
   };
 
   const linePositionPct = fitResult?.visual_markers.line_position_pct ?? 50;
@@ -152,9 +164,13 @@ const Item = () => {
         <main className={styles.page}>
           {/* Breadcrumb */}
           <nav className={styles.breadcrumb} aria-label="breadcrumb">
-            <a href="/" className={styles.breadcrumb__link}>Home</a>
+            <a href="/" className={styles.breadcrumb__link}>
+              Home
+            </a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a href="/catalog" className={styles.breadcrumb__link}>Catalog</a>
+            <a href="/catalog" className={styles.breadcrumb__link}>
+              Catalog
+            </a>
             <span className={styles.breadcrumb__sep}>/</span>
             <a
               href={`/catalog?brands=${item.brand}`}
@@ -184,13 +200,20 @@ const Item = () => {
               disabled={favoriteLoading}
               aria-label={isFavorite ? 'Remove from saved' : 'Save item'}
             >
-              <img src={SavedIcon} alt="" aria-hidden="true" width={22} height={22} />
+              <img
+                src={SavedIcon}
+                alt=""
+                aria-hidden="true"
+                width={22}
+                height={22}
+              />
             </button>
           </div>
 
           {/* Description */}
           <p className={styles.description}>
-            Elegant wrap dress with a flattering V-neck and adjustable waist tie — perfect for evenings and special occasions.
+            Elegant wrap dress with a flattering V-neck and adjustable waist tie
+            — perfect for evenings and special occasions.
           </p>
           <p className={styles.material}>Material: 100% Viscose</p>
           <p className={styles.material}>Lining: 100% Polyester</p>
@@ -202,8 +225,8 @@ const Item = () => {
               {item.availableSizes.map((size) => (
                 <button
                   key={size.id}
-                  className={`${styles.sizeBtn} ${selectedSizeId === size.id ? styles['sizeBtn--active'] : ''}`}
-                  onClick={() => setSelectedSizeId(size.id)}
+                  className={`${styles.sizeBtn} ${selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''}`}
+                  onClick={() => setSelectedSizeLabel(size.sizeLabel)}
                 >
                   {size.sizeLabel}
                 </button>
@@ -272,6 +295,7 @@ const Item = () => {
               ))}
             </div>
           </section>
+          <Footer />
         </main>
       </>
     );
@@ -343,8 +367,8 @@ const Item = () => {
             {item.availableSizes.map((size) => (
               <button
                 key={size.id}
-                className={`${styles.sizeBtn} ${selectedSizeId === size.id ? styles['sizeBtn--active'] : ''}`}
-                onClick={() => setSelectedSizeId(size.id)}
+                className={`${styles.sizeBtn} ${selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''}`}
+                onClick={() => setSelectedSizeLabel(size.sizeLabel)}
               >
                 {size.sizeLabel}
               </button>
@@ -386,6 +410,7 @@ const Item = () => {
             {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
           </PrimaryButton>
         </div>
+        <Footer />
       </main>
     </>
   );

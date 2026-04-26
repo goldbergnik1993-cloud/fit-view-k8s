@@ -73,7 +73,7 @@ export async function request<T>(
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
   if (res.status === 401 && withAuth) {
-    if (silentOn401) throw new Error('Unauthorized'); 
+    if (silentOn401) throw new Error('Unauthorized');
     const refreshed = await tryRefreshToken();
     if (refreshed) {
       headers['Authorization'] = `Bearer ${tokenStorage.getAccess()}`;
@@ -119,6 +119,15 @@ async function tryRefreshToken(): Promise<boolean> {
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
+
+export async function requestOptionalAuth<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const token = tokenStorage.getAccess();
+  if (token) return request<T>(path, options, true);
+  return request<T>(path, options, false);
+}
 
 export const authApi = {
   signup: (body: SignupRequest) =>
@@ -192,14 +201,13 @@ export interface GetItemsParams {
 // ─── Fitting Room ─────────────────────────────────────────────────────────────
 
 export interface FittingRoomRequest {
-  measurement_id?: number;
-  size_chart_id?: number;
-  height_cm: number;
-  shoulders_length_cm?: number;
-  breast_length_cm?: number;
-  waist_length_cm?: number;
-  hips_length_cm?: number;
-  leg_length_cm?: number;
+  size_label: string;
+  height_cm?: number | null;
+  shoulders_length_cm?: number | null;
+  breast_length_cm?: number | null;
+  waist_length_cm?: number | null;
+  hips_length_cm?: number | null;
+  leg_length_cm?: number | null;
 }
 
 export interface FittingRoomResponse {
@@ -249,34 +257,28 @@ export const itemsApi = {
     if (params?.sort_by) query.set('sort_by', params.sort_by);
     params?.brands?.forEach((id) => query.append('brands', String(id)));
     const qs = query.toString() ? `?${query.toString()}` : '';
-    return request<PaginatedResponse>(`/items/${qs}`, {}, true);
+    return requestOptionalAuth<PaginatedResponse>(`/items/${qs}`);
   },
 
   getById: (id: string | number) =>
-    request<BackendItem>(`/items/${id}`, {}, true),
+    requestOptionalAuth<BackendItem>(`/items/${id}`),
 
   toggleFavorite: (itemId: string | number) =>
     request(`/items/${itemId}/favorite`, { method: 'POST' }, true, true),
 
   fitItem: (itemId: number, body: FittingRoomRequest) =>
-    request<FittingRoomResponse>(
-      `/items/${itemId}/fitting-room`,
-      {
-        method: 'POST',
-        body: JSON.stringify(body),
-      },
-      true
-    ),
+    requestOptionalAuth<FittingRoomResponse>(`/items/${itemId}/fitting-room`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
 
   getSearchSuggestions: (q: string) =>
-    request<SearchSuggestion[]>(
-      `/items/search/suggestions?q=${encodeURIComponent(q)}`,
-      {},
-      true
+    requestOptionalAuth<SearchSuggestion[]>(
+      `/items/search/suggestions?q=${encodeURIComponent(q)}`
     ),
 
   getPersonalizedRecommendations: () =>
-    request<BackendItem[]>('/items/recommendations/personalized', {}, true),
+    requestOptionalAuth<BackendItem[]>('/items/recommendations/personalized'),
 };
 
 // ─── User ─────────────────────────────────────────────────────────────────────
@@ -296,9 +298,10 @@ export interface ProfileResponse extends ProfileData {
 }
 
 export const userApi = {
- getFavorites: () =>
-  request<{ items: BackendItem[] }>('/user/favorites', {}, false)
-    .then(data => data.items),
+  getFavorites: () =>
+    request<{ items: BackendItem[] }>('/user/favorites', {}, false).then(
+      (data) => data.items
+    ),
 
   getProfile: () => request<ProfileResponse>('/user/profile', {}, true),
 
