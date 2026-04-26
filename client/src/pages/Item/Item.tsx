@@ -7,13 +7,12 @@ import {
   cartApi,
   type FittingRoomResponse,
 } from '../../services/api';
-import { useItem } from '../../hooks/useItems';
+import { useItem, useItems } from '../../hooks/useItems';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import Silhouette from '../../shared/components/Silhouette/Silhouette';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
-import type { ClothingItem } from '../../types/clothing';
 import styles from './Item.module.scss';
 import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
 import SavedIcon from '../../assets/icons/saved.svg';
@@ -22,33 +21,6 @@ import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 
 // Mock colors — not in DB, display only
 const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
-
-const MOCK_SIMILAR: ClothingItem[] = [
-  {
-    id: 'mock-1',
-    name: 'Evening Wrap Dress',
-    brand: 'Mango',
-    category: 'dress',
-    imageUrl: 'https://placehold.co/400x500?text=Dress',
-    price: 54,
-    isFavorite: false,
-    availableSizes: [],
-    sizeCharts: [],
-    measurements: [],
-  },
-  {
-    id: 'mock-2',
-    name: 'Evening Wrap Dress',
-    brand: 'Mango',
-    category: 'dress',
-    imageUrl: 'https://placehold.co/400x500?text=Dress',
-    price: 54,
-    isFavorite: false,
-    availableSizes: [],
-    sizeCharts: [],
-    measurements: [],
-  },
-];
 
 type View = 'card' | 'fitting';
 
@@ -62,6 +34,10 @@ const Item = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { item, loading, error } = useItem(id);
+  const { items: similarItems } = useItems({
+    category: item?.category,
+    per_page: 4,
+  });
 
   const [view, setView] = useState<View>('card');
 
@@ -290,9 +266,12 @@ const Item = () => {
               </div>
             </div>
             <div className={styles.similar__list}>
-              {MOCK_SIMILAR.slice(0, 2).map((mock: ClothingItem) => (
-                <ItemCard key={mock.id} item={mock} />
-              ))}
+              {similarItems
+                .filter((s) => s.id !== item.id)
+                .slice(0, 2)
+                .map((s) => (
+                  <ItemCard key={s.id} item={s} />
+                ))}
             </div>
           </section>
           <Footer />
@@ -405,11 +384,34 @@ const Item = () => {
           <PrimaryButton
             onClick={handleAddToCart}
             loading={cartLoading}
-            disabled={cartAdded}
+            disabled={cartAdded || !selectedSizeLabel}
           >
             {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
           </PrimaryButton>
         </div>
+
+        {/* You may also like */}
+        <section className={styles.similar}>
+          <div className={styles.similar__header}>
+            <h2 className={styles.similar__title}>You may also like</h2>
+            <div className={styles.similar__nav}>
+              <button aria-label="Previous">
+                <img src={ChevronLeftIcon} alt="" width={20} height={20} />
+              </button>
+              <button aria-label="Next">
+                <img src={ChevronRightIcon} alt="" width={20} height={20} />
+              </button>
+            </div>
+          </div>
+          <div className={styles.similar__list}>
+            {similarItems
+              .filter((s) => s.id !== item.id)
+              .slice(0, 2)
+              .map((s) => (
+                <ItemCard key={s.id} item={s} />
+              ))}
+          </div>
+        </section>
         <Footer />
       </main>
     </>
