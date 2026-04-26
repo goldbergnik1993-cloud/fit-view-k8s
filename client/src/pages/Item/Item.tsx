@@ -1,47 +1,96 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { request, itemsApi, cartApi, type FittingRoomResponse } from '../../services/api';
-import { useParams } from 'react-router-dom';
-import Silhouette from '../../shared/components/Silhouette/Silhouette';
 import { useItem } from '../../hooks/useItems';
+import { Header } from '../../shared/components/Header/Header';
+import Silhouette from '../../shared/components/Silhouette/Silhouette';
+import ItemCard from '../../shared/components/ItemCard/ItemCard';
+import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
+import type { ClothingItem } from '../../types/clothing';
+import styles from './Item.module.scss';
+import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
+import SavedIcon from '../../assets/icons/saved.svg';
+import InfoIcon from '../../assets/icons/info.svg';
+import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
+
+// Mock colors — not in DB, display only
+const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
+
+const MOCK_SIMILAR: ClothingItem[] = [
+  {
+    id: 'mock-1',
+    name: 'Evening Wrap Dress',
+    brand: 'Mango',
+    category: 'dress',
+    imageUrl: 'https://placehold.co/400x500?text=Dress',
+    price: 54,
+    isFavorite: false,
+    availableSizes: [],
+    sizeCharts: [],
+    measurements: [],
+  },
+  {
+    id: 'mock-2',
+    name: 'Evening Wrap Dress',
+    brand: 'Mango',
+    category: 'dress',
+    imageUrl: 'https://placehold.co/400x500?text=Dress',
+    price: 54,
+    isFavorite: false,
+    availableSizes: [],
+    sizeCharts: [],
+    measurements: [],
+  },
+];
+
+type View = 'card' | 'fitting';
+
+const GENDER_TOGGLE: { value: 'male' | 'female'; label: string }[] = [
+  { value: 'male', label: 'M' },
+  { value: 'female', label: 'F' },
+];
 
 const Item = () => {
   const { id } = useParams<{ id: string }>();
-  const { item, loading, error } = useItem(id);
+  const navigate = useNavigate();
   const { user } = useAuth();
+  const { item, loading, error } = useItem(id);
 
-  const [height, setHeight] = useState(165);
-  const [profileLoaded, setProfileLoaded] = useState(false);
-  const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
+  const [view, setView] = useState<View>('card');
 
+  // Card state
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
-
+  const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
   const [cartAdded, setCartAdded] = useState(false);
 
+  // Fitting room state
+  const [height, setHeight] = useState(170);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [gender, setGender] = useState<'male' | 'female'>('female');
   const [fitResult, setFitResult] = useState<FittingRoomResponse | null>(null);
   const [fitLoading, setFitLoading] = useState(false);
 
-  // Sync item data on load
   useEffect(() => {
     if (!item) return;
     setIsFavorite(item.isFavorite);
     setSelectedSizeId(item.availableSizes?.[0]?.id ?? null);
+    if (item.gender === 'male') setGender('male');
   }, [item]);
 
-  // Load height from profile
   useEffect(() => {
     if (!user || profileLoaded) return;
-    request<{ height_cm: number }>('/user/profile', {}, true)
+    request<{ height_cm: number; gender: string }>('/user/profile', {}, true)
       .then((profile) => {
-        setHeight(profile.height_cm);
+        if (profile.height_cm) setHeight(profile.height_cm);
+        if (profile.gender === 'male') setGender('male');
         setProfileLoaded(true);
       })
       .catch(() => {});
   }, [user, profileLoaded]);
 
-  // Call fitting-room when height or size changes
   const runFitting = useCallback(async () => {
     if (!item || !id || selectedSizeId === null) return;
     setFitLoading(true);
@@ -59,8 +108,8 @@ const Item = () => {
   }, [id, item, height, selectedSizeId]);
 
   useEffect(() => {
-    runFitting();
-  }, [runFitting]);
+    if (view === 'fitting') runFitting();
+  }, [view, runFitting]);
 
   const handleToggleFavorite = async () => {
     if (!id) return;
@@ -68,11 +117,9 @@ const Item = () => {
     try {
       await itemsApi.toggleFavorite(id);
       setIsFavorite((prev) => !prev);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setFavoriteLoading(false);
-    }
+    } catch {
+      // ignore
+    } finally { setFavoriteLoading(false); }
   };
 
   const handleAddToCart = async () => {
@@ -82,125 +129,265 @@ const Item = () => {
       await cartApi.addItem(Number(item.id));
       setCartAdded(true);
       setTimeout(() => setCartAdded(false), 2000);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setCartLoading(false);
-    }
+    } catch {
+      // ignore
+    } finally { setCartLoading(false); }
   };
-
-  if (loading) {
-    return (
-      <div style={{ padding: '24px', textAlign: 'center', color: '#666' }}>
-        Loading...
-      </div>
-    );
-  }
-
-  if (error || !item) {
-    return (
-      <div style={{ padding: '24px', color: '#cc0000' }}>
-        Error: {error || 'Item not found'}
-      </div>
-    );
-  }
 
   const linePositionPct = fitResult?.visual_markers.line_position_pct ?? 50;
   const hEndCm = fitResult?.visual_markers.h_end_cm ?? 0;
-  const fitLabel = fitResult ? `Ends ${Math.round(hEndCm)}cm from floor` : '...';
+  const fitLabel = fitResult
+    ? `Ends ${Math.round(hEndCm)} cm from floor`
+    : 'Ends 0 cm from floor';
+
+  if (loading) return <div className={styles.state}>Loading...</div>;
+  if (error || !item) return <div className={styles.state}>Item not found</div>;
+
+  // ─── Card View ──────────────────────────────────────────────────────────────
+
+  if (view === 'card') {
+    return (
+      <>
+        <Header />
+        <main className={styles.page}>
+          {/* Breadcrumb */}
+          <nav className={styles.breadcrumb} aria-label="breadcrumb">
+            <a href="/" className={styles.breadcrumb__link}>Home</a>
+            <span className={styles.breadcrumb__sep}>/</span>
+            <a href="/catalog" className={styles.breadcrumb__link}>Catalog</a>
+            <span className={styles.breadcrumb__sep}>/</span>
+            <a
+              href={`/catalog?brands=${item.brand}`}
+              className={styles.breadcrumb__link}
+            >
+              {item.brand}
+            </a>
+            <span className={styles.breadcrumb__sep}>/</span>
+          </nav>
+
+          <h1 className={styles.title}>{item.name}</h1>
+
+          {/* Image */}
+          <div className={styles.imageWrap}>
+            <img
+              src={item.imageUrl}
+              alt={item.name}
+              className={styles.image}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://placehold.co/400x500?text=No+Image';
+              }}
+            />
+            <button
+              className={`${styles.favoriteBtn} ${isFavorite ? styles['favoriteBtn--active'] : ''}`}
+              onClick={handleToggleFavorite}
+              disabled={favoriteLoading}
+              aria-label={isFavorite ? 'Remove from saved' : 'Save item'}
+            >
+              <img src={SavedIcon} alt="" aria-hidden="true" width={22} height={22} />
+            </button>
+          </div>
+
+          {/* Description */}
+          <p className={styles.description}>
+            Elegant wrap dress with a flattering V-neck and adjustable waist tie — perfect for evenings and special occasions.
+          </p>
+          <p className={styles.material}>Material: 100% Viscose</p>
+          <p className={styles.material}>Lining: 100% Polyester</p>
+
+          {/* Size */}
+          <div className={styles.section}>
+            <p className={styles.sectionLabel}>Choose your size</p>
+            <div className={styles.sizes}>
+              {item.availableSizes.map((size) => (
+                <button
+                  key={size.id}
+                  className={`${styles.sizeBtn} ${selectedSizeId === size.id ? styles['sizeBtn--active'] : ''}`}
+                  onClick={() => setSelectedSizeId(size.id)}
+                >
+                  {size.sizeLabel}
+                </button>
+              ))}
+              <button className={styles.infoBtn} aria-label="Size guide">
+                <img src={InfoIcon} alt="" width={20} height={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Color (mock, display only) */}
+          <div className={styles.section}>
+            <p className={styles.sectionLabel}>Choose your color</p>
+            <div className={styles.colors}>
+              {MOCK_COLORS.map((color) => (
+                <span
+                  key={color}
+                  className={styles.colorDot}
+                  style={{ background: color }}
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Price */}
+          <div className={styles.priceRow}>
+            <span className={styles.priceLabel}>Price</span>
+            <span className={styles.priceValue}>{item.price}$</span>
+          </div>
+
+          {/* CTA buttons */}
+          <div className={styles.actions}>
+            <PrimaryButton
+              onClick={handleAddToCart}
+              loading={cartLoading}
+              disabled={cartAdded}
+            >
+              {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+            </PrimaryButton>
+
+            <button
+              className={styles.tryOnBtn}
+              onClick={() => setView('fitting')}
+            >
+              Virtual Try On
+            </button>
+          </div>
+
+          {/* You may also like */}
+          <section className={styles.similar}>
+            <div className={styles.similar__header}>
+              <h2 className={styles.similar__title}>You may also like</h2>
+              <div className={styles.similar__nav}>
+                <button aria-label="Previous">
+                  <img src={ChevronLeftIcon} alt="" width={20} height={20} />
+                </button>
+                <button aria-label="Next">
+                  <img src={ChevronRightIcon} alt="" width={20} height={20} />
+                </button>
+              </div>
+            </div>
+            <div className={styles.similar__list}>
+              {MOCK_SIMILAR.slice(0, 2).map((mock: ClothingItem) => (
+                <ItemCard key={mock.id} item={mock} />
+              ))}
+            </div>
+          </section>
+        </main>
+      </>
+    );
+  }
+
+  // ─── Fitting Room View ──────────────────────────────────────────────────────
 
   return (
-    <div style={{ padding: '24px', maxWidth: '600px', margin: '0 auto' }}>
-      <h1>{item.name}</h1>
-      <p>{item.brand}</p>
-      <p style={{ fontSize: '20px', fontWeight: 'bold' }}>${item.price}</p>
+    <>
+      <Header />
+      <main className={styles.page}>
+        {/* Gender toggle + back */}
+        <div className={styles.fitting__topRow}>
+          <div className={styles.genderToggle}>
+            {GENDER_TOGGLE.map(({ value, label }) => (
+              <button
+                key={value}
+                className={`${styles.genderBtn} ${gender === value ? styles['genderBtn--active'] : ''}`}
+                onClick={() => setGender(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
-      <button
-        onClick={handleToggleFavorite}
-        disabled={favoriteLoading}
-        style={{
-          padding: '8px 20px',
-          borderRadius: '8px',
-          border: '1px solid #D4537E',
-          background: isFavorite ? '#D4537E' : 'white',
-          color: isFavorite ? 'white' : '#D4537E',
-          cursor: favoriteLoading ? 'not-allowed' : 'pointer',
-          fontSize: '14px',
-          marginTop: '8px',
-        }}
-      >
-        {isFavorite ? '♥ Saved' : '♡ Save'}
-      </button>
-
-      {/* Size selector */}
-      <div style={{ margin: '16px 0' }}>
-        <p>Size:</p>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {item.availableSizes.map((size) => (
-            <button
-              key={size.id}
-              onClick={() => setSelectedSizeId(size.id)}
-              style={{
-                padding: '8px 16px',
-                background: selectedSizeId === size.id ? '#534AB7' : 'white',
-                color: selectedSizeId === size.id ? 'white' : '#333',
-                border: '1px solid #534AB7',
-                borderRadius: '8px',
-                cursor: 'pointer',
-              }}
-            >
-              {size.sizeLabel}
-            </button>
-          ))}
+          <button
+            className={styles.editBtn}
+            onClick={() => navigate('/profile')}
+          >
+            Edit Measurements
+            <img src={ChevronRightIcon} alt="" width={16} height={16} />
+          </button>
         </div>
-      </div>
 
-      {/* Height */}
-      <div style={{ margin: '24px 0' }}>
-        {user ? (
-          <p style={{ color: '#666', fontSize: '13px' }}>
-            Your height from profile: <strong>{height}cm</strong>
-          </p>
-        ) : (
-          <label>
-            Your height: {height}cm
-            <input
-              type="range"
-              min={150}
-              max={200}
-              value={height}
-              onChange={(e) => setHeight(Number(e.target.value))}
-              style={{ display: 'block', width: '200px', marginTop: '8px' }}
-            />
-          </label>
-        )}
-      </div>
+        {/* Silhouette */}
+        <Silhouette
+          linePositionPct={fitLoading ? 50 : linePositionPct}
+          label={fitLoading ? 'Calculating...' : fitLabel}
+          heightCm={height}
+          gender={gender}
+          loading={fitLoading}
+        />
 
-      {/* Silhouette */}
-      <Silhouette
-        linePositionPct={fitLoading ? 50 : linePositionPct}
-        label={fitLoading ? 'Calculating...' : fitLabel}
-      />
+        {/* Height slider */}
+        <div className={styles.sliderWrap}>
+          <input
+            type="range"
+            min={140}
+            max={210}
+            value={height}
+            onChange={(e) => setHeight(Number(e.target.value))}
+            className={styles.slider}
+            aria-label="Your height"
+          />
+          <div className={styles.sliderLabels}>
+            <span>Your Height</span>
+            <span>{height} cm</span>
+          </div>
+        </div>
 
-      {/* Add to bag */}
-      <button
-        onClick={handleAddToCart}
-        disabled={cartLoading || cartAdded}
-        style={{
-          marginTop: '16px',
-          padding: '12px 32px',
-          borderRadius: '8px',
-          border: 'none',
-          background: cartAdded ? '#1D9E75' : '#222',
-          color: 'white',
-          cursor: cartLoading ? 'not-allowed' : 'pointer',
-          fontSize: '15px',
-          width: '100%',
-        }}
-      >
-        {cartAdded ? '✓ Added' : cartLoading ? 'Adding...' : 'Add to My Bag'}
-      </button>
-    </div>
+        {/* Item info */}
+        <h1 className={styles.title}>{item.name}</h1>
+        <p className={styles.brand}>{item.brand}</p>
+
+        {/* Size */}
+        <div className={styles.section}>
+          <p className={styles.sectionLabel}>Choose your size</p>
+          <div className={styles.sizes}>
+            {item.availableSizes.map((size) => (
+              <button
+                key={size.id}
+                className={`${styles.sizeBtn} ${selectedSizeId === size.id ? styles['sizeBtn--active'] : ''}`}
+                onClick={() => setSelectedSizeId(size.id)}
+              >
+                {size.sizeLabel}
+              </button>
+            ))}
+            <button className={styles.infoBtn} aria-label="Size guide">
+              <img src={InfoIcon} alt="" width={20} height={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Color (mock) */}
+        <div className={styles.section}>
+          <p className={styles.sectionLabel}>Choose your color</p>
+          <div className={styles.colors}>
+            {MOCK_COLORS.map((color) => (
+              <span
+                key={color}
+                className={styles.colorDot}
+                style={{ background: color }}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Price */}
+        <div className={styles.priceRow}>
+          <span className={styles.priceLabel}>Price</span>
+          <span className={styles.priceValue}>{item.price}$</span>
+        </div>
+
+        {/* CTA */}
+        <div className={styles.actions}>
+          <PrimaryButton
+            onClick={handleAddToCart}
+            loading={cartLoading}
+            disabled={cartAdded}
+          >
+            {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+          </PrimaryButton>
+        </div>
+      </main>
+    </>
   );
 };
 

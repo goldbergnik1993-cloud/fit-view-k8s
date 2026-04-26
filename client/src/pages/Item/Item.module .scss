@@ -1,0 +1,289 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.page {
+  padding: $spacing-16 var(--container-padding);
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: $spacing-88;
+}
+
+.state {
+  padding: $spacing-24;
+  text-align: center;
+  @include text(14px, 400);
+  color: $color-input-border;
+}
+
+// ─── Breadcrumb ───────────────────────────────────────────────────────────────
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: $spacing-8;
+}
+
+.breadcrumb__link {
+  @include text(12px, 400);
+  color: $color-input-border;
+  @include hover-opacity;
+}
+
+.breadcrumb__sep {
+  @include text(12px, 400);
+  color: $color-input-border;
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────────
+
+.title {
+  @include text(22px, 700);
+  margin: 0 0 $spacing-16;
+}
+
+.brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-16;
+}
+
+// ─── Image ────────────────────────────────────────────────────────────────────
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: $color-card-bg;
+  margin-bottom: $spacing-16;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.favoriteBtn {
+  position: absolute;
+  bottom: $spacing-16;
+  right: $spacing-16;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $color-white;
+  @include flex-center;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.7; }
+
+  &--active img {
+    filter: invert(30%) sepia(80%) saturate(400%) hue-rotate(300deg);
+  }
+}
+
+// ─── Description ─────────────────────────────────────────────────────────────
+
+.description {
+  @include text(14px, 400, 1.5);
+  margin: 0 0 $spacing-8;
+}
+
+.material {
+  @include text(13px, 500);
+  margin: 0 0 4px;
+}
+
+// ─── Section ─────────────────────────────────────────────────────────────────
+
+.section {
+  margin-top: $spacing-16;
+}
+
+.sectionLabel {
+  @include text(14px, 400);
+  margin: 0 0 $spacing-8;
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+.sizes {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.sizeBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid $color-card-bg;
+  @include text(13px, 400);
+  @include flex-center;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover { border-color: $color-text; }
+
+  &--active {
+    border-color: $color-text;
+    background: transparent;
+  }
+}
+
+.infoBtn {
+  width: 40px;
+  height: 40px;
+  @include flex-center;
+  @include hover-opacity;
+}
+
+// ─── Colors ───────────────────────────────────────────────────────────────────
+
+.colors {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.colorDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: block;
+  flex-shrink: 0;
+}
+
+// ─── Price ────────────────────────────────────────────────────────────────────
+
+.priceRow {
+  @include flex-between;
+  margin-top: $spacing-24;
+}
+
+.priceLabel {
+  @include text(18px, 700);
+}
+
+.priceValue {
+  @include text(18px, 700);
+}
+
+// ─── Actions ─────────────────────────────────────────────────────────────────
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  margin-top: $spacing-16;
+}
+
+.tryOnBtn {
+  width: 100%;
+  padding: $spacing-16;
+  border-radius: 8px;
+  border: 1.5px solid $color-primary;
+  @include text(16px, 500);
+  color: $color-primary;
+  background: transparent;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+}
+
+// ─── Similar ──────────────────────────────────────────────────────────────────
+
+.similar {
+  margin-top: $spacing-32;
+}
+
+.similar__header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+}
+
+.similar__title {
+  @include text(16px, 400);
+  margin: 0;
+}
+
+.similar__nav {
+  display: flex;
+  gap: $spacing-8;
+
+  button {
+    width: 32px;
+    height: 32px;
+    @include flex-center;
+    @include hover-opacity;
+  }
+}
+
+.similar__list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-16;
+}
+
+// ─── Fitting Room ─────────────────────────────────────────────────────────────
+
+.fitting__topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-16;
+}
+
+.genderToggle {
+  display: flex;
+  border: 1px solid $color-card-bg;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.genderBtn {
+  width: 44px;
+  height: 36px;
+  @include text(14px, 400);
+  @include flex-center;
+  transition: background 0.2s, color 0.2s;
+
+  &--active {
+    background: $color-text;
+    color: $color-white;
+  }
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  @include text(13px, 400);
+  @include hover-opacity;
+}
+
+// ─── Slider ───────────────────────────────────────────────────────────────────
+
+.sliderWrap {
+  margin: $spacing-16 0;
+}
+
+.slider {
+  width: 100%;
+  accent-color: $color-text;
+  height: 4px;
+  cursor: pointer;
+}
+
+.sliderLabels {
+  @include flex-between;
+  margin-top: $spacing-8;
+
+  span {
+    @include text(12px, 400);
+    color: $color-input-border;
+  }
+}
