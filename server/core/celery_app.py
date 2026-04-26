@@ -40,5 +40,4 @@ def dispose_sqlalchemy_engine(**kwargs):
     connection pool and create a fresh one.
     """
     import asyncio
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(engine.dispose())
+    asyncio.run(engine.dispose())
