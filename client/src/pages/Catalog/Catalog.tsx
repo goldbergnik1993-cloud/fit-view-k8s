@@ -404,7 +404,24 @@ const Catalog = () => {
           </div>
         )}
 
-        {/* Pagination */}
+        {/* Load More — mobile only */}
+        {!loading && totalPages > 1 && (
+          <div className={styles.catalog__loadMore}>
+            <p className={styles.catalog__loadMoreText}>
+              You have viewed {items.length} of {totalItems} items
+            </p>
+            <button
+              type="button"
+              className={styles.catalog__loadMoreBtn}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+            >
+              Load More
+            </button>
+          </div>
+        )}
+
+        {/* Pagination — tablet/desktop only */}
         {!loading && totalPages > 1 && (
           <div className={styles.catalog__pagination}>
             <button
