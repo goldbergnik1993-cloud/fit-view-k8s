@@ -1,0 +1,74 @@
+global:
+  env: production
+  domain: fitview.local
+
+images:
+  backend: goldbernik/todoapp-backend:latest
+  frontend: goldbernik/todoapp-frontend:latest
+  pullPolicy: IfNotPresent
+
+security:
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    readOnlyRootFilesystem: false
+
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+replicas:
+  frontend: 2
+  backend: 2
+  worker: 1
+  beat: 1
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  cpuTarget: 80
+
+resources:
+  backend:
+    limits: { cpu: 500m, memory: 512Mi }
+    requests: { cpu: 100m, memory: 256Mi }
+  frontend:
+    limits: { cpu: 200m, memory: 256Mi }
+    requests: { cpu: 50m, memory: 128Mi }
+  worker:
+    limits: { cpu: 600m, memory: 768Mi }
+    requests: { cpu: 200m, memory: 400Mi }
+  beat:
+    limits: { cpu: 100m, memory: 128Mi }
+    requests: { cpu: 50m, memory: 64Mi }
+
+config:
+  VITE_API_URL: "http://fitview.local"
+  FRONTEND_URL: "http://fitview.local"
+  PGHOST: "ep-late-voice-alj6zo9o-pooler.c-3.eu-central-1.aws.neon.tech"
+  PGDATABASE: "neondb"
+  PGUSER: "neondb_owner"
+  PGCHANNELBINDING: "require"
+  PGSSLMODE: "require"
+  REDIS_URL: "redis://fitview-redis:6379/0"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "15"
+  REFRESH_TOKEN_EXPIRE_DAYS: "7"
+  ACTIVATION_CODE_EXPIRE_MINUTES: "15"
+  RESET_TOKEN_EXPIRE_MINUTES: "15"
+  SMTP_HOST: "fitview-mailhog"
+  SMTP_PORT: "1025"
+
+secrets:
+  PGPASSWORD: ""
+  SECRET_KEY: ""
+  STRIPE_SECRET_KEY: ""
+  STRIPE_PUBLISHABLE_KEY: ""
+  STRIPE_WEBHOOK_SECRET: ""
