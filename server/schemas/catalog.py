@@ -164,6 +164,7 @@ class FittingRoomResponseSchema(BaseModel):
     visual_markers: VisualMarkersSchema
     fit_analysis: FitAnalysisSchema
     user_body: UserBodySchema
+    fitting_image_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -197,6 +198,7 @@ class ItemCreateSchema(BaseModel):
     category: ItemCategoryEnum = Field(...)
     gender: GenderEnum = Field(...)
     image_url: HttpUrl
+    fitting_image_url: Optional[HttpUrl] = Field(None)
     price: Decimal = Field(..., ge=0, max_digits=10, decimal_places=2)
     description: Optional[str] = Field(None, min_length=1, max_length=255)
     reference_point: ItemRefPointEnum = Field(...)
@@ -213,7 +215,8 @@ class ItemUpdateSchema(BaseModel):
     brand: Optional[str] = Field(None, min_length=1, max_length=50)
     category: Optional[ItemCategoryEnum] = Field(None)
     gender: Optional[GenderEnum] = Field(None)
-    image_url: Optional[HttpUrl]
+    image_url: Optional[HttpUrl] = Field(None)
+    fitting_image_url: Optional[HttpUrl] = Field(None)
     price: Optional[Decimal] = Field(None, ge=0, max_digits=10, decimal_places=2)
     description: Optional[str] = Field(None, min_length=1, max_length=255)
     reference_point: Optional[ItemRefPointEnum] = Field(None)
