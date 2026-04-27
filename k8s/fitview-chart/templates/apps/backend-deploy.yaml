@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicas.backend | default 1 }}
+  strategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: {{ .Release.Name }}-sa
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+
+      initContainers:
+        - name: migrations
+          image: {{ .Values.images.backend }}
+          command: ["sh", "-c", "alembic upgrade head"]
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+            - secretRef:
+                name: {{ .Release.Name }}-secrets
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://$(PGUSER):$(PGPASSWORD)@$(PGHOST)/$(PGDATABASE)"
+
+      containers:
+        - name: backend
+          image: {{ .Values.images.backend }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+            - secretRef:
+                name: {{ .Release.Name }}-secrets
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://$(PGUSER):$(PGPASSWORD)@$(PGHOST)/$(PGDATABASE)"
+          resources:
+            {{- toYaml .Values.resources.backend | nindent 12 }}
