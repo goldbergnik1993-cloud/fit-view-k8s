@@ -9,6 +9,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from core.logging_config import logger
 from core.settings import settings
 from database.models import UserModel, UserProfileModel, FitviewEventsModel
 from database.models.catalog import (
@@ -330,6 +331,24 @@ async def fitting_room(
         favorite.used_fitview = True
 
     await db.commit()
+    logger.info(
+        "fitting_room_result",
+        user_id=user.id,
+        body_fields_used=[key for key, value in active_body.items() if value is not None],
+        item_id=item_db.id,
+        size_label=size_chart.size_label,
+        fit_analysis={
+            "shoulders": shoulders_fit,
+            "breast": breast_fit,
+            "waist": waist_fit,
+            "hips": hips_fit,
+        },
+        visual_markers={
+            "h_end": round(h_end_cm, 2),
+            "line_position_pct": round(line_position_pct, 2),
+            "reference_point": item_db.reference_point
+        }
+    )
     return FittingRoomResponseSchema(
         item_id=item_db.id,
         size_label=size_chart.size_label,
@@ -517,7 +536,11 @@ async def item_delete(item_id: int, db: AsyncSession) -> dict:
                 try:
                     os.remove(file_path)
                 except OSError as e:
-                    print(f"Warning: Failed to delete image file {file_path}: {e}")
+                    logger.warning(
+                        "item_image_delete_failed",
+                        file_path=file_path,
+                        error=str(e),
+                    )
         return {"message": f"Item with ID {item_id} has been successfully deleted."}
 
     except SQLAlchemyError:
