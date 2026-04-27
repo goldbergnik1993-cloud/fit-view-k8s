@@ -93,8 +93,6 @@ class MeasurementListSchema(SizeMixin, BaseModel):
     total_length_cm: float
     inseam_cm: float
 
-    model_config = ConfigDict(from_attributes=True)
-
 
 class ItemDetailSchema(ItemBaseSchema):
     id: int

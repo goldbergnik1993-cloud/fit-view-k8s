@@ -2,10 +2,12 @@ from celery import Celery  # type: ignore
 from celery.schedules import crontab  # type: ignore
 from celery.signals import worker_process_init  # type: ignore
 
+from core.logging_config import logger, setup_logging
 from core.settings import settings
 from database.session_postgresql import engine
 
 redis_url = settings.REDIS_URL
+setup_logging()
 
 celery_app = Celery(
     "fitview_worker",
@@ -40,4 +42,8 @@ def dispose_sqlalchemy_engine(**kwargs):
     connection pool and create a fresh one.
     """
     import asyncio
-    asyncio.run(engine.dispose())
+    try:
+        asyncio.run(engine.dispose())
+        logger.info("celery_worker_db_engine_reset_success")
+    except Exception as e:
+        logger.error("celery_worker_db_engine_reset_failed", error=str(e))

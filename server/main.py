@@ -1,6 +1,9 @@
 import os
+import time
+import uuid
 
-from fastapi import FastAPI, status, Depends, HTTPException
+import structlog
+from fastapi import FastAPI, status, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,8 +17,11 @@ from api.events import router as event_router
 from api.orders import router as orders_router
 from api.payments import router as payments_router
 from api.user import router as user_router
+from core.logging_config import setup_logging, logger
 from core.settings import settings
 from database.session_postgresql import get_db
+
+setup_logging()
 
 tags_metadata = [
     {
@@ -72,6 +78,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    structlog.contextvars.clear_contextvars()
+    structlog.contextvars.bind_contextvars(request_id=request_id)
+
+    start_time = time.perf_counter()
+    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    try:
+        response = await call_next(request)
+        status_code = response.status_code
+        return response
+
+    except Exception as e:
+        logger.exception("request_failed", exception=e)
+        raise
+
+    finally:
+        process_time = time.perf_counter() - start_time
+        logger.info(
+            "http_request",
+            method=request.method,
+            path=request.url.path,
+            status_code=status_code,
+            duration_ms=round(process_time * 1000, 2),
+        )
+
 
 os.makedirs(os.path.join("static", "items_images"), exist_ok=True)
 
