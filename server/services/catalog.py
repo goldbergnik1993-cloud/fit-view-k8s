@@ -1,10 +1,12 @@
 import os
 import shutil
 import uuid
+import json
 from typing import Optional
 
 from fastapi import Request, HTTPException, status, UploadFile
-from sqlalchemy import select, desc, asc, func, or_, String, cast
+from redis import Redis
+from sqlalchemy import select, desc, asc, func, or_, String, cast, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -58,6 +60,21 @@ REQUIRED_FIELDS_BY_CATEGORY = {
         "waist_length_cm",
     ],
 }
+
+FIT_ITEM_TTL_SECONDS = 600
+FIT_PROFILE_TTL_SECONDS = 180
+
+
+def _fit_item_cache_key(item_id: int) -> str:
+    return f"fit:item:{item_id}"
+
+
+def _fit_profile_cache_key(user_id: int) -> str:
+    return f"fit:profile:{user_id}"
+
+
+async def _invalidate_fit_item_cache(redis_client: Redis, item_id: int) -> None:
+    await redis_client.delete(_fit_item_cache_key(item_id))
 
 
 async def get_items_list(
@@ -202,39 +219,101 @@ async def toggle_favorite(db: AsyncSession, user_id: int, item_id: int) -> dict:
 
 
 async def fitting_room(
-    user: UserModel, item_id: int, payload: FittingRoomRequestSchema, db: AsyncSession
+    user: UserModel,
+    item_id: int,
+    payload: FittingRoomRequestSchema,
+    db: AsyncSession,
+    redis_client: Redis,
 ) -> FittingRoomResponseSchema:
-    item_stmt = (
-        select(ItemsModel)
-        .where(ItemsModel.id == item_id)
-        .options(
-            selectinload(ItemsModel.size_charts),
-            selectinload(ItemsModel.measurements),
+    cached_item_str = await redis_client.get(_fit_item_cache_key(item_id))
+    item_cache_hit = bool(cached_item_str)
+    if item_cache_hit:
+        item_data = json.loads(cached_item_str)
+    else:
+        item_stmt = (
+            select(ItemsModel)
+            .where(ItemsModel.id == item_id)
+            .options(
+                selectinload(ItemsModel.size_charts),
+                selectinload(ItemsModel.measurements),
+            )
         )
-    )
-    item_db = await db.scalar(item_stmt)
-    if not item_db:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
+        item_db = await db.scalar(item_stmt)
+        if not item_db:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
+            )
+        item_data = {
+            "id": item_db.id,
+            "category": item_db.category.value,
+            "gender": item_db.gender.value,
+            "reference_point": item_db.reference_point.value,
+            "ref_coefficient": item_db.ref_coefficient,
+            "size_charts": [
+                {
+                    "size_label": size.size_label,
+                    "hips_min_cm": size.hips_min_cm,
+                    "hips_max_cm": size.hips_max_cm,
+                    "waist_min_cm": size.waist_min_cm,
+                    "waist_max_cm": size.waist_max_cm,
+                    "breast_min_cm": size.breast_min_cm,
+                    "breast_max_cm": size.breast_max_cm,
+                    "shoulders_min_cm": size.shoulders_min_cm,
+                    "shoulders_max_cm": size.shoulders_max_cm,
+                }
+                for size in item_db.size_charts
+            ],
+            "measurements": [
+                {
+                    "size_label": measurement.size_label,
+                    "total_length_cm": measurement.total_length_cm,
+                    "inseam_cm": measurement.inseam_cm,
+                }
+                for measurement in item_db.measurements
+            ],
+        }
+        await redis_client.setex(
+            _fit_item_cache_key(item_id),
+            FIT_ITEM_TTL_SECONDS,
+            json.dumps(item_data),
         )
-    profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
-    profile_db = await db.scalar(profile_stmt)
+
+    cached_profile_str = await redis_client.get(_fit_profile_cache_key(user.id))
+    profile_cache_hit = bool(cached_profile_str)
+    if profile_cache_hit:
+        profile_data = json.loads(cached_profile_str)
+    else:
+        profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
+        profile_db = await db.scalar(profile_stmt)
+        profile_data = {
+            "gender": profile_db.gender.value if profile_db else "female",
+            "height_cm": profile_db.height_cm if profile_db else None,
+            "shoulders_length_cm": profile_db.shoulders_length_cm if profile_db else None,
+            "breast_length_cm": profile_db.breast_length_cm if profile_db else None,
+            "waist_length_cm": profile_db.waist_length_cm if profile_db else None,
+            "hips_length_cm": profile_db.hips_length_cm if profile_db else None,
+            "leg_length_cm": profile_db.leg_length_cm if profile_db else None,
+        }
+        await redis_client.setex(
+            _fit_profile_cache_key(user.id),
+            FIT_PROFILE_TTL_SECONDS,
+            json.dumps(profile_data),
+        )
+
     active_body = {
-        "gender": profile_db.gender if profile_db else "female",
-        "height_cm": payload.height_cm
-        or (profile_db.height_cm if profile_db else None),
+        "gender": profile_data["gender"],
+        "height_cm": payload.height_cm or profile_data["height_cm"],
         "shoulders_length_cm": payload.shoulders_length_cm
-        or (profile_db.shoulders_length_cm if profile_db else None),
+        or profile_data["shoulders_length_cm"],
         "breast_length_cm": payload.breast_length_cm
-        or (profile_db.breast_length_cm if profile_db else None),
+        or profile_data["breast_length_cm"],
         "waist_length_cm": payload.waist_length_cm
-        or (profile_db.waist_length_cm if profile_db else None),
-        "hips_length_cm": payload.hips_length_cm
-        or (profile_db.hips_length_cm if profile_db else None),
-        "leg_length_cm": payload.leg_length_cm
-        or (profile_db.leg_length_cm if profile_db else None),
+        or profile_data["waist_length_cm"],
+        "hips_length_cm": payload.hips_length_cm or profile_data["hips_length_cm"],
+        "leg_length_cm": payload.leg_length_cm or profile_data["leg_length_cm"],
     }
-    required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(item_db.category, ["height_cm"])
+    item_category = ItemCategoryEnum(item_data["category"])
+    required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(item_category, ["height_cm"])
     missing_fields = [field for field in required_fields if active_body[field] is None]
 
     if missing_fields:
@@ -250,16 +329,16 @@ async def fitting_room(
     measurement = next(
         (
             m
-            for m in item_db.measurements
-            if m.size_label.upper() == payload.size_label.upper()
+            for m in item_data["measurements"]
+            if m["size_label"].upper() == payload.size_label.upper()
         ),
         None,
     )
     size_chart = next(
         (
             s
-            for s in item_db.size_charts
-            if s.size_label.upper() == payload.size_label.upper()
+            for s in item_data["size_charts"]
+            if s["size_label"].upper() == payload.size_label.upper()
         ),
         None,
     )
@@ -272,16 +351,18 @@ async def fitting_room(
 
     user_height = float(active_body["height_cm"])  # type: ignore
 
-    if item_db.category == ItemCategoryEnum.PANTS:
-        h_end_cm = item_db.ref_coefficient * user_height - measurement.inseam_cm
+    if item_category == ItemCategoryEnum.PANTS:
+        h_end_cm = item_data["ref_coefficient"] * user_height - measurement["inseam_cm"]
     else:
-        h_end_cm = item_db.ref_coefficient * user_height - measurement.total_length_cm
+        h_end_cm = (
+            item_data["ref_coefficient"] * user_height - measurement["total_length_cm"]
+        )
     line_position_pct = (h_end_cm / user_height) * 100
 
     def does_it_fit(
         user_val: int | None, min_val: float | None = None, max_val: float | None = None
     ) -> FitResultEnum | None:
-        if not user_val or not min_val or not max_val:
+        if user_val is None or min_val is None or max_val is None:
             return None
         if user_val > max_val:
             return FitResultEnum.TIGHT
@@ -291,23 +372,23 @@ async def fitting_room(
 
     hips_fit = does_it_fit(
         user_val=active_body["hips_length_cm"],  # type: ignore
-        min_val=size_chart.hips_min_cm,
-        max_val=size_chart.hips_max_cm,
+        min_val=size_chart["hips_min_cm"],
+        max_val=size_chart["hips_max_cm"],
     )
     waist_fit = does_it_fit(
         user_val=active_body["waist_length_cm"],  # type: ignore
-        min_val=size_chart.waist_min_cm,
-        max_val=size_chart.waist_max_cm,
+        min_val=size_chart["waist_min_cm"],
+        max_val=size_chart["waist_max_cm"],
     )
     breast_fit = does_it_fit(
         user_val=active_body["breast_length_cm"],  # type: ignore
-        min_val=size_chart.breast_min_cm,
-        max_val=size_chart.breast_max_cm,
+        min_val=size_chart["breast_min_cm"],
+        max_val=size_chart["breast_max_cm"],
     )
     shoulders_fit = does_it_fit(
         user_val=active_body["shoulders_length_cm"],  # type: ignore
-        min_val=size_chart.shoulders_min_cm,
-        max_val=size_chart.shoulders_max_cm,
+        min_val=size_chart["shoulders_min_cm"],
+        max_val=size_chart["shoulders_max_cm"],
     )
     new_event = FitviewEventsModel(
         user_id=user.id,
@@ -323,20 +404,26 @@ async def fitting_room(
     )
     db.add(new_event)
     await db.flush()
-    fav_stmt = select(FavoritesModel).where(
-        FavoritesModel.user_id == user.id, FavoritesModel.item_id == item_db.id
+    await db.execute(
+        update(FavoritesModel)
+        .where(
+            FavoritesModel.user_id == user.id,
+            FavoritesModel.item_id == item_id,
+            FavoritesModel.used_fitview.is_(False),
+        )
+        .values(used_fitview=True)
     )
-    favorite = await db.scalar(fav_stmt)
-    if favorite:
-        favorite.used_fitview = True
 
     await db.commit()
     logger.info(
         "fitting_room_result",
         user_id=user.id,
-        body_fields_used=[key for key, value in active_body.items() if value is not None],
-        item_id=item_db.id,
-        size_label=size_chart.size_label,
+        item_cache_hit=item_cache_hit,
+        profile_cache_hit=profile_cache_hit,
+        body_fields_used=[key for key, value in active_body.items() if
+                          value is not None],
+        item_id=item_id,
+        size_label=size_chart["size_label"],
         fit_analysis={
             "shoulders": shoulders_fit,
             "breast": breast_fit,
@@ -346,17 +433,17 @@ async def fitting_room(
         visual_markers={
             "h_end": round(h_end_cm, 2),
             "line_position_pct": round(line_position_pct, 2),
-            "reference_point": item_db.reference_point
-        }
+            "reference_point": item_data["reference_point"],
+        },
     )
     return FittingRoomResponseSchema(
-        item_id=item_db.id,
-        size_label=size_chart.size_label,
-        gender=item_db.gender,
+        item_id=item_id,
+        size_label=size_chart["size_label"],
+        gender=item_data["gender"],
         visual_markers=VisualMarkersSchema(
             h_end_cm=round(h_end_cm, 2),
             line_position_pct=round(line_position_pct, 2),
-            reference_point=item_db.reference_point,
+            reference_point=item_data["reference_point"],
         ),
         fit_analysis=FitAnalysisSchema(
             hips_fit=hips_fit,
@@ -439,7 +526,12 @@ async def item_create(payload: ItemCreateSchema, db: AsyncSession) -> ItemsModel
         )
 
 
-async def item_update(payload: ItemUpdateSchema, item_id: int, db: AsyncSession):
+async def item_update(
+    payload: ItemUpdateSchema,
+    item_id: int,
+    db: AsyncSession,
+    redis_client: Redis,
+):
     item_stmt = select(ItemsModel).where(ItemsModel.id == item_id)
     item_db = await db.scalar(item_stmt)
     if not item_db:
@@ -494,6 +586,7 @@ async def item_update(payload: ItemUpdateSchema, item_id: int, db: AsyncSession)
 
     try:
         await db.commit()
+        await _invalidate_fit_item_cache(redis_client=redis_client, item_id=item_id)
         stmt = (
             select(ItemsModel)
             .where(ItemsModel.id == item_id)
@@ -514,7 +607,7 @@ async def item_update(payload: ItemUpdateSchema, item_id: int, db: AsyncSession)
         )
 
 
-async def item_delete(item_id: int, db: AsyncSession) -> dict:
+async def item_delete(item_id: int, db: AsyncSession, redis_client: Redis) -> dict:
     item_stmt = select(ItemsModel).where(ItemsModel.id == item_id)
     item_db = await db.scalar(item_stmt)
 
@@ -529,6 +622,7 @@ async def item_delete(item_id: int, db: AsyncSession) -> dict:
     try:
         await db.delete(item_db)
         await db.commit()
+        await _invalidate_fit_item_cache(redis_client=redis_client, item_id=item_id)
         if image_url:
             filename = image_url.split("/")[-1]
             file_path = os.path.join("static", "items_images", filename)
@@ -552,7 +646,12 @@ async def item_delete(item_id: int, db: AsyncSession) -> dict:
         )
 
 
-async def size_chart_delete(item_id: int, size_chart_id: int, db: AsyncSession):
+async def size_chart_delete(
+    item_id: int,
+    size_chart_id: int,
+    db: AsyncSession,
+    redis_client: Redis,
+):
     stmt = select(SizeChartModel).where(
         SizeChartModel.id == size_chart_id, SizeChartModel.item_id == item_id
     )
@@ -565,6 +664,7 @@ async def size_chart_delete(item_id: int, size_chart_id: int, db: AsyncSession):
     try:
         await db.delete(size_chart_db)
         await db.commit()
+        await _invalidate_fit_item_cache(redis_client=redis_client, item_id=item_id)
         return {
             "message": f"Size chart with ID {size_chart_id} has been "
             f"successfully deleted."
@@ -578,7 +678,12 @@ async def size_chart_delete(item_id: int, size_chart_id: int, db: AsyncSession):
         )
 
 
-async def measurement_delete(item_id: int, measurement_id: int, db: AsyncSession):
+async def measurement_delete(
+    item_id: int,
+    measurement_id: int,
+    db: AsyncSession,
+    redis_client: Redis,
+):
     stmt = select(ItemMeasurementsModel).where(
         ItemMeasurementsModel.id == measurement_id,
         ItemMeasurementsModel.item_id == item_id,
@@ -592,6 +697,7 @@ async def measurement_delete(item_id: int, measurement_id: int, db: AsyncSession
     try:
         await db.delete(measurement_db)
         await db.commit()
+        await _invalidate_fit_item_cache(redis_client=redis_client, item_id=item_id)
         return {
             "message": f"Item measurement with ID {measurement_id} has been "
             f"successfully deleted."
