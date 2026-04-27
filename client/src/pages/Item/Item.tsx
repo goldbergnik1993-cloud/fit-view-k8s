@@ -19,7 +19,11 @@ import SavedIcon from '../../assets/icons/saved.svg';
 import InfoIcon from '../../assets/icons/info.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EditMeasurementsModal from '../../shared/components/EditMeasurementsModal/EditMeasurementsModal';
-import { calculateHEnd, getLinePositionPct, getResultLabel } from '../../utils/fitCalculator';
+import {
+  calculateHEnd,
+  getLinePositionPct,
+  getResultLabel,
+} from '../../utils/fitCalculator';
 
 // Mock colors — not in DB, display only
 const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
@@ -83,59 +87,58 @@ const Item = () => {
     return () => clearTimeout(timer);
   }, [height]);
 
-
-const runFitting = useCallback(async () => {
-  if (!item || !id || !selectedSizeLabel) return;
-  setFitLoading(true);
-  try {
-    const result = await itemsApi.fitItem(Number(id), {
-      size_label: selectedSizeLabel,
-      height_cm: debouncedHeight,
-    });
-    setFitResult(result);
-  } catch {
-    const measurement = item.measurements.find(
-      (m) => m.sizeLabel === selectedSizeLabel
-    );
-    const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
-
-    if (lengthCm && item.category) {
-      const hEnd = calculateHEnd(debouncedHeight, item.category, lengthCm);
-      const linePct = getLinePositionPct(hEnd, debouncedHeight);
-      const { label: resultLabel } = getResultLabel(hEnd);
-
-      setFitResult({
-        item_id: Number(id),
+  const runFitting = useCallback(async () => {
+    if (!item || !id || !selectedSizeLabel) return;
+    setFitLoading(true);
+    try {
+      const result = await itemsApi.fitItem(Number(id), {
         size_label: selectedSizeLabel,
-        gender: gender,
-        visual_markers: {
-          h_end_cm: hEnd,
-          line_position_pct: linePct,
-          reference_point: resultLabel,
-        },
-        fit_analysis: {
-          waist_fit: '',
-          breast_fit: '',
-          hips_fit: '',
-          shoulders_fit: '',
-        },
-        user_body: {
-          gender: gender,
-          height_cm: debouncedHeight,
-          leg_length_cm: 0,
-          hips_length_cm: 0,
-          waist_length_cm: 0,
-          breast_length_cm: 0,
-          shoulders_length_cm: 0,
-        },
+        height_cm: debouncedHeight,
       });
-    } else {
-      setFitResult(null);
+      setFitResult(result);
+    } catch {
+      const measurement = item.measurements.find(
+        (m) => m.sizeLabel === selectedSizeLabel
+      );
+      const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
+
+      if (lengthCm && item.category) {
+        const hEnd = calculateHEnd(debouncedHeight, item.category, lengthCm);
+        const linePct = getLinePositionPct(hEnd, debouncedHeight);
+        const { label: resultLabel } = getResultLabel(hEnd);
+
+        setFitResult({
+          item_id: Number(id),
+          size_label: selectedSizeLabel,
+          gender: gender,
+          visual_markers: {
+            h_end_cm: hEnd,
+            line_position_pct: linePct,
+            reference_point: resultLabel,
+          },
+          fit_analysis: {
+            waist_fit: '',
+            breast_fit: '',
+            hips_fit: '',
+            shoulders_fit: '',
+          },
+          user_body: {
+            gender: gender,
+            height_cm: debouncedHeight,
+            leg_length_cm: 0,
+            hips_length_cm: 0,
+            waist_length_cm: 0,
+            breast_length_cm: 0,
+            shoulders_length_cm: 0,
+          },
+        });
+      } else {
+        setFitResult(null);
+      }
+    } finally {
+      setFitLoading(false);
     }
-  } finally {
-    setFitLoading(false);
-  }
-}, [id, item, debouncedHeight, selectedSizeLabel, gender]);
+  }, [id, item, debouncedHeight, selectedSizeLabel, gender]);
 
   useEffect(() => {
     if (view === 'fitting') runFitting();
@@ -364,16 +367,25 @@ const runFitting = useCallback(async () => {
         />
 
         {/* Silhouette */}
-        <Silhouette
-          linePositionPct={fitLoading ? 50 : linePositionPct}
-          label={fitLoading ? 'Calculating...' : fitLabel}
-          heightCm={height}
-          itemLengthCm={
-            fitResult ? Math.round(fitResult.visual_markers.h_end_cm) : null
-          }
-          gender={gender}
-          loading={fitLoading}
-        />
+        {(() => {
+          const selectedMeasurement = item.measurements.find(
+            (m) => m.sizeLabel === selectedSizeLabel
+          );
+          const itemLengthCm =
+            selectedMeasurement?.totalLengthCm ??
+            selectedMeasurement?.inseamCm ??
+            null;
+          return (
+            <Silhouette
+              linePositionPct={fitLoading ? 50 : linePositionPct}
+              label={fitLoading ? 'Calculating...' : fitLabel}
+              heightCm={height}
+              itemLengthCm={itemLengthCm}
+              gender={gender}
+              loading={fitLoading}
+            />
+          );
+        })()}
 
         {/* Height slider */}
         <div className={styles.sliderWrap}>
