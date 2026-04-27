@@ -1,91 +1,74 @@
-# Общие настройки
 global:
+  env: production
   domain: fitview.local
 
-# --- BACKEND (FastAPI) ---
-backend:
-  replicaCount: 2
-  image:
-    repository: fitview-backend # Плейсхолдер
-    tag: "latest"
-    pullPolicy: IfNotPresent
-  
-  service:
-    type: ClusterIP
-    port: 8000
+images:
+  backend: goldbernik/todoapp-backend:latest
+  frontend: goldbernik/todoapp-frontend:latest
+  pullPolicy: IfNotPresent
 
-  # Настройки безопасности (Non-root)
+security:
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 1000
-  
-  # Лимиты ресурсов
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 256Mi
+    fsGroup: 2000
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    readOnlyRootFilesystem: false
 
-  # Горизонтальное автоскейлирование
-  autoscaling:
-    enabled: true
-    minReplicas: 2
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 80
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
 
-  # Переменные окружения (секреты пойдут через ExternalSecret)
-  env:
-    ACCESS_TOKEN_EXPIRE_MINUTES: "15"
-    REFRESH_TOKEN_EXPIRE_DAYS: "7"
+replicas:
+  frontend: 2
+  backend: 2
+  worker: 1
+  beat: 1
 
-# --- FRONTEND (Vite + Nginx) ---
-frontend:
-  replicaCount: 2
-  image:
-    repository: fitview-frontend # Плейсхолдер
-    tag: "latest"
-  
-  service:
-    type: ClusterIP
-    port: 80
-
-  resources:
-    limits:
-      cpu: 200m
-      memory: 256Mi
-    requests:
-      cpu: 50m
-      memory: 128Mi
-
-# --- DATABASE (PostgreSQL) ---
-database:
-  image: postgres:15-alpine
-  user: fitview_admin
-  dbName: fitview_db
-  port: 5432
-  storage:
-    size: 10Gi
-    mountPath: /var/lib/postgresql/data
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-
-# --- NETWORKING (Ingress) ---
-ingress:
+hpa:
   enabled: true
-  className: "nginx"
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /
-  hosts:
-    - host: fitview.local
-      paths:
-        - path: /
-          pathType: Prefix
-          component: frontend
-        - path: /api
-          pathType: Prefix
-          component: backend
+  minReplicas: 2
+  maxReplicas: 5
+  cpuTarget: 80
+
+resources:
+  backend:
+    limits: { cpu: 500m, memory: 512Mi }
+    requests: { cpu: 100m, memory: 256Mi }
+  frontend:
+    limits: { cpu: 200m, memory: 256Mi }
+    requests: { cpu: 50m, memory: 128Mi }
+  worker:
+    limits: { cpu: 600m, memory: 768Mi }
+    requests: { cpu: 200m, memory: 400Mi }
+  beat:
+    limits: { cpu: 100m, memory: 128Mi }
+    requests: { cpu: 50m, memory: 64Mi }
+
+config:
+  VITE_API_URL: "http://fitview.local"
+  FRONTEND_URL: "http://fitview.local"
+  PGHOST: "ep-late-voice-alj6zo9o-pooler.c-3.eu-central-1.aws.neon.tech"
+  PGDATABASE: "neondb"
+  PGUSER: "neondb_owner"
+  PGCHANNELBINDING: "require"
+  PGSSLMODE: "require"
+  REDIS_URL: "redis://fitview-redis:6379/0"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "15"
+  REFRESH_TOKEN_EXPIRE_DAYS: "7"
+  ACTIVATION_CODE_EXPIRE_MINUTES: "15"
+  RESET_TOKEN_EXPIRE_MINUTES: "15"
+  SMTP_HOST: "fitview-mailhog"
+  SMTP_PORT: "1025"
+
+secrets:
+  PGPASSWORD: ""
+  SECRET_KEY: ""
+  STRIPE_SECRET_KEY: ""
+  STRIPE_PUBLISHABLE_KEY: ""
+  STRIPE_WEBHOOK_SECRET: ""
