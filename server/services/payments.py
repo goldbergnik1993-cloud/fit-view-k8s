@@ -1,9 +1,11 @@
 import stripe
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 
+from core.logging_config import logger
 from core.settings import settings
-from database.models.orders import OrderModel
+from database.models.orders import OrderModel, OrderStatusEnum
 from database.models.payments import PaymentsModel, PaymentStatusEnum
 from schemas.payments import CheckoutSessionResponseSchema
 
@@ -59,8 +61,61 @@ async def create_checkout_session(
 
     except Exception as e:
         await db.rollback()
-        print(f"Stripe Error: {e}")
+        logger.exception("create_checkout_session failed", exception=e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to initialize payment session.",
         )
+
+
+async def process_stripe_webhook(
+        payload: bytes, stripe_signature: str, db: AsyncSession
+) -> dict:
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, stripe_signature, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid payload"
+        )
+    except stripe.error.SignatureVerificationError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid signature"
+        )
+
+    handled_events = ["checkout.session.completed", "checkout.session.expired"]
+    if event["type"] not in handled_events:
+        return {"status": "ignored", "reason": "Event type not handled"}
+
+    session = event["data"]["object"]
+    session_id = session.id
+
+    stmt = select(PaymentsModel).where(
+        PaymentsModel.external_payment_id == session_id
+    )
+    payment_db = await db.scalar(stmt)
+
+    if not payment_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found"
+        )
+
+    order_stmt = select(OrderModel).where(OrderModel.id == payment_db.order_id)
+    order_db = await db.scalar(order_stmt)
+
+    if not order_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )
+
+    if event["type"] == "checkout.session.completed":
+        payment_db.status = PaymentStatusEnum.SUCCESSFUL
+        order_db.status = OrderStatusEnum.PAID
+    elif event["type"] == "checkout.session.expired":
+        payment_db.status = PaymentStatusEnum.CANCELED
+        order_db.status = OrderStatusEnum.CANCELED
+
+    await db.commit()
+
+    return {"status": "success"}
