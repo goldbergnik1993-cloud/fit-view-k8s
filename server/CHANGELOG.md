@@ -1,3 +1,6 @@
+b52a40a - Backend. feat(fitting room): added 'fitting_image_url' to ItemsModel to satisfy the frontend requirements. Added 'fitting_image_url' as optional field to FittingRoomResponseSchema, ItemCreateSchema and ItemUpdateSchema (2026-04-27)
+e40d498 - Backend. feat(cache,stability,logging): optimize fitting-room flow with Redis and structured diagnostics - Introduce Redis-backed performance optimization for the fitting-room pipeline and finalize observability/stability hardening across the backend. - Add item/profile fit-data caching with TTL and invalidation on catalog/profile updates, reduce DB round trips in fitting-room processing, and improve structured logging with request correlation, cache-hit indicators, safer domain telemetry, and worker/runtime reliability fixes for async SQLAlchemy/Celery execution. (2026-04-27)
+38b21ec - Backend. fix(celery): dispose db engine to prevent event loop poisoning. Added 'await engine.dispose()' to the cleanup tasks finally block. (2026-04-27)
 a44cdf2 - Merge pull request #40 from goldbergnik1993-cloud/feature/backend (2026-04-27)
 84e11f2 - Merge pull request #41 from goldbergnik1993-cloud/devops (2026-04-27)
 3fc82ec - prowided bilding of images with different architecture (2026-04-27)
