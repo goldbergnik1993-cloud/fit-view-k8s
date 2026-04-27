@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-worker
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicas.worker | default 1 }}
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      serviceAccountName: {{ .Release.Name }}-sa
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+      containers:
+        - name: worker
+          image: {{ .Values.images.backend }}
+          command: ["celery", "-A", "core.celery_app", "worker", "--loglevel=info"]
+          securityContext:
+            {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+            - secretRef:
+                name: {{ .Release.Name }}-secrets
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://$(PGUSER):$(PGPASSWORD)@$(PGHOST)/$(PGDATABASE)"
+          resources:
+            {{- toYaml .Values.resources.worker | nindent 12 }}

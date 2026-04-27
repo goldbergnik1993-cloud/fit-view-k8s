@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicas.frontend | default 1 }}
+  strategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      serviceAccountName: {{ .Release.Name }}-sa
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+      containers:
+        - name: frontend
+          image: {{ .Values.images.frontend }}
+          ports:
+            - containerPort: 80
+          securityContext:
+            {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources.frontend | nindent 12 }}
