@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 
+from core.logging_config import logger
 from core.settings import settings
 from database.models.orders import OrderModel, OrderStatusEnum
 from database.models.payments import PaymentsModel, PaymentStatusEnum
@@ -60,7 +61,7 @@ async def create_checkout_session(
 
     except Exception as e:
         await db.rollback()
-        print(f"Stripe Error: {e}")
+        logger.exception("create_checkout_session failed", exception=e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to initialize payment session.",
