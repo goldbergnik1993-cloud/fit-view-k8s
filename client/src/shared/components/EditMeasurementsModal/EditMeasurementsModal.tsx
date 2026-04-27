@@ -4,7 +4,8 @@ import { userApi } from '../../../services/api';
 import { PrimaryButton } from '../ui/PrimaryButton/PrimaryButton';
 import styles from './EditMeasurementsModal.module.scss';
 import InfoIcon from '../../../assets/icons/info.svg';
-import XIcon from '../../../assets/icons/x.svg';
+import BurgerCloseIcon from '../../../assets/icons/burger-close.svg';
+import { Header } from '../../components/Header/Header';
 
 interface Measurements {
   shoulders_length_cm: number;
@@ -129,52 +130,58 @@ const EditMeasurementsModal = ({
         aria-label="Edit Measurements"
       >
         {/* Header */}
-        <div className={styles.header}>
-          <h2 className={styles.title}>Edit Measurements</h2>
-          <button
-            className={styles.closeBtn}
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <img src={XIcon} alt="" width={24} height={24} />
-          </button>
+        <div className={styles.mobileHeader}>
+          <Header />
         </div>
 
-        {/* Fields */}
-        <div className={styles.fields}>
-          {FIELDS.map(({ key, label, tip }) => (
-            <div key={key} className={styles.field}>
-              <div className={styles.fieldLabel}>
-                <span>{label}</span>
-                <button
-                  className={styles.infoBtn}
-                  onClick={() => setTooltip(tooltip === key ? null : key)}
-                  aria-label="More info"
-                  type="button"
-                >
-                  <img src={InfoIcon} alt="" width={18} height={18} />
-                </button>
+        <div className={styles.content}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Edit Measurements</h2>
+            <button
+              className={styles.closeBtn}
+              onClick={onClose}
+              aria-label="Close"
+            >
+              <img src={BurgerCloseIcon} alt="" width={24} height={24} />
+            </button>
+          </div>
+
+          {/* Fields */}
+          <div className={styles.fields}>
+            {FIELDS.map(({ key, label, tip }) => (
+              <div key={key} className={styles.field}>
+                <div className={styles.fieldLabel}>
+                  <span>{label}</span>
+                  <button
+                    className={styles.infoBtn}
+                    onClick={() => setTooltip(tooltip === key ? null : key)}
+                    aria-label="More info"
+                    type="button"
+                  >
+                    <img src={InfoIcon} alt="" width={18} height={18} />
+                  </button>
+                </div>
+
+                {tooltip === key && <div className={styles.tooltip}>{tip}</div>}
+
+                <input
+                  className={styles.input}
+                  type="number"
+                  min={0}
+                  max={200}
+                  value={values[key] || ''}
+                  placeholder="0 cm"
+                  onChange={(e) => handleChange(key, e.target.value)}
+                />
               </div>
+            ))}
+          </div>
 
-              {tooltip === key && <div className={styles.tooltip}>{tip}</div>}
-
-              <input
-                className={styles.input}
-                type="number"
-                min={0}
-                max={200}
-                value={values[key] || ''}
-                placeholder="0 cm"
-                onChange={(e) => handleChange(key, e.target.value)}
-              />
-            </div>
-          ))}
+          {/* Save */}
+          <PrimaryButton onClick={handleSave} loading={saving}>
+            Save Measurements
+          </PrimaryButton>
         </div>
-
-        {/* Save */}
-        <PrimaryButton onClick={handleSave} loading={saving}>
-          Save Measurements
-        </PrimaryButton>
       </div>
     </div>
   );
