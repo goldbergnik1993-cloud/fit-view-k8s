@@ -25,21 +25,23 @@ async def _cleanup_logic():
 
 async def _change_cart_status_logic():
     async with SessionLocal() as db:
-        now = datetime.now(timezone.utc).replace(tzinfo=None)
-        update_stmt = (
-            update(CartModel)
-            .where(
-                CartModel.created_at < now - timedelta(hours=24),
-                CartModel.status == CartStatusEnum.ACTIVE,
+        try:
+            now = datetime.now(timezone.utc).replace(tzinfo=None)
+            update_stmt = (
+                update(CartModel)
+                .where(
+                    CartModel.created_at < now - timedelta(hours=24),
+                    CartModel.status == CartStatusEnum.ACTIVE,
+                )
+                .values(status=CartStatusEnum.ABANDONED)
             )
-            .values(status=CartStatusEnum.ABANDONED)
-        )
-        result = await db.execute(update_stmt)
-        await db.commit()
-        logger.info(
-            "change_cart_status_completed",
-            switched_count=result.rowcount
-        )
+            result = await db.execute(update_stmt)
+            await db.commit()
+            logger.info("change_cart_status_completed", switched_count=result.rowcount)
+        except Exception:
+            await db.rollback()
+            logger.exception("change_cart_status_failed")
+            raise
 
 
 @celery_app.task(name="tasks.cleanup_tasks.cleanup_expired_tokens")
