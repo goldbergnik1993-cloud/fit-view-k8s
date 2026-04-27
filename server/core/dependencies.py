@@ -5,6 +5,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.logging_config import logger
 from database.models.user import UserModel, UserRoleEnum
 from database.session_postgresql import get_db
 from utils.tokens import decode_access_token
@@ -20,6 +21,7 @@ async def get_current_user(
     token = credentials.credentials
     payload = decode_access_token(token)
     if not payload:
+        logger.warning("auth_failed", reason="invalid_token")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -31,6 +33,7 @@ async def get_current_user(
     user = result.scalar_one_or_none()
 
     if not user:
+        logger.warning("auth_failed", reason="user_not_found", user_id=user_id)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
         )
@@ -49,10 +52,12 @@ async def get_optional_current_user(
     payload = decode_access_token(token)
 
     if not payload:
+        logger.warning("auth_failed", reason="invalid_token")
         return None
 
     user_id = payload.get("sub")
     if not user_id:
+        logger.warning("auth_failed", reason="user_not_found", user_id=user_id)
         return None
 
     user_stmt = select(UserModel).where(UserModel.id == int(user_id))

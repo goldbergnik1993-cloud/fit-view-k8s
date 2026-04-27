@@ -16,15 +16,17 @@ allow_manager_plus = RoleChecker([UserRoleEnum.MANAGER, UserRoleEnum.ADMIN])
 
 @router.patch(
     "/change-user-role",
-    summary="Update User Role",
-    description="Modifies the permission level of a user (e.g., upgrading a "
-    "Buyer to Manager or Admin).",
+    summary="Update User Role"
 )
 async def change_user_status(
     payload: ChangeUserRoleSchema,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(allow_admin_only),
 ):
+    """
+    Modifies the permission level of a user (e.g., upgrading a Buyer to
+    Manager or Admin).
+    """
     user_db = await get_user_by_email(payload.user_email, db=db)
     if not user_db:
         raise HTTPException(
@@ -48,10 +50,15 @@ async def change_user_status(
     response_model=OrderRetrieveSchema,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(allow_manager_plus)],
+    summary="Update Order Status"
 )
 async def update_order_status(
     order_id: int,
     payload: OrderStatusUpdateSchema,
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    Updates the fulfillment status of a specific order (e.g., from 'Paid' to
+    'Shipped').
+    """
     return await admin_update_order_status(order_id=order_id, payload=payload, db=db)

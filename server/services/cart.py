@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from core.logging_config import logger
 from database.models.cart import CartModel, CartItemModel, CartStatusEnum
 from database.models.catalog import ItemsModel
 from schemas.cart import CartItemCreateSchema
@@ -132,7 +133,10 @@ async def update_cart_item_quantity(
 
     except SQLAlchemyError as e:
         await db.rollback()
-        print(f"DATABASE ERROR in update_cart_item_quantity: {e}")
+        logger.exception(
+            "Database Error in update_cart_item_quantity",
+            exception=e
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update cart item.",
