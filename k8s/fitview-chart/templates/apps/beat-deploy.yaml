@@ -24,6 +24,9 @@ spec:
           command: ["celery", "-A", "core.celery_app", "beat", "--loglevel=info"]
           securityContext:
             {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - name: static-data
+              mountPath: /app/static
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
@@ -35,3 +38,6 @@ spec:
           resources:
             limits: { cpu: 200m, memory: 256Mi }
             requests: { cpu: 50m, memory: 128Mi }
+      volumes:
+        - name: static-data
+          emptyDir: {}
