@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta, UTC
 from typing import Optional
 
 from fastapi import HTTPException, status
-from jose import jwt, JWTError  # type: ignore
+from jose import jwt, JWTError, exceptions  # type: ignore
 from passlib.context import CryptContext  # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -60,7 +60,7 @@ def decode_access_token(token: str):
 
 def create_token(email: str, purpose: str) -> str:
     expire = datetime.now(UTC) + timedelta(
-        hours=settings.ACTIVATION_CODE_EXPIRE_MINUTES
+        minutes=settings.RESET_TOKEN_EXPIRE_MINUTES
     )
     to_encode = {"sub": email, "purpose": purpose, "exp": expire}
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
@@ -75,11 +75,11 @@ def decode_token(token: str, purpose: str):
             )
         return payload
 
-    except jwt.ExpiredSignatureError:
+    except exceptions.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Token has expired."
         )
-    except jwt.InvalidTokenError:
+    except exceptions.JWTError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token."
         )

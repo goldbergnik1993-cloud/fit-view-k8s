@@ -23,15 +23,25 @@ router = APIRouter(prefix="/user", tags=["user"])
 templates = Jinja2Templates(directory="templates")
 
 
-@router.get("/profile", response_model=ProfileViewSchema)
+@router.get(
+    "/profile",
+    summary="Retrieve User Profile",
+    response_model=ProfileViewSchema
+)
 async def my_profile(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ):
+    """
+    Fetches the authenticated user's complete profile, including contact
+    information and saved body measurements used for the Virtual Fitting Room.
+    """
     return await get_user_profile(db=db, user=current_user)
 
 
-@router.get("/favorites", response_model=ItemsListSchema)
+@router.get(
+    "/favorites", summary="List Favorites", response_model=ItemsListSchema
+)
 async def list_favorites(
     request: Request,
     db: AsyncSession = Depends(get_db),
@@ -39,6 +49,13 @@ async def list_favorites(
     brands: Optional[List[int]] = Query(None),
     current_user: UserModel = Depends(get_current_user),
 ):
+    """
+    Retrieves a paginated list of catalog items that the authenticated user
+    has marked as favorites (wishlist).
+
+    Supports the same robust filtering and sorting query parameters as the
+    main catalog storefront.
+    """
     filters = params.model_dump(
         exclude={"page", "per_page", "sort_by"}, exclude_none=True
     )
@@ -57,25 +74,44 @@ async def list_favorites(
     )
 
 
-@router.patch("/profile", response_model=ProfileViewSchema)
+@router.patch(
+    "/profile", summary="Update Profile", response_model=ProfileViewSchema
+)
 async def update_profile(
     payload: ProfileUpdateSchema,
     current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
 ):
+    """
+    Updates the authenticated user's profile and body measurement data.
+
+    **Security Note:** If an `email` field is provided in the payload, the
+    email is *not* changed immediately. Instead, a pending state is created in
+    Redis, and an OTP is emailed to the new address to verify ownership before
+    applying the change.
+    """
     return await profile_update(
         payload=payload, user=current_user, db=db, redis_client=redis_client
     )
 
 
-@router.post("/change-email", response_model=MessageSchema)
+@router.post(
+    "/change-email", summary="Change Email", response_model=MessageSchema
+)
 async def change_email(
     payload: EmailChangeVerificationSchema,
     current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
 ):
+    """
+    Finalizes a pending email address change.
+
+    Expects the 4-digit OTP sent to the user's requested new email address.
+    Validates the code against the active Redis cache and updates the core
+    user record if successful.
+    """
     return await verify_email_change(
         payload=payload, user=current_user, db=db, redis_client=redis_client
     )
