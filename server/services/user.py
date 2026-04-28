@@ -98,6 +98,7 @@ async def profile_update(
         )
 
     profile_db.email = new_email if new_email else user.email  # type: ignore
+    await redis_client.delete(f"fit:profile:{user.id}")
 
     return ProfileViewSchema.model_validate(profile_db)
 
