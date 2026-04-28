@@ -1,9 +1,11 @@
 from typing import Optional, List
 
 from fastapi import APIRouter, Depends, Request, Query, status, UploadFile, File
+from redis import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.dependencies import RoleChecker, get_current_user, get_optional_current_user
+from core.redis_client import get_redis
 from database.models.user import UserRoleEnum, UserModel
 from database.session_postgresql import get_db
 from schemas.catalog import (
@@ -131,12 +133,15 @@ async def update_item(
     item_id: int,
     payload: ItemUpdateSchema,
     db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ):
     """
     Partially updates a catalog item. Only the fields explicitly provided in
     the payload will be modified.
     """
-    return await item_update(payload=payload, item_id=item_id, db=db)
+    return await item_update(
+        payload=payload, item_id=item_id, db=db, redis_client=redis_client
+    )
 
 
 @router.delete(
@@ -144,8 +149,12 @@ async def update_item(
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(allow_manager_plus)],
 )
-async def delete_item(item_id: int, db: AsyncSession = Depends(get_db)):
-    return await item_delete(item_id=item_id, db=db)
+async def delete_item(
+    item_id: int,
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
+):
+    return await item_delete(item_id=item_id, db=db, redis_client=redis_client)
 
 
 @router.delete(
@@ -154,9 +163,17 @@ async def delete_item(item_id: int, db: AsyncSession = Depends(get_db)):
     dependencies=[Depends(allow_manager_plus)],
 )
 async def delete_item_size_chart(
-    item_id: int, size_chart_id: int, db: AsyncSession = Depends(get_db)
+    item_id: int,
+    size_chart_id: int,
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ):
-    return await size_chart_delete(item_id=item_id, size_chart_id=size_chart_id, db=db)
+    return await size_chart_delete(
+        item_id=item_id,
+        size_chart_id=size_chart_id,
+        db=db,
+        redis_client=redis_client,
+    )
 
 
 @router.delete(
@@ -165,10 +182,16 @@ async def delete_item_size_chart(
     dependencies=[Depends(allow_manager_plus)],
 )
 async def delete_measurement(
-    item_id: int, measurement_id: int, db: AsyncSession = Depends(get_db)
+    item_id: int,
+    measurement_id: int,
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ):
     return await measurement_delete(
-        item_id=item_id, measurement_id=measurement_id, db=db
+        item_id=item_id,
+        measurement_id=measurement_id,
+        db=db,
+        redis_client=redis_client,
     )
 
 
@@ -199,6 +222,7 @@ async def fit_it(
     payload: FittingRoomRequestSchema,
     current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ):
     """
     Executes the core Virtual Fitting Room analysis engine.
@@ -211,7 +235,11 @@ async def fit_it(
     shoulders, allowing the frontend to visually render the fit to the user.
     """
     return await fitting_room(
-        user=current_user, item_id=item_id, payload=payload, db=db
+        user=current_user,
+        item_id=item_id,
+        payload=payload,
+        db=db,
+        redis_client=redis_client,
     )
 
 
