@@ -539,7 +539,7 @@ async def item_update(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Item with ID {item_id} not found.",
         )
-    update_data = payload.model_dump(exclude_unset=True)
+    update_data = payload.model_dump(exclude_unset=True, mode="json")
 
     if "brand" in update_data:
         brand_name = update_data.pop("brand")
@@ -731,7 +731,7 @@ async def upload_item_image_service(file: UploadFile) -> str:
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    return f"{settings.BASE_URL}/static/items_images/{filename}"
+    return f"{settings.FRONTEND_URL}/static/items_images/{filename}"
 
 
 async def get_search_autocomplete(query: str, db: AsyncSession) -> list[ItemsModel]:
