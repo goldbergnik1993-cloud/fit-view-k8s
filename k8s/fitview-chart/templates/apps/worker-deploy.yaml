@@ -22,6 +22,9 @@ spec:
           command: ["celery", "-A", "core.celery_app", "worker", "--loglevel=info"]
           securityContext:
             {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - name: static-data
+              mountPath: /app/static
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
@@ -32,3 +35,7 @@ spec:
               value: "postgresql+asyncpg://$(PGUSER):$(PGPASSWORD)@$(PGHOST)/$(PGDATABASE)"
           resources:
             {{- toYaml .Values.resources.worker | nindent 12 }}
+      
+      volumes:
+        - name: static-data
+          emptyDir: {}
