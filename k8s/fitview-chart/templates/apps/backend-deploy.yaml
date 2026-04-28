@@ -23,6 +23,9 @@ spec:
         - name: migrations
           image: {{ .Values.images.backend }}
           command: ["sh", "-c", "alembic upgrade head"]
+          volumeMounts:
+            - name: static-data
+              mountPath: /app/static
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-config
@@ -38,6 +41,9 @@ spec:
           imagePullPolicy: {{ .Values.images.pullPolicy }}
           securityContext:
             {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - name: static-data
+              mountPath: /app/static
           ports:
             - containerPort: 8000
           envFrom:
@@ -50,3 +56,8 @@ spec:
               value: "postgresql+asyncpg://$(PGUSER):$(PGPASSWORD)@$(PGHOST)/$(PGDATABASE)"
           resources:
             {{- toYaml .Values.resources.backend | nindent 12 }}
+
+      volumes:
+        - name: static-data
+          emptyDir: {}
+

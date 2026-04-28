@@ -3,8 +3,8 @@ global:
   domain: fitview.local
 
 images:
-  backend: goldbernik/todoapp-backend:latest
-  frontend: goldbernik/todoapp-frontend:latest
+  backend: goldbernik/fitview-backend:latest
+  frontend: goldbernik/fitview-frontend:latest
   pullPolicy: IfNotPresent
 
 security:
