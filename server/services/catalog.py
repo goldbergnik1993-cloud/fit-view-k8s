@@ -283,12 +283,16 @@ async def fitting_room(
     if profile_cache_hit:
         profile_data = json.loads(cached_profile_str)
     else:
-        profile_stmt = select(UserProfileModel).where(UserProfileModel.user_id == user.id)
+        profile_stmt = select(UserProfileModel).where(
+            UserProfileModel.user_id == user.id
+        )
         profile_db = await db.scalar(profile_stmt)
         profile_data = {
             "gender": profile_db.gender.value if profile_db else "female",
             "height_cm": profile_db.height_cm if profile_db else None,
-            "shoulders_length_cm": profile_db.shoulders_length_cm if profile_db else None,
+            "shoulders_length_cm": profile_db.shoulders_length_cm
+            if profile_db
+            else None,
             "breast_length_cm": profile_db.breast_length_cm if profile_db else None,
             "waist_length_cm": profile_db.waist_length_cm if profile_db else None,
             "hips_length_cm": profile_db.hips_length_cm if profile_db else None,
@@ -307,8 +311,7 @@ async def fitting_room(
         or profile_data["shoulders_length_cm"],
         "breast_length_cm": payload.breast_length_cm
         or profile_data["breast_length_cm"],
-        "waist_length_cm": payload.waist_length_cm
-        or profile_data["waist_length_cm"],
+        "waist_length_cm": payload.waist_length_cm or profile_data["waist_length_cm"],
         "hips_length_cm": payload.hips_length_cm or profile_data["hips_length_cm"],
         "leg_length_cm": payload.leg_length_cm or profile_data["leg_length_cm"],
     }
@@ -420,8 +423,9 @@ async def fitting_room(
         user_id=user.id,
         item_cache_hit=item_cache_hit,
         profile_cache_hit=profile_cache_hit,
-        body_fields_used=[key for key, value in active_body.items() if
-                          value is not None],
+        body_fields_used=[
+            key for key, value in active_body.items() if value is not None
+        ],
         item_id=item_id,
         size_label=size_chart["size_label"],
         fit_analysis={

@@ -27,9 +27,7 @@ from services.auth import (
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post(
-    "/register", summary="Create User", response_model=UserRetrieveSchema
-)
+@router.post("/register", summary="Create User", response_model=UserRetrieveSchema)
 async def create_user(
     user: UserCreateSchema,
     db: AsyncSession = Depends(get_db),
@@ -45,9 +43,7 @@ async def create_user(
     return await user_create(user=user, db=db, redis_client=redis_client)
 
 
-@router.post(
-    "/login", summary="Login User", response_model=TokenPairResponse
-)
+@router.post("/login", summary="Login User", response_model=TokenPairResponse)
 async def login(payload: LoginSchema, db: AsyncSession = Depends(get_db)):
     """
     Authenticates a user using their email and password.
@@ -79,9 +75,7 @@ async def refresh_access_token(
 
 
 @router.post(
-    "/verify",
-    summary="Confirm Email Verification",
-    response_model=MessageSchema
+    "/verify", summary="Confirm Email Verification", response_model=MessageSchema
 )
 async def confirm_email(
     payload: EmailVerificationSchema,
@@ -100,7 +94,7 @@ async def confirm_email(
 @router.post(
     "/password-reset-request",
     response_model=MessageSchema,
-    summary="Initiate Password Recovery"
+    summary="Initiate Password Recovery",
 )
 async def request_password_reset(
     payload: UserBaseSchema, db: AsyncSession = Depends(get_db)
@@ -114,7 +108,7 @@ async def request_password_reset(
 @router.post(
     "/password-reset-confirm",
     response_model=MessageSchema,
-    summary="Complete Password Recovery"
+    summary="Complete Password Recovery",
 )
 async def confirm_password_reset(
     data: PasswordResetCompleteSchema, db: AsyncSession = Depends(get_db)

@@ -24,9 +24,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 @router.get(
-    "/profile",
-    summary="Retrieve User Profile",
-    response_model=ProfileViewSchema
+    "/profile", summary="Retrieve User Profile", response_model=ProfileViewSchema
 )
 async def my_profile(
     db: AsyncSession = Depends(get_db),
@@ -39,9 +37,7 @@ async def my_profile(
     return await get_user_profile(db=db, user=current_user)
 
 
-@router.get(
-    "/favorites", summary="List Favorites", response_model=ItemsListSchema
-)
+@router.get("/favorites", summary="List Favorites", response_model=ItemsListSchema)
 async def list_favorites(
     request: Request,
     db: AsyncSession = Depends(get_db),
@@ -74,9 +70,7 @@ async def list_favorites(
     )
 
 
-@router.patch(
-    "/profile", summary="Update Profile", response_model=ProfileViewSchema
-)
+@router.patch("/profile", summary="Update Profile", response_model=ProfileViewSchema)
 async def update_profile(
     payload: ProfileUpdateSchema,
     current_user: UserModel = Depends(get_current_user),
@@ -96,9 +90,7 @@ async def update_profile(
     )
 
 
-@router.post(
-    "/change-email", summary="Change Email", response_model=MessageSchema
-)
+@router.post("/change-email", summary="Change Email", response_model=MessageSchema)
 async def change_email(
     payload: EmailChangeVerificationSchema,
     current_user: UserModel = Depends(get_current_user),

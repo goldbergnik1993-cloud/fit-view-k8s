@@ -14,11 +14,14 @@ def setup_logging():
             structlog.contextvars.merge_contextvars,
             structlog.processors.add_log_level,
             structlog.processors.TimeStamper(fmt="iso"),
-            structlog.processors.JSONRenderer() if not sys.stderr.isatty() else structlog.dev.ConsoleRenderer()
+            structlog.processors.JSONRenderer()
+            if not sys.stderr.isatty()
+            else structlog.dev.ConsoleRenderer(),
         ],
         logger_factory=structlog.stdlib.LoggerFactory(),
         wrapper_class=structlog.stdlib.BoundLogger,
         cache_logger_on_first_use=True,
     )
+
 
 logger = structlog.get_logger()

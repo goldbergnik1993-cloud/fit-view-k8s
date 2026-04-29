@@ -14,10 +14,7 @@ allow_admin_only = RoleChecker([UserRoleEnum.ADMIN])
 allow_manager_plus = RoleChecker([UserRoleEnum.MANAGER, UserRoleEnum.ADMIN])
 
 
-@router.patch(
-    "/change-user-role",
-    summary="Update User Role"
-)
+@router.patch("/change-user-role", summary="Update User Role")
 async def change_user_status(
     payload: ChangeUserRoleSchema,
     db: AsyncSession = Depends(get_db),
@@ -50,7 +47,7 @@ async def change_user_status(
     response_model=OrderRetrieveSchema,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(allow_manager_plus)],
-    summary="Update Order Status"
+    summary="Update Order Status",
 )
 async def update_order_status(
     order_id: int,

@@ -69,7 +69,7 @@ async def create_checkout_session(
 
 
 async def process_stripe_webhook(
-        payload: bytes, stripe_signature: str, db: AsyncSession
+    payload: bytes, stripe_signature: str, db: AsyncSession
 ) -> dict:
     try:
         event = stripe.Webhook.construct_event(
@@ -91,9 +91,7 @@ async def process_stripe_webhook(
     session = event["data"]["object"]
     session_id = session.id
 
-    stmt = select(PaymentsModel).where(
-        PaymentsModel.external_payment_id == session_id
-    )
+    stmt = select(PaymentsModel).where(PaymentsModel.external_payment_id == session_id)
     payment_db = await db.scalar(stmt)
 
     if not payment_db:
