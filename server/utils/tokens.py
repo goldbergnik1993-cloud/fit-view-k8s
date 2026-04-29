@@ -59,9 +59,7 @@ def decode_access_token(token: str):
 
 
 def create_token(email: str, purpose: str) -> str:
-    expire = datetime.now(UTC) + timedelta(
-        minutes=settings.RESET_TOKEN_EXPIRE_MINUTES
-    )
+    expire = datetime.now(UTC) + timedelta(minutes=settings.RESET_TOKEN_EXPIRE_MINUTES)
     to_encode = {"sub": email, "purpose": purpose, "exp": expire}
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
 

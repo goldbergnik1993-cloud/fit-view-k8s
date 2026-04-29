@@ -63,7 +63,7 @@ app = FastAPI(
     title="FitView API",
     description="The core backend API for the FitView e-commerce and virtual fitting room platform.",
     version="0.1.0",
-    openapi_tags=tags_metadata
+    openapi_tags=tags_metadata,
 )
 
 
@@ -114,9 +114,7 @@ os.makedirs(os.path.join("static", "items_images"), exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-@app.get(
-    "/health", status_code=status.HTTP_200_OK, summary="System Health Check"
-)
+@app.get("/health", status_code=status.HTTP_200_OK, summary="System Health Check")
 async def health():
     """
     Performs a basic liveness probe to verify the application container is
@@ -125,9 +123,7 @@ async def health():
     return {"message": "I'm Healthy as always!"}
 
 
-@app.get(
-    "/ready", status_code=status.HTTP_200_OK, summary="System Readiness Check"
-)
+@app.get("/ready", status_code=status.HTTP_200_OK, summary="System Readiness Check")
 async def readiness_check(db: AsyncSession = Depends(get_db)):
     """
     Performs a deep readiness probe. Verifies that the application is fully

@@ -9,9 +9,9 @@ router = APIRouter(prefix="/payments", tags=["payments"])
 
 @router.post("/webhook", summary="Stripe Webhook")
 async def stripe_webhook(
-        request: Request,
-        stripe_signature: str = Header(None),
-        db: AsyncSession = Depends(get_db),
+    request: Request,
+    stripe_signature: str = Header(None),
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Secure, server-to-server webhook endpoint for processing asynchronous
@@ -25,7 +25,5 @@ async def stripe_webhook(
     payload = await request.body()
 
     return await process_stripe_webhook(
-        payload=payload,
-        stripe_signature=stripe_signature,
-        db=db
+        payload=payload, stripe_signature=stripe_signature, db=db
     )

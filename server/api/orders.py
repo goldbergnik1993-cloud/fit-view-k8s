@@ -19,7 +19,7 @@ router = APIRouter(prefix="/orders", tags=["orders"])
     "/",
     summary="Place Order",
     response_model=OrderRetrieveSchema,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
 )
 async def place_order(
     payload: OrderCreateSchema,
@@ -38,7 +38,7 @@ async def place_order(
     "/",
     summary="List My Orders",
     response_model=List[OrderRetrieveSchema],
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def list_my_orders(
     current_user: UserModel = Depends(get_current_user),
@@ -57,7 +57,7 @@ async def list_my_orders(
     "/{order_id}",
     summary="Retrieve Order Details",
     response_model=OrderRetrieveSchema,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def retrieve_order_details(
     order_id: int,

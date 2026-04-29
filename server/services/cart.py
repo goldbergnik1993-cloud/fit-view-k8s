@@ -133,10 +133,7 @@ async def update_cart_item_quantity(
 
     except SQLAlchemyError as e:
         await db.rollback()
-        logger.exception(
-            "Database Error in update_cart_item_quantity",
-            exception=e
-        )
+        logger.exception("Database Error in update_cart_item_quantity", exception=e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update cart item.",
