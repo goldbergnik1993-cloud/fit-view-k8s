@@ -17,10 +17,7 @@ async def _cleanup_logic():
             delete(RefreshTokenModel).where(RefreshTokenModel.expires_at < now)
         )
         await db.commit()
-        logger.info(
-            "cleanup_expired_tokens_completed",
-            deleted_count=result.rowcount
-        )
+        logger.info("cleanup_expired_tokens_completed", deleted_count=result.rowcount)
 
 
 async def _change_cart_status_logic():

@@ -49,7 +49,7 @@ class ItemFilterParams(BaseModel):
         20,
         ge=1,
         le=100,
-        description="Number of items per page. Default is 20, maximum is 100."
+        description="Number of items per page. Default is 20, maximum is 100.",
     )
 
     category: Optional[ItemCategoryEnum] = Field(

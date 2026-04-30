@@ -11,9 +11,7 @@ router = APIRouter(prefix="/events", tags=["analytics"])
 
 
 @router.post(
-    "/fitview",
-    summary="Track FitView Interaction",
-    status_code=status.HTTP_201_CREATED
+    "/fitview", summary="Track FitView Interaction", status_code=status.HTTP_201_CREATED
 )
 async def track_fitview_interaction(
     payload: FitViewEventCreateSchema,
