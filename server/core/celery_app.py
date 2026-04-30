@@ -35,6 +35,7 @@ celery_app.conf.beat_schedule = {
     },
 }
 
+
 @worker_process_init.connect
 def dispose_sqlalchemy_engine(**kwargs):
     """
@@ -42,6 +43,7 @@ def dispose_sqlalchemy_engine(**kwargs):
     connection pool and create a fresh one.
     """
     import asyncio
+
     try:
         asyncio.run(engine.dispose())
         logger.info("celery_worker_db_engine_reset_success")

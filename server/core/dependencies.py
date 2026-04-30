@@ -1,11 +1,14 @@
+import json
 from typing import List, Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from redis import Redis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.logging_config import logger
+from core.redis_client import get_redis
 from database.models.user import UserModel, UserRoleEnum
 from database.session_postgresql import get_db
 from utils.tokens import decode_access_token
@@ -17,6 +20,7 @@ optional_security = HTTPBearer(auto_error=False)
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ):
     token = credentials.credentials
     payload = decode_access_token(token)
@@ -28,6 +32,14 @@ async def get_current_user(
         )
 
     user_id = payload.get("sub")
+    cache_key = f"auth_user:{user_id}"
+
+    cached_user_str = await redis_client.get(cache_key)
+
+    if cached_user_str:
+        user_data = json.loads(cached_user_str)
+        return UserModel(**user_data)
+
     user_stmt = select(UserModel).where(UserModel.id == int(user_id))
     result = await db.execute(user_stmt)
     user = result.scalar_one_or_none()
@@ -37,6 +49,13 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
         )
+    user_dict = {
+        "id": user.id,
+        "email": user.email,
+        "is_active": user.is_active,
+        "ab_group": user.ab_group,
+    }
+    await redis_client.setex(cache_key, 300, json.dumps(user_dict))
 
     return user
 

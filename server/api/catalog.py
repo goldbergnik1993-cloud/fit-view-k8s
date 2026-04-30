@@ -1,6 +1,15 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, Depends, Request, Query, status, UploadFile, File
+from fastapi import (
+    APIRouter,
+    Depends,
+    Request,
+    Query,
+    status,
+    UploadFile,
+    File,
+    BackgroundTasks,
+)
 from redis import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -84,7 +93,7 @@ async def list_items(
     "/",
     summary="Create Item",
     response_model=ItemDetailSchema,
-    dependencies=[Depends(allow_manager_plus)]
+    dependencies=[Depends(allow_manager_plus)],
 )
 async def create_item(payload: ItemCreateSchema, db: AsyncSession = Depends(get_db)):
     """
@@ -105,9 +114,7 @@ async def upload_item_image(file: UploadFile = File(...)):
     return {"image_url": image_path}
 
 
-@router.get(
-    "/{item_id}", summary="Get Item Details", response_model=ItemDetailSchema
-)
+@router.get("/{item_id}", summary="Get Item Details", response_model=ItemDetailSchema)
 async def get_item(
     item_id: int,
     db: AsyncSession = Depends(get_db),
@@ -198,7 +205,7 @@ async def delete_measurement(
 @router.post(
     "/{item_id}/favorite",
     summary="Toggle Favorite",
-    response_model=ToggleFavoriteSchema
+    response_model=ToggleFavoriteSchema,
 )
 async def favorite(
     item_id: int,
@@ -215,7 +222,7 @@ async def favorite(
 @router.post(
     "/{item_id}/fitting-room",
     summary="Run Virtual Fit Analysis",
-    response_model=FittingRoomResponseSchema
+    response_model=FittingRoomResponseSchema,
 )
 async def fit_it(
     item_id: int,
@@ -223,6 +230,7 @@ async def fit_it(
     current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
 ):
     """
     Executes the core Virtual Fitting Room analysis engine.
@@ -240,6 +248,7 @@ async def fit_it(
         payload=payload,
         db=db,
         redis_client=redis_client,
+        background_tasks=background_tasks,
     )
 
 

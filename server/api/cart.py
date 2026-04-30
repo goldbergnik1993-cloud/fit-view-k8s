@@ -20,7 +20,7 @@ router = APIRouter(prefix="/cart", tags=["cart"])
     "/",
     description="Retrieve Active Cart",
     response_model=CartRetrieveSchema,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def retrieve_active_cart(
     current_user: UserModel = Depends(get_current_user),
@@ -41,7 +41,7 @@ async def retrieve_active_cart(
     "/items",
     summary="Add Cart Item",
     response_model=CartRetrieveSchema,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def add_cart_item(
     payload: CartItemCreateSchema,
@@ -102,7 +102,7 @@ async def remove_cart_item(
     "/",
     summary="Clear Active Cart",
     response_model=CartRetrieveSchema,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 async def clear_active_cart(
     current_user: UserModel = Depends(get_current_user),
