@@ -4,16 +4,16 @@ import uuid
 import json
 from typing import Optional
 
-from fastapi import Request, HTTPException, status, UploadFile
+from fastapi import Request, HTTPException, status, UploadFile, BackgroundTasks
 from redis import Redis
-from sqlalchemy import select, desc, asc, func, or_, String, cast, update
+from sqlalchemy import select, desc, asc, func, or_, String, cast
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from core.logging_config import logger
 from core.settings import settings
-from database.models import UserModel, UserProfileModel, FitviewEventsModel
+from database.models import UserModel, UserProfileModel
 from database.models.catalog import (
     ItemsModel,
     SizeChartModel,
@@ -22,7 +22,7 @@ from database.models.catalog import (
     BrandsModel,
     ItemMeasurementsModel,
 )
-from database.models.events import FitResultEnum, EventTypeEnum
+from database.models.events import FitResultEnum
 from schemas.catalog import (
     ItemsListSchema,
     ItemListItemSchema,
@@ -35,6 +35,7 @@ from schemas.catalog import (
     ItemCreateSchema,
     ItemUpdateSchema,
 )
+from services.telemetry import save_fitting_room_telemetry
 from utils.service_helpers import pagination_helper
 
 REQUIRED_FIELDS_BY_CATEGORY = {
@@ -224,6 +225,7 @@ async def fitting_room(
     payload: FittingRoomRequestSchema,
     db: AsyncSession,
     redis_client: Redis,
+    background_tasks: BackgroundTasks,
 ) -> FittingRoomResponseSchema:
     cached_item_str = await redis_client.get(_fit_item_cache_key(item_id))
     item_cache_hit = bool(cached_item_str)
@@ -393,31 +395,39 @@ async def fitting_room(
         min_val=size_chart["shoulders_min_cm"],
         max_val=size_chart["shoulders_max_cm"],
     )
-    new_event = FitviewEventsModel(
-        user_id=user.id,
+    result = FittingRoomResponseSchema(
         item_id=item_id,
-        event_type=EventTypeEnum.RESULT_SHOWN,
-        height_used_cm=active_body["height_cm"],
-        result_end_cm=h_end_cm,
-        fit_shoulders=shoulders_fit,
-        fit_breast=breast_fit,
-        fit_waist=waist_fit,
-        fit_hips=hips_fit,
-        ab_group=user.ab_group,
-    )
-    db.add(new_event)
-    await db.flush()
-    await db.execute(
-        update(FavoritesModel)
-        .where(
-            FavoritesModel.user_id == user.id,
-            FavoritesModel.item_id == item_id,
-            FavoritesModel.used_fitview.is_(False),
-        )
-        .values(used_fitview=True)
+        size_label=size_chart["size_label"],
+        gender=item_data["gender"],
+        visual_markers=VisualMarkersSchema(
+            h_end_cm=round(h_end_cm, 2),
+            line_position_pct=round(line_position_pct, 2),
+            reference_point=item_data["reference_point"],
+        ),
+        fit_analysis=FitAnalysisSchema(
+            hips_fit=hips_fit,
+            waist_fit=waist_fit,
+            breast_fit=breast_fit,
+            shoulders_fit=shoulders_fit,
+        ),
+        user_body=UserBodySchema(**active_body),  # type: ignore
     )
 
-    await db.commit()
+    background_tasks.add_task(
+        save_fitting_room_telemetry,
+        user_id=user.id,
+        item_id=item_id,
+        fit_data={
+            "height_cm": user_height,
+            "h_end_cm": h_end_cm,
+            "shoulders_fit": shoulders_fit,
+            "breast_fit": breast_fit,
+            "waist_fit": waist_fit,
+            "hips_fit": hips_fit,
+        },
+        ab_group=user.ab_group,
+    )
+
     logger.info(
         "fitting_room_result",
         user_id=user.id,
@@ -440,23 +450,8 @@ async def fitting_room(
             "reference_point": item_data["reference_point"],
         },
     )
-    return FittingRoomResponseSchema(
-        item_id=item_id,
-        size_label=size_chart["size_label"],
-        gender=item_data["gender"],
-        visual_markers=VisualMarkersSchema(
-            h_end_cm=round(h_end_cm, 2),
-            line_position_pct=round(line_position_pct, 2),
-            reference_point=item_data["reference_point"],
-        ),
-        fit_analysis=FitAnalysisSchema(
-            hips_fit=hips_fit,
-            waist_fit=waist_fit,
-            breast_fit=breast_fit,
-            shoulders_fit=shoulders_fit,
-        ),
-        user_body=UserBodySchema(**active_body),  # type: ignore
-    )
+
+    return result
 
 
 # CREATE / UPDATE / DELETE

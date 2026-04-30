@@ -1,6 +1,15 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, Depends, Request, Query, status, UploadFile, File
+from fastapi import (
+    APIRouter,
+    Depends,
+    Request,
+    Query,
+    status,
+    UploadFile,
+    File,
+    BackgroundTasks,
+)
 from redis import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -221,6 +230,7 @@ async def fit_it(
     current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
 ):
     """
     Executes the core Virtual Fitting Room analysis engine.
@@ -238,6 +248,7 @@ async def fit_it(
         payload=payload,
         db=db,
         redis_client=redis_client,
+        background_tasks=background_tasks,
     )
 
 
