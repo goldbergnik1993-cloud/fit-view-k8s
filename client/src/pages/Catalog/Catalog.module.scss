@@ -364,7 +364,7 @@
 }
 
 .catalog__brandEmptyTitle {
-  @include text(20px, 700);
+  @include h3;
   margin: 0;
 }
 

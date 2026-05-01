@@ -1,188 +1,209 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { userApi, type ProfileData } from '../../services/api';
+import { useState } from 'react';
+import { Header } from '../../shared/components/Header/Header';
+import { Footer } from '../../shared/components/Footer/Footer';
+import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton'
+import AccountDetailsIcon from '../../assets/icons/account-details.svg';
+import RulerIcon from '../../assets/icons/ruler.svg';
+import BoxIcon from '../../assets/icons/box.svg';
+import CreditCardIcon from '../../assets/icons/credit-card.svg';
+import LocationIcon from '../../assets/icons/location.svg';
+import HeadphonesIcon from '../../assets/icons/headphones.svg';
+import InfoIcon from '../../assets/icons/info.svg';
+import styles from './Profile.module.scss';
 
-const DEFAULT_FORM: ProfileData = {
-  height_cm: 165,
-  gender: 'female',
-  shoulders_length_cm: 40,
-  breast_length_cm: 90,
-  waist_length_cm: 70,
-  hips_length_cm: 95,
-  leg_length_cm: 80,
+// ─── Mock data ────────────────────────────────────────────────────────────────
+
+const MOCK_USER = {
+  name: 'John Doe',
+  phone: '07700 900123',
+  birthday: '01/01/2000',
+  email: 'john.doe@gmail.com',
 };
 
-const GENDER_OPTIONS: { label: string; value: NonNullable<ProfileData['gender']> }[] = [
-  { label: 'Female', value: 'female' },
-  { label: 'Male', value: 'male' },
-  { label: 'Unisex', value: 'unisex' },
+const MOCK_MEASUREMENTS = {
+  shoulders_length_cm: '',
+  breast_length_cm: '',
+  hips_length_cm: '',
+  waist_length_cm: '',
+  leg_length_cm: '',
+};
+
+// ─── Nav items ────────────────────────────────────────────────────────────────
+
+type TabId = 'personal' | 'measurements' | 'orders' | 'payments' | 'address' | 'help';
+
+interface NavItem {
+  id: TabId;
+  label: string;
+  icon: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { id: 'personal', label: 'Personal Details', icon: AccountDetailsIcon },
+  { id: 'measurements', label: 'My Measurements', icon: RulerIcon },
+  { id: 'orders', label: 'Orders', icon: BoxIcon },
+  { id: 'payments', label: 'Payments', icon: CreditCardIcon },
+  { id: 'address', label: 'Address', icon: LocationIcon },
+  { id: 'help', label: 'Help', icon: HeadphonesIcon },
 ];
 
-const Profile = () => {
-  const { user, logout } = useAuth();
-  const [form, setForm] = useState<ProfileData>(DEFAULT_FORM);
-  const [profileExists, setProfileExists] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+// ─── Tabs for mobile/tablet (only first 4) ───────────────────────────────────
 
-  // Load existing profile
-  useEffect(() => {
-    userApi.getProfile()
-      .then((profile) => {
-        setForm({
-          height_cm: profile.height_cm,
-          gender: profile.gender,
-          shoulders_length_cm: profile.shoulders_length_cm,
-          breast_length_cm: profile.breast_length_cm,
-          waist_length_cm: profile.waist_length_cm,
-          hips_length_cm: profile.hips_length_cm,
-          leg_length_cm: profile.leg_length_cm,
-        });
-        setProfileExists(true);
-      })
-      .catch(() => {
-        setProfileExists(false);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+const MOBILE_TABS: TabId[] = ['personal', 'measurements', 'orders', 'payments'];
 
-  const handleChange = (field: keyof ProfileData, value: string | number) => {
-    setForm(prev => ({ ...prev, [field]: value }));
-    setSuccess(false);
-  };
+// ─── Personal Details Tab ─────────────────────────────────────────────────────
 
-  const handleSubmit = async () => {
-    setSaving(true);
-    setError(null);
-    setSuccess(false);
-    try {
-      if (profileExists) {
-        await userApi.updateProfile(form);
-      } else {
-        await userApi.createProfile(form);
-        setProfileExists(true);
-      }
-      setSuccess(true);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setSaving(false);
-    }
-  };
+const PersonalDetailsTab = () => (
+  <div className={styles['profile__content-inner']}>
+    <div className={styles['profile__card']}>
+      <h2 className={styles['profile__card-title']}>Details</h2>
+      <div className={styles['profile__card-divider']} />
+      <div className={styles['profile__card-body']}>
+        <p className={styles['profile__card-info']}>Name: {MOCK_USER.name}</p>
+        <p className={styles['profile__card-info']}>Phone: {MOCK_USER.phone}</p>
+        <p className={styles['profile__card-info']}>Birthday: {MOCK_USER.birthday}</p>
+      </div>
+      <button className={styles['profile__edit-btn']}>Edit</button>
+    </div>
 
-  if (loading) return <div style={{ padding: '24px' }}>Loading...</div>;
+    <div className={styles['profile__card']}>
+      <h2 className={styles['profile__card-title']}>Email</h2>
+      <div className={styles['profile__card-divider']} />
+      <div className={styles['profile__card-body']}>
+        <p className={styles['profile__card-info']}>{MOCK_USER.email}</p>
+      </div>
+      <button className={styles['profile__edit-btn']}>Edit</button>
+    </div>
+
+    <div className={styles['profile__card']}>
+      <h2 className={styles['profile__card-title']}>Password</h2>
+      <div className={styles['profile__card-divider']} />
+      <div className={styles['profile__card-body']}>
+        <p className={styles['profile__card-info']}>*************</p>
+      </div>
+      <button className={styles['profile__edit-btn']}>Edit</button>
+    </div>
+  </div>
+);
+
+// ─── Measurement Field ────────────────────────────────────────────────────────
+
+interface MeasurementFieldProps {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}
+
+const MeasurementField = ({ label, value, onChange }: MeasurementFieldProps) => (
+  <div className={styles['profile__field']}>
+    <label className={styles['profile__field-label']}>
+      {label}
+      <img src={InfoIcon} alt="info" width={16} height={16} className={styles['profile__field-info']} />
+    </label>
+    <input
+      type="number"
+      className={styles['profile__field-input']}
+      placeholder="0 cm"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  </div>
+);
+
+// ─── Measurements Tab ─────────────────────────────────────────────────────────
+
+const MeasurementsTab = () => {
+  const [fields, setFields] = useState(MOCK_MEASUREMENTS);
+
+  const set = (key: keyof typeof fields) => (v: string) =>
+    setFields((prev) => ({ ...prev, [key]: v }));
 
   return (
-    <div style={{ padding: '24px', maxWidth: '480px', margin: '0 auto' }}>
-      <h1>Profile</h1>
-      {user && <p style={{ color: '#666', marginBottom: '24px' }}>{user.email}</p>}
+    <div className={styles['profile__content-inner']}>
+      <MeasurementField label="Enter shoulder width (cm)" value={fields.shoulders_length_cm} onChange={set('shoulders_length_cm')} />
+      <MeasurementField label="Enter chest girth (cm)" value={fields.breast_length_cm} onChange={set('breast_length_cm')} />
+      <MeasurementField label="Enter hip girth (cm)" value={fields.hips_length_cm} onChange={set('hips_length_cm')} />
+      <MeasurementField label="Enter waist girth (cm)" value={fields.waist_length_cm} onChange={set('waist_length_cm')} />
+      <MeasurementField label="Enter inseam length (cm)" value={fields.leg_length_cm} onChange={set('leg_length_cm')} />
+      <PrimaryButton>Save Measurements</PrimaryButton>
+    </div>
+  );
+};
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+// ─── Placeholder tabs ─────────────────────────────────────────────────────────
 
-        {/* Gender */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '8px' }}>Gender</label>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {GENDER_OPTIONS.map(({ label, value }) => (
-              <button key={value} onClick={() => handleChange('gender', value)}
-                style={{
-                  padding: '8px 16px', borderRadius: '8px',
-                  border: '1px solid #534AB7',
-                  background: form.gender === value ? '#534AB7' : 'white',
-                  color: form.gender === value ? 'white' : '#534AB7',
-                  cursor: 'pointer', fontSize: '13px',
-                }}>
-                {label}
-              </button>
-            ))}
+const PlaceholderTab = ({ label }: { label: string }) => (
+  <div className={styles['profile__content-inner']}>
+    <p className={styles['profile__placeholder']}>{label} — coming soon</p>
+  </div>
+);
+
+// ─── Profile Page ─────────────────────────────────────────────────────────────
+
+const TAB_CONTENT: Record<TabId, React.ReactNode> = {
+  personal: <PersonalDetailsTab />,
+  measurements: <MeasurementsTab />,
+  orders: <PlaceholderTab label="Orders" />,
+  payments: <PlaceholderTab label="Payments" />,
+  address: <PlaceholderTab label="Address" />,
+  help: <PlaceholderTab label="Help" />,
+};
+
+const Profile = () => {
+  const [activeTab, setActiveTab] = useState<TabId>('personal');
+
+  return (
+    <div className={styles['profile-page']}>
+      <Header />
+
+      <main className={styles['profile']}>
+        <h1 className={styles['profile__title']}>My Profile</h1>
+
+        {/* Mobile / Tablet: horizontal scrollable tabs */}
+        <div className={styles['profile__tabs']} role="tablist" aria-label="Profile sections">
+          {NAV_ITEMS.filter((item) => MOBILE_TABS.includes(item.id)).map((item) => (
+            <button
+              key={item.id}
+              role="tab"
+              aria-selected={activeTab === item.id}
+              className={`${styles['profile__tab']} ${activeTab === item.id ? styles['profile__tab--active'] : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <span className={styles['profile__tab-icon']}>
+                <img src={item.icon} alt="" width={20} height={20} />
+              </span>
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Desktop: sidebar + content */}
+        <div className={styles['profile__layout']}>
+          <aside className={styles['profile__sidebar']}>
+            <nav aria-label="Profile navigation">
+              {NAV_ITEMS.map((item) => (
+                <button
+                  key={item.id}
+                  className={`${styles['profile__nav-item']} ${activeTab === item.id ? styles['profile__nav-item--active'] : ''}`}
+                  onClick={() => setActiveTab(item.id)}
+                  aria-current={activeTab === item.id ? 'page' : undefined}
+                >
+                  <span className={styles['profile__nav-icon']}>
+                    <img src={item.icon} alt="" width={24} height={24} />
+                  </span>
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+          </aside>
+
+          <div className={styles['profile__content']}>
+            {TAB_CONTENT[activeTab]}
           </div>
         </div>
+      </main>
 
-        {/* Height */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Height: {form.height_cm} cm
-          </label>
-          <input type="range" min={100} max={250} value={form.height_cm}
-            onChange={e => handleChange('height_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Shoulders */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Shoulders: {form.shoulders_length_cm} cm
-          </label>
-          <input type="range" min={30} max={60} value={form.shoulders_length_cm}
-            onChange={e => handleChange('shoulders_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Breast */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Breast: {form.breast_length_cm} cm
-          </label>
-          <input type="range" min={60} max={180} value={form.breast_length_cm}
-            onChange={e => handleChange('breast_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Waist */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Waist: {form.waist_length_cm} cm
-          </label>
-          <input type="range" min={40} max={150} value={form.waist_length_cm}
-            onChange={e => handleChange('waist_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Hips */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Hips: {form.hips_length_cm} cm
-          </label>
-          <input type="range" min={60} max={180} value={form.hips_length_cm}
-            onChange={e => handleChange('hips_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Leg */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Leg length: {form.leg_length_cm} cm
-          </label>
-          <input type="range" min={50} max={120} value={form.leg_length_cm}
-            onChange={e => handleChange('leg_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {error && (
-          <div style={{ padding: '12px', background: '#fff0f0', border: '1px solid #ffcccc', borderRadius: '8px', color: '#cc0000', fontSize: '13px' }}>
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div style={{ padding: '12px', background: '#f0fff0', border: '1px solid #ccffcc', borderRadius: '8px', color: '#007700', fontSize: '13px' }}>
-            Profile saved successfully!
-          </div>
-        )}
-
-        <button onClick={handleSubmit} disabled={saving}
-          style={{ padding: '12px', borderRadius: '8px', border: 'none', background: '#534AB7', color: 'white', fontSize: '15px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
-          {saving ? 'Saving...' : 'Save Profile'}
-        </button>
-
-        <button onClick={logout}
-          style={{ padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0', background: 'white', color: '#666', fontSize: '15px', cursor: 'pointer' }}>
-          Log Out
-        </button>
-
-      </div>
+      <Footer />
     </div>
   );
 };

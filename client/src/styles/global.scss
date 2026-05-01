@@ -10,6 +10,7 @@
   --color-text: #{$color-text};
   --color-card-bg: #{$color-card-bg};
   --color-btn-bg: #{$color-btn-bg};
+  --font-family-heading: #{$font-family-heading};
   --font-family: #{$font-family};
   --spacing-4: #{$spacing-4};
   --spacing-8: #{$spacing-8};
@@ -31,7 +32,8 @@
   box-sizing: border-box;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
   margin: 0;
   padding: 0;

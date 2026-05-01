@@ -34,7 +34,7 @@
 }
 
 .card__title {
-  @include text(24px, 600);
+  @include heading(24px, 600);
   margin: 0;
 }
 
