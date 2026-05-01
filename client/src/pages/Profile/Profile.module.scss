@@ -1,0 +1,263 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Page wrapper ─────────────────────────────────────────────────────────────
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// ─── Main container ───────────────────────────────────────────────────────────
+
+.profile {
+  flex: 1;
+  padding: $spacing-24 var(--container-padding);
+  max-width: $container-max-width;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────────
+
+.profile__title {
+  @include h3;
+  margin-bottom: $spacing-24;
+}
+
+// ─── Mobile/Tablet horizontal tabs ───────────────────────────────────────────
+
+.profile__tabs {
+  display: flex;
+  gap: $spacing-8;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: $spacing-24;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.profile__tab {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  padding: $spacing-8 $spacing-16;
+  border: 1.5px solid $color-card-bg;
+  border-radius: 8px;
+  white-space: nowrap;
+  @include text(14px, 400);
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &--active {
+    border-color: $color-text;
+    background-color: $color-white;
+  }
+}
+
+.profile__tab-icon {
+  @include flex-center;
+  width: 20px;
+  height: 20px;
+
+  img, svg { width: 20px; height: 20px; }
+}
+
+// ─── Desktop layout ───────────────────────────────────────────────────────────
+
+.profile__layout {
+  display: flex;
+  gap: $spacing-32;
+}
+
+// ─── Sidebar (hidden on mobile/tablet) ───────────────────────────────────────
+
+.profile__sidebar {
+  display: none;
+}
+
+// ─── Content area ─────────────────────────────────────────────────────────────
+
+.profile__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile__content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+
+.profile__card {
+  border: 1.5px solid $color-card-bg;
+  border-radius: 12px;
+  padding: $spacing-16;
+}
+
+.profile__card-title {
+  @include h3;
+  margin-bottom: $spacing-16;
+}
+
+.profile__card-divider {
+  height: 1px;
+  background: $color-card-bg;
+  margin-bottom: $spacing-16;
+}
+
+.profile__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  margin-bottom: $spacing-16;
+}
+
+.profile__card-info {
+  @include text(14px, 400);
+}
+
+// ─── Edit button ──────────────────────────────────────────────────────────────
+
+.profile__edit-btn {
+  width: 100%;
+  padding: $spacing-16;
+  border: 1.5px solid $color-primary;
+  border-radius: 8px;
+  @include text(16px, 500);
+  color: $color-primary;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background-color: $color-primary;
+    color: $color-white;
+  }
+}
+
+// ─── Measurement fields ───────────────────────────────────────────────────────
+
+.profile__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.profile__field-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  @include text(14px, 400);
+}
+
+.profile__field-info {
+  opacity: 0.5;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+.profile__field-input {
+  width: 100%;
+  padding: $spacing-16;
+  border: 1.5px solid $color-card-bg;
+  border-radius: 8px;
+  @include text(14px, 400);
+  color: $color-text;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+
+  &::placeholder { color: $color-card-bg; }
+
+  &:focus {
+    outline: none;
+    border-color: $color-input-border;
+  }
+
+  // hide number input arrows
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+// ─── Placeholder ──────────────────────────────────────────────────────────────
+
+.profile__placeholder {
+  @include text(14px, 400);
+  color: $color-input-border;
+  padding: $spacing-32 0;
+  text-align: center;
+}
+
+// ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
+
+@include tablet {
+  .profile__card {
+    max-width: 460px;
+  }
+
+  .profile__content-inner {
+    max-width: 460px;
+  }
+}
+
+// ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
+
+@include desktop {
+  .profile {
+    padding-top: $spacing-32;
+  }
+
+  // Hide horizontal tabs on desktop
+  .profile__tabs {
+    display: none;
+  }
+
+  // Show sidebar
+  .profile__sidebar {
+    display: block;
+    width: 240px;
+    flex-shrink: 0;
+  }
+
+  .profile__nav-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-16;
+    width: 100%;
+    padding: $spacing-16;
+    border-radius: 8px;
+    @include text(16px, 400);
+    text-align: left;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: $color-toggle-bg;
+    }
+
+    &--active {
+      border: 1.5px solid $color-text;
+      border-radius: 8px;
+    }
+  }
+
+  .profile__nav-icon {
+    @include flex-center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+
+    img, svg { width: 24px; height: 24px; }
+  }
+
+  .profile__card {
+    max-width: none;
+  }
+
+  .profile__content-inner {
+    max-width: none;
+  }
+}
