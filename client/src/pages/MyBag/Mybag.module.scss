@@ -1,0 +1,523 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Page layout ──────────────────────────────────────────────────────────────
+
+.main {
+  min-height: calc(100vh - 140px);
+  padding: $spacing-24 var(--container-padding);
+  max-width: $container-max-width;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.page-title {
+  @include h1;
+  margin: 0 0 $spacing-4 0;
+}
+
+.page-subtitle {
+  @include text(14px, 400);
+  color: $color-text;
+  margin: 0 0 $spacing-24 0;
+}
+
+// ─── Step dots ────────────────────────────────────────────────────────────────
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-8;
+  margin-top: $spacing-24;
+}
+
+.step-dots__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $color-card-bg;
+  transition: background 0.2s ease;
+
+  &--active {
+    background: $color-primary;
+  }
+}
+
+// ─── Cart list ────────────────────────────────────────────────────────────────
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-16;
+  padding: $spacing-16 0;
+  border-bottom: 1px solid $color-card-bg;
+  position: relative;
+}
+
+.cart-item__remove {
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid $color-input-border;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.6; }
+}
+
+.cart-item__image {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  background: $color-card-bg;
+  flex-shrink: 0;
+}
+
+.cart-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item__name {
+  @include text(14px, 600);
+  margin: 0 0 $spacing-4 0;
+}
+
+.cart-item__brand {
+  @include text(12px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-8 0;
+}
+
+.cart-item__qty {
+  display: flex;
+  align-items: center;
+  gap: $spacing-16;
+  margin-top: auto;
+}
+
+.cart-item__qty-btn {
+  @include flex-center;
+  @include text(18px, 400);
+  width: 28px;
+  height: 28px;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.6; }
+}
+
+.cart-item__qty-value {
+  @include text(14px, 400);
+  min-width: 16px;
+  text-align: center;
+}
+
+// ─── Subtotal row ─────────────────────────────────────────────────────────────
+
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-16 0;
+  border-bottom: 1px solid $color-card-bg;
+}
+
+.subtotal__label {
+  @include text(14px, 400);
+}
+
+.subtotal__value {
+  @include text(14px, 400);
+}
+
+// ─── Promo code ───────────────────────────────────────────────────────────────
+
+.promo {
+  border-bottom: 1px solid $color-card-bg;
+}
+
+.promo__toggle {
+  @include flex-between;
+  @include text(14px, 400);
+  width: 100%;
+  padding: $spacing-16 0;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.6; }
+}
+
+.promo__chevron--open {
+  transform: rotate(180deg);
+}
+
+.promo__body {
+  display: flex;
+  gap: $spacing-8;
+  padding-bottom: $spacing-16;
+}
+
+.promo__input {
+  flex: 1;
+  @include text(14px, 400);
+  border: 1px solid $color-input-border;
+  border-radius: 8px;
+  padding: $spacing-8 $spacing-16;
+  outline: none;
+
+  &:focus {
+    border-color: $color-primary;
+  }
+}
+
+.promo__apply {
+  @include text(14px, 500);
+  color: $color-primary;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $color-primary;
+  border-radius: 8px;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+
+  &:hover { opacity: 0.7; }
+}
+
+// ─── Summary ──────────────────────────────────────────────────────────────────
+
+.summary {
+  padding: $spacing-16 0;
+  margin-bottom: $spacing-24;
+  border-bottom: 1px solid $color-card-bg;
+}
+
+.summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @include text(14px, 400);
+  padding: $spacing-4 0;
+
+  &--total {
+    @include text(18px, 700);
+    padding-top: $spacing-16;
+    margin-top: $spacing-8;
+    border-top: 1px solid $color-card-bg;
+  }
+}
+
+// ─── Compact cart (step 2 & 3) ────────────────────────────────────────────────
+
+.cart-compact {
+  margin-bottom: $spacing-24;
+}
+
+.cart-compact__item {
+  display: flex;
+  gap: $spacing-16;
+  padding: $spacing-16 0;
+  border-bottom: 1px solid $color-card-bg;
+}
+
+.cart-compact__image {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  background: $color-card-bg;
+  flex-shrink: 0;
+}
+
+.cart-compact__name {
+  @include text(14px, 600);
+  margin: 0 0 $spacing-4 0;
+}
+
+.cart-compact__brand {
+  @include text(12px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-4 0;
+}
+
+.cart-compact__qty {
+  @include text(12px, 400);
+  margin: 0;
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+
+.form-section {
+  margin-bottom: $spacing-24;
+}
+
+.form-section__title {
+  @include h3;
+  margin: 0 0 $spacing-16 0;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  margin-bottom: $spacing-16;
+}
+
+.form-field__label {
+  @include text(12px, 400);
+  color: $color-input-border;
+}
+
+.form-field__input {
+  @include text(14px, 400);
+  border: 1px solid $color-input-border;
+  border-radius: 8px;
+  padding: $spacing-16;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $color-card-bg;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+  }
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  @include text(14px, 400);
+  margin-bottom: $spacing-16;
+  cursor: pointer;
+}
+
+.radio-label__input {
+  accent-color: $color-primary;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+// ─── Review text ──────────────────────────────────────────────────────────────
+
+.review-text {
+  @include text(14px, 400);
+  line-height: 1.6;
+  margin: 0;
+  color: $color-input-border;
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.empty__illustration {
+  margin: $spacing-48 0 $spacing-32 0;
+}
+
+.empty__title {
+  @include h2;
+  margin: 0 0 $spacing-8 0;
+}
+
+.empty__text {
+  @include text(14px, 400);
+  margin: 0 0 $spacing-32 0;
+  max-width: 280px;
+}
+
+// ─── Success state ────────────────────────────────────────────────────────────
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $spacing-32 0;
+}
+
+.success__illustration {
+  margin-bottom: $spacing-32;
+}
+
+.success__title {
+  @include h2;
+  margin: 0 0 $spacing-8 0;
+}
+
+.success__text {
+  @include text(14px, 400);
+  margin: 0 0 $spacing-32 0;
+  max-width: 280px;
+}
+
+.success__keep-shopping {
+  width: 100%;
+  margin-top: $spacing-16;
+  padding: $spacing-16;
+  @include text(16px, 500);
+  color: $color-primary;
+  border: 1px solid $color-primary;
+  border-radius: 8px;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.7; }
+}
+
+// ─── Similar items ────────────────────────────────────────────────────────────
+
+.similar {
+  width: 100%;
+  margin-top: $spacing-48;
+}
+
+.similar__header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+}
+
+.similar__title {
+  @include h3;
+  margin: 0;
+}
+
+.similar__nav {
+  display: flex;
+  gap: $spacing-8;
+
+  button {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid $color-card-bg;
+    border-radius: 4px;
+    @include text(18px, 400);
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 0.6; }
+  }
+}
+
+.similar__list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--card-gap);
+}
+
+// ─── Step 1 specific ─────────────────────────────────────────────────────────
+
+.step1 {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ─── Step 2 specific ─────────────────────────────────────────────────────────
+
+.step2 {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ─── Step 3 specific ─────────────────────────────────────────────────────────
+
+.step3 {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ─── Step 4 specific ─────────────────────────────────────────────────────────
+
+.step4 {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
+
+@include tablet {
+  .main {
+    padding: $spacing-32 var(--container-padding);
+  }
+
+  .page-title {
+    font-size: 28px;
+    margin-bottom: $spacing-8;
+  }
+
+  .cart-item__image {
+    width: 100px;
+    height: 120px;
+  }
+
+  .cart-item__name {
+    font-size: 16px;
+  }
+}
+
+// ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
+
+@include desktop {
+  .main {
+    padding: $spacing-48 var(--container-padding);
+  }
+
+  // Two-column layout for steps 1-3
+  .step1,
+  .step2,
+  .step3 {
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    grid-template-rows: auto;
+    gap: 0 $spacing-88;
+    align-items: start;
+  }
+
+  // Page title & subtitle span full width
+  .page-title {
+    grid-column: 1 / -1;
+    font-size: 32px;
+  }
+
+  .page-subtitle {
+    grid-column: 1 / -1;
+  }
+
+  // Step 1: left column = cart list + subtotal + promo; right = summary + button
+  .step1 {
+    .cart-list    { grid-column: 1; grid-row: 3; }
+    .subtotal     { grid-column: 1; grid-row: 4; }
+    .promo        { grid-column: 1; grid-row: 5; }
+    .summary      { grid-column: 2; grid-row: 3 / 5; }
+  }
+
+  // Step 4 full width
+  .step4 {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .similar__list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

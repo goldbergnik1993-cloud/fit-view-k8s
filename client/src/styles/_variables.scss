@@ -18,7 +18,8 @@ $color-success: #42D921;
 $color-error:   #D92124;
 
 // ─── Typography ───────────────────────────────────────────────────────────────
-$font-family: 'Inter', sans-serif;
+$font-family-heading: 'Outfit', sans-serif;
+$font-family: 'Albert Sans', sans-serif;
 
 // ─── Spacing ──────────────────────────────────────────────────────────────────
 $spacing-4: 4px;
@@ -35,7 +36,7 @@ $breakpoint-desktop: 1440px;
 
 // ─── Layout ───────────────────────────────────────────────────────────────────
 $container-padding-mobile: 16px;
-$container-padding-desktop: 24px;
+$container-padding-desktop: 40px;
 $container-max-width: 1440px;
 
 // ─── Cards ────────────────────────────────────────────────────────────────────

@@ -42,7 +42,7 @@
 }
 
 .hero__title {
-  @include text(24px, 600, 120%);
+  @include h1-hero;
   margin: 0;
 }
 
@@ -64,11 +64,20 @@
   text-decoration: none;
   white-space: nowrap;
   align-self: center;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
 
-  &:hover { opacity: 0.85; }
-  &:active { transform: scale(0.98); }
-  &:focus-visible { outline: 2px solid $color-black; outline-offset: 2px; }
+  &:hover {
+    opacity: 0.85;
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+  &:focus-visible {
+    outline: 2px solid $color-black;
+    outline-offset: 2px;
+  }
 }
 
 .hero__instructions-link {
@@ -77,13 +86,18 @@
   padding: 0;
   font: inherit;
   font-size: inherit;
-  color: #3030F2;
+  color: #3030f2;
   cursor: pointer;
   text-decoration: none;
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.7; }
-  &:focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; }
+  &:hover {
+    opacity: 0.7;
+  }
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
 }
 
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
@@ -105,8 +119,12 @@
     height: 180px;
   }
 
+  .hero__text {
+    max-width: 400px;
+  }
   .hero__title {
     font-size: 36px;
+    line-height: 120%;
   }
 
   .hero__description {
@@ -141,8 +159,7 @@
   }
 
   .hero__title {
-    font-size: 56px;
-    line-height: 120%;
+    font-size: 60px;
   }
 
   .hero__description {
