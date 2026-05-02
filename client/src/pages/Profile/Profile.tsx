@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
-import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton'
+import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
 import AccountDetailsIcon from '../../assets/icons/account-details.svg';
 import RulerIcon from '../../assets/icons/ruler.svg';
 import BoxIcon from '../../assets/icons/box.svg';
@@ -9,28 +8,19 @@ import CreditCardIcon from '../../assets/icons/credit-card.svg';
 import LocationIcon from '../../assets/icons/location.svg';
 import HeadphonesIcon from '../../assets/icons/headphones.svg';
 import InfoIcon from '../../assets/icons/info.svg';
+import { useState, useEffect } from 'react';
+import { userApi, type ProfileResponse } from '../../services/api';
 import styles from './Profile.module.scss';
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MOCK_USER = {
-  name: 'John Doe',
-  phone: '07700 900123',
-  birthday: '01/01/2000',
-  email: 'john.doe@gmail.com',
-};
-
-const MOCK_MEASUREMENTS = {
-  shoulders_length_cm: '',
-  breast_length_cm: '',
-  hips_length_cm: '',
-  waist_length_cm: '',
-  leg_length_cm: '',
-};
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
 
-type TabId = 'personal' | 'measurements' | 'orders' | 'payments' | 'address' | 'help';
+type TabId =
+  | 'personal'
+  | 'measurements'
+  | 'orders'
+  | 'payments'
+  | 'address'
+  | 'help';
 
 interface NavItem {
   id: TabId;
@@ -53,15 +43,25 @@ const MOBILE_TABS: TabId[] = ['personal', 'measurements', 'orders', 'payments'];
 
 // ─── Personal Details Tab ─────────────────────────────────────────────────────
 
-const PersonalDetailsTab = () => (
+interface PersonalDetailsTabProps {
+  profile: ProfileResponse;
+}
+
+const PersonalDetailsTab = ({ profile }: PersonalDetailsTabProps) => (
   <div className={styles['profile__content-inner']}>
     <div className={styles['profile__card']}>
       <h2 className={styles['profile__card-title']}>Details</h2>
       <div className={styles['profile__card-divider']} />
       <div className={styles['profile__card-body']}>
-        <p className={styles['profile__card-info']}>Name: {MOCK_USER.name}</p>
-        <p className={styles['profile__card-info']}>Phone: {MOCK_USER.phone}</p>
-        <p className={styles['profile__card-info']}>Birthday: {MOCK_USER.birthday}</p>
+        <p className={styles['profile__card-info']}>
+          Name: {profile.first_name} {profile.last_name}
+        </p>
+        <p className={styles['profile__card-info']}>
+          Phone: {profile.phone_number}
+        </p>
+        <p className={styles['profile__card-info']}>
+          Birthday: {profile.birth_date ?? '—'}
+        </p>
       </div>
       <button className={styles['profile__edit-btn']}>Edit</button>
     </div>
@@ -70,7 +70,7 @@ const PersonalDetailsTab = () => (
       <h2 className={styles['profile__card-title']}>Email</h2>
       <div className={styles['profile__card-divider']} />
       <div className={styles['profile__card-body']}>
-        <p className={styles['profile__card-info']}>{MOCK_USER.email}</p>
+        <p className={styles['profile__card-info']}>{profile.email}</p>
       </div>
       <button className={styles['profile__edit-btn']}>Edit</button>
     </div>
@@ -94,11 +94,21 @@ interface MeasurementFieldProps {
   onChange: (v: string) => void;
 }
 
-const MeasurementField = ({ label, value, onChange }: MeasurementFieldProps) => (
+const MeasurementField = ({
+  label,
+  value,
+  onChange,
+}: MeasurementFieldProps) => (
   <div className={styles['profile__field']}>
     <label className={styles['profile__field-label']}>
       {label}
-      <img src={InfoIcon} alt="info" width={16} height={16} className={styles['profile__field-info']} />
+      <img
+        src={InfoIcon}
+        alt="info"
+        width={16}
+        height={16}
+        className={styles['profile__field-info']}
+      />
     </label>
     <input
       type="number"
@@ -112,20 +122,78 @@ const MeasurementField = ({ label, value, onChange }: MeasurementFieldProps) => 
 
 // ─── Measurements Tab ─────────────────────────────────────────────────────────
 
-const MeasurementsTab = () => {
-  const [fields, setFields] = useState(MOCK_MEASUREMENTS);
+interface MeasurementsTabProps {
+  profile: ProfileResponse;
+}
+
+const MeasurementsTab = ({ profile }: MeasurementsTabProps) => {
+  const [fields, setFields] = useState({
+    shoulders_length_cm: String(profile.shoulders_length_cm ?? ''),
+    breast_length_cm: String(profile.breast_length_cm ?? ''),
+    hips_length_cm: String(profile.hips_length_cm ?? ''),
+    waist_length_cm: String(profile.waist_length_cm ?? ''),
+    leg_length_cm: String(profile.leg_length_cm ?? ''),
+  });
+  const [saving, setSaving] = useState(false);
 
   const set = (key: keyof typeof fields) => (v: string) =>
     setFields((prev) => ({ ...prev, [key]: v }));
 
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await userApi.updateProfile({
+        shoulders_length_cm: fields.shoulders_length_cm
+          ? Number(fields.shoulders_length_cm)
+          : null,
+        breast_length_cm: fields.breast_length_cm
+          ? Number(fields.breast_length_cm)
+          : null,
+        hips_length_cm: fields.hips_length_cm
+          ? Number(fields.hips_length_cm)
+          : null,
+        waist_length_cm: fields.waist_length_cm
+          ? Number(fields.waist_length_cm)
+          : null,
+        leg_length_cm: fields.leg_length_cm
+          ? Number(fields.leg_length_cm)
+          : null,
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className={styles['profile__content-inner']}>
-      <MeasurementField label="Enter shoulder width (cm)" value={fields.shoulders_length_cm} onChange={set('shoulders_length_cm')} />
-      <MeasurementField label="Enter chest girth (cm)" value={fields.breast_length_cm} onChange={set('breast_length_cm')} />
-      <MeasurementField label="Enter hip girth (cm)" value={fields.hips_length_cm} onChange={set('hips_length_cm')} />
-      <MeasurementField label="Enter waist girth (cm)" value={fields.waist_length_cm} onChange={set('waist_length_cm')} />
-      <MeasurementField label="Enter inseam length (cm)" value={fields.leg_length_cm} onChange={set('leg_length_cm')} />
-      <PrimaryButton>Save Measurements</PrimaryButton>
+      <MeasurementField
+        label="Enter shoulder width (cm)"
+        value={fields.shoulders_length_cm}
+        onChange={set('shoulders_length_cm')}
+      />
+      <MeasurementField
+        label="Enter chest girth (cm)"
+        value={fields.breast_length_cm}
+        onChange={set('breast_length_cm')}
+      />
+      <MeasurementField
+        label="Enter hip girth (cm)"
+        value={fields.hips_length_cm}
+        onChange={set('hips_length_cm')}
+      />
+      <MeasurementField
+        label="Enter waist girth (cm)"
+        value={fields.waist_length_cm}
+        onChange={set('waist_length_cm')}
+      />
+      <MeasurementField
+        label="Enter inseam length (cm)"
+        value={fields.leg_length_cm}
+        onChange={set('leg_length_cm')}
+      />
+      <PrimaryButton onClick={handleSave} loading={saving}>
+        Save Measurements
+      </PrimaryButton>
     </div>
   );
 };
@@ -140,17 +208,34 @@ const PlaceholderTab = ({ label }: { label: string }) => (
 
 // ─── Profile Page ─────────────────────────────────────────────────────────────
 
-const TAB_CONTENT: Record<TabId, React.ReactNode> = {
-  personal: <PersonalDetailsTab />,
-  measurements: <MeasurementsTab />,
-  orders: <PlaceholderTab label="Orders" />,
-  payments: <PlaceholderTab label="Payments" />,
-  address: <PlaceholderTab label="Address" />,
-  help: <PlaceholderTab label="Help" />,
+const getTabContent = (
+  tab: TabId,
+  profile: ProfileResponse | null
+): React.ReactNode => {
+  if (!profile) return null;
+  const map: Record<TabId, React.ReactNode> = {
+    personal: <PersonalDetailsTab profile={profile} />,
+    measurements: <MeasurementsTab profile={profile} />,
+    orders: <PlaceholderTab label="Orders" />,
+    payments: <PlaceholderTab label="Payments" />,
+    address: <PlaceholderTab label="Address" />,
+    help: <PlaceholderTab label="Help" />,
+  };
+  return map[tab];
 };
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabId>('personal');
+  const [profile, setProfile] = useState<ProfileResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    userApi
+      .getProfile()
+      .then(setProfile)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className={styles['profile-page']}>
@@ -160,21 +245,27 @@ const Profile = () => {
         <h1 className={styles['profile__title']}>My Profile</h1>
 
         {/* Mobile / Tablet: horizontal scrollable tabs */}
-        <div className={styles['profile__tabs']} role="tablist" aria-label="Profile sections">
-          {NAV_ITEMS.filter((item) => MOBILE_TABS.includes(item.id)).map((item) => (
-            <button
-              key={item.id}
-              role="tab"
-              aria-selected={activeTab === item.id}
-              className={`${styles['profile__tab']} ${activeTab === item.id ? styles['profile__tab--active'] : ''}`}
-              onClick={() => setActiveTab(item.id)}
-            >
-              <span className={styles['profile__tab-icon']}>
-                <img src={item.icon} alt="" width={20} height={20} />
-              </span>
-              {item.label}
-            </button>
-          ))}
+        <div
+          className={styles['profile__tabs']}
+          role="tablist"
+          aria-label="Profile sections"
+        >
+          {NAV_ITEMS.filter((item) => MOBILE_TABS.includes(item.id)).map(
+            (item) => (
+              <button
+                key={item.id}
+                role="tab"
+                aria-selected={activeTab === item.id}
+                className={`${styles['profile__tab']} ${activeTab === item.id ? styles['profile__tab--active'] : ''}`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <span className={styles['profile__tab-icon']}>
+                  <img src={item.icon} alt="" width={20} height={20} />
+                </span>
+                {item.label}
+              </button>
+            )
+          )}
         </div>
 
         {/* Desktop: sidebar + content */}
@@ -198,7 +289,7 @@ const Profile = () => {
           </aside>
 
           <div className={styles['profile__content']}>
-            {TAB_CONTENT[activeTab]}
+            {loading ? null : getTabContent(activeTab, profile)}
           </div>
         </div>
       </main>
