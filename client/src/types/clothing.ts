@@ -28,13 +28,17 @@ export interface ClothingItem {
   brand: string;
   category: ItemCategory;
   imageUrl: string;
+  fittingImageUrl?: string | null;
   price: number;
   isFavorite: boolean;
   gender?: string;
+  description?: string | null;
+  mandatoryFields?: string[];
   availableSizes: SizeOption[];
   sizeCharts: SizeChart[];
   measurements: Measurement[];
 }
+
 export interface UserProfile {
   heightCm: number;
   gender: GenderType;

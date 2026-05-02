@@ -4,45 +4,19 @@ import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
-import { mockClothingItems } from '../../data/mockClothing';
+import { useCart } from '../../hooks/useCart';
+import { useItems } from '../../hooks/useItems';
+import { ordersApi, type DeliveryMethod } from '../../services/api';
 import type { ClothingItem } from '../../types/clothing';
 import type { Cart, CartItem } from '../../services/api';
 import ChevronDownIcon from '../../assets/icons/chevron-down.svg';
 import XIcon from '../../assets/icons/x.svg';
 import styles from './MyBag.module.scss';
 
-// ─── Mock cart data ───────────────────────────────────────────────────────────
-
-const MOCK_CART: Cart = {
-  user_id: 1,
-  id: 1,
-  status: 'Active',
-  cart_items: [
-    {
-      id: 1,
-      quantity: 1,
-      item: {
-        id: 1,
-        name: 'Evening Wrap Dress',
-        brand: { id: 1, name: 'Mango' },
-        category: 'dress',
-        gender: 'female',
-        image_url: 'https://placehold.co/80x100?text=Dress',
-        price: '129',
-        is_favorite: false,
-      },
-    },
-  ],
-  created_at: '',
-  updated_at: '',
-  total_items: 1,
-  total_price: 129,
-};
-
 // ─── Step indicators ──────────────────────────────────────────────────────────
 
 interface StepDotsProps {
-  current: number; // 1 | 2 | 3
+  current: number;
   total: number;
 }
 
@@ -95,6 +69,9 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
           <div className={styles['cart-item__info']}>
             <p className={styles['cart-item__name']}>{ci.item.name}</p>
             <p className={styles['cart-item__brand']}>{ci.item.brand.name}</p>
+            {ci.size_label && (
+              <p className={styles['cart-item__brand']}>Size: {ci.size_label}</p>
+            )}
 
             <div className={styles['cart-item__qty']}>
               <button
@@ -181,9 +158,8 @@ interface FormState {
   address2: string;
   city: string;
   zip: string;
-  phone: string;
-  email: string;
-  payment: 'card' | 'cash';
+  country: string;
+  deliveryMethod: DeliveryMethod;
 }
 
 interface Step2Props {
@@ -194,7 +170,7 @@ interface Step2Props {
 }
 
 const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
-  const set = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
+  const set = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm({ ...form, [field]: e.target.value });
 
   return (
@@ -204,7 +180,6 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
         You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
       </p>
 
-      {/* Cart summary (compact) */}
       <div className={styles['cart-compact']}>
         {cart.cart_items.map((ci: CartItem) => (
           <div key={ci.id} className={styles['cart-compact__item']}>
@@ -222,117 +197,45 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
         </div>
       </div>
 
-      {/* Shipping */}
       <section className={styles['form-section']}>
         <h2 className={styles['form-section__title']}>Shipping details</h2>
 
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>First Name *</label>
-          <input
-            type="text"
-            placeholder="John"
-            value={form.firstName}
-            onChange={set('firstName')}
-            className={styles['form-field__input']}
-          />
+          <input type="text" placeholder="John" value={form.firstName} onChange={set('firstName')} className={styles['form-field__input']} />
         </div>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>Last Name *</label>
-          <input
-            type="text"
-            placeholder="Doe"
-            value={form.lastName}
-            onChange={set('lastName')}
-            className={styles['form-field__input']}
-          />
+          <input type="text" placeholder="Doe" value={form.lastName} onChange={set('lastName')} className={styles['form-field__input']} />
         </div>
         <div className={styles['form-field']}>
-          <label className={styles['form-field__label']}>Address *</label>
-          <input
-            type="text"
-            placeholder="Address line 1"
-            value={form.address}
-            onChange={set('address')}
-            className={styles['form-field__input']}
-          />
-        </div>
-        <div className={styles['form-field']}>
-          <label className={styles['form-field__label']}>Address 2 (optional)</label>
-          <input
-            type="text"
-            placeholder="Address line 2"
-            value={form.address2}
-            onChange={set('address2')}
-            className={styles['form-field__input']}
-          />
+          <label className={styles['form-field__label']}>Country *</label>
+          <input type="text" placeholder="US" value={form.country} onChange={set('country')} className={styles['form-field__input']} />
         </div>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>City *</label>
-          <input
-            type="text"
-            placeholder="London"
-            value={form.city}
-            onChange={set('city')}
-            className={styles['form-field__input']}
-          />
+          <input type="text" placeholder="New York" value={form.city} onChange={set('city')} className={styles['form-field__input']} />
         </div>
         <div className={styles['form-field']}>
-          <label className={styles['form-field__label']}>Zip Code *</label>
-          <input
-            type="text"
-            placeholder="NM32 1UE"
-            value={form.zip}
-            onChange={set('zip')}
-            className={styles['form-field__input']}
-          />
+          <label className={styles['form-field__label']}>Address</label>
+          <input type="text" placeholder="123 Main St" value={form.address} onChange={set('address')} className={styles['form-field__input']} />
         </div>
         <div className={styles['form-field']}>
-          <label className={styles['form-field__label']}>Phone Number *</label>
-          <input
-            type="tel"
-            placeholder="+1 000 number"
-            value={form.phone}
-            onChange={set('phone')}
-            className={styles['form-field__input']}
-          />
+          <label className={styles['form-field__label']}>Address 2 (optional)</label>
+          <input type="text" placeholder="Apt 4B" value={form.address2} onChange={set('address2')} className={styles['form-field__input']} />
         </div>
         <div className={styles['form-field']}>
-          <label className={styles['form-field__label']}>Email (optional)</label>
-          <input
-            type="email"
-            placeholder="mailbox@gmail.com"
-            value={form.email}
-            onChange={set('email')}
-            className={styles['form-field__input']}
-          />
+          <label className={styles['form-field__label']}>Zip Code</label>
+          <input type="text" placeholder="NY 10011" value={form.zip} onChange={set('zip')} className={styles['form-field__input']} />
         </div>
-      </section>
-
-      {/* Payment */}
-      <section className={styles['form-section']}>
-        <h2 className={styles['form-section__title']}>Payment details</h2>
-        <label className={styles['radio-label']}>
-          <input
-            type="radio"
-            name="payment"
-            value="card"
-            checked={form.payment === 'card'}
-            onChange={() => setForm({ ...form, payment: 'card' })}
-            className={styles['radio-label__input']}
-          />
-          Card
-        </label>
-        <label className={styles['radio-label']}>
-          <input
-            type="radio"
-            name="payment"
-            value="cash"
-            checked={form.payment === 'cash'}
-            onChange={() => setForm({ ...form, payment: 'cash' })}
-            className={styles['radio-label__input']}
-          />
-          Cash on delivery
-        </label>
+        <div className={styles['form-field']}>
+          <label className={styles['form-field__label']}>Delivery Method *</label>
+          <select value={form.deliveryMethod} onChange={set('deliveryMethod')} className={styles['form-field__input']}>
+            <option value="COURIER">Courier</option>
+            <option value="POST_OFFICE">Post Office</option>
+            <option value="PARCEL_LOCKER">Parcel Locker</option>
+          </select>
+        </div>
       </section>
 
       <div className={`${styles['summary__row']} ${styles['summary__row--total']}`} style={{ marginBottom: 24 }}>
@@ -351,9 +254,10 @@ interface Step3Props {
   cart: Cart;
   form: FormState;
   onConfirm: () => void;
+  submitting: boolean;
 }
 
-const Step3 = ({ cart, form, onConfirm }: Step3Props) => (
+const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
   <div className={styles['step3']}>
     <h1 className={styles['page-title']}>My Bag</h1>
     <p className={styles['page-subtitle']}>
@@ -380,17 +284,9 @@ const Step3 = ({ cart, form, onConfirm }: Step3Props) => (
       <h2 className={styles['form-section__title']}>Shipping details</h2>
       <p className={styles['review-text']}>
         {form.firstName} {form.lastName}<br />
+        {form.country}, {form.city}{form.zip ? `, ${form.zip}` : ''}<br />
         {form.address}{form.address2 ? `, ${form.address2}` : ''}<br />
-        {form.city}{form.zip ? `, ${form.zip}` : ''}<br />
-        {form.phone}<br />
-        {form.email}
-      </p>
-    </section>
-
-    <section className={styles['form-section']}>
-      <h2 className={styles['form-section__title']}>Payment details</h2>
-      <p className={styles['review-text']}>
-        {form.payment === 'card' ? 'Card' : 'Cash on delivery'}
+        {form.deliveryMethod.replace('_', ' ')}
       </p>
     </section>
 
@@ -398,7 +294,7 @@ const Step3 = ({ cart, form, onConfirm }: Step3Props) => (
       <span>Total</span><span>${cart.total_price}</span>
     </div>
 
-    <PrimaryButton onClick={onConfirm}>Payment →</PrimaryButton>
+    <PrimaryButton onClick={onConfirm} loading={submitting}>Payment →</PrimaryButton>
     <StepDots current={3} total={3} />
   </div>
 );
@@ -410,7 +306,6 @@ const Step4 = ({ recommendations }: { recommendations: ClothingItem[] }) => (
     <h1 className={styles['page-title']}>My Bag</h1>
 
     <div className={styles['success']}>
-      {/* Placeholder illustration — замени на реальный SVG из фигмы */}
       <div className={styles['success__illustration']} aria-hidden="true">
         <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="80" cy="60" r="40" stroke="#0D0C0D" strokeWidth="2" fill="none" />
@@ -431,7 +326,6 @@ const Step4 = ({ recommendations }: { recommendations: ClothingItem[] }) => (
       </Link>
     </div>
 
-    {/* You may also like */}
     {recommendations.length > 0 && (
       <section className={styles['similar']}>
         <div className={styles['similar__header']}>
@@ -457,7 +351,6 @@ const EmptyBag = ({ recommendations }: { recommendations: ClothingItem[] }) => (
   <div className={styles['empty']}>
     <h1 className={styles['page-title']}>My Bag</h1>
 
-    {/* Placeholder — замени на реальный SVG из фигмы */}
     <div className={styles['empty__illustration']} aria-hidden="true">
       <svg width="160" height="180" viewBox="0 0 160 180" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M30 55 L130 55 L115 150 H45 L30 55Z" stroke="#0D0C0D" strokeWidth="2" fill="none" />
@@ -500,57 +393,60 @@ const INITIAL_FORM: FormState = {
   address2: '',
   city: '',
   zip: '',
-  phone: '',
-  email: '',
-  payment: 'card',
+  country: '',
+  deliveryMethod: 'COURIER',
 };
 
 const MyBag = () => {
-  const [cart, setCart] = useState<Cart | null>(MOCK_CART);
+  const { cart, loading, updateQuantity, removeItem } = useCart();
+  const { items: recommendations } = useItems({ per_page: 4 });
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [promoOpen, setPromoOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const isEmpty = !cart || cart.cart_items.length === 0;
 
-  const handleUpdateQuantity = (itemId: number, qty: number) => {
-    if (!cart) return;
-    if (qty < 1) return handleRemove(itemId);
-    setCart({
-      ...cart,
-      cart_items: cart.cart_items.map((ci) =>
-        ci.id === itemId ? { ...ci, quantity: qty } : ci
-      ),
-      total_items: cart.cart_items.reduce((s, ci) => s + (ci.id === itemId ? qty : ci.quantity), 0),
-      total_price: cart.cart_items.reduce(
-        (s, ci) => s + Number(ci.item.price) * (ci.id === itemId ? qty : ci.quantity),
-        0
-      ),
-    });
+  const handleConfirm = async () => {
+    setSubmitting(true);
+    try {
+      const order = await ordersApi.create({
+        delivery_info: {
+          country: form.country,
+          city: form.city,
+          delivery_method: form.deliveryMethod,
+          zip_code: form.zip || null,
+          address_line: form.address || null,
+        },
+      });
+      const session = await ordersApi.checkout(order.id);
+      window.location.href = session.checkout_url;
+    } catch {
+      setStep(4);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleRemove = (itemId: number) => {
-    if (!cart) return;
-    const updated = cart.cart_items.filter((ci) => ci.id !== itemId);
-    setCart({
-      ...cart,
-      cart_items: updated,
-      total_items: updated.reduce((s, ci) => s + ci.quantity, 0),
-      total_price: updated.reduce((s, ci) => s + Number(ci.item.price) * ci.quantity, 0),
-    });
-  };
+  if (loading) return (
+    <>
+      <Header />
+      <main className={styles.main} />
+      <Footer />
+    </>
+  );
 
   return (
     <>
       <Header />
       <main className={styles.main}>
         {isEmpty && step !== 4 ? (
-          <EmptyBag recommendations={mockClothingItems} />
+          <EmptyBag recommendations={recommendations} />
         ) : step === 1 && cart ? (
           <Step1
             cart={cart}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemove={handleRemove}
+            onUpdateQuantity={updateQuantity}
+            onRemove={removeItem}
             onCheckout={() => setStep(2)}
             promoOpen={promoOpen}
             setPromoOpen={setPromoOpen}
@@ -566,10 +462,11 @@ const MyBag = () => {
           <Step3
             cart={cart}
             form={form}
-            onConfirm={() => setStep(4)}
+            onConfirm={handleConfirm}
+            submitting={submitting}
           />
         ) : (
-          <Step4 recommendations={mockClothingItems} />
+          <Step4 recommendations={recommendations} />
         )}
       </main>
       <Footer />
