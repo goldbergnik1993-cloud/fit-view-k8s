@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useFavorites } from '../../providers/FavoritesContext';
 import {
   request,
   itemsApi,
@@ -48,7 +49,7 @@ const Item = () => {
   const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
 
   // Card state
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { isFavorite: isFav, toggleFavorite } = useFavorites();
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(
     null
@@ -66,7 +67,6 @@ const Item = () => {
 
   useEffect(() => {
     if (!item) return;
-    setIsFavorite(item.isFavorite);
     setSelectedSizeLabel(item.availableSizes?.[0]?.sizeLabel ?? null);
     if (item.gender === 'male') setGender('male');
   }, [item]);
@@ -148,10 +148,7 @@ const Item = () => {
     if (!id) return;
     setFavoriteLoading(true);
     try {
-      await itemsApi.toggleFavorite(id);
-      setIsFavorite((prev) => !prev);
-    } catch {
-      // ignore
+      await toggleFavorite(id);
     } finally {
       setFavoriteLoading(false);
     }
@@ -161,7 +158,7 @@ const Item = () => {
     if (!item) return;
     setCartLoading(true);
     try {
-      await cartApi.addItem(Number(item.id));
+      await cartApi.addItem(Number(item.id), selectedSizeLabel ?? '');
       setCartAdded(true);
       setTimeout(() => setCartAdded(false), 2000);
     } catch {
@@ -220,10 +217,10 @@ const Item = () => {
               }}
             />
             <button
-              className={`${styles.favoriteBtn} ${isFavorite ? styles['favoriteBtn--active'] : ''}`}
+              className={`${styles.favoriteBtn} ${isFav(id ?? '') ? styles['favoriteBtn--active'] : ''}`}
               onClick={handleToggleFavorite}
               disabled={favoriteLoading}
-              aria-label={isFavorite ? 'Remove from saved' : 'Save item'}
+              aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
             >
               <img
                 src={SavedIcon}
@@ -319,7 +316,12 @@ const Item = () => {
                 .filter((s) => s.id !== item.id)
                 .slice(0, 2)
                 .map((s) => (
-                  <ItemCard key={s.id} item={s} />
+                  <ItemCard
+                    key={s.id}
+                    item={s}
+                    isFavorite={isFav(s.id)}
+                    onFavoriteToggle={toggleFavorite}
+                  />
                 ))}
             </div>
           </section>
@@ -477,7 +479,12 @@ const Item = () => {
               .filter((s) => s.id !== item.id)
               .slice(0, 2)
               .map((s) => (
-                <ItemCard key={s.id} item={s} />
+                <ItemCard
+                  key={s.id}
+                  item={s}
+                  isFavorite={isFav(s.id)}
+                  onFavoriteToggle={toggleFavorite}
+                />
               ))}
           </div>
         </section>

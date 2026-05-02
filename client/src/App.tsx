@@ -7,10 +7,11 @@ import Saved from './pages/Saved/Saved';
 import MyBag from './pages/MyBag/MyBag';
 import Login from './pages/Auth/Login';
 import Profile from './pages/Profile/Profile';
+import { FavoritesProvider } from './providers/FavoritesProvider';
 
-const App = () => {
-  return (
-    <AuthProvider>
+const App = () => (
+  <AuthProvider>
+    <FavoritesProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -22,8 +23,8 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
-  );
-};
+    </FavoritesProvider>
+  </AuthProvider>
+);
 
 export default App;
