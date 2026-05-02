@@ -9,11 +9,11 @@ import { mapItem } from '../../hooks/useItems';
 import type { ClothingItem } from '../../types/clothing';
 import styles from './Saved.module.scss';
 import { useAuth } from '../../hooks/useAuth';
-import { useFavorites } from '../../hooks/useFavorites';
+import { useFavorites } from '../../providers/FavoritesContext';
 
 const Saved = () => {
   const { user, loading: authLoading } = useAuth();
-  const { favorites, toggleFavorite, isFavorite } = useFavorites(!!user);
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const [savedItems, setSavedItems] = useState<ClothingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +47,7 @@ const Saved = () => {
     setError(null);
     try {
       const data = await userApi.getFavorites();
-      setSavedItems(data.map(mapItem));
+      setSavedItems(data.items.map(mapItem));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {

@@ -1,19 +1,17 @@
 import { useItems } from '../../../../hooks/useItems';
 import { useBreakpoint } from '../../../../hooks/useBreakpoint';
 import ItemCard from '../../../../shared/components/ItemCard/ItemCard';
-import { useAuth } from '../../../../hooks/useAuth';
-import { useFavorites } from '../../../../hooks/useFavorites';
+import { useFavorites } from '../../../../providers/FavoritesContext';
 import styles from './ItemsSection.module.scss';
 
 export const ItemsSection = () => {
-  const { user } = useAuth();
   const { isMobile } = useBreakpoint();
   const { items, loading } = useItems({
     sort_by: 'popular',
     per_page: isMobile ? 4 : 8,
   });
 
-  const {toggleFavorite, isFavorite } = useFavorites(!!user);
+  const {toggleFavorite, isFavorite } = useFavorites();
 
   return (
     <section className={styles.section} aria-labelledby="popular-items-heading">

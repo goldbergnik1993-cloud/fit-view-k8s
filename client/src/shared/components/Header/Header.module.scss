@@ -161,6 +161,28 @@
   &:hover { opacity: 0.6; }
 }
 
+// ─── Favorite badge ───────────────────────────────────────────────────────────
+
+.header__icon-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.header__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: $color-primary;
+  color: $color-white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  @include flex-center;
+  @include text(10px, 600);
+  line-height: 1;
+  pointer-events: none;
+}
+
 // ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
 
 @include desktop {

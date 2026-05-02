@@ -12,6 +12,7 @@ import { useItems } from '../../hooks/useItems';
 import FilterIcon from '../../assets/icons/filter.svg';
 import GridLargeIcon from '../../assets/icons/grid-large.svg';
 import GridSmallIcon from '../../assets/icons/grid-small.svg';
+import { useFavorites } from '../../providers/FavoritesContext';
 import styles from './Catalog.module.scss';
 
 const CATEGORIES = [
@@ -57,6 +58,8 @@ const Catalog = () => {
   const [page, setPage] = useState(1);
   const [gridView, setGridView] = useState<GridView>('large');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const urlName = searchParams.get('name');
   const urlBrandId = searchParams.get('brands');
@@ -399,7 +402,12 @@ const Catalog = () => {
             className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}
           >
             {items.map((item) => (
-              <ItemCard key={item.id} item={item} />
+              <ItemCard
+                key={item.id}
+                item={item}
+                isFavorite={isFavorite(item.id)}
+                onFavoriteToggle={toggleFavorite}
+              />
             ))}
           </div>
         )}

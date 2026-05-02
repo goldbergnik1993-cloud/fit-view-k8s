@@ -13,6 +13,7 @@ import { SearchOverlay } from '../SearchOverlay/SearchOverlay';
 import { SearchBar } from '../SearchOverlay/SearchBar';
 import { useBreakpoint } from '../../../hooks/useBreakpoint';
 import { useAuth } from '../../../hooks/useAuth';
+import { useFavorites } from '../../../providers/FavoritesContext';
 
 const NAV_ITEMS = [
   {
@@ -40,6 +41,8 @@ export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const { count } = useFavorites();
 
   const { isMobile } = useBreakpoint();
   const { user } = useAuth();
@@ -129,13 +132,18 @@ export const Header = () => {
                 className={styles['header__icon-btn']}
                 aria-label="Saved items"
               >
-                <img
-                  src={SavedIcon}
-                  alt=""
-                  aria-hidden="true"
-                  width={24}
-                  height={24}
-                />
+                <div className={styles['header__icon-wrapper']}>
+                  <img
+                    src={SavedIcon}
+                    alt=""
+                    aria-hidden="true"
+                    width={24}
+                    height={24}
+                  />
+                  {count > 0 && (
+                    <span className={styles['header__badge']}>{count}</span>
+                  )}
+                </div>
               </a>
               <a
                 href="/my-bag"
@@ -239,13 +247,18 @@ export const Header = () => {
                 className={styles['header__icon-btn']}
                 aria-label="Saved items"
               >
-                <img
-                  src={SavedIcon}
-                  alt=""
-                  aria-hidden="true"
-                  width={24}
-                  height={24}
-                />
+                <div className={styles['header__icon-wrapper']}>
+                  <img
+                    src={SavedIcon}
+                    alt=""
+                    aria-hidden="true"
+                    width={24}
+                    height={24}
+                  />
+                  {count > 0 && (
+                    <span className={styles['header__badge']}>{count}</span>
+                  )}
+                </div>
               </a>
               <a
                 href="/my-bag"
@@ -336,13 +349,18 @@ export const Header = () => {
               className={styles['header__icon-btn']}
               aria-label="Saved items"
             >
-              <img
-                src={SavedIcon}
-                alt=""
-                aria-hidden="true"
-                width={24}
-                height={24}
-              />
+              <div className={styles['header__icon-wrapper']}>
+                <img
+                  src={SavedIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
+                {count > 0 && (
+                  <span className={styles['header__badge']}>{count}</span>
+                )}
+              </div>
             </a>
             <a
               href="/my-bag"
