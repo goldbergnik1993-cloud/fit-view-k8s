@@ -27,13 +27,13 @@ export function mapItem(item: BackendItem): ClothingItem {
     name: item.name,
     brand: brandName,
     category: item.category as ClothingItem['category'],
-    imageUrl: item.image_url,
-    fittingImageUrl: item.fitting_image_url ?? null, // ← новое
+    imageUrl: item.image_url?.replace('http://127.0.0.1', 'http://localhost') ?? '',
+    fittingImageUrl: item.fitting_image_url ?? null,
     price: Number(item.price),
     isFavorite: item.is_favorite ?? false,
     gender: item.gender,
-    description: item.description ?? null, // ← новое
-    mandatoryFields: item.mandatory_fields ?? [], // ← новое
+    description: item.description ?? null,
+    mandatoryFields: item.mandatory_fields ?? [],
     availableSizes: sizes,
     sizeCharts: sizes.map((s) => ({
       id: String(s.id),
