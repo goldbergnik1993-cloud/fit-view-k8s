@@ -120,10 +120,10 @@
   }
 
   .hero__text {
-    max-width: 400px;
+    max-width: 500px;
   }
   .hero__title {
-    font-size: 36px;
+    font-size: clamp(28px, 4vw, 48px);
     line-height: 120%;
   }
 
