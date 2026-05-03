@@ -12,7 +12,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from core.logging_config import logger
-from core.settings import settings
 from database.models import UserModel, UserProfileModel
 from database.models.catalog import (
     ItemsModel,
@@ -730,7 +729,7 @@ async def upload_item_image_service(file: UploadFile) -> str:
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    return f"{settings.FRONTEND_URL}/static/items_images/{filename}"
+    return f"/static/items_images/{filename}"
 
 
 async def get_search_autocomplete(query: str, db: AsyncSession) -> list[ItemsModel]:
