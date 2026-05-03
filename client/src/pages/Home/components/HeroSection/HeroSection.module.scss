@@ -92,29 +92,16 @@
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
 
 @include tablet {
-  .hero__content {
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
+  .hero__top {
     gap: $spacing-16;
-    justify-content: flex-start;
-  }
-
-  .hero__media {
-    justify-content: flex-start;
   }
 
   .hero__silhouette-img {
     height: 180px;
   }
 
-  .hero__text {
-    max-width: 574px;
-  }
-
   .hero__title {
     font-size: clamp(28px, 4vw, 48px);
-    line-height: 120%;
   }
 
   .hero__description {
@@ -123,7 +110,6 @@
 
   .hero__cta {
     width: 212px;
-    margin-top: 0;
   }
 }
 
@@ -132,30 +118,30 @@
 @include desktop {
   .hero {
     padding: $spacing-48 var(--container-padding);
+    align-items: center;
     gap: $spacing-32;
   }
 
-  .hero__content {
+  .hero__top {
+    width: 100%;
     justify-content: center;
+    gap: $spacing-32;
   }
 
   .hero__silhouette-img {
     height: 212px;
   }
 
-  .hero__text {
-    max-width: 684px;
-    flex: 1;
-  }
-
   .hero__title {
-    font-size: 56px;
-    font-weight: 600;
+    font-size: 60px;
+    max-width: 684px;
   }
 
   .hero__description {
-    font-size: 24px;
-    line-height: 150%;
+    font-size: 20px;
+    line-height: 30px;
+    max-width: 684px;
+    text-align: center;
   }
 
   .hero__cta {
