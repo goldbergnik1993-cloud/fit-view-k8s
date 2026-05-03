@@ -10,33 +10,43 @@ export const HeroSection = () => {
   return (
     <>
       <section className={styles.hero} aria-label="Welcome section">
-        <div className={styles['hero__content']}>
+        <div className={styles['hero__top']}>
           <div className={styles['hero__media']} aria-hidden="true">
             <div className={styles['hero__silhouette']}>
-              <img src={SilhouetteManImg} alt="" aria-hidden="true" className={styles['hero__silhouette-img']} />
+              <img
+                src={SilhouetteManImg}
+                alt=""
+                aria-hidden="true"
+                className={styles['hero__silhouette-img']}
+              />
             </div>
             <div className={styles['hero__silhouette']}>
-              <img src={SilhouetteWomanImg} alt="" aria-hidden="true" className={styles['hero__silhouette-img']} />
+              <img
+                src={SilhouetteWomanImg}
+                alt=""
+                aria-hidden="true"
+                className={styles['hero__silhouette-img']}
+              />
             </div>
           </div>
 
-          <div className={styles['hero__text']}>
-            <h1 className={styles['hero__title']}>
-              Find your new favorite style without the hassle
-            </h1>
-            <p className={styles['hero__description']}>
-              Browse, measure, and virtually try on in seconds. Check out these brief{' '}
-              <button
-                className={styles['hero__instructions-link']}
-                onClick={() => setIsModalOpen(true)}
-                aria-haspopup="dialog"
-              >
-                instructions
-              </button>{' '}
-              before you get started
-            </p>
-          </div>
+          <h1 className={styles['hero__title']}>
+            Find your new favorite style without the hassle
+          </h1>
         </div>
+
+        <p className={styles['hero__description']}>
+          Browse, measure, and virtually try on in seconds. Check out these
+          brief{' '}
+          <button
+            className={styles['hero__instructions-link']}
+            onClick={() => setIsModalOpen(true)}
+            aria-haspopup="dialog"
+          >
+            instructions
+          </button>{' '}
+          before you get started
+        </p>
 
         <a
           href="/catalog"
