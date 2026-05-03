@@ -26,41 +26,8 @@
 
 .items-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: $card-gap-mobile;
-}
-
-.item-card {
-  @include flex-center;
-  @include focus-visible;
-  background: $color-card-bg;
-  width: 100%;
-  height: $card-height;
-  color: $color-black;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-
-  &:hover {
-    opacity: 0.85;
-    transform: translateY(-2px);
-  }
-}
-
-.item-card__placeholder {
-  @include flex-center;
-  gap: $spacing-8;
-  width: 100%;
-  height: 100%;
-}
-
-.item-card__icon {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.item-card__name {
-  @include text(18px, 400, 100%);
-  margin: 0;
 }
 
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
@@ -76,15 +43,12 @@
 
 @include desktop {
   .items-grid {
-    grid-template-columns: repeat(4, 330px);
-    justify-content: center;
+    grid-template-columns: repeat(4, 1fr);
     gap: $card-gap-desktop;
   }
 
   .section__header {
-    max-width: calc(4 * 330px + 3 * #{$card-gap-desktop});
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: $spacing-24;
   }
 }
 
