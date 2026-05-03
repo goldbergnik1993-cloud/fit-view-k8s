@@ -8,6 +8,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: $spacing-16;
 }
 
@@ -40,6 +41,7 @@
   margin: 0;
   font-size: 24px;
   line-height: 120%;
+  font-weight: 600;
 }
 
 .hero__description {
@@ -92,20 +94,18 @@
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
 
 @include tablet {
+  .hero {
+    align-items: center;
+  }
+
   .hero__top {
+    width: 100%;
     gap: $spacing-16;
-  }
-
-  .hero__silhouette-img {
-    height: 180px;
-  }
-
-  .hero__title {
-    font-size: clamp(28px, 4vw, 48px);
   }
 
   .hero__description {
     font-size: 16px;
+    width: 100%;
   }
 
   .hero__cta {
