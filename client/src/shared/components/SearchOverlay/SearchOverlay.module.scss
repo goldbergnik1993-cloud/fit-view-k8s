@@ -102,17 +102,18 @@
 
 .itemsRow {
   display: flex;
-  gap: $spacing-16;
+  gap: $spacing-8;
 }
 
 .itemCard {
   @include hover-opacity;
   text-align: left;
   flex: 1;
+  min-width: 0;
   cursor: pointer;
-  border: 1px solid $color-card-bg;
-  border-radius: 8px;
-  padding: $spacing-8;
+  border: 1px solid #E9E9F7;
+  border-radius: 16px;
+  padding: $spacing-16;
   display: flex;
   flex-direction: column;
   gap: $spacing-8;
@@ -123,7 +124,7 @@
   width: 100%;
   aspect-ratio: 3 / 4;
   background: $color-card-bg;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
 
   img {
@@ -136,23 +137,39 @@
 .itemInfo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 12px;
+  padding-top: $spacing-16;
+}
+
+.itemPriceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .itemName {
-  @include text(14px, 400);
+  @include text(16px, 400);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .itemBrand {
-  @include text(12px, 400);
+  @include text(14px, 400);
   opacity: 0.6;
 }
 
 .itemPrice {
-  @include text(14px, 400);
+  @include text(16px, 400);
+}
+
+.itemLike {
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: $color-text;
+  @include hover-opacity;
 }
 
 // ─── See All Results ─────────────────────────────────────────────────────────
