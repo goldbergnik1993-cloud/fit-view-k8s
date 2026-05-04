@@ -23,26 +23,18 @@ const Silhouette = ({
   return (
     <div className={styles.silhouette}>
 
-      {/* ── Левая колонка: "0 cm" сверху, "Your Height" снизу ── */}
+      {/* Левая колонка: "Ends X cm from floor" + "Your Height" */}
       <div className={styles.silhouette__left}>
-        {/* "Ends X cm from floor" — позиционируется по linePositionPct */}
-        <div style={{ position: 'relative', flex: 1, width: '100%' }}>
-          <span
-            className={styles.silhouette__endLabel}
-            style={{
-              position: 'absolute',
-              bottom: `${linePositionPct}%`,
-              right: 0,
-              transform: 'translateY(50%)',
-            }}
-          >
-            {loading ? '...' : label}
-          </span>
-        </div>
+        <span
+          className={styles.silhouette__endLabel}
+          style={{ bottom: `${linePositionPct}%` }}
+        >
+          {loading ? '...' : label}
+        </span>
         <span className={styles.silhouette__heightLabel}>Your Height</span>
       </div>
 
-      {/* ── Центр: силуэт + горизонтальная линия + вертикальный ruler ── */}
+      {/* Центр: картинка + горизонтальная линия + вертикальный ruler */}
       <div className={styles.silhouette__center}>
         <div className={styles.silhouette__imageWrap}>
           <img
@@ -50,20 +42,16 @@ const Silhouette = ({
             alt={gender === 'male' ? 'Male silhouette' : 'Female silhouette'}
             className={styles.silhouette__image}
           />
-
-          {/* Горизонтальная линия */}
           <div
             className={styles.silhouette__line}
             style={{ bottom: `${linePositionPct}%` }}
             aria-hidden="true"
           />
-
-          {/* Вертикальный ruler — правая граница */}
           <div className={styles.silhouette__ruler} aria-hidden="true" />
         </div>
       </div>
 
-      {/* ── Правая колонка: "130 cm" сверху, "Item length" снизу ── */}
+      {/* Правая колонка: "130 cm" сверху, "Item length" снизу */}
       <div className={styles.silhouette__right}>
         <span className={styles.silhouette__heightLabel}>
           {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
