@@ -64,15 +64,3 @@
   max-width: 343px;
   height: 48px;
 }
-
-.emptyState__recommendations {
-  padding: 0 $spacing-16;
-
-  @include tablet {
-    padding: 0 40px;
-  }
-
-  @include desktop {
-    padding: 0 120px;
-  }
-}
