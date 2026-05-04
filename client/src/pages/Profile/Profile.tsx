@@ -12,6 +12,25 @@ import { useState, useEffect } from 'react';
 import { userApi, type ProfileResponse } from '../../services/api';
 import styles from './Profile.module.scss';
 
+// ─── Mock data ────────────────────────────────────────────────────────────────
+
+const MOCK_PROFILE: ProfileResponse = {
+  id: 1,
+  user_id: 1,
+  first_name: 'John',
+  last_name: 'Doe',
+  email: 'john.doe@gmail.com',
+  phone_number: '07700 900123',
+  birth_date: '01/01/2000',
+  height_cm: null,
+  gender: null,
+  shoulders_length_cm: null,
+  breast_length_cm: null,
+  waist_length_cm: null,
+  hips_length_cm: null,
+  leg_length_cm: null,
+};
+
 // ─── Nav items ────────────────────────────────────────────────────────────────
 
 type TabId =
@@ -37,7 +56,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'help', label: 'Help', icon: HeadphonesIcon },
 ];
 
-// ─── Tabs for mobile/tablet (only first 4) ───────────────────────────────────
+// ─── Tabs shown on mobile/tablet ──────────────────────────────────────────────
 
 const MOBILE_TABS: TabId[] = ['personal', 'measurements', 'orders', 'payments'];
 
@@ -206,7 +225,7 @@ const PlaceholderTab = ({ label }: { label: string }) => (
   </div>
 );
 
-// ─── Profile Page ─────────────────────────────────────────────────────────────
+// ─── Tab content map ──────────────────────────────────────────────────────────
 
 const getTabContent = (
   tab: TabId,
@@ -224,6 +243,8 @@ const getTabContent = (
   return map[tab];
 };
 
+// ─── Profile Page ─────────────────────────────────────────────────────────────
+
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabId>('personal');
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
@@ -233,7 +254,7 @@ const Profile = () => {
     userApi
       .getProfile()
       .then(setProfile)
-      .catch(() => {})
+      .catch(() => setProfile(MOCK_PROFILE))
       .finally(() => setLoading(false));
   }, []);
 
