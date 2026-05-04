@@ -1,0 +1,56 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.similar {
+  margin-top: $spacing-32;
+}
+
+.similar__header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+}
+
+.similar__title {
+  @include h3;
+  margin: 0;
+}
+
+.similar__nav {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.similar__navBtn {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid $color-card-bg;
+  border-radius: 4px;
+  @include hover-opacity;
+}
+
+.similar__list {
+  display: flex;
+  gap: $spacing-16;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include tablet {
+    gap: $spacing-24;
+  }
+}
+
+.similar__item {
+  flex: 0 0 calc(50% - 8px);
+  scroll-snap-align: start;
+
+  @include tablet {
+    flex: 0 0 calc(25% - 18px);
+  }
+}

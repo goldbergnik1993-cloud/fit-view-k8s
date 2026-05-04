@@ -2,41 +2,44 @@
 @use '../../../styles/mixins' as *;
 
 .emptyState {
-  @include flex-center;
+  display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 48px 24px 64px;
+  padding-bottom: $spacing-48;
+}
+
+.emptyState__inner {
+  @include flex-center;
+  flex-direction: column;
   text-align: center;
+  padding: $spacing-48 $spacing-24;
 
   @include tablet {
-    padding: 80px 40px;
+    padding: $spacing-48 40px;
   }
 
   @include desktop {
-    padding: 100px 40px;
+    padding: 80px 40px $spacing-48;
   }
 }
 
 .emptyState__illustration {
-  margin-bottom: 32px;
+  width: 140px;
+  height: auto;
+  margin-bottom: $spacing-32;
 
-  svg {
-    width: 140px;
-    height: auto;
+  @include tablet {
+    width: 160px;
+  }
 
-    @include tablet {
-      width: 160px;
-    }
-
-    @include desktop {
-      width: 180px;
-    }
+  @include desktop {
+    width: 180px;
   }
 }
 
 .emptyState__title {
   @include h3;
-  margin: 0 0 12px;
+  margin: 0 0 $spacing-8;
   max-width: 280px;
 
   @include tablet {
@@ -48,7 +51,7 @@
 .emptyState__subtitle {
   @include text(14px, 400, 1.5);
   color: #666;
-  margin: 0 0 32px;
+  margin: 0 0 $spacing-32;
   max-width: 260px;
 
   @include tablet {
@@ -57,18 +60,19 @@
 }
 
 .emptyState__button {
-  @include text(14px, 500, 1);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 48px;
-  background-color: $color-btn-bg;
-  color: $color-black;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
-  min-width: 200px;
+  @include btn-primary;
+  max-width: 343px;
+  height: 48px;
+}
 
-  @include hover-opacity;
-  @include focus-visible;
+.emptyState__recommendations {
+  padding: 0 $spacing-16;
+
+  @include tablet {
+    padding: 0 40px;
+  }
+
+  @include desktop {
+    padding: 0 120px;
+  }
 }
