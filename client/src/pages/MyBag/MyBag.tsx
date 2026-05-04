@@ -12,6 +12,8 @@ import type { Cart, CartItem } from '../../services/api';
 import ChevronDownIcon from '../../assets/icons/chevron-down.svg';
 import BurgerCloseIcon from '../../assets/icons/burger-close.svg';
 import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
+import MinusIcon from '../../assets/icons/minus.svg';
+import PlusIcon from '../../assets/icons/plus.svg';
 import styles from './MyBag.module.scss';
 
 // ─── Breadcrumb Component ───────────────────────────────────────────────────
@@ -22,15 +24,33 @@ interface BreadcrumbProps {
 
 const Breadcrumb = ({ step }: BreadcrumbProps) => (
   <nav className={styles['breadcrumb']} aria-label="Order steps">
-    <span className={step >= 1 ? styles['breadcrumb__item--active'] : styles['breadcrumb__item']}>
+    <span
+      className={
+        step >= 1
+          ? styles['breadcrumb__item--active']
+          : styles['breadcrumb__item']
+      }
+    >
       My Bag
     </span>
     <span className={styles['breadcrumb__arrow']}>→</span>
-    <span className={step >= 2 ? styles['breadcrumb__item--active'] : styles['breadcrumb__item']}>
+    <span
+      className={
+        step >= 2
+          ? styles['breadcrumb__item--active']
+          : styles['breadcrumb__item']
+      }
+    >
       Checkout
     </span>
     <span className={styles['breadcrumb__arrow']}>→</span>
-    <span className={step >= 3 ? styles['breadcrumb__item--active'] : styles['breadcrumb__item']}>
+    <span
+      className={
+        step >= 3
+          ? styles['breadcrumb__item--active']
+          : styles['breadcrumb__item']
+      }
+    >
       Review Order
     </span>
   </nav>
@@ -44,7 +64,10 @@ interface StepDotsProps {
 }
 
 const StepDots = ({ current, total }: StepDotsProps) => (
-  <div className={styles['step-dots']} aria-label={`Step ${current} of ${total}`}>
+  <div
+    className={styles['step-dots']}
+    aria-label={`Step ${current} of ${total}`}
+  >
     {Array.from({ length: total }).map((_, i) => (
       <span
         key={i}
@@ -65,12 +88,20 @@ interface Step1Props {
   setPromoOpen: (v: boolean) => void;
 }
 
-const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPromoOpen }: Step1Props) => (
+const Step1 = ({
+  cart,
+  onUpdateQuantity,
+  onRemove,
+  onCheckout,
+  promoOpen,
+  setPromoOpen,
+}: Step1Props) => (
   <div className={styles['step1']}>
     <div className={styles['step1__left']}>
       <h1 className={styles['page-title']}>My Bag</h1>
       <p className={styles['page-subtitle']}>
-        You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
+        You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in
+        the bag
       </p>
 
       <div className={styles['cart-list']}>
@@ -93,9 +124,13 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
                 />
                 <div className={styles['cart-item__info']}>
                   <p className={styles['cart-item__name']}>{ci.item.name}</p>
-                  <p className={styles['cart-item__brand']}>{ci.item.brand.name}</p>
+                  <p className={styles['cart-item__brand']}>
+                    {ci.item.brand.name}
+                  </p>
                   {ci.size_label && (
-                    <p className={styles['cart-item__size']}>Size: {ci.size_label}</p>
+                    <p className={styles['cart-item__size']}>
+                      Size: {ci.size_label}
+                    </p>
                   )}
                   <div className={styles['cart-item__qty-controls']}>
                     <button
@@ -103,22 +138,26 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
                       onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
                       aria-label="Decrease quantity"
                     >
-                      −
+                      <img src={MinusIcon} alt="" width={24} height={24} />
                     </button>
-                    <span className={styles['cart-item__qty-value']}>{ci.quantity}</span>
+                    <span className={styles['cart-item__qty-value']}>
+                      {ci.quantity}
+                    </span>
                     <button
                       className={styles['cart-item__qty-btn']}
                       onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
                       aria-label="Increase quantity"
                     >
-                      +
+                      <img src={PlusIcon} alt="" width={24} height={24} />
                     </button>
                   </div>
                 </div>
               </div>
 
               <div className={styles['cart-item__subtotal']}>
-                <span className={styles['cart-item__subtotal-label']}>Subtotal</span>
+                <span className={styles['cart-item__subtotal-label']}>
+                  Subtotal
+                </span>
                 <span className={styles['cart-item__subtotal-value']}>
                   ${Number(ci.item.price) * ci.quantity}
                 </span>
@@ -159,16 +198,22 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
 
       <div className={styles['summary']}>
         <div className={styles['summary__row']}>
-          <span>Subtotal</span><span>${cart.total_price}</span>
+          <span>Subtotal</span>
+          <span>${cart.total_price}</span>
         </div>
         <div className={styles['summary__row']}>
-          <span>Shipping</span><span>$0</span>
+          <span>Shipping</span>
+          <span>$0</span>
         </div>
         <div className={styles['summary__row']}>
-          <span>Tax</span><span>$0</span>
+          <span>Tax</span>
+          <span>$0</span>
         </div>
-        <div className={`${styles['summary__row']} ${styles['summary__row--total']}`}>
-          <span>Total</span><span>${cart.total_price}</span>
+        <div
+          className={`${styles['summary__row']} ${styles['summary__row--total']}`}
+        >
+          <span>Total</span>
+          <span>${cart.total_price}</span>
         </div>
       </div>
 
@@ -199,25 +244,36 @@ interface Step2Props {
 }
 
 const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
-  const set = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setForm({ ...form, [field]: e.target.value });
+  const set =
+    (field: keyof FormState) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setForm({ ...form, [field]: e.target.value });
 
   return (
     <div className={styles['step2']}>
       <h1 className={styles['page-title']}>My Bag</h1>
       <p className={styles['page-subtitle']}>
-        You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
+        You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in
+        the bag
       </p>
       <Breadcrumb step={2} />
 
       <div className={styles['cart-compact']}>
         {cart.cart_items.map((ci: CartItem) => (
           <div key={ci.id} className={styles['cart-compact__item']}>
-            <img src={ci.item.image_url} alt={ci.item.name} className={styles['cart-compact__image']} />
+            <img
+              src={ci.item.image_url}
+              alt={ci.item.name}
+              className={styles['cart-compact__image']}
+            />
             <div>
               <p className={styles['cart-compact__name']}>{ci.item.name}</p>
-              <p className={styles['cart-compact__brand']}>{ci.item.brand.name}</p>
-              <p className={styles['cart-compact__qty']}>Quantity: {ci.quantity}</p>
+              <p className={styles['cart-compact__brand']}>
+                {ci.item.brand.name}
+              </p>
+              <p className={styles['cart-compact__qty']}>
+                Quantity: {ci.quantity}
+              </p>
             </div>
           </div>
         ))}
@@ -231,35 +287,85 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
         <h2 className={styles['form-section__title']}>Shipping details</h2>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>First Name *</label>
-          <input type="text" placeholder="John" value={form.firstName} onChange={set('firstName')} className={styles['form-field__input']} />
+          <input
+            type="text"
+            placeholder="John"
+            value={form.firstName}
+            onChange={set('firstName')}
+            className={styles['form-field__input']}
+          />
         </div>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>Last Name *</label>
-          <input type="text" placeholder="Doe" value={form.lastName} onChange={set('lastName')} className={styles['form-field__input']} />
+          <input
+            type="text"
+            placeholder="Doe"
+            value={form.lastName}
+            onChange={set('lastName')}
+            className={styles['form-field__input']}
+          />
         </div>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>Country *</label>
-          <input type="text" placeholder="US" value={form.country} onChange={set('country')} className={styles['form-field__input']} />
+          <input
+            type="text"
+            placeholder="US"
+            value={form.country}
+            onChange={set('country')}
+            className={styles['form-field__input']}
+          />
         </div>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>City *</label>
-          <input type="text" placeholder="New York" value={form.city} onChange={set('city')} className={styles['form-field__input']} />
+          <input
+            type="text"
+            placeholder="New York"
+            value={form.city}
+            onChange={set('city')}
+            className={styles['form-field__input']}
+          />
         </div>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>Address</label>
-          <input type="text" placeholder="123 Main St" value={form.address} onChange={set('address')} className={styles['form-field__input']} />
+          <input
+            type="text"
+            placeholder="123 Main St"
+            value={form.address}
+            onChange={set('address')}
+            className={styles['form-field__input']}
+          />
         </div>
         <div className={styles['form-field']}>
-          <label className={styles['form-field__label']}>Address 2 (optional)</label>
-          <input type="text" placeholder="Apt 4B" value={form.address2} onChange={set('address2')} className={styles['form-field__input']} />
+          <label className={styles['form-field__label']}>
+            Address 2 (optional)
+          </label>
+          <input
+            type="text"
+            placeholder="Apt 4B"
+            value={form.address2}
+            onChange={set('address2')}
+            className={styles['form-field__input']}
+          />
         </div>
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>Zip Code</label>
-          <input type="text" placeholder="NY 10011" value={form.zip} onChange={set('zip')} className={styles['form-field__input']} />
+          <input
+            type="text"
+            placeholder="NY 10011"
+            value={form.zip}
+            onChange={set('zip')}
+            className={styles['form-field__input']}
+          />
         </div>
         <div className={styles['form-field']}>
-          <label className={styles['form-field__label']}>Delivery Method *</label>
-          <select value={form.deliveryMethod} onChange={set('deliveryMethod')} className={styles['form-field__input']}>
+          <label className={styles['form-field__label']}>
+            Delivery Method *
+          </label>
+          <select
+            value={form.deliveryMethod}
+            onChange={set('deliveryMethod')}
+            className={styles['form-field__input']}
+          >
             <option value="COURIER">Courier</option>
             <option value="POST_OFFICE">Post Office</option>
             <option value="PARCEL_LOCKER">Parcel Locker</option>
@@ -267,8 +373,12 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
         </div>
       </section>
 
-      <div className={`${styles['summary__row']} ${styles['summary__row--total']}`} style={{ marginBottom: 24 }}>
-        <span>Total</span><span>${cart.total_price}</span>
+      <div
+        className={`${styles['summary__row']} ${styles['summary__row--total']}`}
+        style={{ marginBottom: 24 }}
+      >
+        <span>Total</span>
+        <span>${cart.total_price}</span>
       </div>
 
       <PrimaryButton onClick={onReview}>Review Order →</PrimaryButton>
@@ -290,13 +400,18 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
   <div className={styles['step3']}>
     <h1 className={styles['page-title']}>My Bag</h1>
     <p className={styles['page-subtitle']}>
-      You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
+      You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in
+      the bag
     </p>
     <Breadcrumb step={3} />
 
     {cart.cart_items.map((ci: CartItem) => (
       <div key={ci.id} className={styles['cart-compact__item']}>
-        <img src={ci.item.image_url} alt={ci.item.name} className={styles['cart-compact__image']} />
+        <img
+          src={ci.item.image_url}
+          alt={ci.item.name}
+          className={styles['cart-compact__image']}
+        />
         <div>
           <p className={styles['cart-compact__name']}>{ci.item.name}</p>
           <p className={styles['cart-compact__brand']}>{ci.item.brand.name}</p>
@@ -313,18 +428,29 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
     <section className={styles['form-section']}>
       <h2 className={styles['form-section__title']}>Shipping details</h2>
       <p className={styles['review-text']}>
-        {form.firstName} {form.lastName}<br />
-        {form.country}, {form.city}{form.zip ? `, ${form.zip}` : ''}<br />
-        {form.address}{form.address2 ? `, ${form.address2}` : ''}<br />
+        {form.firstName} {form.lastName}
+        <br />
+        {form.country}, {form.city}
+        {form.zip ? `, ${form.zip}` : ''}
+        <br />
+        {form.address}
+        {form.address2 ? `, ${form.address2}` : ''}
+        <br />
         {form.deliveryMethod.replace('_', ' ')}
       </p>
     </section>
 
-    <div className={`${styles['summary__row']} ${styles['summary__row--total']}`} style={{ marginBottom: 24 }}>
-      <span>Total</span><span>${cart.total_price}</span>
+    <div
+      className={`${styles['summary__row']} ${styles['summary__row--total']}`}
+      style={{ marginBottom: 24 }}
+    >
+      <span>Total</span>
+      <span>${cart.total_price}</span>
     </div>
 
-    <PrimaryButton onClick={onConfirm} loading={submitting}>Payment →</PrimaryButton>
+    <PrimaryButton onClick={onConfirm} loading={submitting}>
+      Payment →
+    </PrimaryButton>
     <StepDots current={3} total={3} />
   </div>
 );
@@ -337,22 +463,74 @@ const Step4 = () => (
 
     <div className={styles['success']}>
       <div className={styles['success__illustration']} aria-hidden="true">
-        <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="80" cy="60" r="40" stroke="#0D0C0D" strokeWidth="2" fill="none" />
-          <polyline points="62,60 76,74 100,48" stroke="#0D0C0D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          <rect x="40" y="95" width="30" height="50" rx="4" stroke="#0D0C0D" strokeWidth="2" fill="none" />
-          <rect x="75" y="85" width="45" height="60" rx="4" stroke="#0D0C0D" strokeWidth="2" fill="none" />
-          <path d="M50 95 Q55 80 60 95" stroke="#0D0C0D" strokeWidth="2" fill="none" />
-          <path d="M85 85 Q97 68 109 85" stroke="#0D0C0D" strokeWidth="2" fill="none" />
+        <svg
+          width="160"
+          height="160"
+          viewBox="0 0 160 160"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="80"
+            cy="60"
+            r="40"
+            stroke="#0D0C0D"
+            strokeWidth="2"
+            fill="none"
+          />
+          <polyline
+            points="62,60 76,74 100,48"
+            stroke="#0D0C0D"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <rect
+            x="40"
+            y="95"
+            width="30"
+            height="50"
+            rx="4"
+            stroke="#0D0C0D"
+            strokeWidth="2"
+            fill="none"
+          />
+          <rect
+            x="75"
+            y="85"
+            width="45"
+            height="60"
+            rx="4"
+            stroke="#0D0C0D"
+            strokeWidth="2"
+            fill="none"
+          />
+          <path
+            d="M50 95 Q55 80 60 95"
+            stroke="#0D0C0D"
+            strokeWidth="2"
+            fill="none"
+          />
+          <path
+            d="M85 85 Q97 68 109 85"
+            stroke="#0D0C0D"
+            strokeWidth="2"
+            fill="none"
+          />
         </svg>
       </div>
 
       <h2 className={styles['success__title']}>Thanks for your order!</h2>
-      <p className={styles['success__text']}>A confirmation email has been sent to your inbox</p>
+      <p className={styles['success__text']}>
+        A confirmation email has been sent to your inbox
+      </p>
 
       <PrimaryButton>Track Order →</PrimaryButton>
       <Link to="/catalog">
-        <button className={styles['success__keep-shopping']}>Keep Shopping</button>
+        <button className={styles['success__keep-shopping']}>
+          Keep Shopping
+        </button>
       </Link>
     </div>
 
@@ -404,13 +582,14 @@ const MyBag = () => {
     }
   };
 
-  if (loading) return (
-    <>
-      <Header />
-      <main className={styles.main} />
-      <Footer />
-    </>
-  );
+  if (loading)
+    return (
+      <>
+        <Header />
+        <main className={styles.main} />
+        <Footer />
+      </>
+    );
 
   return (
     <>
