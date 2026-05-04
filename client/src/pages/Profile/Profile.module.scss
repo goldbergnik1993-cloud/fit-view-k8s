@@ -85,7 +85,7 @@
   min-width: 0;
 }
 
-// ─── Content inner — mobile: 343px centered ───────────────────────────────────
+// ─── Content inner — mobile: 343px centered ──────────────────────────────────
 
 .profile__content-inner {
   display: flex;
@@ -159,11 +159,44 @@
   @include text(14px, 400);
 }
 
-.profile__field-info {
-  opacity: 0.5;
-  cursor: help;
-  flex-shrink: 0;
+// ─── Tooltip ─────────────────────────────────────────────────────────────────
+
+.profile__field-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
+
+.profile__field-info-btn {
+  @include flex-center;
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover { opacity: 1; }
+
+  img { display: block; }
+}
+
+.profile__field-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
+  background: $color-white;
+  border: 1px solid $color-card-bg;
+  border-radius: 8px;
+  padding: $spacing-16;
+  @include text(14px, 400);
+  line-height: 1.5;
+  width: 280px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+// ─── Input ────────────────────────────────────────────────────────────────────
 
 .profile__field-input {
   width: 100%;
@@ -183,7 +216,6 @@
     border-color: $color-input-border;
   }
 
-  // hide number input arrows
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   appearance: textfield;
@@ -206,6 +238,10 @@
     width: 470px;
     margin: 0 auto;
   }
+
+  .profile__field-tooltip {
+    width: 340px;
+  }
 }
 
 // ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
@@ -215,12 +251,10 @@
     padding-top: $spacing-32;
   }
 
-  // Hide horizontal tabs on desktop
   .profile__tabs {
     display: none;
   }
 
-  // Show sidebar
   .profile__sidebar {
     display: block;
     width: 240px;
@@ -238,9 +272,7 @@
     text-align: left;
     transition: background-color 0.2s ease;
 
-    &:hover {
-      background-color: $color-toggle-bg;
-    }
+    &:hover { background-color: $color-toggle-bg; }
 
     &--active {
       border: 1px solid $color-text;
@@ -257,9 +289,12 @@
     img, svg { width: 24px; height: 24px; }
   }
 
-  // Desktop: content-inner 448px centered
   .profile__content-inner {
     width: 448px;
     margin: 0 auto;
+  }
+
+  .profile__field-tooltip {
+    width: 360px;
   }
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../hooks/useAuth';
-import { userApi } from '../../../services/api';
+import { useUserProfile } from '../../../hooks/useUserProfile';
 import { PrimaryButton } from '../ui/PrimaryButton/PrimaryButton';
 import styles from './EditMeasurementsModal.module.scss';
 import InfoIcon from '../../../assets/icons/info.svg';
@@ -60,7 +59,8 @@ const EditMeasurementsModal = ({
   onSave,
   initialValues,
 }: Props) => {
-  const { user } = useAuth();
+  const { profile, updateProfile } = useUserProfile();
+
   const [values, setValues] = useState<Measurements>({
     shoulders_length_cm: 0,
     breast_length_cm: 0,
@@ -71,27 +71,22 @@ const EditMeasurementsModal = ({
   const [tooltip, setTooltip] = useState<keyof Measurements | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Load from profile if logged in
+  // ─── Подставляем мерки из профиля (авторизованный или гость из localStorage)
   useEffect(() => {
     if (!isOpen) return;
     if (initialValues) {
       setValues((prev) => ({ ...prev, ...initialValues }));
       return;
     }
-    if (!user) return;
-    userApi
-      .getProfile()
-      .then((profile) => {
-        setValues({
-          shoulders_length_cm: profile.shoulders_length_cm ?? 0,
-          breast_length_cm: profile.breast_length_cm ?? 0,
-          hips_length_cm: profile.hips_length_cm ?? 0,
-          waist_length_cm: profile.waist_length_cm ?? 0,
-          leg_length_cm: profile.leg_length_cm ?? 0,
-        });
-      })
-      .catch(() => {});
-  }, [isOpen, user, initialValues]);
+    if (!profile) return;
+    setValues({
+      shoulders_length_cm: profile.shoulders_length_cm ?? 0,
+      breast_length_cm: profile.breast_length_cm ?? 0,
+      hips_length_cm: profile.hips_length_cm ?? 0,
+      waist_length_cm: profile.waist_length_cm ?? 0,
+      leg_length_cm: profile.leg_length_cm ?? 0,
+    });
+  }, [isOpen, profile, initialValues]);
 
   const handleChange = (key: keyof Measurements, raw: string) => {
     const num = parseInt(raw.replace(/\D/g, ''), 10);
@@ -101,13 +96,15 @@ const EditMeasurementsModal = ({
   const handleSave = async () => {
     setSaving(true);
     try {
-      if (user) {
-        const currentProfile = await userApi.getProfile();
-        await userApi.updateProfile({
-          ...currentProfile,
-          ...values,
-        });
-      }
+      // Для авторизованного → бэкенд, для гостя → localStorage
+      // Логика внутри updateProfile в UserProfileProvider
+      await updateProfile({
+        shoulders_length_cm: values.shoulders_length_cm || null,
+        breast_length_cm: values.breast_length_cm || null,
+        hips_length_cm: values.hips_length_cm || null,
+        waist_length_cm: values.waist_length_cm || null,
+        leg_length_cm: values.leg_length_cm || null,
+      });
       onSave(values);
       onClose();
     } catch {
@@ -129,7 +126,6 @@ const EditMeasurementsModal = ({
         aria-modal="true"
         aria-label="Edit Measurements"
       >
-        {/* Header */}
         <div className={styles.mobileHeader}>
           <Header />
         </div>
@@ -146,7 +142,6 @@ const EditMeasurementsModal = ({
             </button>
           </div>
 
-          {/* Fields */}
           <div className={styles.fields}>
             {FIELDS.map(({ key, label, tip }) => (
               <div key={key} className={styles.field}>
@@ -162,7 +157,9 @@ const EditMeasurementsModal = ({
                   </button>
                 </div>
 
-                {tooltip === key && <div className={styles.tooltip}>{tip}</div>}
+                {tooltip === key && (
+                  <div className={styles.tooltip}>{tip}</div>
+                )}
 
                 <input
                   className={styles.input}
@@ -177,7 +174,6 @@ const EditMeasurementsModal = ({
             ))}
           </div>
 
-          {/* Save */}
           <PrimaryButton onClick={handleSave} loading={saving}>
             Save Measurements
           </PrimaryButton>
