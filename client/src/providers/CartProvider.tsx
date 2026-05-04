@@ -14,7 +14,8 @@ type GuestCartItem = {
 
 function loadGuestCart(): GuestCartItem[] {
   try {
-    return JSON.parse(localStorage.getItem(GUEST_CART_KEY) ?? '[]');
+    const data = localStorage.getItem(GUEST_CART_KEY);
+    return data ? JSON.parse(data) : [];
   } catch {
     return [];
   }
@@ -44,39 +45,57 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Оставляем useCallback для возможности ручного обновления (refetch)
   const fetchCart = useCallback(async () => {
     setLoading(true);
-    if (isAuth) {
-      try {
+    try {
+      if (isAuth) {
         const data = await cartApi.getCart();
         setCart(data);
-      } catch {
-        setCart(null);
+      } else {
+        setCart(guestItemsToCart(loadGuestCart()));
       }
-    } else {
-      setCart(guestItemsToCart(loadGuestCart()));
+    } catch {
+      setCart(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [isAuth]);
 
-  useEffect(() => {
-  if (!isAuth) return;
-  const guestItems = loadGuestCart();
-  if (guestItems.length === 0) return;
 
-  (async () => {
-    try {
-      await Promise.all(
-        guestItems.map(i => cartApi.addItem(i.id, i.size_label, i.quantity))
-      );
-      saveGuestCart([]);
-      const data = await cartApi.getCart();
-      setCart(data);
-    } catch {
-      // If merging fails, just load the existing cart without merging
-    }
-  })();
-}, [isAuth]);
+  useEffect(() => {
+    const initializeCart = async () => {
+      setLoading(true);
+      
+      if (isAuth) {
+        const guestItems = loadGuestCart();
+        
+        if (guestItems.length > 0) {
+          try {
+            await Promise.all(
+              guestItems.map(i => cartApi.addItem(i.id, i.size_label, i.quantity))
+            );
+            saveGuestCart([]);
+          } catch (error) {
+            console.error('Merge failed', error);
+          }
+        }
+
+        try {
+          const data = await cartApi.getCart();
+          setCart(data);
+        } catch {
+          setCart(null);
+        }
+      } else {
+        setCart(guestItemsToCart(loadGuestCart()));
+      }
+      
+      setLoading(false);
+    };
+
+    initializeCart();
+  }, [isAuth]); 
 
   const addItem = async (item_id: number, size_label: string, quantity = 1) => {
     if (isAuth) {
@@ -88,7 +107,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (idx >= 0) {
         items[idx].quantity += quantity;
       } else {
-        items.push({ id: item_id, size_label, quantity, item: { id: item_id, name: '', brand: { id: 0, name: '' }, category: '', gender: '', image_url: '', price: '0', is_favorite: false } });
+        items.push({ 
+          id: item_id, 
+          size_label, 
+          quantity, 
+          item: { id: item_id, name: '', brand: { id: 0, name: '' }, category: '', gender: '', image_url: '', price: '0', is_favorite: false } 
+        });
       }
       saveGuestCart(items);
       setCart(guestItemsToCart(items));
@@ -131,7 +155,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const count = cart?.total_items ?? 0;
 
   return (
-    <CartContext.Provider value={{ cart, count, loading, addItem, updateQuantity, removeItem, clearCart, refetch: fetchCart }}>
+    <CartContext.Provider value={{ 
+      cart, 
+      count, 
+      loading, 
+      addItem, 
+      updateQuantity, 
+      removeItem, 
+      clearCart, 
+      refetch: fetchCart 
+    }}>
       {children}
     </CartContext.Provider>
   );
