@@ -128,7 +128,8 @@
 
   &--active {
     border-color: $color-text;
-    background: transparent;
+    background: $color-text;
+    color: $color-white;
   }
 }
 
@@ -137,6 +138,37 @@
   height: 40px;
   @include flex-center;
   @include hover-opacity;
+  border-radius: 50%;
+  transition: opacity 0.2s ease;
+
+  &--active {
+    img {
+      // inverts the icon to appear dark/filled when active
+      filter: invert(1);
+    }
+    background: $color-text;
+    border-radius: 50%;
+    opacity: 1;
+  }
+}
+
+// ─── Size Guide Popup ─────────────────────────────────────────────────────────
+
+.sizeGuide {
+  margin-top: $spacing-8;
+  padding: $spacing-16;
+  background: $color-white;
+  border: 1px solid $color-card-bg;
+  border-radius: 8px;
+  box-shadow: 0 5px 0 0 rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.sizeGuide__row {
+  @include text(13px, 400, 1.5);
+  margin: 0;
 }
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
@@ -173,9 +205,27 @@
 
 .actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse; // mobile: Add To My Bag on top, Try On below
   gap: $spacing-8;
   margin-top: $spacing-16;
+
+  @include tablet {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.actions__primary {
+  width: 100%;
+
+  // make inner PrimaryButton fill the wrapper
+  > button {
+    width: 100%;
+  }
+
+  @include tablet {
+    flex: 1;
+  }
 }
 
 .tryOnBtn {
@@ -187,10 +237,16 @@
   color: $color-primary;
   background: transparent;
   transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
 
   &:hover {
     background: $color-primary;
     color: $color-white;
+  }
+
+  @include tablet {
+    flex: 1;
+    width: auto;
   }
 }
 

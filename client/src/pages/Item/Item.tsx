@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFavorites } from '../../providers/FavoritesContext';
-import { useCart } from '../../providers/CartContext'; // Добавлен импорт
+import { useCart } from '../../providers/CartContext';
 import {
   itemsApi,
-  type FittingRoomResponse, // cartApi удален отсюда
+  type FittingRoomResponse,
 } from '../../services/api';
 import { useItem, useItems } from '../../hooks/useItems';
 import { useUserProfile } from '../../hooks/useUserProfile';
@@ -27,6 +27,14 @@ import {
 
 const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
 
+// Mock size guide data — replace with real data from backend when available
+const MOCK_SIZE_GUIDE: Record<string, string> = {
+  S: 'Chest 86–89" / Waist 62–65" / Hips 90–94"',
+  M: 'Chest 90–93" / Waist 66–69" / Hips 95–98"',
+  L: 'Chest 94–99" / Waist 70–75" / Hips 98–104"',
+  XL: 'Chest 100–105" / Waist 76–82" / Hips 105–112"',
+};
+
 type View = 'card' | 'fitting';
 
 const GENDER_TOGGLE: { value: 'male' | 'female'; label: string }[] = [
@@ -45,10 +53,11 @@ const Item = () => {
 
   const [view, setView] = useState<View>('card');
   const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   const { isFavorite: isFav, toggleFavorite } = useFavorites();
-  const { addItem } = useCart(); // Добавлена деструктуризация из контекста
-  
+  const { addItem } = useCart();
+
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
@@ -60,7 +69,6 @@ const Item = () => {
   const [fitLoading, setFitLoading] = useState(false);
   const [debouncedHeight, setDebouncedHeight] = useState(height);
 
-  // ─── Подставляем данные из глобального профиля ────────────────────────────
   useEffect(() => {
     if (!profile) return;
     if (profile.height_cm) setHeight(profile.height_cm);
@@ -69,7 +77,7 @@ const Item = () => {
 
   useEffect(() => {
     if (!item) return;
-    setSelectedSizeLabel(item.availableSizes?.[0]?.sizeLabel ?? null);
+    setSelectedSizeLabel(null); // reset on item change — user must pick size
     if (item.gender === 'male') setGender('male');
   }, [item]);
 
@@ -150,12 +158,11 @@ const Item = () => {
     }
   };
 
-  // Заменен handleAddToCart согласно инструкции
   const handleAddToCart = async () => {
-    if (!item) return;
+    if (!item || !selectedSizeLabel) return;
     setCartLoading(true);
     try {
-      await addItem(Number(item.id), selectedSizeLabel ?? '');
+      await addItem(Number(item.id), selectedSizeLabel);
       setCartAdded(true);
       setTimeout(() => setCartAdded(false), 2000);
     } catch (err) {
@@ -171,9 +178,71 @@ const Item = () => {
     ? `Ends ${Math.round(hEndCm)} cm from floor`
     : 'Ends 0 cm from floor';
 
+  // Shared size selector block used in both views
+  const renderSizes = (itemData: typeof item) => {
+    if (!itemData) return null;
+    return (
+      <div className={styles.section}>
+        <p className={styles.sectionLabel}>Choose your size</p>
+        <div className={styles.sizes}>
+          {itemData.availableSizes.map((size) => (
+            <button
+              key={size.id}
+              className={`${styles.sizeBtn} ${
+                selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''
+              }`}
+              onClick={() => setSelectedSizeLabel(size.sizeLabel)}
+            >
+              {size.sizeLabel}
+            </button>
+          ))}
+          <button
+            className={`${styles.infoBtn} ${isSizeGuideOpen ? styles['infoBtn--active'] : ''}`}
+            aria-label="Size guide"
+            aria-expanded={isSizeGuideOpen}
+            onClick={() => setIsSizeGuideOpen((v) => !v)}
+          >
+            <img src={InfoIcon} alt="" width={20} height={20} />
+          </button>
+        </div>
+
+        {isSizeGuideOpen && (
+          <div className={styles.sizeGuide}>
+            {itemData.availableSizes.map((size) => {
+              const guideText = MOCK_SIZE_GUIDE[size.sizeLabel];
+              return (
+                <p key={size.id} className={styles.sizeGuide__row}>
+                  {size.sizeLabel}: {guideText ?? '—'}
+                </p>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Shared color selector
+  const renderColors = () => (
+    <div className={styles.section}>
+      <p className={styles.sectionLabel}>Choose your color</p>
+      <div className={styles.colors}>
+        {MOCK_COLORS.map((color) => (
+          <span
+            key={color}
+            className={styles.colorDot}
+            style={{ background: color }}
+            aria-hidden="true"
+          />
+        ))}
+      </div>
+    </div>
+  );
+
   if (loading) return <div className={styles.state}>Loading...</div>;
   if (error || !item) return <div className={styles.state}>Item not found</div>;
 
+  // ─── Card View ────────────────────────────────────────────────────────────────
   if (view === 'card') {
     return (
       <>
@@ -203,7 +272,9 @@ const Item = () => {
               }}
             />
             <button
-              className={`${styles.favoriteBtn} ${isFav(id ?? '') ? styles['favoriteBtn--active'] : ''}`}
+              className={`${styles.favoriteBtn} ${
+                isFav(id ?? '') ? styles['favoriteBtn--active'] : ''
+              }`}
               onClick={handleToggleFavorite}
               disabled={favoriteLoading}
               aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
@@ -219,50 +290,30 @@ const Item = () => {
           <p className={styles.material}>Material: 100% Viscose</p>
           <p className={styles.material}>Lining: 100% Polyester</p>
 
-          <div className={styles.section}>
-            <p className={styles.sectionLabel}>Choose your size</p>
-            <div className={styles.sizes}>
-              {item.availableSizes.map((size) => (
-                <button
-                  key={size.id}
-                  className={`${styles.sizeBtn} ${selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''}`}
-                  onClick={() => setSelectedSizeLabel(size.sizeLabel)}
-                >
-                  {size.sizeLabel}
-                </button>
-              ))}
-              <button className={styles.infoBtn} aria-label="Size guide">
-                <img src={InfoIcon} alt="" width={20} height={20} />
-              </button>
-            </div>
-          </div>
-
-          <div className={styles.section}>
-            <p className={styles.sectionLabel}>Choose your color</p>
-            <div className={styles.colors}>
-              {MOCK_COLORS.map((color) => (
-                <span
-                  key={color}
-                  className={styles.colorDot}
-                  style={{ background: color }}
-                  aria-hidden="true"
-                />
-              ))}
-            </div>
-          </div>
+          {renderSizes(item)}
+          {renderColors()}
 
           <div className={styles.priceRow}>
-            <span className={styles.priceLabel}>Price</span>
+            <span className={styles.priceLabel}>Price:</span>
             <span className={styles.priceValue}>{item.price}$</span>
           </div>
 
           <div className={styles.actions}>
-            <PrimaryButton onClick={handleAddToCart} loading={cartLoading} disabled={cartAdded}>
-              {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
-            </PrimaryButton>
-            <button className={styles.tryOnBtn} onClick={() => setView('fitting')}>
+            <button
+              className={styles.tryOnBtn}
+              onClick={() => setView('fitting')}
+            >
               Virtual Try On
             </button>
+            <div className={styles.actions__primary}>
+              <PrimaryButton
+                onClick={handleAddToCart}
+                loading={cartLoading}
+                disabled={cartAdded || !selectedSizeLabel}
+              >
+                {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+              </PrimaryButton>
+            </div>
           </div>
 
           <section className={styles.similar}>
@@ -297,6 +348,7 @@ const Item = () => {
     );
   }
 
+  // ─── Fitting View ─────────────────────────────────────────────────────────────
   return (
     <>
       <Header />
@@ -306,14 +358,19 @@ const Item = () => {
             {GENDER_TOGGLE.map(({ value, label }) => (
               <button
                 key={value}
-                className={`${styles.genderBtn} ${gender === value ? styles['genderBtn--active'] : ''}`}
+                className={`${styles.genderBtn} ${
+                  gender === value ? styles['genderBtn--active'] : ''
+                }`}
                 onClick={() => setGender(value)}
               >
                 {label}
               </button>
             ))}
           </div>
-          <button className={styles.editBtn} onClick={() => setIsMeasurementsOpen(true)}>
+          <button
+            className={styles.editBtn}
+            onClick={() => setIsMeasurementsOpen(true)}
+          >
             Edit Measurements
             <img src={ChevronRightIcon} alt="" width={16} height={16} />
           </button>
@@ -364,51 +421,24 @@ const Item = () => {
         <h1 className={styles.title}>{item.name}</h1>
         <p className={styles.brand}>{item.brand}</p>
 
-        <div className={styles.section}>
-          <p className={styles.sectionLabel}>Choose your size</p>
-          <div className={styles.sizes}>
-            {item.availableSizes.map((size) => (
-              <button
-                key={size.id}
-                className={`${styles.sizeBtn} ${selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''}`}
-                onClick={() => setSelectedSizeLabel(size.sizeLabel)}
-              >
-                {size.sizeLabel}
-              </button>
-            ))}
-            <button className={styles.infoBtn} aria-label="Size guide">
-              <img src={InfoIcon} alt="" width={20} height={20} />
-            </button>
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <p className={styles.sectionLabel}>Choose your color</p>
-          <div className={styles.colors}>
-            {MOCK_COLORS.map((color) => (
-              <span
-                key={color}
-                className={styles.colorDot}
-                style={{ background: color }}
-                aria-hidden="true"
-              />
-            ))}
-          </div>
-        </div>
+        {renderSizes(item)}
+        {renderColors()}
 
         <div className={styles.priceRow}>
-          <span className={styles.priceLabel}>Price</span>
+          <span className={styles.priceLabel}>Price:</span>
           <span className={styles.priceValue}>{item.price}$</span>
         </div>
 
         <div className={styles.actions}>
-          <PrimaryButton
-            onClick={handleAddToCart}
-            loading={cartLoading}
-            disabled={cartAdded || !selectedSizeLabel}
-          >
-            {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
-          </PrimaryButton>
+          <div className={styles.actions__primary}>
+            <PrimaryButton
+              onClick={handleAddToCart}
+              loading={cartLoading}
+              disabled={cartAdded || !selectedSizeLabel}
+            >
+              {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+            </PrimaryButton>
+          </div>
         </div>
 
         <section className={styles.similar}>
