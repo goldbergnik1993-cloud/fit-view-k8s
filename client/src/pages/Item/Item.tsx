@@ -22,7 +22,7 @@ import {
   getResultLabel,
 } from '../../utils/fitCalculator';
 
-const MOCK_COLORS = ['#976B56', '#626044', '#B9C8DA', '#D8CAB3'];
+const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
 
 const MOCK_SIZE_GUIDE: Record<string, string> = {
   S: 'Chest 86–89" / Waist 62–65" / Hips 90–94"',
@@ -203,32 +203,36 @@ const Item = () => {
             />
           </button>
         </div>
-        {isSizeGuideOpen && (
-          <div className={styles.sizeGuide}>
-            {itemData.availableSizes.map((size) => (
-              <p key={size.id} className={styles.sizeGuide__row}>
-                {size.sizeLabel}: {MOCK_SIZE_GUIDE[size.sizeLabel] ?? '—'}
-              </p>
-            ))}
-          </div>
-        )}
       </div>
     );
   };
 
   const renderColors = () => (
     <div className={styles.section}>
-      <p className={styles.sectionLabel}>Choose your color</p>
-      <div className={styles.colors}>
-        {MOCK_COLORS.map((color) => (
-          <span
-            key={color}
-            className={styles.colorDot}
-            style={{ background: color }}
-            aria-hidden="true"
-          />
-        ))}
-      </div>
+      {isSizeGuideOpen ? (
+        // Size guide занимает место секции цветов
+        <div className={styles.sizeGuide}>
+          {item?.availableSizes.map((size) => (
+            <p key={size.id} className={styles.sizeGuide__row}>
+              {size.sizeLabel}: {MOCK_SIZE_GUIDE[size.sizeLabel] ?? '—'}
+            </p>
+          ))}
+        </div>
+      ) : (
+        <>
+          <p className={styles.sectionLabel}>Choose your color</p>
+          <div className={styles.colors}>
+            {MOCK_COLORS.map((color) => (
+              <span
+                key={color}
+                className={styles.colorDot}
+                style={{ background: color }}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 
