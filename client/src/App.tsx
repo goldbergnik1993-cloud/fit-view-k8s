@@ -7,6 +7,7 @@ import Saved from './pages/Saved/Saved';
 import MyBag from './pages/MyBag/MyBag';
 import Login from './pages/Auth/Login';
 import Profile from './pages/Profile/Profile';
+import BrandEmpty from './pages/BrandEmpty/BrandEmpty';
 import { FavoritesProvider } from './providers/FavoritesProvider';
 
 const App = () => (
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/saved" element={<Saved />} />
           <Route path="/my-bag" element={<MyBag />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/brand/:slug" element={<BrandEmpty />} />
         </Routes>
       </BrowserRouter>
     </FavoritesProvider>

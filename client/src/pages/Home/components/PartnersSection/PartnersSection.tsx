@@ -26,9 +26,7 @@ export const PartnersSection = () => {
 
   const handleClick = (partner: (typeof PARTNERS)[number]) => {
     if (partner.id === null) {
-      navigate(
-        `/catalog?brand_name=${encodeURIComponent(partner.name)}&empty=true`
-      );
+      navigate(`/brand/${encodeURIComponent(partner.name.toLowerCase())}`);
     } else {
       navigate(
         `/catalog?brands=${partner.id}&brand_name=${encodeURIComponent(partner.name)}`
