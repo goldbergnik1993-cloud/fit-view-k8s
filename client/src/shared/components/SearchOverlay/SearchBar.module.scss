@@ -108,10 +108,11 @@
 
 .itemImg {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  height: 100px;
   background: $color-card-bg;
-  border-radius: 8px;
+  border-radius: 24px;
   overflow: hidden;
+  flex-shrink: 0;
 
   img {
     width: 100%;
@@ -123,15 +124,13 @@
 .itemInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-top: $spacing-8;
+  gap: $spacing-8;
 }
 
 .itemPriceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: $spacing-8;
 }
 
 .itemName {
