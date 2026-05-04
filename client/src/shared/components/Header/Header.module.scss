@@ -99,7 +99,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  width: 375px;
+  width: 100%;
   background: $color-white;
   z-index: 100;
   border: 1px solid $color-card-bg;
@@ -115,6 +115,10 @@
     max-height: 600px;
     opacity: 1;
     pointer-events: auto;
+  }
+
+  @include tablet {
+    width: 375px;
   }
 }
 
