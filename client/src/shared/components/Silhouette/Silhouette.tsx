@@ -22,14 +22,27 @@ const Silhouette = ({
 
   return (
     <div className={styles.silhouette}>
-      {/* Left label */}
+
+      {/* ── Левая колонка: "0 cm" сверху, "Your Height" снизу ── */}
       <div className={styles.silhouette__left}>
-        <span className={styles.silhouette__endLabel}>
-          {loading ? '...' : label}
-        </span>
+        {/* "Ends X cm from floor" — позиционируется по linePositionPct */}
+        <div style={{ position: 'relative', flex: 1, width: '100%' }}>
+          <span
+            className={styles.silhouette__endLabel}
+            style={{
+              position: 'absolute',
+              bottom: `${linePositionPct}%`,
+              right: 0,
+              transform: 'translateY(50%)',
+            }}
+          >
+            {loading ? '...' : label}
+          </span>
+        </div>
+        <span className={styles.silhouette__heightLabel}>Your Height</span>
       </div>
 
-      {/* Center: silhouette image + line */}
+      {/* ── Центр: силуэт + горизонтальная линия + вертикальный ruler ── */}
       <div className={styles.silhouette__center}>
         <div className={styles.silhouette__imageWrap}>
           <img
@@ -38,25 +51,26 @@ const Silhouette = ({
             className={styles.silhouette__image}
           />
 
-          {/* Horizontal line */}
+          {/* Горизонтальная линия */}
           <div
             className={styles.silhouette__line}
             style={{ bottom: `${linePositionPct}%` }}
             aria-hidden="true"
           />
 
-          {/* Vertical ruler */}
+          {/* Вертикальный ruler — правая граница */}
           <div className={styles.silhouette__ruler} aria-hidden="true" />
         </div>
       </div>
 
-      {/* Right labels */}
+      {/* ── Правая колонка: "130 cm" сверху, "Item length" снизу ── */}
       <div className={styles.silhouette__right}>
         <span className={styles.silhouette__heightLabel}>
           {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
         </span>
         <span className={styles.silhouette__itemLabel}>Item length</span>
       </div>
+
     </div>
   );
 };
