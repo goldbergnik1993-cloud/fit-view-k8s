@@ -12,7 +12,6 @@ import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
 import styles from './Item.module.scss';
 import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
-
 import InfoIcon from '../../assets/icons/info.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EditMeasurementsModal from '../../shared/components/EditMeasurementsModal/EditMeasurementsModal';
@@ -55,12 +54,9 @@ const Item = () => {
   const { addItem } = useCart();
 
   const [favoriteLoading, setFavoriteLoading] = useState(false);
-  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(
-    null
-  );
+  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
   const [cartAdded, setCartAdded] = useState(false);
-  // Добавлено состояние ошибки корзины
   const [cartError, setCartError] = useState<string | null>(null);
 
   const [height, setHeight] = useState(170);
@@ -101,9 +97,7 @@ const Item = () => {
       });
       setFitResult(result);
     } catch {
-      const measurement = item.measurements.find(
-        (m) => m.sizeLabel === selectedSizeLabel
-      );
+      const measurement = item.measurements.find((m) => m.sizeLabel === selectedSizeLabel);
       const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
 
       if (lengthCm && item.category) {
@@ -136,8 +130,6 @@ const Item = () => {
             shoulders_length_cm: profile?.shoulders_length_cm ?? 0,
           },
         });
-      } else {
-        setFitResult(null);
       }
     } finally {
       setFitLoading(false);
@@ -189,9 +181,7 @@ const Item = () => {
             <button
               key={size.id}
               className={`${styles.sizeBtn} ${
-                selectedSizeLabel === size.sizeLabel
-                  ? styles['sizeBtn--active']
-                  : ''
+                selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''
               }`}
               onClick={() => setSelectedSizeLabel(size.sizeLabel)}
             >
@@ -207,7 +197,6 @@ const Item = () => {
             <img src={InfoIcon} alt="" width={20} height={20} />
           </button>
         </div>
-
         {isSizeGuideOpen && (
           <div className={styles.sizeGuide}>
             {itemData.availableSizes.map((size) => (
@@ -239,9 +228,7 @@ const Item = () => {
 
   const renderFavoriteBtn = () => (
     <button
-      className={`${styles.favoriteBtn} ${
-        isFav(id ?? '') ? styles['favoriteBtn--active'] : ''
-      }`}
+      className={`${styles.favoriteBtn} ${isFav(id ?? '') ? styles['favoriteBtn--active'] : ''}`}
       onClick={handleToggleFavorite}
       disabled={favoriteLoading}
       aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
@@ -275,18 +262,11 @@ const Item = () => {
         <Header />
         <main className={styles.page}>
           <nav className={styles.breadcrumb} aria-label="breadcrumb">
-            <a href="/" className={styles.breadcrumb__link}>
-              Home
-            </a>
+            <a href="/" className={styles.breadcrumb__link}>Home</a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a href="/catalog" className={styles.breadcrumb__link}>
-              Catalog
-            </a>
+            <a href="/catalog" className={styles.breadcrumb__link}>Catalog</a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a
-              href={`/catalog?brands=${item.brand}`}
-              className={styles.breadcrumb__link}
-            >
+            <a href={`/catalog?brands=${item.brand}`} className={styles.breadcrumb__link}>
               {item.brand}
             </a>
             <span className={styles.breadcrumb__sep}>/</span>
@@ -294,6 +274,9 @@ const Item = () => {
 
           <div className={styles.layout}>
             <div className={styles.layout__left}>
+              {/* Название — только мобайл, над картинкой */}
+              <h1 className={styles.title}>{item.name}</h1>
+
               <div className={styles.imageWrap}>
                 <img
                   src={item.imageUrl}
@@ -309,7 +292,8 @@ const Item = () => {
             </div>
 
             <div className={styles.layout__right}>
-              <h1 className={styles.title}>{item.name}</h1>
+              {/* Название — планшет (под картинкой) и десктоп (правая колонка) */}
+              <h1 className={styles['title--right']}>{item.name}</h1>
 
               <p className={styles.description}>
                 Elegant wrap dress with a flattering V-neck and adjustable waist
@@ -331,7 +315,7 @@ const Item = () => {
                   className={styles.tryOnBtn}
                   onClick={() => setView('fitting')}
                 >
-                  Virtual Try On
+                  Virtual Try-On
                 </button>
                 <div className={styles.actions__primary}>
                   <PrimaryButton
@@ -341,7 +325,6 @@ const Item = () => {
                   >
                     {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
                   </PrimaryButton>
-                  {/* Вывод ошибки под кнопкой в Card View */}
                   {cartError && <p className={styles.cartError}>{cartError}</p>}
                 </div>
               </div>
@@ -442,9 +425,8 @@ const Item = () => {
               loading={cartLoading}
               disabled={cartAdded || !selectedSizeLabel}
             >
-              {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+              {cartAdded ? 'Added to Bag' : 'Add To My Bag'}
             </PrimaryButton>
-            {/* Вывод ошибки под кнопкой в Fitting View */}
             {cartError && <p className={styles.cartError}>{cartError}</p>}
           </div>
         </div>
