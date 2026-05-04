@@ -75,13 +75,5 @@
 }
 
 .emptyState__recommendations {
-  padding: 0 $spacing-16 $spacing-48;
-
-  @include tablet {
-    padding: 0 40px $spacing-48;
-  }
-
-  @include desktop {
-    padding: 0 40px 80px;
-  }
+  width: 100%;
 }
