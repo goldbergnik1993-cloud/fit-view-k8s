@@ -77,7 +77,7 @@ const Item = () => {
 
   useEffect(() => {
     if (!item) return;
-    setSelectedSizeLabel(null); // user must pick size
+    setSelectedSizeLabel(null);
     if (item.gender === 'male') setGender('male');
   }, [item]);
 
@@ -234,6 +234,19 @@ const Item = () => {
     </div>
   );
 
+  const renderFavoriteBtn = () => (
+    <button
+      className={`${styles.favoriteBtn} ${
+        isFav(id ?? '') ? styles['favoriteBtn--active'] : ''
+      }`}
+      onClick={handleToggleFavorite}
+      disabled={favoriteLoading}
+      aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
+    >
+      <img src={SavedIcon} alt="" aria-hidden="true" />
+    </button>
+  );
+
   if (loading) return <div className={styles.state}>Loading...</div>;
   if (error || !item) return <div className={styles.state}>Item not found</div>;
 
@@ -256,7 +269,7 @@ const Item = () => {
 
           {/* Two-column grid on desktop */}
           <div className={styles.layout}>
-            {/* Left: image */}
+            {/* Left: image only */}
             <div className={styles.layout__left}>
               <div className={styles.imageWrap}>
                 <img
@@ -268,20 +281,11 @@ const Item = () => {
                       'https://placehold.co/400x500?text=No+Image';
                   }}
                 />
-                <button
-                  className={`${styles.favoriteBtn} ${
-                    isFav(id ?? '') ? styles['favoriteBtn--active'] : ''
-                  }`}
-                  onClick={handleToggleFavorite}
-                  disabled={favoriteLoading}
-                  aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
-                >
-                  <img src={SavedIcon} alt="" aria-hidden="true" width={22} height={22} />
-                </button>
+                {renderFavoriteBtn()}
               </div>
             </div>
 
-            {/* Right: content */}
+            {/* Right: all content */}
             <div className={styles.layout__right}>
               <h1 className={styles.title}>{item.name}</h1>
 
@@ -320,32 +324,7 @@ const Item = () => {
             </div>
           </div>
 
-          <section className={styles.similar}>
-            <div className={styles.similar__header}>
-              <h2 className={styles.similar__title}>You may also like</h2>
-              <div className={styles.similar__nav}>
-                <button aria-label="Previous">
-                  <img src={ChevronLeftIcon} alt="" width={20} height={20} />
-                </button>
-                <button aria-label="Next">
-                  <img src={ChevronRightIcon} alt="" width={20} height={20} />
-                </button>
-              </div>
-            </div>
-            <div className={styles.similar__list}>
-              {similarItems
-                .filter((s) => s.id !== item.id)
-                .slice(0, 2)
-                .map((s) => (
-                  <ItemCard
-                    key={s.id}
-                    item={s}
-                    isFavorite={isFav(s.id)}
-                    onFavoriteToggle={toggleFavorite}
-                  />
-                ))}
-            </div>
-          </section>
+          {/* No "You may also like" in card view */}
           <Footer />
         </main>
       </>
@@ -445,6 +424,7 @@ const Item = () => {
           </div>
         </div>
 
+        {/* "You may also like" — fitting view only */}
         <section className={styles.similar}>
           <div className={styles.similar__header}>
             <h2 className={styles.similar__title}>You may also like</h2>
@@ -471,6 +451,7 @@ const Item = () => {
               ))}
           </div>
         </section>
+
         <Footer />
       </main>
     </>
