@@ -7,6 +7,7 @@ import {
 import type { ClothingItem } from '../types/clothing';
 
 export function mapItem(item: BackendItem): ClothingItem {
+  console.log('raw available_measurements:', JSON.stringify(item.available_measurements));
   const brandName =
     typeof item.brand === 'object' && item.brand !== null
       ? item.brand.name
