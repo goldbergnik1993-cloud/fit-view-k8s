@@ -24,9 +24,12 @@ const Silhouette = ({
     <div className={styles.silhouette}>
       <div className={styles.silhouette__left}>
         <span
-          className={styles.silhouette__endLabel}
+          className={styles.silhouette__itemLengthLabel}
           style={{ bottom: `${linePositionPct}%` }}
         >
+          {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
+        </span>
+        <span className={styles.silhouette__endLabel}>
           {loading ? '...' : label}
         </span>
       </div>
@@ -48,12 +51,7 @@ const Silhouette = ({
 
       <div className={styles.silhouette__right}>
         <div className={styles.silhouette__ruler} aria-hidden="true" />
-        <span
-          className={styles.silhouette__itemLengthLabel}
-          style={{ bottom: `${linePositionPct}%` }}
-        >
-          {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
-        </span>
+        <span className={styles.silhouette__bottomLabel}>Item length</span>
       </div>
     </div>
   );
