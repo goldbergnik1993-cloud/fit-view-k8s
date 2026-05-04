@@ -9,14 +9,14 @@
 
 .catalog__main {
   flex: 1;
-  padding: 24px 16px 48px;
+  padding: 24px var(--container-padding) 48px;
 
   @include tablet {
-    padding: 32px 40px 64px;
+    padding: 32px var(--container-padding) 64px;
   }
 
   @include desktop {
-    padding: 40px 120px 80px;
+    padding: 40px var(--container-padding) 80px;
   }
 }
 
