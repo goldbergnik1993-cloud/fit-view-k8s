@@ -1,14 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
 import { useFavorites } from '../../providers/FavoritesContext';
 import {
-  request,
   itemsApi,
   cartApi,
   type FittingRoomResponse,
 } from '../../services/api';
 import { useItem, useItems } from '../../hooks/useItems';
+import { useUserProfile } from '../../hooks/useUserProfile';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import Silhouette from '../../shared/components/Silhouette/Silhouette';
@@ -26,7 +25,6 @@ import {
   getResultLabel,
 } from '../../utils/fitCalculator';
 
-// Mock colors — not in DB, display only
 const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
 
 type View = 'card' | 'fitting';
@@ -38,49 +36,40 @@ const GENDER_TOGGLE: { value: 'male' | 'female'; label: string }[] = [
 
 const Item = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
   const { item, loading, error } = useItem(id);
   const { items: similarItems } = useItems({
     category: item?.category,
     per_page: 4,
   });
+  const { profile } = useUserProfile();
 
   const [view, setView] = useState<View>('card');
   const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
 
-  // Card state
   const { isFavorite: isFav, toggleFavorite } = useFavorites();
   const [favoriteLoading, setFavoriteLoading] = useState(false);
-  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(
-    null
-  );
+  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
   const [cartAdded, setCartAdded] = useState(false);
 
-  // Fitting room state
   const [height, setHeight] = useState(170);
-  const [profileLoaded, setProfileLoaded] = useState(false);
   const [gender, setGender] = useState<'male' | 'female'>('female');
   const [fitResult, setFitResult] = useState<FittingRoomResponse | null>(null);
   const [fitLoading, setFitLoading] = useState(false);
   const [debouncedHeight, setDebouncedHeight] = useState(height);
+
+  // ─── Подставляем данные из глобального профиля ────────────────────────────
+  useEffect(() => {
+    if (!profile) return;
+    if (profile.height_cm) setHeight(profile.height_cm);
+    if (profile.gender === 'male') setGender('male');
+  }, [profile]);
 
   useEffect(() => {
     if (!item) return;
     setSelectedSizeLabel(item.availableSizes?.[0]?.sizeLabel ?? null);
     if (item.gender === 'male') setGender('male');
   }, [item]);
-
-  useEffect(() => {
-    if (!user || profileLoaded) return;
-    request<{ height_cm: number; gender: string }>('/user/profile', {}, true)
-      .then((profile) => {
-        if (profile.height_cm) setHeight(profile.height_cm);
-        if (profile.gender === 'male') setGender('male');
-        setProfileLoaded(true);
-      })
-      .catch(() => {});
-  }, [user, profileLoaded]);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedHeight(height), 400);
@@ -91,9 +80,15 @@ const Item = () => {
     if (!item || !id || !selectedSizeLabel) return;
     setFitLoading(true);
     try {
+      // ─── Передаём все мерки из профиля ───────────────────────────────
       const result = await itemsApi.fitItem(Number(id), {
         size_label: selectedSizeLabel,
         height_cm: debouncedHeight,
+        shoulders_length_cm: profile?.shoulders_length_cm ?? null,
+        breast_length_cm: profile?.breast_length_cm ?? null,
+        waist_length_cm: profile?.waist_length_cm ?? null,
+        hips_length_cm: profile?.hips_length_cm ?? null,
+        leg_length_cm: profile?.leg_length_cm ?? null,
       });
       setFitResult(result);
     } catch {
@@ -110,7 +105,7 @@ const Item = () => {
         setFitResult({
           item_id: Number(id),
           size_label: selectedSizeLabel,
-          gender: gender,
+          gender,
           visual_markers: {
             h_end_cm: hEnd,
             line_position_pct: linePct,
@@ -123,13 +118,13 @@ const Item = () => {
             shoulders_fit: '',
           },
           user_body: {
-            gender: gender,
+            gender,
             height_cm: debouncedHeight,
-            leg_length_cm: 0,
-            hips_length_cm: 0,
-            waist_length_cm: 0,
-            breast_length_cm: 0,
-            shoulders_length_cm: 0,
+            leg_length_cm: profile?.leg_length_cm ?? 0,
+            hips_length_cm: profile?.hips_length_cm ?? 0,
+            waist_length_cm: profile?.waist_length_cm ?? 0,
+            breast_length_cm: profile?.breast_length_cm ?? 0,
+            shoulders_length_cm: profile?.shoulders_length_cm ?? 0,
           },
         });
       } else {
@@ -138,7 +133,7 @@ const Item = () => {
     } finally {
       setFitLoading(false);
     }
-  }, [id, item, debouncedHeight, selectedSizeLabel, gender]);
+  }, [id, item, debouncedHeight, selectedSizeLabel, gender, profile]);
 
   useEffect(() => {
     if (view === 'fitting') runFitting();
@@ -184,20 +179,12 @@ const Item = () => {
       <>
         <Header />
         <main className={styles.page}>
-          {/* Breadcrumb */}
           <nav className={styles.breadcrumb} aria-label="breadcrumb">
-            <a href="/" className={styles.breadcrumb__link}>
-              Home
-            </a>
+            <a href="/" className={styles.breadcrumb__link}>Home</a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a href="/catalog" className={styles.breadcrumb__link}>
-              Catalog
-            </a>
+            <a href="/catalog" className={styles.breadcrumb__link}>Catalog</a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a
-              href={`/catalog?brands=${item.brand}`}
-              className={styles.breadcrumb__link}
-            >
+            <a href={`/catalog?brands=${item.brand}`} className={styles.breadcrumb__link}>
               {item.brand}
             </a>
             <span className={styles.breadcrumb__sep}>/</span>
@@ -205,7 +192,6 @@ const Item = () => {
 
           <h1 className={styles.title}>{item.name}</h1>
 
-          {/* Image */}
           <div className={styles.imageWrap}>
             <img
               src={item.imageUrl}
@@ -222,17 +208,10 @@ const Item = () => {
               disabled={favoriteLoading}
               aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
             >
-              <img
-                src={SavedIcon}
-                alt=""
-                aria-hidden="true"
-                width={22}
-                height={22}
-              />
+              <img src={SavedIcon} alt="" aria-hidden="true" width={22} height={22} />
             </button>
           </div>
 
-          {/* Description */}
           <p className={styles.description}>
             Elegant wrap dress with a flattering V-neck and adjustable waist tie
             — perfect for evenings and special occasions.
@@ -240,7 +219,6 @@ const Item = () => {
           <p className={styles.material}>Material: 100% Viscose</p>
           <p className={styles.material}>Lining: 100% Polyester</p>
 
-          {/* Size */}
           <div className={styles.section}>
             <p className={styles.sectionLabel}>Choose your size</p>
             <div className={styles.sizes}>
@@ -259,7 +237,6 @@ const Item = () => {
             </div>
           </div>
 
-          {/* Color (mock, display only) */}
           <div className={styles.section}>
             <p className={styles.sectionLabel}>Choose your color</p>
             <div className={styles.colors}>
@@ -274,31 +251,20 @@ const Item = () => {
             </div>
           </div>
 
-          {/* Price */}
           <div className={styles.priceRow}>
             <span className={styles.priceLabel}>Price</span>
             <span className={styles.priceValue}>{item.price}$</span>
           </div>
 
-          {/* CTA buttons */}
           <div className={styles.actions}>
-            <PrimaryButton
-              onClick={handleAddToCart}
-              loading={cartLoading}
-              disabled={cartAdded}
-            >
+            <PrimaryButton onClick={handleAddToCart} loading={cartLoading} disabled={cartAdded}>
               {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
             </PrimaryButton>
-
-            <button
-              className={styles.tryOnBtn}
-              onClick={() => setView('fitting')}
-            >
+            <button className={styles.tryOnBtn} onClick={() => setView('fitting')}>
               Virtual Try On
             </button>
           </div>
 
-          {/* You may also like */}
           <section className={styles.similar}>
             <div className={styles.similar__header}>
               <h2 className={styles.similar__title}>You may also like</h2>
@@ -337,7 +303,6 @@ const Item = () => {
     <>
       <Header />
       <main className={styles.page}>
-        {/* Gender toggle + back */}
         <div className={styles.fitting__topRow}>
           <div className={styles.genderToggle}>
             {GENDER_TOGGLE.map(({ value, label }) => (
@@ -350,11 +315,7 @@ const Item = () => {
               </button>
             ))}
           </div>
-
-          <button
-            className={styles.editBtn}
-            onClick={() => setIsMeasurementsOpen(true)}
-          >
+          <button className={styles.editBtn} onClick={() => setIsMeasurementsOpen(true)}>
             Edit Measurements
             <img src={ChevronRightIcon} alt="" width={16} height={16} />
           </button>
@@ -363,12 +324,9 @@ const Item = () => {
         <EditMeasurementsModal
           isOpen={isMeasurementsOpen}
           onClose={() => setIsMeasurementsOpen(false)}
-          onSave={() => {
-            runFitting();
-          }}
+          onSave={() => runFitting()}
         />
 
-        {/* Silhouette */}
         {(() => {
           const selectedMeasurement = item.measurements.find(
             (m) => m.sizeLabel === selectedSizeLabel
@@ -389,7 +347,6 @@ const Item = () => {
           );
         })()}
 
-        {/* Height slider */}
         <div className={styles.sliderWrap}>
           <input
             type="range"
@@ -406,11 +363,9 @@ const Item = () => {
           </div>
         </div>
 
-        {/* Item info */}
         <h1 className={styles.title}>{item.name}</h1>
         <p className={styles.brand}>{item.brand}</p>
 
-        {/* Size */}
         <div className={styles.section}>
           <p className={styles.sectionLabel}>Choose your size</p>
           <div className={styles.sizes}>
@@ -429,7 +384,6 @@ const Item = () => {
           </div>
         </div>
 
-        {/* Color (mock) */}
         <div className={styles.section}>
           <p className={styles.sectionLabel}>Choose your color</p>
           <div className={styles.colors}>
@@ -444,13 +398,11 @@ const Item = () => {
           </div>
         </div>
 
-        {/* Price */}
         <div className={styles.priceRow}>
           <span className={styles.priceLabel}>Price</span>
           <span className={styles.priceValue}>{item.price}$</span>
         </div>
 
-        {/* CTA */}
         <div className={styles.actions}>
           <PrimaryButton
             onClick={handleAddToCart}
@@ -461,7 +413,6 @@ const Item = () => {
           </PrimaryButton>
         </div>
 
-        {/* You may also like */}
         <section className={styles.similar}>
           <div className={styles.similar__header}>
             <h2 className={styles.similar__title}>You may also like</h2>

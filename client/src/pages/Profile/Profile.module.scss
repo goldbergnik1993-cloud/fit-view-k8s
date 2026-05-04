@@ -85,10 +85,14 @@
   min-width: 0;
 }
 
+// ─── Content inner — mobile: 343px centered ───────────────────────────────────
+
 .profile__content-inner {
   display: flex;
   flex-direction: column;
   gap: $spacing-24;
+  width: 343px;
+  margin: 0 auto;
 }
 
 // ─── Cards ────────────────────────────────────────────────────────────────────
@@ -198,12 +202,9 @@
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
 
 @include tablet {
-  .profile__card {
-    max-width: 470px;
-  }
-
   .profile__content-inner {
-    max-width: 470px;
+    width: 470px;
+    margin: 0 auto;
   }
 }
 
@@ -256,11 +257,9 @@
     img, svg { width: 24px; height: 24px; }
   }
 
-  .profile__card {
-    max-width: none;
-  }
-
+  // Desktop: content-inner 448px centered
   .profile__content-inner {
-    max-width: none;
+    width: 448px;
+    margin: 0 auto;
   }
 }
