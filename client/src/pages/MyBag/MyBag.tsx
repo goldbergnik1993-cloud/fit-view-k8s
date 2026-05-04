@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
-import ItemCard from '../../shared/components/ItemCard/ItemCard';
+import EmptyState from '../../shared/components/EmptyState/EmptyState';
+import { SimilarItems } from '../../shared/components/SimilarItems/SimilarItems';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
-import { useCart } from '../../hooks/useCart';
-import { useItems } from '../../hooks/useItems';
+import { useCart } from '../../providers/CartContext';
 import { ordersApi, type DeliveryMethod } from '../../services/api';
-import type { ClothingItem } from '../../types/clothing';
 import type { Cart, CartItem } from '../../services/api';
 import ChevronDownIcon from '../../assets/icons/chevron-down.svg';
 import XIcon from '../../assets/icons/x.svg';
+import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
 import styles from './MyBag.module.scss';
 
 // ─── Step indicators ──────────────────────────────────────────────────────────
@@ -72,7 +72,6 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
             {ci.size_label && (
               <p className={styles['cart-item__brand']}>Size: {ci.size_label}</p>
             )}
-
             <div className={styles['cart-item__qty']}>
               <button
                 className={styles['cart-item__qty-btn']}
@@ -100,7 +99,6 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
       <span className={styles['subtotal__value']}>${cart.total_price}</span>
     </div>
 
-    {/* Promo code */}
     <div className={styles['promo']}>
       <button
         className={styles['promo__toggle']}
@@ -128,7 +126,6 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
       )}
     </div>
 
-    {/* Summary */}
     <div className={styles['summary']}>
       <div className={styles['summary__row']}>
         <span>Subtotal</span><span>${cart.total_price}</span>
@@ -199,7 +196,6 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
 
       <section className={styles['form-section']}>
         <h2 className={styles['form-section__title']}>Shipping details</h2>
-
         <div className={styles['form-field']}>
           <label className={styles['form-field__label']}>First Name *</label>
           <input type="text" placeholder="John" value={form.firstName} onChange={set('firstName')} className={styles['form-field__input']} />
@@ -301,7 +297,7 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
 
 // ─── Step 4 — Success ─────────────────────────────────────────────────────────
 
-const Step4 = ({ recommendations }: { recommendations: ClothingItem[] }) => (
+const Step4 = () => (
   <div className={styles['step4']}>
     <h1 className={styles['page-title']}>My Bag</h1>
 
@@ -326,61 +322,7 @@ const Step4 = ({ recommendations }: { recommendations: ClothingItem[] }) => (
       </Link>
     </div>
 
-    {recommendations.length > 0 && (
-      <section className={styles['similar']}>
-        <div className={styles['similar__header']}>
-          <h2 className={styles['similar__title']}>You may also like</h2>
-          <div className={styles['similar__nav']}>
-            <button aria-label="Previous">‹</button>
-            <button aria-label="Next">›</button>
-          </div>
-        </div>
-        <div className={styles['similar__list']}>
-          {recommendations.slice(0, 2).map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
-      </section>
-    )}
-  </div>
-);
-
-// ─── Empty state ──────────────────────────────────────────────────────────────
-
-const EmptyBag = ({ recommendations }: { recommendations: ClothingItem[] }) => (
-  <div className={styles['empty']}>
-    <h1 className={styles['page-title']}>My Bag</h1>
-
-    <div className={styles['empty__illustration']} aria-hidden="true">
-      <svg width="160" height="180" viewBox="0 0 160 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M30 55 L130 55 L115 150 H45 L30 55Z" stroke="#0D0C0D" strokeWidth="2" fill="none" />
-        <path d="M55 55 Q55 25 80 25 Q105 25 105 55" stroke="#0D0C0D" strokeWidth="2" fill="none" />
-      </svg>
-    </div>
-
-    <h2 className={styles['empty__title']}>Nothing in your bag yet!</h2>
-    <p className={styles['empty__text']}>Browse our store, find items & happy shopping!</p>
-
-    <Link to="/catalog">
-      <PrimaryButton>Browse Items</PrimaryButton>
-    </Link>
-
-    {recommendations.length > 0 && (
-      <section className={styles['similar']}>
-        <div className={styles['similar__header']}>
-          <h2 className={styles['similar__title']}>You may also like</h2>
-          <div className={styles['similar__nav']}>
-            <button aria-label="Previous">‹</button>
-            <button aria-label="Next">›</button>
-          </div>
-        </div>
-        <div className={styles['similar__list']}>
-          {recommendations.slice(0, 2).map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
-      </section>
-    )}
+    <SimilarItems />
   </div>
 );
 
@@ -399,7 +341,6 @@ const INITIAL_FORM: FormState = {
 
 const MyBag = () => {
   const { cart, loading, updateQuantity, removeItem } = useCart();
-  const { items: recommendations } = useItems({ per_page: 4 });
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [promoOpen, setPromoOpen] = useState(false);
@@ -421,7 +362,8 @@ const MyBag = () => {
       });
       const session = await ordersApi.checkout(order.id);
       window.location.href = session.checkout_url;
-    } catch {
+    } catch (err) {
+      console.warn('Checkout failed:', err);
       setStep(4);
     } finally {
       setSubmitting(false);
@@ -441,7 +383,13 @@ const MyBag = () => {
       <Header />
       <main className={styles.main}>
         {isEmpty && step !== 4 ? (
-          <EmptyBag recommendations={recommendations} />
+          <EmptyState
+            title="Nothing in your bag yet!"
+            subtitle="Browse our store, find items & happy shopping!"
+            buttonText="Browse Items"
+            buttonPath="/catalog"
+            illustration={EmptyBagIllustration}
+          />
         ) : step === 1 && cart ? (
           <Step1
             cart={cart}
@@ -466,7 +414,7 @@ const MyBag = () => {
             submitting={submitting}
           />
         ) : (
-          <Step4 recommendations={recommendations} />
+          <Step4 />
         )}
       </main>
       <Footer />

@@ -315,30 +315,6 @@
   color: $color-input-border;
 }
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
-
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.empty__illustration {
-  margin: $spacing-48 0 $spacing-32 0;
-}
-
-.empty__title {
-  @include h2;
-  margin: 0 0 $spacing-8 0;
-}
-
-.empty__text {
-  @include text(14px, 400);
-  margin: 0 0 $spacing-32 0;
-  max-width: 280px;
-}
-
 // ─── Success state ────────────────────────────────────────────────────────────
 
 .success {
@@ -377,47 +353,7 @@
   &:hover { opacity: 0.7; }
 }
 
-// ─── Similar items ────────────────────────────────────────────────────────────
-
-.similar {
-  width: 100%;
-  margin-top: $spacing-48;
-}
-
-.similar__header {
-  @include flex-between;
-  margin-bottom: $spacing-16;
-}
-
-.similar__title {
-  @include h3;
-  margin: 0;
-}
-
-.similar__nav {
-  display: flex;
-  gap: $spacing-8;
-
-  button {
-    @include flex-center;
-    width: 32px;
-    height: 32px;
-    border: 1px solid $color-card-bg;
-    border-radius: 4px;
-    @include text(18px, 400);
-    transition: opacity 0.2s ease;
-
-    &:hover { opacity: 0.6; }
-  }
-}
-
-.similar__list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--card-gap);
-}
-
-// ─── Step 1 specific ─────────────────────────────────────────────────────────
+// ─── Step specifics ───────────────────────────────────────────────────────────
 
 .step1 {
   max-width: 600px;
@@ -425,23 +361,17 @@
   width: 100%;
 }
 
-// ─── Step 2 specific ─────────────────────────────────────────────────────────
-
 .step2 {
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
 }
 
-// ─── Step 3 specific ─────────────────────────────────────────────────────────
-
 .step3 {
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
 }
-
-// ─── Step 4 specific ─────────────────────────────────────────────────────────
 
 .step4 {
   max-width: 600px;
@@ -478,7 +408,6 @@
     padding: $spacing-48 var(--container-padding);
   }
 
-  // Two-column layout for steps 1-3
   .step1,
   .step2,
   .step3 {
@@ -490,7 +419,6 @@
     align-items: start;
   }
 
-  // Page title & subtitle span full width
   .page-title {
     grid-column: 1 / -1;
     font-size: 32px;
@@ -500,24 +428,18 @@
     grid-column: 1 / -1;
   }
 
-  // Step 1: left column = cart list + subtotal + promo; right = summary + button
   .step1 {
-    .cart-list    { grid-column: 1; grid-row: 3; }
-    .subtotal     { grid-column: 1; grid-row: 4; }
-    .promo        { grid-column: 1; grid-row: 5; }
-    .summary      { grid-column: 2; grid-row: 3 / 5; }
+    .cart-list { grid-column: 1; grid-row: 3; }
+    .subtotal  { grid-column: 1; grid-row: 4; }
+    .promo     { grid-column: 1; grid-row: 5; }
+    .summary   { grid-column: 2; grid-row: 3 / 5; }
   }
 
-  // Step 4 full width
   .step4 {
     max-width: 600px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .similar__list {
-    grid-template-columns: repeat(4, 1fr);
   }
 }
