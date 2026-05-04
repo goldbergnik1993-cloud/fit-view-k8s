@@ -79,44 +79,93 @@ const PersonalDetailsTab = ({ profile }: { profile: ProfileResponse }) => (
   </div>
 );
 
+// ─── Measurement fields config ────────────────────────────────────────────────
+
+type MeasurementKey =
+  | 'shoulders_length_cm'
+  | 'breast_length_cm'
+  | 'hips_length_cm'
+  | 'waist_length_cm'
+  | 'leg_length_cm';
+
+const MEASUREMENT_FIELDS: { key: MeasurementKey; label: string; tip: string }[] = [
+  {
+    key: 'shoulders_length_cm',
+    label: 'Enter shoulder width (cm)',
+    tip: 'Measure across the back from the edge of one shoulder to the other.',
+  },
+  {
+    key: 'breast_length_cm',
+    label: 'Enter chest girth (cm)',
+    tip: 'Measure horizontally around the fullest part of the chest.',
+  },
+  {
+    key: 'hips_length_cm',
+    label: 'Enter hip girth (cm)',
+    tip: 'Measure horizontally around the widest part of the hips.',
+  },
+  {
+    key: 'waist_length_cm',
+    label: 'Enter waist girth (cm)',
+    tip: 'Measure horizontally around the narrowest part of the waistline (typically just above the belly button).',
+  },
+  {
+    key: 'leg_length_cm',
+    label: 'Enter inseam length (cm)',
+    tip: 'Measure from the crotch to the bottom of the leg.',
+  },
+];
+
 // ─── Measurement Field ────────────────────────────────────────────────────────
 
 const MeasurementField = ({
   label,
+  tip,
   value,
   onChange,
 }: {
   label: string;
+  tip: string;
   value: string;
   onChange: (v: string) => void;
-}) => (
-  <div className={styles['profile__field']}>
-    <label className={styles['profile__field-label']}>
-      {label}
-      <img
-        src={InfoIcon}
-        alt="info"
-        width={16}
-        height={16}
-        className={styles['profile__field-info']}
+}) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  return (
+    <div className={styles['profile__field']}>
+      <label className={styles['profile__field-label']}>
+        {label}
+        <span className={styles['profile__field-tooltip-wrap']}>
+          <button
+            type="button"
+            className={styles['profile__field-info-btn']}
+            onClick={() => setTooltipOpen((v) => !v)}
+            aria-label="Show tip"
+          >
+            <img src={InfoIcon} alt="" width={16} height={16} />
+          </button>
+          {tooltipOpen && (
+            <span className={styles['profile__field-tooltip']}>{tip}</span>
+          )}
+        </span>
+      </label>
+      <input
+        type="number"
+        className={styles['profile__field-input']}
+        placeholder="0 cm"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
       />
-    </label>
-    <input
-      type="number"
-      className={styles['profile__field-input']}
-      placeholder="0 cm"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  </div>
-);
+    </div>
+  );
+};
 
 // ─── Measurements Tab ─────────────────────────────────────────────────────────
 
 const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
   const { updateProfile } = useUserProfile();
 
-  const [fields, setFields] = useState({
+  const [fields, setFields] = useState<Record<MeasurementKey, string>>({
     shoulders_length_cm: String(profile.shoulders_length_cm ?? ''),
     breast_length_cm: String(profile.breast_length_cm ?? ''),
     hips_length_cm: String(profile.hips_length_cm ?? ''),
@@ -126,28 +175,18 @@ const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const set = (key: keyof typeof fields) => (v: string) =>
+  const set = (key: MeasurementKey) => (v: string) =>
     setFields((prev) => ({ ...prev, [key]: v }));
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await updateProfile({
-        shoulders_length_cm: fields.shoulders_length_cm
-          ? Number(fields.shoulders_length_cm)
-          : null,
-        breast_length_cm: fields.breast_length_cm
-          ? Number(fields.breast_length_cm)
-          : null,
-        hips_length_cm: fields.hips_length_cm
-          ? Number(fields.hips_length_cm)
-          : null,
-        waist_length_cm: fields.waist_length_cm
-          ? Number(fields.waist_length_cm)
-          : null,
-        leg_length_cm: fields.leg_length_cm
-          ? Number(fields.leg_length_cm)
-          : null,
+        shoulders_length_cm: fields.shoulders_length_cm ? Number(fields.shoulders_length_cm) : null,
+        breast_length_cm: fields.breast_length_cm ? Number(fields.breast_length_cm) : null,
+        hips_length_cm: fields.hips_length_cm ? Number(fields.hips_length_cm) : null,
+        waist_length_cm: fields.waist_length_cm ? Number(fields.waist_length_cm) : null,
+        leg_length_cm: fields.leg_length_cm ? Number(fields.leg_length_cm) : null,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -158,31 +197,15 @@ const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
 
   return (
     <div className={styles['profile__content-inner']}>
-      <MeasurementField
-        label="Enter shoulder width (cm)"
-        value={fields.shoulders_length_cm}
-        onChange={set('shoulders_length_cm')}
-      />
-      <MeasurementField
-        label="Enter chest girth (cm)"
-        value={fields.breast_length_cm}
-        onChange={set('breast_length_cm')}
-      />
-      <MeasurementField
-        label="Enter hip girth (cm)"
-        value={fields.hips_length_cm}
-        onChange={set('hips_length_cm')}
-      />
-      <MeasurementField
-        label="Enter waist girth (cm)"
-        value={fields.waist_length_cm}
-        onChange={set('waist_length_cm')}
-      />
-      <MeasurementField
-        label="Enter inseam length (cm)"
-        value={fields.leg_length_cm}
-        onChange={set('leg_length_cm')}
-      />
+      {MEASUREMENT_FIELDS.map(({ key, label, tip }) => (
+        <MeasurementField
+          key={key}
+          label={label}
+          tip={tip}
+          value={fields[key]}
+          onChange={set(key)}
+        />
+      ))}
       <PrimaryButton onClick={handleSave} loading={saving} disabled={saved}>
         {saved ? '✓ Saved' : 'Save Measurements'}
       </PrimaryButton>
@@ -229,7 +252,6 @@ const Profile = () => {
       <main className={styles['profile']}>
         <h1 className={styles['profile__title']}>My Profile</h1>
 
-        {/* Mobile / Tablet: horizontal scrollable tabs */}
         <div
           className={styles['profile__tabs']}
           role="tablist"
@@ -251,7 +273,6 @@ const Profile = () => {
           ))}
         </div>
 
-        {/* Desktop: sidebar + content */}
         <div className={styles['profile__layout']}>
           <aside className={styles['profile__sidebar']}>
             <nav aria-label="Profile navigation">
