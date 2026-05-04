@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFavorites } from '../../providers/FavoritesContext';
+import { useCart } from '../../providers/CartContext'; // Добавлен импорт
 import {
   itemsApi,
-  cartApi,
-  type FittingRoomResponse,
+  type FittingRoomResponse, // cartApi удален отсюда
 } from '../../services/api';
 import { useItem, useItems } from '../../hooks/useItems';
 import { useUserProfile } from '../../hooks/useUserProfile';
@@ -47,6 +47,8 @@ const Item = () => {
   const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
 
   const { isFavorite: isFav, toggleFavorite } = useFavorites();
+  const { addItem } = useCart(); // Добавлена деструктуризация из контекста
+  
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
@@ -80,7 +82,6 @@ const Item = () => {
     if (!item || !id || !selectedSizeLabel) return;
     setFitLoading(true);
     try {
-      // ─── Передаём все мерки из профиля ───────────────────────────────
       const result = await itemsApi.fitItem(Number(id), {
         size_label: selectedSizeLabel,
         height_cm: debouncedHeight,
@@ -149,15 +150,16 @@ const Item = () => {
     }
   };
 
+  // Заменен handleAddToCart согласно инструкции
   const handleAddToCart = async () => {
     if (!item) return;
     setCartLoading(true);
     try {
-      await cartApi.addItem(Number(item.id), selectedSizeLabel ?? '');
+      await addItem(Number(item.id), selectedSizeLabel ?? '');
       setCartAdded(true);
       setTimeout(() => setCartAdded(false), 2000);
-    } catch {
-      // ignore
+    } catch (err) {
+      console.warn('Failed to add to cart:', err);
     } finally {
       setCartLoading(false);
     }
@@ -171,8 +173,6 @@ const Item = () => {
 
   if (loading) return <div className={styles.state}>Loading...</div>;
   if (error || !item) return <div className={styles.state}>Item not found</div>;
-
-  // ─── Card View ──────────────────────────────────────────────────────────────
 
   if (view === 'card') {
     return (
@@ -296,8 +296,6 @@ const Item = () => {
       </>
     );
   }
-
-  // ─── Fitting Room View ──────────────────────────────────────────────────────
 
   return (
     <>
