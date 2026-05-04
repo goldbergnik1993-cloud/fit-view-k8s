@@ -7,7 +7,10 @@ import {
 import type { ClothingItem } from '../types/clothing';
 
 export function mapItem(item: BackendItem): ClothingItem {
-  console.log('raw available_measurements:', JSON.stringify(item.available_measurements));
+  console.log(
+    'raw available_measurements:',
+    JSON.stringify(item.available_measurements)
+  );
   const brandName =
     typeof item.brand === 'object' && item.brand !== null
       ? item.brand.name
@@ -48,6 +51,8 @@ export function mapItem(item: BackendItem): ClothingItem {
       id: String(s.id),
       itemId: String(item.id),
       sizeLabel: s.sizeLabel,
+      totalLengthCm: s.totalLengthCm,
+      inseamCm: s.inseamCm,
     })),
   };
 }
