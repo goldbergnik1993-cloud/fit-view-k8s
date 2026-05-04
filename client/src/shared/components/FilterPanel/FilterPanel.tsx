@@ -52,7 +52,7 @@ export const FilterPanel = ({
 }: FilterPanelProps) => {
   const { isMobile } = useBreakpoint();
   const [local, setLocal] = useState<FilterState>(filters);
-  const [expanded, setExpanded] = useState<string[]>(['sort_by']);
+  const [expanded, setExpanded] = useState<string[]>([]);
 
   const toggle = (section: string) => {
     setExpanded((prev) =>
