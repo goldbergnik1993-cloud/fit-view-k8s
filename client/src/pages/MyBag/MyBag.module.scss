@@ -1,507 +1,682 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
-.page {
+.main {
   padding: $spacing-16 var(--container-padding) $spacing-88;
-  max-width: 600px;
-  margin: 0 auto;
-
-  @include tablet {
-    max-width: 744px;
-  }
-
-  @include desktop {
-    max-width: $container-max-width;
-    margin: 0 auto;
-    padding: $spacing-24 var(--container-padding) $spacing-88;
-  }
+  min-height: 60vh;
 }
 
-.state {
-  padding: $spacing-24;
-  text-align: center;
-  @include text(14px, 400);
-  color: $color-input-border;
-}
+// ─── Typography shared ────────────────────────────────────────────────────────
 
-// ─── Breadcrumb ───────────────────────────────────────────────────────────────
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: $spacing-16;
-}
-
-.breadcrumb__link {
-  @include text(12px, 400);
-  color: $color-input-border;
-  @include hover-opacity;
-}
-
-.breadcrumb__sep {
-  @include text(12px, 400);
-  color: $color-input-border;
-}
-
-// ─── Desktop two-column layout ────────────────────────────────────────────────
-
-.layout {
-  @include desktop {
-    display: grid;
-    grid-template-columns: 684px 566px;
-    gap: 142px;
-    align-items: start;
-  }
-}
-
-.layout__right {
-  margin-top: $spacing-16;
-
-  @include tablet {
-    margin-top: 0;
-  }
-
-  @include desktop {
-    margin-top: 0;
-    display: flex;
-    flex-direction: column;
-    height: 490px;
-  }
-}
-
-.layout__right-spacer {
-  @include desktop {
-    flex: 1;
-  }
-}
-
-// ─── Title ────────────────────────────────────────────────────────────────────
-
-// Мобайл: над картинкой — скрывается на планшете и десктопе
-.title {
-  font-family: $font-family-heading;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
+.page-title {
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 500;
   color: $color-text;
-  margin: 0 0 $spacing-16;
-
-  @include tablet {
-    display: none;
-  }
-}
-
-// Планшет + десктоп: под картинкой (планшет) / в правой колонке (десктоп)
-.title--right {
-  display: none;
-  font-family: $font-family-heading;
-  font-weight: 700;
-  line-height: 1.2;
-  color: $color-text;
-  margin: 0 0 $spacing-16;
-
-  @include tablet {
-    display: block;
-    font-size: 32px;
-    margin-top: $spacing-24; // отступ от картинки на планшете
-  }
-
-  @include desktop {
-    display: block;
-    font-size: 32px;
-    margin-top: 0; // на десктопе контент выровнен по верху картинки через grid align-items: start
-  }
-}
-
-.brand {
-  @include text(14px, 400);
-  color: $color-input-border;
-  margin: 0 0 $spacing-16;
-}
-
-// ─── Image ────────────────────────────────────────────────────────────────────
-
-.imageWrap {
-  position: relative;
-  width: 100%;
-  border-radius: 16px;
-  overflow: hidden;
-  background: $color-card-bg;
-  height: 340px;
-
-  @include tablet {
-    height: 490px;
-  }
-
-  @include desktop {
-    height: 490px;
-  }
-}
-
-.image {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-// ─── Favorite button ──────────────────────────────────────────────────────────
-
-.favoriteBtn {
-  position: absolute;
-  bottom: $spacing-16;
-  right: $spacing-16;
-  width: 40px;
-  height: 40px;
-  background: none;
-  border: none;
-  padding: 0;
-  @include flex-center;
-  color: $color-white;
-  transition: opacity 0.2s ease, color 0.2s ease;
-
-  &:hover { opacity: 0.7; }
-
-  &--active {
-    color: $color-primary;
-  }
-}
-
-// ─── Description ─────────────────────────────────────────────────────────────
-
-.description {
-  @include text(16px, 400, 1.5);
-  margin: 0 0 $spacing-8;
-}
-
-.material {
-  @include text(14px, 400);
   margin: 0 0 4px;
 }
 
-// ─── Section ─────────────────────────────────────────────────────────────────
+.page-subtitle {
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 400;
+  color: $color-text;
+  margin: 0 0 $spacing-16;
+}
 
-.section {
+// ─── Step Dots ────────────────────────────────────────────────────────────────
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
   margin-top: $spacing-16;
 }
 
-.section--first {
-  margin-top: $spacing-32;
-}
-
-.sectionLabel {
-  @include text(16px, 400);
-  color: $color-text;
-  margin: 0 0 $spacing-8;
-}
-
-// ─── Sizes ────────────────────────────────────────────────────────────────────
-
-.sizes {
-  display: flex;
-  align-items: center;
-  gap: $spacing-8;
-}
-
-.sizeBtn {
-  width: 33px;
-  height: 32px;
-  border-radius: 4px;
-  border: 1px solid #787880;
-  background: $color-white;
-  @include text(14px, 400);
-  @include flex-center;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
-
-  &:hover { border-color: #4C494D; }
-
-  &--active {
-    border-color: #4C494D;
-    background: #4C494D;
-    color: $color-white;
-  }
-}
-
-.infoBtn {
-  width: 32px;
-  height: 32px;
-  @include flex-center;
+.step-dots__dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  color: $color-text;
-  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
-
-  &:hover { opacity: 0.7; }
+  background: $color-card-bg;
+  display: block;
 
   &--active {
-    background: $color-text;
-    color: $color-white;
+    background: $color-primary;
   }
 }
 
-// ─── Size Guide ───────────────────────────────────────────────────────────────
+// ─── Step 1 ───────────────────────────────────────────────────────────────────
 
-.sizeGuide {
-  margin-top: $spacing-8;
-  padding: $spacing-16;
-  background: $color-white;
-  border: 1px solid $color-primary;
-  border-radius: 8px;
-  box-shadow: 0 5px 0 0 rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-8;
-}
-
-.sizeGuide__row {
-  @include text(13px, 400, 1.5);
-  margin: 0;
-}
-
-// ─── Colors ───────────────────────────────────────────────────────────────────
-
-.colors {
-  display: flex;
-  gap: $spacing-8;
-}
-
-.colorDot {
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  display: block;
-  flex-shrink: 0;
-}
-
-// ─── Price ────────────────────────────────────────────────────────────────────
-
-.priceRow {
-  @include flex-between;
-  margin-top: $spacing-32;
-}
-
-.priceLabel {
-  font-family: $font-family-heading;
-  font-size: 24px;
-  font-weight: 700;
-  color: $color-text;
-}
-
-.priceValue {
-  font-family: $font-family-heading;
-  font-size: 24px;
-  font-weight: 700;
-  color: $color-text;
-}
-
-// ─── Actions ─────────────────────────────────────────────────────────────────
-
-.actions {
+.step1 {
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
-  margin-top: $spacing-16;
+}
+
+.step1__left {
+  display: flex;
+  flex-direction: column;
+}
+
+.step1__right {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+// ─── Cart List ────────────────────────────────────────────────────────────────
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+// ─── Cart Item ────────────────────────────────────────────────────────────────
+
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.cart-item__remove {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.7; }
+}
+
+.cart-item__card {
+  display: flex;
+  flex-direction: row;
+  background: $color-white;
+  border-radius: 12px;
+  overflow: hidden;
+  padding-left: 16px; // offset for remove button
+}
+
+.cart-item__image {
+  width: 343px;
+  height: 170px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+
+  // On mobile, make it responsive
+  max-width: 120px;
+  height: 120px;
 
   @include tablet {
-    flex-direction: row;
-    gap: $spacing-24;
+    max-width: 160px;
+    height: 140px;
   }
 
   @include desktop {
-    flex-direction: row;
-    gap: $spacing-24;
+    max-width: 343px;
+    height: 170px;
   }
 }
 
-.actions__primary {
-  width: 100%;
-
-  > button { width: 100%; }
-
-  @include tablet {
-    flex: 1;
-  }
-
-  @include desktop {
-    flex: 1;
-  }
+.cart-item__info {
+  padding: $spacing-16;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
 }
 
-.cartError {
-  @include text(13px, 400);
-  color: $color-error;
-  margin: $spacing-4 0 0;
+.cart-item__name {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  margin: 0;
+}
+
+.cart-item__brand {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-input-border;
+  margin: 0;
+}
+
+.cart-item__size {
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 400;
+  color: $color-input-border;
+  margin: 0;
+}
+
+.cart-item__qty {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  margin-top: $spacing-8;
+}
+
+.cart-item__qty-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid $color-card-bg;
+  border-radius: 6px;
+  @include flex-center;
+  transition: border-color 0.2s ease;
+
+  &:hover { border-color: $color-text; }
+}
+
+.cart-item__qty-value {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  min-width: 20px;
   text-align: center;
 }
 
-.tryOnBtn {
+// ─── Cart Item Subtotal ───────────────────────────────────────────────────────
+
+.cart-item__subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-8 0;
+  border-top: 1px solid $color-card-bg;
+  margin-top: 4px;
+}
+
+.cart-item__subtotal-label {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.cart-item__subtotal-value {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+// ─── Promo ────────────────────────────────────────────────────────────────────
+
+.promo {
+  display: flex;
+  flex-direction: column;
+}
+
+.promo__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  min-height: 56px;
+  padding: $spacing-16 0;
+  border-bottom: 1px solid $color-card-bg;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.7; }
+}
+
+.promo__chevron {
+  transition: transform 0.2s ease;
+}
+
+.promo__chevron--open {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+}
+
+.promo__body {
+  display: flex;
+  gap: $spacing-8;
+  padding: $spacing-16 0;
+}
+
+.promo__input {
+  flex: 1;
+  height: 48px;
+  border: 1px solid $color-card-bg;
+  border-radius: 8px;
+  padding: 0 $spacing-16;
+  font-family: $font-family;
+  font-size: 16px;
+  outline: none;
+
+  &:focus { border-color: $color-primary; }
+}
+
+.promo__apply {
+  height: 48px;
+  padding: 0 $spacing-24;
+  border-radius: 8px;
+  background: $color-primary;
+  color: $color-white;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+
+  &:hover { background: $color-primary-hover; }
+}
+
+// ─── Summary ──────────────────────────────────────────────────────────────────
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-8 0;
+
+  &--total {
+    border-top: 1px solid $color-card-bg;
+    padding-top: $spacing-16;
+    margin-top: $spacing-8;
+  }
+}
+
+.summary__row-label {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+}
+
+.summary__row-value {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+}
+
+.summary__row-label--bold {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.summary__row-value--bold {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.summary__total-label {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.summary__total-value {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+// ─── Cart Compact (Step 2 & 3) ────────────────────────────────────────────────
+
+.cart-compact {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-bottom: $spacing-16;
+}
+
+.cart-compact__item {
+  display: flex;
+  gap: $spacing-16;
+  align-items: flex-start;
+}
+
+.cart-compact__image {
+  width: 64px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cart-compact__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-compact__name {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  margin: 0;
+}
+
+.cart-compact__brand {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-input-border;
+  margin: 0;
+}
+
+.cart-compact__qty {
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 400;
+  color: $color-input-border;
+  margin: 0;
+}
+
+.cart-compact__subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-8;
+  border-top: 1px solid $color-card-bg;
+}
+
+.cart-compact__subtotal-label {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.cart-compact__subtotal-value {
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+// ─── Step 2 ───────────────────────────────────────────────────────────────────
+
+.step2 {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.step2__left {
+  display: flex;
+  flex-direction: column;
+}
+
+.step2__right {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+
+.form-section {
+  margin-top: $spacing-24;
+}
+
+.form-section__title {
+  font-family: $font-family-heading;
+  font-size: 20px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0 0 $spacing-16;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field__label {
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 400;
+  color: $color-text;
+}
+
+.form-field__input {
+  height: 48px;
+  background: #E9E9F7;
+  border: none;
+  border-radius: 8px;
+  padding: 0 $spacing-16;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: $color-input-border;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px $color-primary;
+  }
+}
+
+// ─── Radio ────────────────────────────────────────────────────────────────────
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  cursor: pointer;
+  margin-bottom: $spacing-8;
+}
+
+.radio-input {
+  display: none;
+}
+
+.radio-custom {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid $color-input-border;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.2s ease;
+
+  .radio-input:checked + & {
+    border-color: $color-primary;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: $color-primary;
+    }
+  }
+}
+
+// ─── Step 3 ───────────────────────────────────────────────────────────────────
+
+.step3 {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+}
+
+.step3__left {
+  display: flex;
+  flex-direction: column;
+}
+
+.step3__right {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.review-text {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  line-height: 1.6;
+  margin: 0;
+}
+
+// ─── Step 4 ───────────────────────────────────────────────────────────────────
+
+.step4 {
+  display: flex;
+  flex-direction: column;
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $spacing-32 0;
+  gap: $spacing-16;
+}
+
+.success__illustration {
+  margin-bottom: $spacing-8;
+}
+
+.success__title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0;
+}
+
+.success__text {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-input-border;
+  margin: 0;
+}
+
+.success__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  width: 100%;
+  max-width: 343px;
+}
+
+.success__keep-shopping {
+  width: 100%;
+  height: 56px;
   border-radius: 8px;
   border: 1.5px solid $color-primary;
-  @include text(16px, 500);
-  color: $color-primary;
   background: transparent;
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 500;
+  color: $color-primary;
+  transition: background 0.2s ease, color 0.2s ease;
 
   &:hover {
     background: $color-primary;
     color: $color-white;
   }
+}
 
-  @include tablet {
-    flex: 1;
-    width: auto;
-    min-height: 48px;
-    height: 48px;
+// ─── Tablet (744px+) ──────────────────────────────────────────────────────────
+
+@include tablet {
+  .main {
+    padding: $spacing-24 var(--container-padding) $spacing-88;
   }
 
-  @include desktop {
-    flex: 1;
-    width: auto;
-    min-height: 48px;
-    height: 48px;
-  }
-}
-
-// ─── Similar ─────────────────────────────────────────────────────────────────
-
-.similar {
-  margin-top: $spacing-32;
-}
-
-.similar__header {
-  @include flex-between;
-  margin-bottom: $spacing-16;
-}
-
-.similar__title {
-  @include text(16px, 400);
-  margin: 0;
-}
-
-.similar__nav {
-  display: flex;
-  gap: $spacing-8;
-
-  button {
-    width: 32px;
-    height: 32px;
-    @include flex-center;
-    @include hover-opacity;
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-16;
   }
 }
 
-.similar__list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-16;
-}
+// ─── Desktop (1440px+) ────────────────────────────────────────────────────────
 
-// ─── Fitting Room ─────────────────────────────────────────────────────────────
-
-.fitting__topRow {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-8;
-  margin-bottom: $spacing-16;
-}
-
-.genderToggle {
-  display: flex;
-  gap: 8px;
-}
-
-.genderBtn {
-  width: 38px;
-  height: 38px;
-  padding: 8px;
-  @include text(18px, 400);
-  line-height: 100%;
-  color: #A8A8B2;
-  @include flex-center;
-  border: none;
-  transition: color 0.2s, border 0.2s;
-
-  &--active {
-    color: $color-text;
-    border: 1px solid $color-text;
-  }
-}
-
-.editBtn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  @include text(13px, 400);
-  @include hover-opacity;
-  color: $color-text;
-}
-
-// ─── Slider ───────────────────────────────────────────────────────────────────
-
-.sliderWrap {
-  margin: $spacing-16 0;
-}
-
-.slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 2px;
-  background: #676767;
-  border-radius: 2px;
-  cursor: pointer;
-  outline: none;
-  display: block;
-  position: relative;
-  z-index: 1;
-
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: $color-white;
-    border: 3px solid #676767;
-    cursor: pointer;
-    position: relative;
-    z-index: 2;
-    margin-top: -9px;
+@include desktop {
+  .main {
+    padding: $spacing-32 var(--container-padding) $spacing-88;
+    max-width: $container-max-width;
+    margin: 0 auto;
   }
 
-  &::-webkit-slider-runnable-track {
-    height: 2px;
-    background: #676767;
-    border-radius: 2px;
+  // Step 1: two columns, 60/40, gap 260px
+  .step1 {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 0;
+    column-gap: 260px;
+    align-items: start;
   }
 
-  &::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: $color-white;
-    border: 3px solid #676767;
-    cursor: pointer;
+  // Step 2: two columns
+  .step2 {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    column-gap: 260px;
+    align-items: start;
   }
 
-  &::-moz-range-track {
-    height: 2px;
-    background: #676767;
-    border-radius: 2px;
+  // Step 3: two columns
+  .step3 {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    column-gap: 260px;
+    align-items: start;
   }
-}
 
-.sliderLabels {
-  @include flex-between;
-  margin-top: $spacing-8;
+  // Step 4: centered
+  .step4 {
+    align-items: center;
+  }
 
-  span {
-    @include text(12px, 400);
-    color: $color-input-border;
+  .success {
+    max-width: 480px;
+    margin: 0 auto;
   }
 }
