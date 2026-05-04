@@ -14,7 +14,7 @@
 
   @include desktop {
     max-width: $container-max-width;
-    margin: 0;
+    margin: 0 auto;
     padding: $spacing-24 var(--container-padding) $spacing-88;
   }
 }
@@ -51,12 +51,19 @@
 .layout {
   @include desktop {
     display: grid;
-    grid-template-columns: 684px 566px;
-    gap: 142px;
+    // 684 : 566 = ~54.7% : ~45.3% от общей ширины контента (без gap)
+    // gap 142px фиксированный
+    grid-template-columns: 1fr 142px 566px;
+    grid-template-areas: "left . right";
     align-items: start;
   }
 }
 
+.layout__left {
+  @include desktop {
+    grid-area: left;
+  }
+}
 
 .layout__right {
   margin-top: $spacing-16;
@@ -66,12 +73,23 @@
   }
 
   @include desktop {
+    grid-area: right;
     margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 490px;
+  }
+}
+
+.layout__right-spacer {
+  @include desktop {
+    flex: 1;
   }
 }
 
 // ─── Title ────────────────────────────────────────────────────────────────────
 
+// Мобайл: над картинкой — скрывается на планшете и десктопе
 .title {
   font-family: $font-family-heading;
   font-size: 24px;
@@ -85,6 +103,7 @@
   }
 }
 
+// Планшет + десктоп: под картинкой (планшет) / в правой колонке (десктоп)
 .title--right {
   display: none;
   font-family: $font-family-heading;
@@ -96,13 +115,13 @@
   @include tablet {
     display: block;
     font-size: 32px;
-    margin-top: $spacing-24;
+    margin-top: $spacing-24; // отступ от картинки на планшете
   }
 
   @include desktop {
     display: block;
     font-size: 32px;
-    margin-top: 0;
+    margin-top: 0; // на десктопе контент выровнен по верху картинки через grid align-items: start
   }
 }
 
@@ -150,7 +169,7 @@
   border: none;
   padding: 0;
   @include flex-center;
-  color: $color-black;
+  color: $color-white;
   transition: opacity 0.2s ease, color 0.2s ease;
 
   &:hover { opacity: 0.7; }
@@ -220,15 +239,9 @@
   height: 32px;
   @include flex-center;
   border-radius: 50%;
-  transition: background 0.2s ease, opacity 0.2s ease;
+  transition: opacity 0.2s ease;
 
   &:hover { opacity: 0.7; }
-
-  &--active {
-    background: $color-text;
-
-    img { filter: invert(1); }
-  }
 }
 
 // ─── Size Guide ───────────────────────────────────────────────────────────────
