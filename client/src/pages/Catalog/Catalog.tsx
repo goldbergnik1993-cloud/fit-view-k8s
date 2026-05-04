@@ -389,10 +389,14 @@ const Catalog = () => {
         {/* Empty */}
         {!isEmptyBrand && !loading && !error && items.length === 0 && (
           <EmptyState
-            title="No items found"
-            subtitle="Try changing the filter or check back later"
-            buttonText="Show all"
+            title="Oops! No matches found"
+            subtitle="Try adjusting your filters or search terms."
+            buttonText="Clear All & Browse Items"
             buttonPath="/catalog"
+            onButtonClick={() => {
+              handleClearAll();
+              navigate('/catalog');
+            }}
           />
         )}
 
