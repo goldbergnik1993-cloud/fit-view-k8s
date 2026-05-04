@@ -20,6 +20,8 @@ export function mapItem(item: BackendItem): ClothingItem {
   const measurements = (item.available_measurements ?? []).map((s) => ({
     id: s.id,
     sizeLabel: s.size_label,
+    totalLengthCm: s.total_length_cm,
+    inseamCm: s.inseam_cm,
   }));
 
   return {
@@ -27,7 +29,8 @@ export function mapItem(item: BackendItem): ClothingItem {
     name: item.name,
     brand: brandName,
     category: item.category as ClothingItem['category'],
-    imageUrl: item.image_url?.replace('http://127.0.0.1', 'http://localhost') ?? '',
+    imageUrl:
+      item.image_url?.replace('http://127.0.0.1', 'http://localhost') ?? '',
     fittingImageUrl: item.fitting_image_url ?? null,
     price: Number(item.price),
     isFavorite: item.is_favorite ?? false,

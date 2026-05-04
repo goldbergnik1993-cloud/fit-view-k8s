@@ -194,7 +194,7 @@ export interface BackendItem {
   fitting_image_url?: string | null;
   mandatory_fields?: string[];
   available_sizes: { id: number; size_label: string }[];
-  available_measurements: { id: number; size_label: string }[];
+  available_measurements: { id: number; size_label: string; total_length_cm?: number; inseam_cm?: number }[];
 }
 
 export interface PaginatedResponse {
