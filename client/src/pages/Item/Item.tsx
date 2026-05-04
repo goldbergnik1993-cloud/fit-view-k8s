@@ -5,6 +5,7 @@ import { useCart } from '../../providers/CartContext';
 import { itemsApi, type FittingRoomResponse } from '../../services/api';
 import { useItem, useItems } from '../../hooks/useItems';
 import { useUserProfile } from '../../hooks/useUserProfile';
+import { useBreakpoint } from '../../hooks/useBreakpoint';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import Silhouette from '../../shared/components/Silhouette/Silhouette';
@@ -22,7 +23,7 @@ import {
   getResultLabel,
 } from '../../utils/fitCalculator';
 
-const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
+const MOCK_COLORS = ['#976B56', '#626044', '#B9C8DA', '#D8CAB3'];
 
 const MOCK_SIZE_GUIDE: Record<string, string> = {
   S: 'Chest 86–89" / Waist 62–65" / Hips 90–94"',
@@ -46,6 +47,7 @@ const Item = () => {
     per_page: 4,
   });
   const { profile } = useUserProfile();
+  const { isDesktop } = useBreakpoint();
 
   const [view, setView] = useState<View>('card');
   const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
@@ -172,10 +174,18 @@ const Item = () => {
     ? `Ends ${Math.round(hEndCm)} cm from floor`
     : 'Ends 0 cm from floor';
 
+  const selectedMeasurement = item?.measurements.find(
+    (m) => m.sizeLabel === selectedSizeLabel
+  );
+  const itemLengthCm =
+    selectedMeasurement?.totalLengthCm ??
+    selectedMeasurement?.inseamCm ??
+    null;
+
   const renderSizes = (itemData: typeof item) => {
     if (!itemData) return null;
     return (
-      <div className={styles.section}>
+      <>
         <p className={styles.sectionLabel}>Choose your size</p>
         <div className={styles.sizes}>
           {itemData.availableSizes.map((size) => (
@@ -203,14 +213,13 @@ const Item = () => {
             />
           </button>
         </div>
-      </div>
+      </>
     );
   };
 
   const renderColors = () => (
-    <div className={styles.section}>
+    <>
       {isSizeGuideOpen ? (
-        // Size guide занимает место секции цветов
         <div className={styles.sizeGuide}>
           {item?.availableSizes.map((size) => (
             <p key={size.id} className={styles.sizeGuide__row}>
@@ -220,7 +229,7 @@ const Item = () => {
         </div>
       ) : (
         <>
-          <p className={styles.sectionLabel}>Choose your color</p>
+          <p className={styles.sectionLabel} style={{ marginTop: 16 }}>Choose your color</p>
           <div className={styles.colors}>
             {MOCK_COLORS.map((color) => (
               <span
@@ -233,7 +242,7 @@ const Item = () => {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 
   const renderFavoriteBtn = () => (
@@ -262,6 +271,78 @@ const Item = () => {
     </button>
   );
 
+  const renderGenderToggle = () => (
+    <div className={styles.fitting__left}>
+      <div className={styles.genderToggle}>
+        {GENDER_TOGGLE.map(({ value, label }) => (
+          <button
+            key={value}
+            className={`${styles.genderBtn} ${
+              gender === value ? styles['genderBtn--active'] : ''
+            }`}
+            onClick={() => setGender(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <button
+        className={styles.editBtn}
+        onClick={() => setIsMeasurementsOpen(true)}
+      >
+        Edit Measurements
+        <img src={ChevronRightIcon} alt="" width={16} height={16} />
+      </button>
+    </div>
+  );
+
+  const renderSlider = () => (
+    <div className={styles.sliderWrap}>
+      <input
+        type="range"
+        min={140}
+        max={210}
+        value={height}
+        onChange={(e) => setHeight(Number(e.target.value))}
+        className={styles.slider}
+        aria-label="Your height"
+      />
+      <div className={styles.sliderLabels}>
+        <span>Your Height</span>
+        <span>{height} cm</span>
+      </div>
+    </div>
+  );
+
+  const renderSimilar = () => (
+    <section className={styles.similar}>
+      <div className={styles.similar__header}>
+        <h2 className={styles.similar__title}>You may also like</h2>
+        <div className={styles.similar__nav}>
+          <button aria-label="Previous">
+            <img src={ChevronLeftIcon} alt="" width={20} height={20} />
+          </button>
+          <button aria-label="Next">
+            <img src={ChevronRightIcon} alt="" width={20} height={20} />
+          </button>
+        </div>
+      </div>
+      <div className={styles.similar__list}>
+        {similarItems
+          .filter((s) => s.id !== item?.id)
+          .slice(0, isDesktop ? 4 : 2)
+          .map((s) => (
+            <ItemCard
+              key={s.id}
+              item={s}
+              isFavorite={isFav(s.id)}
+              onFavoriteToggle={toggleFavorite}
+            />
+          ))}
+      </div>
+    </section>
+  );
+
   if (loading) return <div className={styles.state}>Loading...</div>;
   if (error || !item) return <div className={styles.state}>Item not found</div>;
 
@@ -284,9 +365,7 @@ const Item = () => {
 
           <div className={styles.layout}>
             <div className={styles.layout__left}>
-              {/* Название — только мобайл, над картинкой */}
               <h1 className={styles.title}>{item.name}</h1>
-
               <div className={styles.imageWrap}>
                 <img
                   src={item.imageUrl}
@@ -302,9 +381,7 @@ const Item = () => {
             </div>
 
             <div className={styles.layout__right}>
-              {/* Название — планшет (под картинкой) и десктоп (правая колонка) */}
               <h1 className={styles['title--right']}>{item.name}</h1>
-
               <p className={styles.description}>
                 Elegant wrap dress with a flattering V-neck and adjustable waist
                 tie — perfect for evenings and special occasions.
@@ -312,10 +389,13 @@ const Item = () => {
               <p className={styles.material}>Material: 100% Viscose</p>
               <p className={styles.material}>Lining: 100% Polyester</p>
 
-              {renderSizes(item)}
-              {renderColors()}
+              <div className={styles.section}>
+                {renderSizes(item)}
+              </div>
+              <div className={styles.section}>
+                {renderColors()}
+              </div>
 
-              {/* Спейсер — на десктопе толкает цену и кнопки вниз до уровня конца картинки */}
               <div className={styles['layout__right-spacer']} />
 
               <div className={styles.priceRow}>
@@ -355,44 +435,15 @@ const Item = () => {
     <>
       <Header />
       <main className={styles.page}>
+
+        {/* Основной ряд: левая (toggle+edit) + силуэт + правая (только десктоп) */}
         <div className={styles.fitting__topRow}>
-          <div className={styles.genderToggle}>
-            {GENDER_TOGGLE.map(({ value, label }) => (
-              <button
-                key={value}
-                className={`${styles.genderBtn} ${
-                  gender === value ? styles['genderBtn--active'] : ''
-                }`}
-                onClick={() => setGender(value)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          <button
-            className={styles.editBtn}
-            onClick={() => setIsMeasurementsOpen(true)}
-          >
-            Edit Measurements
-            <img src={ChevronRightIcon} alt="" width={16} height={16} />
-          </button>
-        </div>
 
-        <EditMeasurementsModal
-          isOpen={isMeasurementsOpen}
-          onClose={() => setIsMeasurementsOpen(false)}
-          onSave={() => runFitting()}
-        />
+          {/* Левая колонка: toggle + editBtn */}
+          {renderGenderToggle()}
 
-        {(() => {
-          const selectedMeasurement = item.measurements.find(
-            (m) => m.sizeLabel === selectedSizeLabel
-          );
-          const itemLengthCm =
-            selectedMeasurement?.totalLengthCm ??
-            selectedMeasurement?.inseamCm ??
-            null;
-          return (
+          {/* Центр: силуэт */}
+          <div className={styles.fitting__silhouette}>
             <Silhouette
               linePositionPct={fitLoading ? 50 : linePositionPct}
               label={fitLoading ? 'Calculating...' : fitLabel}
@@ -401,75 +452,79 @@ const Item = () => {
               gender={gender}
               loading={fitLoading}
             />
-          );
-        })()}
+          </div>
 
-        <div className={styles.sliderWrap}>
-          <input
-            type="range"
-            min={140}
-            max={210}
-            value={height}
-            onChange={(e) => setHeight(Number(e.target.value))}
-            className={styles.slider}
-            aria-label="Your height"
-          />
-          <div className={styles.sliderLabels}>
-            <span>Your Height</span>
-            <span>{height} cm</span>
+          {/* Правая колонка — только десктоп */}
+          <div className={styles.fitting__right}>
+            <h1 className={styles.fitting__right_title}>{item.name}</h1>
+            <p className={styles.fitting__right_brand}>{item.brand}</p>
+
+            <div style={{ marginTop: 16 }}>
+              {renderSizes(item)}
+            </div>
+            <div style={{ marginTop: 16 }}>
+              {renderColors()}
+            </div>
+
+            <div className={styles.fitting__right_price}>
+              <div className={styles.priceRow}>
+                <span className={styles.priceLabel}>Price:</span>
+                <span className={styles.priceValue}>{item.price}$</span>
+              </div>
+            </div>
+
+            <div className={styles.fitting__right_actions}>
+              <PrimaryButton
+                onClick={handleAddToCart}
+                loading={cartLoading}
+                disabled={cartAdded || !selectedSizeLabel}
+              >
+                {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+              </PrimaryButton>
+              {cartError && <p className={styles.cartError}>{cartError}</p>}
+            </div>
           </div>
         </div>
 
-        <h1 className={styles.title}>{item.name}</h1>
-        <p className={styles.brand}>{item.brand}</p>
+        <EditMeasurementsModal
+          isOpen={isMeasurementsOpen}
+          onClose={() => setIsMeasurementsOpen(false)}
+          onSave={() => runFitting()}
+        />
 
-        {renderSizes(item)}
-        {renderColors()}
+        {/* Слайдер — мобайл и планшет под силуэтом, десктоп тоже под силуэтом */}
+        <div className={styles.fitting__slider}>
+          {renderSlider()}
+        </div>
 
-        <div className={styles.priceRow}>
+        {/* Название, размеры, цена, кнопка — мобайл и планшет */}
+        <h1 className={styles.fitting__title}>{item.name}</h1>
+        <p className={styles.fitting__brand}>{item.brand}</p>
+
+        <div className={styles.fitting__section}>
+          {renderSizes(item)}
+        </div>
+        <div className={styles.fitting__section}>
+          {renderColors()}
+        </div>
+
+        <div className={styles.fitting__priceRow}>
           <span className={styles.priceLabel}>Price:</span>
           <span className={styles.priceValue}>{item.price}$</span>
         </div>
 
-        <div className={styles.actions}>
-          <div className={styles.actions__primary}>
-            <PrimaryButton
-              onClick={handleAddToCart}
-              loading={cartLoading}
-              disabled={cartAdded || !selectedSizeLabel}
-            >
-              {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
-            </PrimaryButton>
-            {cartError && <p className={styles.cartError}>{cartError}</p>}
-          </div>
+        <div className={styles.fitting__actions}>
+          <PrimaryButton
+            onClick={handleAddToCart}
+            loading={cartLoading}
+            disabled={cartAdded || !selectedSizeLabel}
+          >
+            {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+          </PrimaryButton>
+          {cartError && <p className={styles.cartError}>{cartError}</p>}
         </div>
 
-        <section className={styles.similar}>
-          <div className={styles.similar__header}>
-            <h2 className={styles.similar__title}>You may also like</h2>
-            <div className={styles.similar__nav}>
-              <button aria-label="Previous">
-                <img src={ChevronLeftIcon} alt="" width={20} height={20} />
-              </button>
-              <button aria-label="Next">
-                <img src={ChevronRightIcon} alt="" width={20} height={20} />
-              </button>
-            </div>
-          </div>
-          <div className={styles.similar__list}>
-            {similarItems
-              .filter((s) => s.id !== item.id)
-              .slice(0, 2)
-              .map((s) => (
-                <ItemCard
-                  key={s.id}
-                  item={s}
-                  isFavorite={isFav(s.id)}
-                  onFavoriteToggle={toggleFavorite}
-                />
-              ))}
-          </div>
-        </section>
+        {renderSimilar()}
 
         <Footer />
       </main>

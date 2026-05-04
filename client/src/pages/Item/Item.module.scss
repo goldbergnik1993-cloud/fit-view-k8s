@@ -46,13 +46,11 @@
   color: $color-input-border;
 }
 
-// ─── Desktop two-column layout ────────────────────────────────────────────────
+// ─── Desktop two-column layout (card view) ────────────────────────────────────
 
 .layout {
   @include desktop {
     display: grid;
-    // 684 : 566 = ~54.7% : ~45.3% от общей ширины контента (без gap)
-    // gap 142px фиксированный
     grid-template-columns: 1fr 142px 566px;
     grid-template-areas: "left . right";
     align-items: start;
@@ -87,9 +85,8 @@
   }
 }
 
-// ─── Title ────────────────────────────────────────────────────────────────────
+// ─── Title (card view) ────────────────────────────────────────────────────────
 
-// Мобайл: над картинкой — скрывается на планшете и десктопе
 .title {
   font-family: $font-family-heading;
   font-size: 24px;
@@ -103,7 +100,6 @@
   }
 }
 
-// Планшет + десктоп: под картинкой (планшет) / в правой колонке (десктоп)
 .title--right {
   display: none;
   font-family: $font-family-heading;
@@ -115,13 +111,13 @@
   @include tablet {
     display: block;
     font-size: 32px;
-    margin-top: $spacing-24; // отступ от картинки на планшете
+    margin-top: $spacing-24;
   }
 
   @include desktop {
     display: block;
     font-size: 32px;
-    margin-top: 0; // на десктопе контент выровнен по верху картинки через grid align-items: start
+    margin-top: 0;
   }
 }
 
@@ -131,7 +127,7 @@
   margin: 0 0 $spacing-16;
 }
 
-// ─── Image ────────────────────────────────────────────────────────────────────
+// ─── Image (card view) ────────────────────────────────────────────────────────
 
 .imageWrap {
   position: relative;
@@ -169,7 +165,7 @@
   border: none;
   padding: 0;
   @include flex-center;
-  color: $color-white;
+  color: $color-black;
   transition: opacity 0.2s ease, color 0.2s ease;
 
   &:hover { opacity: 0.7; }
@@ -195,10 +191,6 @@
 
 .section {
   margin-top: $spacing-16;
-}
-
-.section--first {
-  margin-top: $spacing-32;
 }
 
 .sectionLabel {
@@ -299,7 +291,7 @@
   color: $color-text;
 }
 
-// ─── Actions ─────────────────────────────────────────────────────────────────
+// ─── Actions (card view) ─────────────────────────────────────────────────────
 
 .actions {
   display: flex;
@@ -373,7 +365,7 @@
 // ─── Similar ─────────────────────────────────────────────────────────────────
 
 .similar {
-  margin-top: $spacing-32;
+  margin-top: 40px;
 }
 
 .similar__header {
@@ -402,36 +394,119 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-16;
+
+  @include desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
-// ─── Fitting Room ─────────────────────────────────────────────────────────────
+// ─── FITTING ROOM ─────────────────────────────────────────────────────────────
+// Мобайл: toggle+editBtn слева, силуэт справа (flex row)
+// Планшет: то же, силуэт выше
+// Десктоп: 3 колонки — левая фикс, центр flex:1, правая фикс
 
 .fitting__topRow {
   display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $spacing-16;
+
+  @include desktop {
+    gap: 24px;
+    align-items: flex-start;
+  }
+}
+
+// ─── Левая колонка: toggle + editBtn ─────────────────────────────────────────
+
+.fitting__left {
+  display: flex;
   flex-direction: column;
   gap: $spacing-8;
-  margin-bottom: $spacing-16;
+  flex-shrink: 0;
+
+  @include desktop {
+    width: 174px;
+  }
 }
+
+// ─── Центральная колонка: силуэт ─────────────────────────────────────────────
+
+.fitting__silhouette {
+  flex: 1;
+  min-width: 0;
+  height: 343px;
+
+  @include tablet {
+    height: 469px;
+  }
+
+  @include desktop {
+    flex: 1;
+    height: 446px;
+  }
+}
+
+// ─── Правая колонка: только десктоп ──────────────────────────────────────────
+
+.fitting__right {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    width: 448px;
+    flex-shrink: 0;
+  }
+}
+
+.fitting__right-title {
+  font-family: $font-family-heading;
+  font-size: 32px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0 0 4px;
+}
+
+.fitting__right-brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-16;
+}
+
+.fitting__right-price {
+  margin-top: 84px;
+}
+
+.fitting__right-actions {
+  margin-top: $spacing-16;
+
+  > button {
+    width: 100%;
+    height: 48px;
+  }
+}
+
+// ─── Gender Toggle ────────────────────────────────────────────────────────────
 
 .genderToggle {
   display: flex;
-  gap: 8px;
+  gap: $spacing-8;
 }
 
 .genderBtn {
-  width: 38px;
-  height: 38px;
-  padding: 8px;
-  @include text(18px, 400);
-  line-height: 100%;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  @include text(14px, 400);
   color: #A8A8B2;
   @include flex-center;
-  border: none;
-  transition: color 0.2s, border 0.2s;
+  border: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
 
   &--active {
     color: $color-text;
-    border: 1px solid $color-text;
+    border-color: $color-text;
   }
 }
 
@@ -439,15 +514,30 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  @include text(13px, 400);
+  @include text(14px, 400);
   @include hover-opacity;
   color: $color-text;
+  white-space: nowrap;
 }
 
-// ─── Slider ───────────────────────────────────────────────────────────────────
+// ─── Слайдер — мобайл и планшет (на десктопе под силуэтом) ───────────────────
 
 .sliderWrap {
-  margin: $spacing-16 0;
+  margin-top: $spacing-24;
+
+  @include desktop {
+    // на десктопе слайдер под силуэтом — вне правой колонки
+    margin-top: $spacing-16;
+  }
+}
+
+// На десктопе слайдер рендерится в отдельном блоке под fitting__topRow
+.fitting__slider {
+  @include desktop {
+    // занимает только ширину левой + центральной колонок
+    // правая колонка не участвует
+    padding-right: calc(448px + 24px);
+  }
 }
 
 .slider {
@@ -460,8 +550,6 @@
   cursor: pointer;
   outline: none;
   display: block;
-  position: relative;
-  z-index: 1;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -472,8 +560,6 @@
     background: $color-white;
     border: 3px solid #676767;
     cursor: pointer;
-    position: relative;
-    z-index: 2;
     margin-top: -9px;
   }
 
@@ -504,7 +590,69 @@
   margin-top: $spacing-8;
 
   span {
-    @include text(12px, 400);
-    color: $color-input-border;
+    @include text(14px, 400);
+    color: #4C494D;
+  }
+}
+
+// ─── Нижняя часть fitting (мобайл + планшет) ─────────────────────────────────
+
+.fitting__title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+  margin: $spacing-32 0 0;
+
+  // На десктопе название в правой колонке, здесь скрываем
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 4px 0 0;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+// Секция sizes/colors на мобайле и планшете — отступ 24px от названия
+.fitting__section {
+  margin-top: $spacing-24;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+// priceRow на мобайле и планшете
+.fitting__priceRow {
+  @include flex-between;
+  margin-top: $spacing-32;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+// actions на мобайле и планшете
+.fitting__actions {
+  margin-top: $spacing-16;
+
+  > button {
+    width: 100%;
+    height: 44px;
+
+    @include tablet {
+      height: 48px;
+    }
+  }
+
+  @include desktop {
+    display: none;
   }
 }
