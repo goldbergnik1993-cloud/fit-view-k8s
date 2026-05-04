@@ -19,15 +19,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
   const addItem = async (item_id: number, size_label: string, quantity = 1) => {
-    try {
-      const data = await cartApi.addItem(item_id, size_label, quantity);
-      setCart(data);
-    } catch (err) {
-      console.warn('Failed to add item:', err);
-    }
+    const data = await cartApi.addItem(item_id, size_label, quantity);
+    setCart(data);
   };
 
   const updateQuantity = async (item_id: number, quantity: number) => {
@@ -61,7 +59,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const count = cart?.total_items ?? 0;
 
   return (
-    <CartContext.Provider value={{ cart, count, loading, addItem, updateQuantity, removeItem, clearCart, refetch: fetchCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        count,
+        loading,
+        addItem,
+        updateQuantity,
+        removeItem,
+        clearCart,
+        refetch: fetchCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
