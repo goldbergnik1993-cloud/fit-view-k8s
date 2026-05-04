@@ -163,7 +163,7 @@ const Item = () => {
     setCartLoading(true);
     setCartError(null);
     try {
-      await addItem(Number(item.id), selectedSizeLabel);
+      await addItem(Number(item.id), selectedSizeLabel, 1, item.price);
       setCartAdded(true);
       setTimeout(() => setCartAdded(false), 2000);
     } catch {

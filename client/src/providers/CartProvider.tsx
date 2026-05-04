@@ -34,7 +34,7 @@ function guestItemsToCart(items: GuestCartItem[]): Cart {
     created_at: '',
     updated_at: '',
     total_items: items.reduce((s, i) => s + i.quantity, 0),
-    total_price: 0,
+    total_price: items.reduce((s, i) => s + Number(i.item.price) * i.quantity, 0),
   };
 }
 
@@ -45,7 +45,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Оставляем useCallback для возможности ручного обновления (refetch)
   const fetchCart = useCallback(async () => {
     setLoading(true);
     try {
@@ -62,18 +61,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [isAuth]);
 
-
   useEffect(() => {
     const initializeCart = async () => {
       setLoading(true);
-      
+
       if (isAuth) {
         const guestItems = loadGuestCart();
-        
+
         if (guestItems.length > 0) {
           try {
             await Promise.all(
-              guestItems.map(i => cartApi.addItem(i.id, i.size_label, i.quantity))
+              guestItems.map((i) =>
+                cartApi.addItem(i.id, i.size_label, i.quantity)
+              )
             );
             saveGuestCart([]);
           } catch (error) {
@@ -90,28 +90,44 @@ export function CartProvider({ children }: { children: ReactNode }) {
       } else {
         setCart(guestItemsToCart(loadGuestCart()));
       }
-      
+
       setLoading(false);
     };
 
     initializeCart();
-  }, [isAuth]); 
+  }, [isAuth]);
 
-  const addItem = async (item_id: number, size_label: string, quantity = 1) => {
+  const addItem = async (
+    item_id: number,
+    size_label: string,
+    quantity = 1,
+    price = 0
+  ) => {
     if (isAuth) {
       const data = await cartApi.addItem(item_id, size_label, quantity);
       setCart(data);
     } else {
       const items = loadGuestCart();
-      const idx = items.findIndex(i => i.id === item_id && i.size_label === size_label);
+      const idx = items.findIndex(
+        (i) => i.id === item_id && i.size_label === size_label
+      );
       if (idx >= 0) {
         items[idx].quantity += quantity;
       } else {
-        items.push({ 
-          id: item_id, 
-          size_label, 
-          quantity, 
-          item: { id: item_id, name: '', brand: { id: 0, name: '' }, category: '', gender: '', image_url: '', price: '0', is_favorite: false } 
+        items.push({
+          id: item_id,
+          size_label,
+          quantity,
+          item: {
+            id: item_id,
+            name: '',
+            brand: { id: 0, name: '' },
+            category: '',
+            gender: '',
+            image_url: '',
+            price: String(price), // ← было '0'
+            is_favorite: false,
+          },
         });
       }
       saveGuestCart(items);
@@ -125,7 +141,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const data = await cartApi.updateQuantity(item_id, quantity);
       setCart(data);
     } else {
-      const items = loadGuestCart().map(i => i.id === item_id ? { ...i, quantity } : i);
+      const items = loadGuestCart().map((i) =>
+        i.id === item_id ? { ...i, quantity } : i
+      );
       saveGuestCart(items);
       setCart(guestItemsToCart(items));
     }
@@ -136,7 +154,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const data = await cartApi.removeItem(item_id);
       setCart(data);
     } else {
-      const items = loadGuestCart().filter(i => i.id !== item_id);
+      const items = loadGuestCart().filter((i) => i.id !== item_id);
       saveGuestCart(items);
       setCart(guestItemsToCart(items));
     }
@@ -155,16 +173,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const count = cart?.total_items ?? 0;
 
   return (
-    <CartContext.Provider value={{ 
-      cart, 
-      count, 
-      loading, 
-      addItem, 
-      updateQuantity, 
-      removeItem, 
-      clearCart, 
-      refetch: fetchCart 
-    }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        count,
+        loading,
+        addItem,
+        updateQuantity,
+        removeItem,
+        clearCart,
+        refetch: fetchCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
