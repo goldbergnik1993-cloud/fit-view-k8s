@@ -20,12 +20,12 @@
   border-radius: 16px 16px 0 0;
   padding: $spacing-24;
   width: 100%;
-  max-width: 448px;
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
 
   @include tablet {
+    width: 448px;
     height: 499px;
     border-radius: 16px;
     margin: $spacing-16;
