@@ -40,19 +40,15 @@
   &::-webkit-scrollbar {
     display: none;
   }
-
-  @include tablet {
-    gap: $spacing-24;
-  }
 }
 
 .similar__item {
-  flex: 0 0 calc(50% - 8px);
-  scroll-snap-align: start;
+  flex: 0 0 calc(50% - $spacing-8);
   min-width: 0;
+  scroll-snap-align: start;
 
   @include tablet {
-    flex: 0 0 348px;
+    flex: 0 0 calc(50% - $spacing-8);
   }
 
   @include desktop {
