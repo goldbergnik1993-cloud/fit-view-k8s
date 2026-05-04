@@ -90,6 +90,7 @@
   height: 24px;
   border-radius: 50%;
   border: 1px solid $color-input-border;
+  background: $color-white;
   flex-shrink: 0;
   transition: opacity 0.2s ease;
   z-index: 1;
@@ -100,13 +101,14 @@
 .cart-item__body {
   display: flex;
   gap: $spacing-16;
-  padding-left: $spacing-32;
+  padding-left: $spacing-32; // Отступ под кнопку удаления
 }
 
 .cart-item__image {
   width: 100px;
   height: 130px;
   object-fit: cover;
+  border-radius: 12px;
   background: $color-card-bg;
   flex-shrink: 0;
 }
@@ -124,16 +126,15 @@
   margin: 0;
 }
 
-.cart-item__brand {
+.cart-item__brand,
+.cart-item__size {
   @include text(14px, 400);
   color: $color-input-border;
   margin: 0;
 }
 
 .cart-item__size {
-  @include text(12px, 400);
-  color: $color-input-border;
-  margin: 0;
+  font-size: 12px;
 }
 
 .cart-item__qty {
@@ -159,6 +160,7 @@
   @include text(18px, 400);
   width: 28px;
   height: 28px;
+  cursor: pointer;
   transition: opacity 0.2s ease;
 
   &:hover { opacity: 0.6; }
@@ -198,6 +200,7 @@
   @include text(14px, 400);
   width: 100%;
   padding: $spacing-16 0;
+  cursor: pointer;
   transition: opacity 0.2s ease;
 
   &:hover { opacity: 0.6; }
@@ -232,6 +235,7 @@
   padding: $spacing-8 $spacing-16;
   border: 1px solid $color-primary;
   border-radius: 8px;
+  cursor: pointer;
   transition: opacity 0.2s ease;
   white-space: nowrap;
 
@@ -262,12 +266,6 @@
 }
 
 // ─── Form & Sections ─────────────────────────────────────────────────────────
-
-.step1, .step2, .step3, .step4 {
-  max-width: 600px;
-  margin: 0 auto;
-  width: 100%;
-}
 
 .form-section {
   margin-bottom: $spacing-24;
@@ -335,12 +333,13 @@
     display: flex;
   }
 
-  .step1, .step2, .step3 {
+  .step1, .step2, .step3, .step4 {
     max-width: 100%;
     display: grid;
     grid-template-columns: 1fr 420px;
     gap: 0 $spacing-88;
     align-items: start;
+    margin: 0 auto;
   }
 
   .step1__left {
@@ -352,10 +351,5 @@
     grid-row: 1 / 5;
     position: sticky;
     top: 80px;
-  }
-
-  .step1 .page-title,
-  .step1 .page-subtitle {
-    grid-column: unset;
   }
 }

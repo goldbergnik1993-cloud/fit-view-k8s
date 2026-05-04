@@ -84,20 +84,19 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
               <img src={BurgerCloseIcon} alt="" width={12} height={12} />
             </button>
 
-            <div className={styles['cart-item__body']}>
-              <img
-                src={ci.item.image_url}
-                alt={ci.item.name}
-                className={styles['cart-item__image']}
-              />
-              <div className={styles['cart-item__info']}>
-                <p className={styles['cart-item__name']}>{ci.item.name}</p>
-                <p className={styles['cart-item__brand']}>{ci.item.brand.name}</p>
-                {ci.size_label && (
-                  <p className={styles['cart-item__size']}>Size: {ci.size_label}</p>
-                )}
-                <div className={styles['cart-item__qty']}>
-                  <span className={styles['cart-item__qty-label']}>Quantity</span>
+            <div className={styles['cart-item__card']}>
+              <div className={styles['cart-item__body']}>
+                <img
+                  src={ci.item.image_url}
+                  alt={ci.item.name}
+                  className={styles['cart-item__image']}
+                />
+                <div className={styles['cart-item__info']}>
+                  <p className={styles['cart-item__name']}>{ci.item.name}</p>
+                  <p className={styles['cart-item__brand']}>{ci.item.brand.name}</p>
+                  {ci.size_label && (
+                    <p className={styles['cart-item__size']}>Size: {ci.size_label}</p>
+                  )}
                   <div className={styles['cart-item__qty-controls']}>
                     <button
                       className={styles['cart-item__qty-btn']}
@@ -117,13 +116,13 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className={styles['cart-item__subtotal']}>
-              <span className={styles['cart-item__subtotal-label']}>Subtotal</span>
-              <span className={styles['cart-item__subtotal-value']}>
-                ${Number(ci.item.price) * ci.quantity}
-              </span>
+              <div className={styles['cart-item__subtotal']}>
+                <span className={styles['cart-item__subtotal-label']}>Subtotal</span>
+                <span className={styles['cart-item__subtotal-value']}>
+                  ${Number(ci.item.price) * ci.quantity}
+                </span>
+              </div>
             </div>
           </div>
         ))}
