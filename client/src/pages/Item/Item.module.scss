@@ -378,22 +378,19 @@
 // FITTING ROOM
 // ═══════════════════════════════════════════════════════════════════════════════
 //
-// Мобайл + Планшет:
-//   .fitting__body — flex row
-//     .fitting__left  — авто-ширина (toggle + editBtn, flex col, gap 8px)
-//     .fitting__silhouette — flex:1 (силуэт на оставшуюся ширину)
-//   под body: слайдер на всю ширину
-//   под слайдером: название, бренд, sizes, colors, price, кнопка
+// Мобайл:
+//   .fitting__body = flex row
+//     .fitting__left  = авто (toggle + editBtn)
+//     .fitting__silhouette = фиксированная ширина 300px, высота 343px
+//
+// Планшет:
+//   .fitting__silhouette = фиксированная ширина 380px, высота 469px
 //
 // Десктоп:
-//   .fitting__body — flex row
-//     .fitting__left  — 174px
-//     .fitting__silhouette — flex:1
-//     .fitting__right — 448px (название, sizes, colors, price, кнопка)
-//   под body: слайдер с padding-right = 448px + gap (скрыт от правой колонки)
-//   нижние блоки (title/brand/sizes/price/btn) — display:none
-
-// ─── fitting__body ────────────────────────────────────────────────────────────
+//   .fitting__body = flex row
+//     .fitting__left  = 174px
+//     .fitting__silhouette = фиксированная ширина, высота 446px
+//     .fitting__right = 448px
 
 .fitting__body {
   display: flex;
@@ -408,19 +405,29 @@
   flex-direction: column;
   gap: $spacing-8;
   flex-shrink: 0;
-  // на мобайле/планшете ширина по контенту
-  min-width: 0;
 
   @include desktop {
     width: 174px;
   }
 }
 
-// ─── Силуэт ───────────────────────────────────────────────────────────────────
+// ─── Силуэт — фиксированная ширина и высота ───────────────────────────────────
 
 .fitting__silhouette {
-  flex: 1;
-  min-width: 0;
+  flex-shrink: 0;
+  width: 300px;
+  height: 343px;
+
+  @include tablet {
+    width: 380px;
+    height: 469px;
+  }
+
+  @include desktop {
+    // на десктопе силуэт занимает оставшееся место между левой и правой колонкой
+    flex: 1;
+    height: 446px;
+  }
 }
 
 // ─── Правая колонка (только десктоп) ─────────────────────────────────────────
@@ -511,8 +518,6 @@
   margin-top: $spacing-24;
 
   @include desktop {
-    // слайдер занимает только ширину левой + центральной колонок
-    // правая колонка (448px) + её padding-left (48px) = 496px
     padding-right: calc(448px + #{$spacing-48});
   }
 }
@@ -572,7 +577,7 @@
   }
 }
 
-// ─── Нижние блоки (мобайл + планшет, скрыто на десктопе) ─────────────────────
+// ─── Нижние блоки (мобайл + планшет) ─────────────────────────────────────────
 
 .fitting__title {
   font-family: $font-family-heading;

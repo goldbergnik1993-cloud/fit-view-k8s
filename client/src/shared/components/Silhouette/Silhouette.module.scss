@@ -1,40 +1,47 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
-// Структура:
-// .silhouette — flex row
-//   .silhouette__left  — фиксированная ширина, колонка лейблов слева
-//   .silhouette__center — flex:1, содержит imageWrap + вертикальный ruler
-//   .silhouette__right — фиксированная ширина, колонка лейблов справа
+// Силуэт — 3 колонки: левые лейблы | картинка | правые лейблы
+// Ширина картинки фиксированная, лейблы авто
 
 .silhouette {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
-  min-height: 280px;
+  height: 100%; // высота задаётся родителем (.fitting__silhouette)
 }
 
-// ─── Left column ─────────────────────────────────────────────────────────────
-// Содержит: "0 cm" сверху, "Your Height" снизу
+// ─── Левая колонка ────────────────────────────────────────────────────────────
+// "Ends X cm from floor" — позиционируется абсолютно
+// "Your Height" — прижат к низу
 
 .silhouette__left {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-end;      // текст прижат вправо (к вертикальной линии)
+  justify-content: flex-end;
+  align-items: flex-end;
   padding-right: $spacing-8;
   flex-shrink: 0;
-  width: auto;
-  min-width: 0;
+  width: 90px;
+
+  @include tablet {
+    width: 110px;
+  }
+
+  @include desktop {
+    width: 110px;
+  }
 }
 
 .silhouette__endLabel {
+  position: absolute;
+  right: $spacing-8;
   @include text(14px, 400);
   color: #4C494D;
   white-space: nowrap;
-  // позиционируется динамически через inline style
-  align-self: flex-end;
+  transform: translateY(50%);
 }
 
 .silhouette__heightLabel {
@@ -43,15 +50,21 @@
   white-space: nowrap;
 }
 
-// ─── Center ───────────────────────────────────────────────────────────────────
-// Силуэт + горизонтальная линия + вертикальный ruler справа
+// ─── Центр: картинка + линии ──────────────────────────────────────────────────
 
 .silhouette__center {
-  flex: 1;
-  min-width: 0;
+  flex-shrink: 0;
   position: relative;
-  display: flex;
-  justify-content: center;
+  // ширина фиксированная — картинка не растягивается
+  width: 120px;
+
+  @include tablet {
+    width: 160px;
+  }
+
+  @include desktop {
+    width: 160px;
+  }
 }
 
 .silhouette__imageWrap {
@@ -67,6 +80,7 @@
   display: block;
 }
 
+// Горизонтальная линия — на всю ширину центра
 .silhouette__line {
   position: absolute;
   left: 0;
@@ -76,7 +90,7 @@
   transition: bottom 0.4s ease;
 }
 
-// Вертикальный ruler — правая граница центральной колонки
+// Вертикальный ruler — правая граница центра
 .silhouette__ruler {
   position: absolute;
   right: 0;
@@ -86,24 +100,26 @@
   background: #A8A8B2;
 }
 
-// ─── Right column ─────────────────────────────────────────────────────────────
-// Содержит: "130 cm" сверху, "Item length" снизу
+// ─── Правая колонка ───────────────────────────────────────────────────────────
+// "130 cm" — сверху
+// "Item length" — снизу
 
 .silhouette__right {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;    // текст прижат влево (от вертикальной линии)
+  align-items: flex-start;
   padding-left: $spacing-8;
-  flex-shrink: 0;
-  width: auto;
-  min-width: 0;
-}
+  width: 80px;
 
-.silhouette__heightLabel {
-  @include text(14px, 400);
-  color: #4C494D;
-  white-space: nowrap;
+  @include tablet {
+    width: 90px;
+  }
+
+  @include desktop {
+    width: 90px;
+  }
 }
 
 .silhouette__itemLabel {
