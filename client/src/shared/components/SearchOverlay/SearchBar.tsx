@@ -45,7 +45,10 @@ export const SearchBar = ({ onClose }: SearchBarProps) => {
 
   const hasQuery = query.length >= 3;
   const topChoices = recommendations.slice(0, 5);
-  const youMayAlsoLike = recommendations.slice(0, isDesktop ? 3 : 2);
+  // Планшет — 2 карточки, десктоп — 3 карточки
+  const cardCount = isDesktop ? 3 : 2;
+  const youMayAlsoLike = recommendations.slice(0, cardCount);
+  const resultCount = suggestions.length;
 
   return (
     <div ref={containerRef} className={styles.searchBar}>
@@ -81,7 +84,7 @@ export const SearchBar = ({ onClose }: SearchBarProps) => {
 
       {/* Dropdown */}
       <div className={styles.dropdown}>
-        {/* Top choices  */}
+        {/* Top choices — пока нет запроса */}
         {!hasQuery && topChoices.length > 0 && (
           <div className={styles.section}>
             <p className={styles.sectionTitle}>Top choices</p>
@@ -100,7 +103,7 @@ export const SearchBar = ({ onClose }: SearchBarProps) => {
           </div>
         )}
 
-        {/* Suggestions */}
+        {/* Suggestions при вводе */}
         {hasQuery && suggestions.length > 0 && (
           <div className={styles.section}>
             <p className={styles.sectionTitle}>Top choices</p>
@@ -119,41 +122,39 @@ export const SearchBar = ({ onClose }: SearchBarProps) => {
           </div>
         )}
 
-        {/* You may also like */}
+        {/* You may also like + See All Results */}
         {youMayAlsoLike.length > 0 && (
           <div className={styles.section}>
             <p className={styles.sectionTitle}>You may also like</p>
-            <div className={styles.itemsAndButton}>
-              <div className={styles.itemsRow}>
-                {youMayAlsoLike.map((raw) => {
-                  const item = mapItem(raw);
-                  return (
-                    <button
-                      key={item.id}
-                      className={styles.itemCard}
-                      onClick={() => handleItemClick(Number(item.id))}
-                    >
-                      <div className={styles.itemImg}>
-                        {item.imageUrl && (
-                          <img src={item.imageUrl} alt={item.name} />
-                        )}
-                      </div>
-                      <div className={styles.itemInfo}>
-                        <p className={styles.itemName}>{item.name}</p>
-                        <p className={styles.itemBrand}>{item.brand}</p>
-                        <p className={styles.itemPrice}>${item.price}</p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {hasQuery && (
-                <button className={styles.seeAll} onClick={handleSeeAll}>
-                  See all results
-                </button>
-              )}
+            <div className={styles.itemsRow}>
+              {youMayAlsoLike.map((raw) => {
+                const item = mapItem(raw);
+                return (
+                  <button
+                    key={item.id}
+                    className={styles.itemCard}
+                    onClick={() => handleItemClick(Number(item.id))}
+                  >
+                    <div className={styles.itemImg}>
+                      {item.imageUrl && (
+                        <img src={item.imageUrl} alt={item.name} />
+                      )}
+                    </div>
+                    <div className={styles.itemInfo}>
+                      <p className={styles.itemName}>{item.name}</p>
+                      <p className={styles.itemBrand}>{item.brand}</p>
+                      <p className={styles.itemPrice}>${item.price}</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+
+            {hasQuery && (
+              <button className={styles.seeAll} onClick={handleSeeAll}>
+                See All Results ({resultCount})
+              </button>
+            )}
           </div>
         )}
 
