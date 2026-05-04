@@ -10,7 +10,7 @@ import { ordersApi, type DeliveryMethod } from '../../services/api';
 import type { Cart, CartItem } from '../../services/api';
 
 import CircleXIcon from '../../assets/icons/circle-x-error.svg';
-import ChevronDownIcon from '../../assets/icons/chevron-down.svg';
+import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
 import MinusIcon from '../../assets/icons/minus.svg';
 import PlusIcon from '../../assets/icons/plus.svg';
@@ -153,19 +153,13 @@ const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPro
         >
           <span>Have a promo code?</span>
           <img
-            src={ChevronDownIcon}
+            src={ChevronRightIcon}
             alt=""
             width={20}
             height={20}
             className={promoOpen ? styles['promo__chevron--open'] : styles['promo__chevron']}
           />
         </button>
-        {promoOpen && (
-          <div className={styles['promo__body']}>
-            <input type="text" placeholder="Enter promo code" className={styles['promo__input']} />
-            <button className={styles['promo__apply']}>Apply</button>
-          </div>
-        )}
       </div>
 
       {/* Summary */}
