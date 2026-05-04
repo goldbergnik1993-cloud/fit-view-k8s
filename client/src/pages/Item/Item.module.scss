@@ -1,11 +1,18 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 .page {
   padding: $spacing-16 var(--container-padding);
   max-width: 600px;
   margin: 0 auto;
   padding-bottom: $spacing-88;
+
+  @include desktop {
+    max-width: $container-max-width;
+    padding: $spacing-24 var(--container-padding) $spacing-88;
+  }
 }
 
 .state {
@@ -14,6 +21,19 @@
   @include text(14px, 400);
   color: $color-input-border;
 }
+
+// ─── Desktop two-column layout ────────────────────────────────────────────────
+
+.layout {
+  @include desktop {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-32;
+    align-items: start;
+  }
+}
+
+
 
 // ─── Breadcrumb ───────────────────────────────────────────────────────────────
 
@@ -57,6 +77,10 @@
   overflow: hidden;
   background: $color-card-bg;
   margin-bottom: $spacing-16;
+
+  @include desktop {
+    margin-bottom: 0;
+  }
 }
 
 .image {
@@ -79,8 +103,13 @@
 
   &:hover { opacity: 0.7; }
 
+  img {
+    transition: filter 0.2s ease;
+  }
+
+  // active = blue heart (#3030F2)
   &--active img {
-    filter: invert(30%) sepia(80%) saturate(400%) hue-rotate(300deg);
+    filter: invert(17%) sepia(98%) saturate(4000%) hue-rotate(232deg) brightness(90%);
   }
 }
 
@@ -122,13 +151,13 @@
   border: 1px solid $color-card-bg;
   @include text(13px, 400);
   @include flex-center;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 
-  &:hover { border-color: $color-text; }
+  &:hover { border-color: #787880; }
 
   &--active {
-    border-color: $color-text;
-    background: $color-text;
+    border-color: #787880;
+    background: #787880;
     color: $color-white;
   }
 }
@@ -137,18 +166,17 @@
   width: 40px;
   height: 40px;
   @include flex-center;
-  @include hover-opacity;
   border-radius: 50%;
-  transition: opacity 0.2s ease;
+  transition: background 0.2s ease, opacity 0.2s ease;
+
+  &:hover { opacity: 0.7; }
 
   &--active {
+    background: $color-text;
+
     img {
-      // inverts the icon to appear dark/filled when active
       filter: invert(1);
     }
-    background: $color-text;
-    border-radius: 50%;
-    opacity: 1;
   }
 }
 
@@ -158,7 +186,7 @@
   margin-top: $spacing-8;
   padding: $spacing-16;
   background: $color-white;
-  border: 1px solid $color-card-bg;
+  border: 1px solid $color-primary;
   border-radius: 8px;
   box-shadow: 0 5px 0 0 rgba(0, 0, 0, 0.25);
   display: flex;
@@ -205,7 +233,7 @@
 
 .actions {
   display: flex;
-  flex-direction: column-reverse; // mobile: Add To My Bag on top, Try On below
+  flex-direction: column-reverse;
   gap: $spacing-8;
   margin-top: $spacing-16;
 
@@ -218,7 +246,6 @@
 .actions__primary {
   width: 100%;
 
-  // make inner PrimaryButton fill the wrapper
   > button {
     width: 100%;
   }
