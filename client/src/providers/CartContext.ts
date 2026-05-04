@@ -5,7 +5,7 @@ export interface CartContextValue {
   cart: Cart | null;
   count: number;
   loading: boolean;
-  addItem: (item_id: number, size_label: string, quantity?: number) => Promise<void>;
+  addItem: (item_id: number, size_label: string, quantity?: number, price?: number) => Promise<void>;
   updateQuantity: (item_id: number, quantity: number) => Promise<void>;
   removeItem: (item_id: number) => Promise<void>;
   clearCart: () => Promise<void>;
