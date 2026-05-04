@@ -208,8 +208,8 @@
   position: absolute;
   top: -4px;
   right: -4px;
-  background: $color-primary;
-  color: $color-white;
+  background: $color-white;
+  color: $color-primary;
   border-radius: 50%;
   width: 16px;
   height: 16px;
@@ -217,7 +217,7 @@
   @include text(10px, 600);
   line-height: 1;
   pointer-events: none;
-  border: 1px solid $color-white;
+  border: 1px solid $color-primary;
 }
 
 // ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
