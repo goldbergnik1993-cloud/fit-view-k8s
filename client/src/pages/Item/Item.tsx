@@ -27,7 +27,7 @@ import {
 
 const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
 
-// Mock size guide data — replace with real data from backend when available
+// Mock size guide — replace with real data from backend
 const MOCK_SIZE_GUIDE: Record<string, string> = {
   S: 'Chest 86–89" / Waist 62–65" / Hips 90–94"',
   M: 'Chest 90–93" / Waist 66–69" / Hips 95–98"',
@@ -77,7 +77,7 @@ const Item = () => {
 
   useEffect(() => {
     if (!item) return;
-    setSelectedSizeLabel(null); // reset on item change — user must pick size
+    setSelectedSizeLabel(null); // user must pick size
     if (item.gender === 'male') setGender('male');
   }, [item]);
 
@@ -178,7 +178,6 @@ const Item = () => {
     ? `Ends ${Math.round(hEndCm)} cm from floor`
     : 'Ends 0 cm from floor';
 
-  // Shared size selector block used in both views
   const renderSizes = (itemData: typeof item) => {
     if (!itemData) return null;
     return (
@@ -208,21 +207,17 @@ const Item = () => {
 
         {isSizeGuideOpen && (
           <div className={styles.sizeGuide}>
-            {itemData.availableSizes.map((size) => {
-              const guideText = MOCK_SIZE_GUIDE[size.sizeLabel];
-              return (
-                <p key={size.id} className={styles.sizeGuide__row}>
-                  {size.sizeLabel}: {guideText ?? '—'}
-                </p>
-              );
-            })}
+            {itemData.availableSizes.map((size) => (
+              <p key={size.id} className={styles.sizeGuide__row}>
+                {size.sizeLabel}: {MOCK_SIZE_GUIDE[size.sizeLabel] ?? '—'}
+              </p>
+            ))}
           </div>
         )}
       </div>
     );
   };
 
-  // Shared color selector
   const renderColors = () => (
     <div className={styles.section}>
       <p className={styles.sectionLabel}>Choose your color</p>
@@ -259,60 +254,69 @@ const Item = () => {
             <span className={styles.breadcrumb__sep}>/</span>
           </nav>
 
-          <h1 className={styles.title}>{item.name}</h1>
+          {/* Two-column grid on desktop */}
+          <div className={styles.layout}>
+            {/* Left: image */}
+            <div className={styles.layout__left}>
+              <div className={styles.imageWrap}>
+                <img
+                  src={item.imageUrl}
+                  alt={item.name}
+                  className={styles.image}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      'https://placehold.co/400x500?text=No+Image';
+                  }}
+                />
+                <button
+                  className={`${styles.favoriteBtn} ${
+                    isFav(id ?? '') ? styles['favoriteBtn--active'] : ''
+                  }`}
+                  onClick={handleToggleFavorite}
+                  disabled={favoriteLoading}
+                  aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
+                >
+                  <img src={SavedIcon} alt="" aria-hidden="true" width={22} height={22} />
+                </button>
+              </div>
+            </div>
 
-          <div className={styles.imageWrap}>
-            <img
-              src={item.imageUrl}
-              alt={item.name}
-              className={styles.image}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  'https://placehold.co/400x500?text=No+Image';
-              }}
-            />
-            <button
-              className={`${styles.favoriteBtn} ${
-                isFav(id ?? '') ? styles['favoriteBtn--active'] : ''
-              }`}
-              onClick={handleToggleFavorite}
-              disabled={favoriteLoading}
-              aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
-            >
-              <img src={SavedIcon} alt="" aria-hidden="true" width={22} height={22} />
-            </button>
-          </div>
+            {/* Right: content */}
+            <div className={styles.layout__right}>
+              <h1 className={styles.title}>{item.name}</h1>
 
-          <p className={styles.description}>
-            Elegant wrap dress with a flattering V-neck and adjustable waist tie
-            — perfect for evenings and special occasions.
-          </p>
-          <p className={styles.material}>Material: 100% Viscose</p>
-          <p className={styles.material}>Lining: 100% Polyester</p>
+              <p className={styles.description}>
+                Elegant wrap dress with a flattering V-neck and adjustable waist tie
+                — perfect for evenings and special occasions.
+              </p>
+              <p className={styles.material}>Material: 100% Viscose</p>
+              <p className={styles.material}>Lining: 100% Polyester</p>
 
-          {renderSizes(item)}
-          {renderColors()}
+              {renderSizes(item)}
+              {renderColors()}
 
-          <div className={styles.priceRow}>
-            <span className={styles.priceLabel}>Price:</span>
-            <span className={styles.priceValue}>{item.price}$</span>
-          </div>
+              <div className={styles.priceRow}>
+                <span className={styles.priceLabel}>Price:</span>
+                <span className={styles.priceValue}>{item.price}$</span>
+              </div>
 
-          <div className={styles.actions}>
-            <button
-              className={styles.tryOnBtn}
-              onClick={() => setView('fitting')}
-            >
-              Virtual Try On
-            </button>
-            <div className={styles.actions__primary}>
-              <PrimaryButton
-                onClick={handleAddToCart}
-                loading={cartLoading}
-                disabled={cartAdded || !selectedSizeLabel}
-              >
-                {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
-              </PrimaryButton>
+              <div className={styles.actions}>
+                <button
+                  className={styles.tryOnBtn}
+                  onClick={() => setView('fitting')}
+                >
+                  Virtual Try On
+                </button>
+                <div className={styles.actions__primary}>
+                  <PrimaryButton
+                    onClick={handleAddToCart}
+                    loading={cartLoading}
+                    disabled={cartAdded || !selectedSizeLabel}
+                  >
+                    {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+                  </PrimaryButton>
+                </div>
+              </div>
             </div>
           </div>
 
