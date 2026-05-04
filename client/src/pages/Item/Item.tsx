@@ -57,7 +57,9 @@ const Item = () => {
   const { addItem } = useCart();
 
   const [favoriteLoading, setFavoriteLoading] = useState(false);
-  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(null);
+  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(
+    null
+  );
   const [cartLoading, setCartLoading] = useState(false);
   const [cartAdded, setCartAdded] = useState(false);
   const [cartError, setCartError] = useState<string | null>(null);
@@ -100,7 +102,9 @@ const Item = () => {
       });
       setFitResult(result);
     } catch {
-      const measurement = item.measurements.find((m) => m.sizeLabel === selectedSizeLabel);
+      const measurement = item.measurements.find(
+        (m) => m.sizeLabel === selectedSizeLabel
+      );
       const lengthCm = measurement?.totalLengthCm ?? measurement?.inseamCm ?? 0;
 
       if (lengthCm && item.category) {
@@ -178,9 +182,7 @@ const Item = () => {
     (m) => m.sizeLabel === selectedSizeLabel
   );
   const itemLengthCm =
-    selectedMeasurement?.totalLengthCm ??
-    selectedMeasurement?.inseamCm ??
-    null;
+    selectedMeasurement?.totalLengthCm ?? selectedMeasurement?.inseamCm ?? null;
 
   // ─── Shared render helpers ────────────────────────────────────────────────
 
@@ -194,7 +196,9 @@ const Item = () => {
             <button
               key={size.id}
               className={`${styles.sizeBtn} ${
-                selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''
+                selectedSizeLabel === size.sizeLabel
+                  ? styles['sizeBtn--active']
+                  : ''
               }`}
               onClick={() => setSelectedSizeLabel(size.sizeLabel)}
             >
@@ -324,11 +328,18 @@ const Item = () => {
         <Header />
         <main className={styles.page}>
           <nav className={styles.breadcrumb} aria-label="breadcrumb">
-            <a href="/" className={styles.breadcrumb__link}>Home</a>
+            <a href="/" className={styles.breadcrumb__link}>
+              Home
+            </a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a href="/catalog" className={styles.breadcrumb__link}>Catalog</a>
+            <a href="/catalog" className={styles.breadcrumb__link}>
+              Catalog
+            </a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a href={`/catalog?brands=${item.brand}`} className={styles.breadcrumb__link}>
+            <a
+              href={`/catalog?brands=${item.brand}`}
+              className={styles.breadcrumb__link}
+            >
               {item.brand}
             </a>
             <span className={styles.breadcrumb__sep}>/</span>
@@ -396,10 +407,8 @@ const Item = () => {
     <>
       <Header />
       <main className={styles.page}>
-
         {/* ── Основной ряд ── */}
         <div className={styles.fitting__body}>
-
           {/* Левая колонка: toggle + editBtn */}
           <div className={styles.fitting__left}>
             <div className={styles.genderToggle}>
@@ -422,6 +431,9 @@ const Item = () => {
               Edit Measurements
               <img src={ChevronRightIcon} alt="" width={16} height={16} />
             </button>
+            <span className={styles.fitting__endLabel}>
+              {fitLoading ? '...' : fitLabel}
+            </span>
           </div>
 
           {/* Центр: силуэт */}
@@ -500,9 +512,7 @@ const Item = () => {
           <span className={styles.priceValue}>{item.price}$</span>
         </div>
 
-        <div className={styles.fitting__actions}>
-          {renderAddToCart(44)}
-        </div>
+        <div className={styles.fitting__actions}>{renderAddToCart(44)}</div>
 
         {renderSimilar()}
 
