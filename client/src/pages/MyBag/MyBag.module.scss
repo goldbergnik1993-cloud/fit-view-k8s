@@ -1,452 +1,507 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-// ─── Page layout ──────────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
-.main {
-  min-height: calc(100vh - 140px);
-  padding: $spacing-24 var(--container-padding);
-  max-width: $container-max-width;
+.page {
+  padding: $spacing-16 var(--container-padding) $spacing-88;
+  max-width: 600px;
   margin: 0 auto;
-  box-sizing: border-box;
+
+  @include tablet {
+    max-width: 744px;
+  }
+
+  @include desktop {
+    max-width: $container-max-width;
+    margin: 0 auto;
+    padding: $spacing-24 var(--container-padding) $spacing-88;
+  }
 }
 
-.page-title {
-  @include h1;
-  margin: 0 0 $spacing-4 0;
-}
-
-.page-subtitle {
+.state {
+  padding: $spacing-24;
+  text-align: center;
   @include text(14px, 400);
-  color: $color-text;
-  margin: 0 0 $spacing-24 0;
+  color: $color-input-border;
 }
 
 // ─── Breadcrumb ───────────────────────────────────────────────────────────────
 
 .breadcrumb {
-  display: none;
+  display: flex;
   align-items: center;
-  gap: $spacing-8;
-  margin-bottom: $spacing-24;
+  gap: 4px;
+  margin-bottom: $spacing-16;
 }
 
-.breadcrumb__item {
-  @include text(14px, 400);
+.breadcrumb__link {
+  @include text(12px, 400);
+  color: $color-input-border;
+  @include hover-opacity;
+}
+
+.breadcrumb__sep {
+  @include text(12px, 400);
   color: $color-input-border;
 }
 
-.breadcrumb__item--active {
-  @include text(14px, 500);
+// ─── Desktop two-column layout ────────────────────────────────────────────────
+
+.layout {
+  @include desktop {
+    display: grid;
+    grid-template-columns: 684px 566px;
+    gap: 142px;
+    align-items: start;
+  }
+}
+
+.layout__right {
+  margin-top: $spacing-16;
+
+  @include tablet {
+    margin-top: 0;
+  }
+
+  @include desktop {
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 490px;
+  }
+}
+
+.layout__right-spacer {
+  @include desktop {
+    flex: 1;
+  }
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────────
+
+// Мобайл: над картинкой — скрывается на планшете и десктопе
+.title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $color-text;
+  margin: 0 0 $spacing-16;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+// Планшет + десктоп: под картинкой (планшет) / в правой колонке (десктоп)
+.title--right {
+  display: none;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $color-text;
+  margin: 0 0 $spacing-16;
+
+  @include tablet {
+    display: block;
+    font-size: 32px;
+    margin-top: $spacing-24; // отступ от картинки на планшете
+  }
+
+  @include desktop {
+    display: block;
+    font-size: 32px;
+    margin-top: 0; // на десктопе контент выровнен по верху картинки через grid align-items: start
+  }
+}
+
+.brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-16;
+}
+
+// ─── Image ────────────────────────────────────────────────────────────────────
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $color-card-bg;
+  height: 340px;
+
+  @include tablet {
+    height: 490px;
+  }
+
+  @include desktop {
+    height: 490px;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+// ─── Favorite button ──────────────────────────────────────────────────────────
+
+.favoriteBtn {
+  position: absolute;
+  bottom: $spacing-16;
+  right: $spacing-16;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  padding: 0;
+  @include flex-center;
+  color: $color-white;
+  transition: opacity 0.2s ease, color 0.2s ease;
+
+  &:hover { opacity: 0.7; }
+
+  &--active {
+    color: $color-primary;
+  }
+}
+
+// ─── Description ─────────────────────────────────────────────────────────────
+
+.description {
+  @include text(16px, 400, 1.5);
+  margin: 0 0 $spacing-8;
+}
+
+.material {
+  @include text(14px, 400);
+  margin: 0 0 4px;
+}
+
+// ─── Section ─────────────────────────────────────────────────────────────────
+
+.section {
+  margin-top: $spacing-16;
+}
+
+.section--first {
+  margin-top: $spacing-32;
+}
+
+.sectionLabel {
+  @include text(16px, 400);
+  color: $color-text;
+  margin: 0 0 $spacing-8;
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+.sizes {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.sizeBtn {
+  width: 33px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #787880;
+  background: $color-white;
+  @include text(14px, 400);
+  @include flex-center;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+
+  &:hover { border-color: #4C494D; }
+
+  &--active {
+    border-color: #4C494D;
+    background: #4C494D;
+    color: $color-white;
+  }
+}
+
+.infoBtn {
+  width: 32px;
+  height: 32px;
+  @include flex-center;
+  border-radius: 50%;
+  color: $color-text;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+
+  &:hover { opacity: 0.7; }
+
+  &--active {
+    background: $color-text;
+    color: $color-white;
+  }
+}
+
+// ─── Size Guide ───────────────────────────────────────────────────────────────
+
+.sizeGuide {
+  margin-top: $spacing-8;
+  padding: $spacing-16;
+  background: $color-white;
+  border: 1px solid $color-primary;
+  border-radius: 8px;
+  box-shadow: 0 5px 0 0 rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.sizeGuide__row {
+  @include text(13px, 400, 1.5);
+  margin: 0;
+}
+
+// ─── Colors ───────────────────────────────────────────────────────────────────
+
+.colors {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.colorDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: block;
+  flex-shrink: 0;
+}
+
+// ─── Price ────────────────────────────────────────────────────────────────────
+
+.priceRow {
+  @include flex-between;
+  margin-top: $spacing-32;
+}
+
+.priceLabel {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
   color: $color-text;
 }
 
-.breadcrumb__arrow {
-  @include text(14px, 400);
-  color: $color-input-border;
+.priceValue {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
 }
 
-// ─── Step dots ────────────────────────────────────────────────────────────────
+// ─── Actions ─────────────────────────────────────────────────────────────────
 
-.step-dots {
+.actions {
   display: flex;
-  justify-content: center;
-  gap: $spacing-8;
-  margin-top: $spacing-24;
-}
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-top: $spacing-16;
 
-.step-dots__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: $color-card-bg;
-  transition: background 0.2s ease;
+  @include tablet {
+    flex-direction: row;
+    gap: $spacing-24;
+  }
 
-  &--active {
-    background: $color-primary;
+  @include desktop {
+    flex-direction: row;
+    gap: $spacing-24;
   }
 }
 
-// ─── Cart list / Item ─────────────────────────────────────────────────────────
+.actions__primary {
+  width: 100%;
 
-.cart-list {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-16;
+  > button { width: 100%; }
+
+  @include tablet {
+    flex: 1;
+  }
+
+  @include desktop {
+    flex: 1;
+  }
 }
 
-.cart-item {
-  position: relative;
-}
-
-.cart-item__remove {
-  @include flex-center;
-  position: absolute;
-  top: $spacing-16;
-  left: -$spacing-8;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1px solid $color-input-border;
-  background: $color-white;
-  flex-shrink: 0;
-  transition: opacity 0.2s ease;
-  z-index: 1;
-
-  &:hover { opacity: 0.6; }
-}
-
-.cart-item__card {
-  background: $color-card-bg;
-  border-radius: 16px;
-  padding: $spacing-16;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-16;
-  margin-left: $spacing-16;
-}
-
-.cart-item__body {
-  display: flex;
-  gap: $spacing-16;
-}
-
-.cart-item__image {
-  width: 132px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 24px;
-  background: $color-white;
-  flex-shrink: 0;
-}
-
-.cart-item__info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-4;
-}
-
-.cart-item__name {
-  @include text(16px, 600);
-  margin: 0;
-  word-break: break-word;
-}
-
-.cart-item__brand {
-  @include text(14px, 400);
-  color: $color-input-border;
-  margin: 0;
-}
-
-.cart-item__size {
-  @include text(12px, 400);
-  color: $color-input-border;
-  margin: 0;
-}
-
-.cart-item__qty-controls {
-  display: flex;
-  align-items: center;
-  gap: $spacing-16;
-  margin-top: auto;
-  padding-top: $spacing-8;
-}
-
-.cart-item__qty-btn {
-  @include flex-center;
-  width: 24px;
-  height: 24px;
-  transition: opacity 0.2s ease;
-
-  &:hover { opacity: 0.6; }
-}
-
-.cart-item__qty-value {
-  @include text(16px, 400);
-  min-width: 16px;
+.cartError {
+  @include text(13px, 400);
+  color: $color-error;
+  margin: $spacing-4 0 0;
   text-align: center;
 }
 
-.cart-item__subtotal {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: $spacing-16;
-}
-
-.cart-item__subtotal-label {
-  @include text(16px, 600);
-}
-
-.cart-item__subtotal-value {
-  @include text(16px, 600);
-}
-
-// ─── Promo code ───────────────────────────────────────────────────────────────
-
-.promo {
-  border-bottom: 1px solid $color-card-bg;
-}
-
-.promo__toggle {
-  @include flex-between;
-  @include text(14px, 400);
+.tryOnBtn {
   width: 100%;
-  padding: $spacing-16 0;
-  transition: opacity 0.2s ease;
-
-  &:hover { opacity: 0.6; }
-}
-
-.promo__chevron--open {
-  transform: rotate(180deg);
-}
-
-.promo__body {
-  display: flex;
-  gap: $spacing-8;
-  padding-bottom: $spacing-16;
-}
-
-.promo__input {
-  flex: 1;
-  @include text(14px, 400);
-  border: 1px solid $color-input-border;
+  min-height: 56px;
   border-radius: 8px;
-  padding: $spacing-8 $spacing-16;
-  outline: none;
-
-  &:focus {
-    border-color: $color-primary;
-  }
-}
-
-.promo__apply {
-  @include text(14px, 500);
+  border: 1.5px solid $color-primary;
+  @include text(16px, 500);
   color: $color-primary;
-  padding: $spacing-8 $spacing-16;
-  border: 1px solid $color-primary;
-  border-radius: 8px;
-  transition: opacity 0.2s ease;
+  background: transparent;
+  transition: background 0.2s, color 0.2s;
   white-space: nowrap;
 
-  &:hover { opacity: 0.7; }
-}
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
 
-// ─── Summary ──────────────────────────────────────────────────────────────────
+  @include tablet {
+    flex: 1;
+    width: auto;
+    min-height: 48px;
+    height: 48px;
+  }
 
-.summary {
-  padding: $spacing-16 0;
-  margin-bottom: $spacing-24;
-  border-bottom: 1px solid $color-card-bg;
-}
-
-.summary__row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  @include text(14px, 400);
-  padding: $spacing-4 0;
-
-  &--total {
-    @include text(18px, 700);
-    padding-top: $spacing-16;
-    margin-top: $spacing-8;
-    border-top: 1px solid $color-card-bg;
+  @include desktop {
+    flex: 1;
+    width: auto;
+    min-height: 48px;
+    height: 48px;
   }
 }
 
-// ─── Compact cart (steps 2 & 3) ───────────────────────────────────────────────
+// ─── Similar ─────────────────────────────────────────────────────────────────
 
-.cart-compact {
-  margin-bottom: $spacing-24;
+.similar {
+  margin-top: $spacing-32;
 }
 
-.cart-compact__item {
-  display: flex;
-  gap: $spacing-16;
-  padding: $spacing-16 0;
-  border-bottom: 1px solid $color-card-bg;
-}
-
-.cart-compact__image {
-  width: 64px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: $color-card-bg;
-  flex-shrink: 0;
-}
-
-.cart-compact__name {
-  @include text(14px, 600);
-  margin: 0 0 $spacing-4 0;
-}
-
-.cart-compact__brand {
-  @include text(12px, 400);
-  color: $color-input-border;
-  margin: 0 0 $spacing-4 0;
-}
-
-.cart-compact__qty {
-  @include text(12px, 400);
-  color: $color-input-border;
-  margin: 0;
-}
-
-.subtotal {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-16 0;
-  border-top: 1px solid $color-card-bg;
-}
-
-.subtotal__label {
-  @include text(14px, 400);
-}
-
-.subtotal__value {
-  @include text(14px, 600);
-}
-
-// ─── Form & Sections ──────────────────────────────────────────────────────────
-
-.step1, .step2, .step3, .step4 {
-  max-width: 600px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.form-section {
-  margin-bottom: $spacing-24;
-}
-
-.form-section__title {
-  @include h3;
-  margin: 0 0 $spacing-16 0;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-4;
+.similar__header {
+  @include flex-between;
   margin-bottom: $spacing-16;
 }
 
-.form-field__label {
-  @include text(12px, 400);
-  color: $color-input-border;
-}
-
-.form-field__input {
-  @include text(14px, 400);
-  border: 1px solid $color-input-border;
-  border-radius: 8px;
-  padding: $spacing-16;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
-
-  &::placeholder {
-    color: $color-card-bg;
-  }
-
-  &:focus {
-    border-color: $color-primary;
-  }
-}
-
-.review-text {
-  @include text(14px, 400);
-  line-height: 1.6;
+.similar__title {
+  @include text(16px, 400);
   margin: 0;
 }
 
-.radio-label {
+.similar__nav {
   display: flex;
-  align-items: center;
   gap: $spacing-8;
-  @include text(14px, 400);
-  margin-bottom: $spacing-16;
-  cursor: pointer;
+
+  button {
+    width: 32px;
+    height: 32px;
+    @include flex-center;
+    @include hover-opacity;
+  }
 }
 
-.radio-label__input {
-  accent-color: $color-primary;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-// ─── Success ──────────────────────────────────────────────────────────────────
-
-.success {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: $spacing-48 0;
+.similar__list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: $spacing-16;
 }
 
-.success__illustration {
-  margin-bottom: $spacing-8;
+// ─── Fitting Room ─────────────────────────────────────────────────────────────
+
+.fitting__topRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  margin-bottom: $spacing-16;
 }
 
-.success__title {
-  @include h2;
-  margin: 0;
+.genderToggle {
+  display: flex;
+  gap: 8px;
 }
 
-.success__text {
-  @include text(14px, 400);
-  color: $color-input-border;
-  margin: 0 0 $spacing-8 0;
+.genderBtn {
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  @include text(18px, 400);
+  line-height: 100%;
+  color: #A8A8B2;
+  @include flex-center;
+  border: none;
+  transition: color 0.2s, border 0.2s;
+
+  &--active {
+    color: $color-text;
+    border: 1px solid $color-text;
+  }
 }
 
-.success__keep-shopping {
-  @include text(14px, 400);
-  color: $color-input-border;
-  text-decoration: underline;
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  @include text(13px, 400);
+  @include hover-opacity;
+  color: $color-text;
+}
+
+// ─── Slider ───────────────────────────────────────────────────────────────────
+
+.sliderWrap {
+  margin: $spacing-16 0;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: #676767;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  display: block;
+  position: relative;
+  z-index: 1;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    margin-top: -9px;
+  }
+
+  &::-webkit-slider-runnable-track {
+    height: 2px;
+    background: #676767;
+    border-radius: 2px;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+  }
+
+  &::-moz-range-track {
+    height: 2px;
+    background: #676767;
+    border-radius: 2px;
+  }
+}
+
+.sliderLabels {
+  @include flex-between;
   margin-top: $spacing-8;
-  transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.6; }
-}
-
-// ─── Desktop ──────────────────────────────────────────────────────────────────
-
-@include desktop {
-  .main {
-    padding: $spacing-48 var(--container-padding);
-  }
-
-  .breadcrumb {
-    display: flex;
-  }
-
-  .step1, .step2, .step3, .step4 {
-    max-width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 420px;
-    gap: 0 $spacing-88;
-    align-items: start;
-    margin: 0 auto;
-  }
-
-  .step1__left {
-    grid-column: 1;
-  }
-
-  .step1__right {
-    grid-column: 2;
-    grid-row: 1 / 5;
-    position: sticky;
-    top: 80px;
+  span {
+    @include text(12px, 400);
+    color: $color-input-border;
   }
 }

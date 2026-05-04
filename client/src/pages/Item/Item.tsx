@@ -12,7 +12,6 @@ import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
 import styles from './Item.module.scss';
 import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
-import InfoIcon from '../../assets/icons/info.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EditMeasurementsModal from '../../shared/components/EditMeasurementsModal/EditMeasurementsModal';
 import {
@@ -194,7 +193,11 @@ const Item = () => {
             aria-expanded={isSizeGuideOpen}
             onClick={() => setIsSizeGuideOpen((v) => !v)}
           >
-            <img src={InfoIcon} alt="" width={20} height={20} />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M12 11V17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <circle cx="12" cy="7.5" r="1" fill="currentColor"/>
+            </svg>
           </button>
         </div>
         {isSizeGuideOpen && (
@@ -304,6 +307,9 @@ const Item = () => {
 
               {renderSizes(item)}
               {renderColors()}
+
+              {/* Спейсер — на десктопе толкает цену и кнопки вниз до уровня конца картинки */}
+              <div className={styles['layout__right-spacer']} />
 
               <div className={styles.priceRow}>
                 <span className={styles.priceLabel}>Price:</span>
