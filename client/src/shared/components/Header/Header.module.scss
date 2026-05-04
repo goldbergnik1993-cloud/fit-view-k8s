@@ -61,6 +61,7 @@
 
 .header__icon-btn {
   @include flex-center;
+  position: relative;
   width: 44px;
   height: 44px;
   color: $color-black;
@@ -72,6 +73,23 @@
 
 .header__icon-btn--desktop {
   display: none;
+}
+
+.header__icon-btn--active {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $color-toggle-bg;
+    border-radius: 50%;
+    z-index: 0;
+  }
+
+  img,
+  .header__icon-wrapper {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 .header__search-text {
@@ -179,7 +197,7 @@
   &:hover { opacity: 0.6; }
 }
 
-// ─── Favorite badge ───────────────────────────────────────────────────────────
+// ─── Icon wrapper & badge ─────────────────────────────────────────────────────
 
 .header__icon-wrapper {
   position: relative;
@@ -199,6 +217,7 @@
   @include text(10px, 600);
   line-height: 1;
   pointer-events: none;
+  border: 1px solid $color-white;
 }
 
 // ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
