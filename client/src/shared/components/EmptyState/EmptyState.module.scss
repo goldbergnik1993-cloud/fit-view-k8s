@@ -61,6 +61,15 @@
 
 .emptyState__button {
   @include btn-primary;
+  width: 100%;
   max-width: 343px;
   height: 48px;
+
+  @include tablet {
+    max-width: 348px;
+  }
+
+  @include desktop {
+    max-width: 447px;
+  }
 }
