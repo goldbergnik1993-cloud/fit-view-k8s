@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { SimilarItems } from '../SimilarItems/SimilarItems';
 import styles from './EmptyState.module.scss';
-import EmptyIllustration from '../../../assets/illustrations/empty-catalog.svg';
+import DefaultIllustration from '../../../assets/illustrations/empty-catalog.svg';
 
 interface EmptyStateProps {
   title: string;
@@ -10,6 +10,7 @@ interface EmptyStateProps {
   buttonPath: string;
   onButtonClick?: () => void;
   showRecommendations?: boolean;
+  illustration?: string;
 }
 
 const EmptyState = ({
@@ -19,6 +20,7 @@ const EmptyState = ({
   buttonPath,
   onButtonClick,
   showRecommendations = true,
+  illustration,
 }: EmptyStateProps) => {
   const navigate = useNavigate();
 
@@ -34,7 +36,7 @@ const EmptyState = ({
     <div className={styles.emptyState}>
       <div className={styles.emptyState__inner}>
         <img
-          src={EmptyIllustration}
+          src={illustration ?? DefaultIllustration}
           alt=""
           aria-hidden="true"
           className={styles.emptyState__illustration}

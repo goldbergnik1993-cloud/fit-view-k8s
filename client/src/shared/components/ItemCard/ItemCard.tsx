@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ClothingItem } from '../../../types/clothing';
 import styles from './ItemCard.module.scss';
@@ -16,9 +17,11 @@ const ItemCard = ({
   onFavoriteToggle,
 }: ItemCardProps) => {
   const navigate = useNavigate();
+  const [isPopping, setIsPopping] = useState(false);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsPopping(true);
     onFavoriteToggle?.(item.id);
   };
 
@@ -52,8 +55,15 @@ const ItemCard = ({
         </div>
 
         <button
-          className={`${styles.card__favorite} ${isFavorite ? styles['card__favorite--active'] : ''}`}
+          className={[
+            styles.card__favorite,
+            isFavorite ? styles['card__favorite--active'] : '',
+            isPopping ? styles['card__favorite--pop'] : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
           onClick={handleFavoriteClick}
+          onAnimationEnd={() => setIsPopping(false)}
           type="button"
           aria-label={isFavorite ? 'Remove from saved' : 'Save item'}
         >

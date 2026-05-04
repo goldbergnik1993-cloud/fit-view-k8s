@@ -100,16 +100,28 @@
   color: $color-text;
   padding: 0;
   border-radius: 50%;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
   align-self: flex-end;
 
   &:hover {
-    color: $color-black;
+    color: $color-primary;
+    transform: scale(1.15);
   }
 
   &--active {
-    color: $color-primary-pressed;
+    color: $color-primary;
+  }
+
+  &--pop {
+    animation: heart-pop 0.35s ease forwards;
   }
 
   @include focus-visible;
+}
+
+@keyframes heart-pop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.4); }
+  65%  { transform: scale(0.88); }
+  100% { transform: scale(1); }
 }
