@@ -137,14 +137,15 @@
 .itemInfo {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: $spacing-16;
+  gap: 4px;
+  padding-top: $spacing-8;
 }
 
 .itemPriceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: $spacing-8;
 }
 
 .itemName {
