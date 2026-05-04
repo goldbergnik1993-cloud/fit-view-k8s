@@ -252,7 +252,7 @@ const Item = () => {
         loading={cartLoading}
         disabled={cartAdded || !selectedSizeLabel}
       >
-        {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+        {cartAdded ? 'Added to Bag' : 'Add To My Bag'}
       </PrimaryButton>
       {cartError && <p className={styles.cartError}>{cartError}</p>}
     </>

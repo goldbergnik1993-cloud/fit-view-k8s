@@ -22,8 +22,6 @@ const Silhouette = ({
 
   return (
     <div className={styles.silhouette}>
-
-      {/* Левая колонка: "Ends X cm from floor" + "Your Height" */}
       <div className={styles.silhouette__left}>
         <span
           className={styles.silhouette__endLabel}
@@ -31,10 +29,8 @@ const Silhouette = ({
         >
           {loading ? '...' : label}
         </span>
-        <span className={styles.silhouette__heightLabel}>Your Height</span>
       </div>
 
-      {/* Центр: картинка + горизонтальная линия + вертикальный ruler */}
       <div className={styles.silhouette__center}>
         <div className={styles.silhouette__imageWrap}>
           <img
@@ -47,18 +43,18 @@ const Silhouette = ({
             style={{ bottom: `${linePositionPct}%` }}
             aria-hidden="true"
           />
-          <div className={styles.silhouette__ruler} aria-hidden="true" />
         </div>
       </div>
 
-      {/* Правая колонка: "130 cm" сверху, "Item length" снизу */}
       <div className={styles.silhouette__right}>
-        <span className={styles.silhouette__heightLabel}>
+        <div className={styles.silhouette__ruler} aria-hidden="true" />
+        <span
+          className={styles.silhouette__itemLengthLabel}
+          style={{ bottom: `${linePositionPct}%` }}
+        >
           {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
         </span>
-        <span className={styles.silhouette__itemLabel}>Item length</span>
       </div>
-
     </div>
   );
 };

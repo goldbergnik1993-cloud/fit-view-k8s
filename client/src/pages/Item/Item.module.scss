@@ -413,7 +413,6 @@
   // flex:1 — занимает оставшееся место после левой (и правой на десктопе) колонок
   flex: 1;
   min-width: 0;
-  height: 343px;
 
   @include tablet {
     height: 469px;
