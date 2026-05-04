@@ -182,7 +182,9 @@ const Item = () => {
     selectedMeasurement?.inseamCm ??
     null;
 
-  const renderSizes = (itemData: typeof item) => {
+  // ─── Shared render helpers ────────────────────────────────────────────────
+
+  const renderSizesContent = (itemData: typeof item) => {
     if (!itemData) return null;
     return (
       <>
@@ -200,7 +202,7 @@ const Item = () => {
             </button>
           ))}
           <button
-            className={`${styles.infoBtn} ${isSizeGuideOpen ? styles['infoBtn--active'] : ''}`}
+            className={styles.infoBtn}
             aria-label="Size guide"
             aria-expanded={isSizeGuideOpen}
             onClick={() => setIsSizeGuideOpen((v) => !v)}
@@ -213,35 +215,46 @@ const Item = () => {
             />
           </button>
         </div>
+        {isSizeGuideOpen && (
+          <div className={styles.sizeGuide}>
+            {itemData.availableSizes.map((size) => (
+              <p key={size.id} className={styles.sizeGuide__row}>
+                {size.sizeLabel}: {MOCK_SIZE_GUIDE[size.sizeLabel] ?? '—'}
+              </p>
+            ))}
+          </div>
+        )}
       </>
     );
   };
 
-  const renderColors = () => (
+  const renderColorsContent = () => (
     <>
-      {isSizeGuideOpen ? (
-        <div className={styles.sizeGuide}>
-          {item?.availableSizes.map((size) => (
-            <p key={size.id} className={styles.sizeGuide__row}>
-              {size.sizeLabel}: {MOCK_SIZE_GUIDE[size.sizeLabel] ?? '—'}
-            </p>
-          ))}
-        </div>
-      ) : (
-        <>
-          <p className={styles.sectionLabel} style={{ marginTop: 16 }}>Choose your color</p>
-          <div className={styles.colors}>
-            {MOCK_COLORS.map((color) => (
-              <span
-                key={color}
-                className={styles.colorDot}
-                style={{ background: color }}
-                aria-hidden="true"
-              />
-            ))}
-          </div>
-        </>
-      )}
+      <p className={styles.sectionLabel}>Choose your color</p>
+      <div className={styles.colors}>
+        {MOCK_COLORS.map((color) => (
+          <span
+            key={color}
+            className={styles.colorDot}
+            style={{ background: color }}
+            aria-hidden="true"
+          />
+        ))}
+      </div>
+    </>
+  );
+
+  const renderAddToCart = (height: number) => (
+    <>
+      <PrimaryButton
+        style={{ height }}
+        onClick={handleAddToCart}
+        loading={cartLoading}
+        disabled={cartAdded || !selectedSizeLabel}
+      >
+        {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
+      </PrimaryButton>
+      {cartError && <p className={styles.cartError}>{cartError}</p>}
     </>
   );
 
@@ -269,49 +282,6 @@ const Item = () => {
         />
       </svg>
     </button>
-  );
-
-  const renderGenderToggle = () => (
-    <div className={styles.fitting__left}>
-      <div className={styles.genderToggle}>
-        {GENDER_TOGGLE.map(({ value, label }) => (
-          <button
-            key={value}
-            className={`${styles.genderBtn} ${
-              gender === value ? styles['genderBtn--active'] : ''
-            }`}
-            onClick={() => setGender(value)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <button
-        className={styles.editBtn}
-        onClick={() => setIsMeasurementsOpen(true)}
-      >
-        Edit Measurements
-        <img src={ChevronRightIcon} alt="" width={16} height={16} />
-      </button>
-    </div>
-  );
-
-  const renderSlider = () => (
-    <div className={styles.sliderWrap}>
-      <input
-        type="range"
-        min={140}
-        max={210}
-        value={height}
-        onChange={(e) => setHeight(Number(e.target.value))}
-        className={styles.slider}
-        aria-label="Your height"
-      />
-      <div className={styles.sliderLabels}>
-        <span>Your Height</span>
-        <span>{height} cm</span>
-      </div>
-    </div>
   );
 
   const renderSimilar = () => (
@@ -346,7 +316,8 @@ const Item = () => {
   if (loading) return <div className={styles.state}>Loading...</div>;
   if (error || !item) return <div className={styles.state}>Item not found</div>;
 
-  // ─── Card View ────────────────────────────────────────────────────────────────
+  // ─── Card View ────────────────────────────────────────────────────────────
+
   if (view === 'card') {
     return (
       <>
@@ -389,12 +360,8 @@ const Item = () => {
               <p className={styles.material}>Material: 100% Viscose</p>
               <p className={styles.material}>Lining: 100% Polyester</p>
 
-              <div className={styles.section}>
-                {renderSizes(item)}
-              </div>
-              <div className={styles.section}>
-                {renderColors()}
-              </div>
+              <div className={styles.section}>{renderSizesContent(item)}</div>
+              <div className={styles.section}>{renderColorsContent()}</div>
 
               <div className={styles['layout__right-spacer']} />
 
@@ -411,14 +378,7 @@ const Item = () => {
                   Virtual Try-On
                 </button>
                 <div className={styles.actions__primary}>
-                  <PrimaryButton
-                    onClick={handleAddToCart}
-                    loading={cartLoading}
-                    disabled={cartAdded || !selectedSizeLabel}
-                  >
-                    {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
-                  </PrimaryButton>
-                  {cartError && <p className={styles.cartError}>{cartError}</p>}
+                  {renderAddToCart(56)}
                 </div>
               </div>
             </div>
@@ -430,17 +390,39 @@ const Item = () => {
     );
   }
 
-  // ─── Fitting View ─────────────────────────────────────────────────────────────
+  // ─── Fitting View ─────────────────────────────────────────────────────────
+
   return (
     <>
       <Header />
       <main className={styles.page}>
 
-        {/* Основной ряд: левая (toggle+edit) + силуэт + правая (только десктоп) */}
-        <div className={styles.fitting__topRow}>
+        {/* ── Основной ряд ── */}
+        <div className={styles.fitting__body}>
 
           {/* Левая колонка: toggle + editBtn */}
-          {renderGenderToggle()}
+          <div className={styles.fitting__left}>
+            <div className={styles.genderToggle}>
+              {GENDER_TOGGLE.map(({ value, label }) => (
+                <button
+                  key={value}
+                  className={`${styles.genderBtn} ${
+                    gender === value ? styles['genderBtn--active'] : ''
+                  }`}
+                  onClick={() => setGender(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button
+              className={styles.editBtn}
+              onClick={() => setIsMeasurementsOpen(true)}
+            >
+              Edit Measurements
+              <img src={ChevronRightIcon} alt="" width={16} height={16} />
+            </button>
+          </div>
 
           {/* Центр: силуэт */}
           <div className={styles.fitting__silhouette}>
@@ -456,32 +438,25 @@ const Item = () => {
 
           {/* Правая колонка — только десктоп */}
           <div className={styles.fitting__right}>
-            <h1 className={styles.fitting__right_title}>{item.name}</h1>
-            <p className={styles.fitting__right_brand}>{item.brand}</p>
+            <h1 className={styles['fitting__right-title']}>{item.name}</h1>
+            <p className={styles['fitting__right-brand']}>{item.brand}</p>
 
-            <div style={{ marginTop: 16 }}>
-              {renderSizes(item)}
+            <div className={styles['fitting__right-sizes']}>
+              {renderSizesContent(item)}
             </div>
-            <div style={{ marginTop: 16 }}>
-              {renderColors()}
+            <div className={styles['fitting__right-colors']}>
+              {renderColorsContent()}
             </div>
 
-            <div className={styles.fitting__right_price}>
+            <div className={styles['fitting__right-price']}>
               <div className={styles.priceRow}>
                 <span className={styles.priceLabel}>Price:</span>
                 <span className={styles.priceValue}>{item.price}$</span>
               </div>
             </div>
 
-            <div className={styles.fitting__right_actions}>
-              <PrimaryButton
-                onClick={handleAddToCart}
-                loading={cartLoading}
-                disabled={cartAdded || !selectedSizeLabel}
-              >
-                {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
-              </PrimaryButton>
-              {cartError && <p className={styles.cartError}>{cartError}</p>}
+            <div className={styles['fitting__right-actions']}>
+              {renderAddToCart(48)}
             </div>
           </div>
         </div>
@@ -492,20 +467,32 @@ const Item = () => {
           onSave={() => runFitting()}
         />
 
-        {/* Слайдер — мобайл и планшет под силуэтом, десктоп тоже под силуэтом */}
-        <div className={styles.fitting__slider}>
-          {renderSlider()}
+        {/* ── Слайдер под силуэтом ── */}
+        <div className={styles['fitting__slider-wrap']}>
+          <input
+            type="range"
+            min={140}
+            max={210}
+            value={height}
+            onChange={(e) => setHeight(Number(e.target.value))}
+            className={styles.slider}
+            aria-label="Your height"
+          />
+          <div className={styles.sliderLabels}>
+            <span>Your Height</span>
+            <span>{height} cm</span>
+          </div>
         </div>
 
-        {/* Название, размеры, цена, кнопка — мобайл и планшет */}
+        {/* ── Нижняя часть: мобайл + планшет ── */}
         <h1 className={styles.fitting__title}>{item.name}</h1>
         <p className={styles.fitting__brand}>{item.brand}</p>
 
         <div className={styles.fitting__section}>
-          {renderSizes(item)}
+          {renderSizesContent(item)}
         </div>
-        <div className={styles.fitting__section}>
-          {renderColors()}
+        <div className={styles['fitting__section--sm']}>
+          {renderColorsContent()}
         </div>
 
         <div className={styles.fitting__priceRow}>
@@ -514,14 +501,7 @@ const Item = () => {
         </div>
 
         <div className={styles.fitting__actions}>
-          <PrimaryButton
-            onClick={handleAddToCart}
-            loading={cartLoading}
-            disabled={cartAdded || !selectedSizeLabel}
-          >
-            {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
-          </PrimaryButton>
-          {cartError && <p className={styles.cartError}>{cartError}</p>}
+          {renderAddToCart(44)}
         </div>
 
         {renderSimilar()}
