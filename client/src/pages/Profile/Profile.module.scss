@@ -44,7 +44,7 @@
   align-items: center;
   gap: $spacing-8;
   padding: $spacing-8 $spacing-16;
-  border: 1.5px solid $color-card-bg;
+  border: 1px solid $color-card-bg;
   border-radius: 8px;
   white-space: nowrap;
   @include text(14px, 400);
@@ -88,13 +88,13 @@
 .profile__content-inner {
   display: flex;
   flex-direction: column;
-  gap: $spacing-16;
+  gap: $spacing-24;
 }
 
 // ─── Cards ────────────────────────────────────────────────────────────────────
 
 .profile__card {
-  border: 1.5px solid $color-card-bg;
+  border: 1px solid $color-card-bg;
   border-radius: 12px;
   padding: $spacing-16;
 }
@@ -125,11 +125,13 @@
 
 .profile__edit-btn {
   width: 100%;
-  padding: $spacing-16;
-  border: 1.5px solid $color-primary;
+  height: 48px;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $color-primary;
   border-radius: 8px;
   @include text(16px, 500);
   color: $color-primary;
+  box-sizing: border-box;
   transition: background-color 0.2s ease, color 0.2s ease;
 
   &:hover {
@@ -161,8 +163,9 @@
 
 .profile__field-input {
   width: 100%;
-  padding: $spacing-16;
-  border: 1.5px solid $color-card-bg;
+  height: 48px;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $color-card-bg;
   border-radius: 8px;
   @include text(14px, 400);
   color: $color-text;
@@ -196,11 +199,11 @@
 
 @include tablet {
   .profile__card {
-    max-width: 460px;
+    max-width: 470px;
   }
 
   .profile__content-inner {
-    max-width: 460px;
+    max-width: 470px;
   }
 }
 
@@ -239,7 +242,7 @@
     }
 
     &--active {
-      border: 1.5px solid $color-text;
+      border: 1px solid $color-text;
       border-radius: 8px;
     }
   }
