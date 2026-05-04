@@ -289,174 +289,95 @@ export const Header = () => {
             </div>
           </>
         )}
-      </header>
 
-      {/* Mobile menu */}
-      <nav
-        id="mobile-nav"
-        className={`${styles['mobile-nav']} ${isMenuOpen ? styles['mobile-nav--open'] : ''}`}
-        aria-label="Mobile navigation"
-        inert={!isMenuOpen ? true : undefined}
-      >
-        <div className={styles['mobile-nav__header']}>
-          <div className={styles['mobile-nav__header-left']}>
-            <button
-              className={styles['mobile-nav__close']}
-              onClick={closeMenu}
-              aria-label="Close menu"
-            >
-              <img
-                src={BurgerCloseIcon}
-                alt=""
-                aria-hidden="true"
-                width={24}
-                height={24}
-              />
-            </button>
-            <a
-              href="/"
-              className={styles['header__logo']}
-              aria-label="FitView home"
-              onClick={(e) => {
-                if (window.location.pathname === '/') {
-                  e.preventDefault();
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-              }}
-            >
-              <img src={LogoIcon} alt="FitView" width={44} height={44} />
-            </a>
-          </div>
-          <div className={styles['header__icons']}>
-            <button
-              className={styles['header__icon-btn']}
-              aria-label="Search"
-              onClick={() => {
-                closeMenu();
-                openSearch();
-              }}
-            >
-              <img
-                src={SearchIcon}
-                alt=""
-                aria-hidden="true"
-                width={24}
-                height={24}
-              />
-            </button>
-            <a
-              href="/saved"
-              className={styles['header__icon-btn']}
-              aria-label="Saved items"
-            >
-              <div className={styles['header__icon-wrapper']}>
+        {/* Backdrop */}
+        {isMenuOpen && (
+          <div
+            className={styles['mobile-nav__backdrop']}
+            onClick={closeMenu}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Dropdown Nav (mobile + tablet) */}
+        <nav
+          id="mobile-nav"
+          className={`${styles['mobile-nav']} ${isMenuOpen ? styles['mobile-nav--open'] : ''}`}
+          aria-label="Mobile navigation"
+          inert={!isMenuOpen ? true : undefined}
+        >
+          <ul className={styles['mobile-nav__list']} role="list">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.label} className={styles['mobile-nav__item']}>
+                <button
+                  className={styles['mobile-nav__link']}
+                  onClick={() => {
+                    if (item.children) {
+                      toggleNavItem(item.label);
+                    } else {
+                      window.location.href = item.href ?? '/catalog';
+                      closeMenu();
+                    }
+                  }}
+                  aria-expanded={
+                    item.children ? expandedNav === item.label : undefined
+                  }
+                >
+                  {item.label}
+                  <img
+                    src={
+                      expandedNav === item.label
+                        ? ChevronUpIcon
+                        : ChevronRightIcon
+                    }
+                    alt=""
+                    aria-hidden="true"
+                    width={16}
+                    height={16}
+                  />
+                </button>
+
+                {item.children && expandedNav === item.label && (
+                  <ul role="list" className={styles['mobile-nav__children']}>
+                    {item.children.map((child) => (
+                      <li key={child.href}>
+                        <a
+                          href={child.href}
+                          className={styles['mobile-nav__child-link']}
+                          onClick={closeMenu}
+                        >
+                          {child.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <div className={styles['mobile-nav__divider']} role="separator" />
+
+          <ul className={styles['mobile-nav__secondary']} role="list">
+            <li>
+              <a
+                href={profileHref}
+                className={styles['mobile-nav__secondary-link']}
+                onClick={closeMenu}
+              >
                 <img
-                  src={SavedIcon}
+                  src={ProfileIcon}
                   alt=""
                   aria-hidden="true"
                   width={24}
                   height={24}
                 />
-                {count > 0 && (
-                  <span className={styles['header__badge']}>{count}</span>
-                )}
-              </div>
-            </a>
-            <a
-              href="/my-bag"
-              className={styles['header__icon-btn']}
-              aria-label="Shopping bag"
-            >
-              <img
-                src={BagIcon}
-                alt=""
-                aria-hidden="true"
-                width={24}
-                height={24}
-              />
-            </a>
-          </div>
-        </div>
-
-        <ul className={styles['mobile-nav__list']} role="list">
-          {NAV_ITEMS.map((item) => (
-            <li key={item.label} className={styles['mobile-nav__item']}>
-              <button
-                className={styles['mobile-nav__link']}
-                onClick={() => {
-                  if (item.children) {
-                    toggleNavItem(item.label);
-                  } else {
-                    window.location.href = item.href ?? '/catalog';
-                    closeMenu();
-                  }
-                }}
-                aria-expanded={
-                  item.children ? expandedNav === item.label : undefined
-                }
-              >
-                {item.label}
-                <img
-                  src={
-                    expandedNav === item.label
-                      ? ChevronUpIcon
-                      : ChevronRightIcon
-                  }
-                  alt=""
-                  aria-hidden="true"
-                  width={16}
-                  height={16}
-                />
-              </button>
-
-              {item.children && expandedNav === item.label && (
-                <ul
-                  role="list"
-                  style={{
-                    listStyle: 'none',
-                    padding: '0 0 8px 16px',
-                    margin: 0,
-                  }}
-                >
-                  {item.children.map((child) => (
-                    <li key={child.href}>
-                      <a
-                        href={child.href}
-                        className={styles['mobile-nav__link']}
-                        style={{ fontSize: '14px', paddingLeft: 0 }}
-                        onClick={closeMenu}
-                      >
-                        {child.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                Profile
+              </a>
             </li>
-          ))}
-        </ul>
-
-        <div className={styles['mobile-nav__divider']} role="separator" />
-
-        <ul className={styles['mobile-nav__secondary']} role="list">
-          <li>
-            <a
-              href={profileHref}
-              className={styles['mobile-nav__secondary-link']}
-              onClick={closeMenu}
-            >
-              <img
-                src={ProfileIcon}
-                alt=""
-                aria-hidden="true"
-                width={24}
-                height={24}
-              />
-              Profile
-            </a>
-          </li>
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      </header>
 
       {/* Mobile search — fullscreen */}
       {isMobile && (
