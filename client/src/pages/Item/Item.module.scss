@@ -111,21 +111,13 @@
   border: none;
   padding: 0;
   @include flex-center;
-  transition: opacity 0.2s ease;
+  color: $color-white;
+  transition: opacity 0.2s ease, color 0.2s ease;
 
   &:hover { opacity: 0.7; }
 
-  img {
-    width: 24px;
-    height: 24px;
-    transition: filter 0.2s ease;
-  }
-
-  // inactive: default icon (outline/black)
-  // active: icon filled with #3030F2
-  &--active img {
-    // renders the SVG icon as solid #3030F2
-    filter: invert(17%) sepia(98%) saturate(4000%) hue-rotate(232deg) brightness(90%);
+  &--active {
+    color: $color-primary;
   }
 }
 
@@ -269,6 +261,13 @@
   @include tablet {
     flex: 1;
   }
+}
+
+.cartError {
+  @include text(13px, 400);
+  color: $color-error;
+  margin: $spacing-4 0 0;
+  text-align: center;
 }
 
 .tryOnBtn {

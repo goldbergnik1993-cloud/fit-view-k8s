@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFavorites } from '../../providers/FavoritesContext';
 import { useCart } from '../../providers/CartContext';
-import {
-  itemsApi,
-  type FittingRoomResponse,
-} from '../../services/api';
+import { itemsApi, type FittingRoomResponse } from '../../services/api';
 import { useItem, useItems } from '../../hooks/useItems';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import { Header } from '../../shared/components/Header/Header';
@@ -15,7 +12,7 @@ import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
 import styles from './Item.module.scss';
 import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
-import SavedIcon from '../../assets/icons/saved.svg';
+
 import InfoIcon from '../../assets/icons/info.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EditMeasurementsModal from '../../shared/components/EditMeasurementsModal/EditMeasurementsModal';
@@ -27,7 +24,6 @@ import {
 
 const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
 
-// Mock size guide — replace with real data from backend
 const MOCK_SIZE_GUIDE: Record<string, string> = {
   S: 'Chest 86–89" / Waist 62–65" / Hips 90–94"',
   M: 'Chest 90–93" / Waist 66–69" / Hips 95–98"',
@@ -59,9 +55,13 @@ const Item = () => {
   const { addItem } = useCart();
 
   const [favoriteLoading, setFavoriteLoading] = useState(false);
-  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(null);
+  const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(
+    null
+  );
   const [cartLoading, setCartLoading] = useState(false);
   const [cartAdded, setCartAdded] = useState(false);
+  // Добавлено состояние ошибки корзины
+  const [cartError, setCartError] = useState<string | null>(null);
 
   const [height, setHeight] = useState(170);
   const [gender, setGender] = useState<'male' | 'female'>('female');
@@ -161,12 +161,13 @@ const Item = () => {
   const handleAddToCart = async () => {
     if (!item || !selectedSizeLabel) return;
     setCartLoading(true);
+    setCartError(null);
     try {
       await addItem(Number(item.id), selectedSizeLabel);
       setCartAdded(true);
       setTimeout(() => setCartAdded(false), 2000);
-    } catch (err) {
-      console.warn('Failed to add to cart:', err);
+    } catch {
+      setCartError('Failed to add to bag');
     } finally {
       setCartLoading(false);
     }
@@ -188,7 +189,9 @@ const Item = () => {
             <button
               key={size.id}
               className={`${styles.sizeBtn} ${
-                selectedSizeLabel === size.sizeLabel ? styles['sizeBtn--active'] : ''
+                selectedSizeLabel === size.sizeLabel
+                  ? styles['sizeBtn--active']
+                  : ''
               }`}
               onClick={() => setSelectedSizeLabel(size.sizeLabel)}
             >
@@ -243,7 +246,22 @@ const Item = () => {
       disabled={favoriteLoading}
       aria-label={isFav(id ?? '') ? 'Remove from saved' : 'Save item'}
     >
-      <img src={SavedIcon} alt="" aria-hidden="true" />
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 20 20"
+        fill={isFav(id ?? '') ? 'currentColor' : 'none'}
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path
+          d="M10 17C10 17 2 12.5 2 7C2 4.79 3.79 3 6 3C7.5 3 8.8 3.8 9.5 5C9.8 5.5 10.2 5.5 10.5 5C11.2 3.8 12.5 3 14 3C16.21 3 18 4.79 18 7C18 12.5 10 17 10 17Z"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </button>
   );
 
@@ -257,19 +275,24 @@ const Item = () => {
         <Header />
         <main className={styles.page}>
           <nav className={styles.breadcrumb} aria-label="breadcrumb">
-            <a href="/" className={styles.breadcrumb__link}>Home</a>
+            <a href="/" className={styles.breadcrumb__link}>
+              Home
+            </a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a href="/catalog" className={styles.breadcrumb__link}>Catalog</a>
+            <a href="/catalog" className={styles.breadcrumb__link}>
+              Catalog
+            </a>
             <span className={styles.breadcrumb__sep}>/</span>
-            <a href={`/catalog?brands=${item.brand}`} className={styles.breadcrumb__link}>
+            <a
+              href={`/catalog?brands=${item.brand}`}
+              className={styles.breadcrumb__link}
+            >
               {item.brand}
             </a>
             <span className={styles.breadcrumb__sep}>/</span>
           </nav>
 
-          {/* Two-column grid on desktop */}
           <div className={styles.layout}>
-            {/* Left: image only */}
             <div className={styles.layout__left}>
               <div className={styles.imageWrap}>
                 <img
@@ -285,13 +308,12 @@ const Item = () => {
               </div>
             </div>
 
-            {/* Right: all content */}
             <div className={styles.layout__right}>
               <h1 className={styles.title}>{item.name}</h1>
 
               <p className={styles.description}>
-                Elegant wrap dress with a flattering V-neck and adjustable waist tie
-                — perfect for evenings and special occasions.
+                Elegant wrap dress with a flattering V-neck and adjustable waist
+                tie — perfect for evenings and special occasions.
               </p>
               <p className={styles.material}>Material: 100% Viscose</p>
               <p className={styles.material}>Lining: 100% Polyester</p>
@@ -319,12 +341,13 @@ const Item = () => {
                   >
                     {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
                   </PrimaryButton>
+                  {/* Вывод ошибки под кнопкой в Card View */}
+                  {cartError && <p className={styles.cartError}>{cartError}</p>}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* No "You may also like" in card view */}
           <Footer />
         </main>
       </>
@@ -421,10 +444,11 @@ const Item = () => {
             >
               {cartAdded ? '✓ Added to Bag' : 'Add To My Bag'}
             </PrimaryButton>
+            {/* Вывод ошибки под кнопкой в Fitting View */}
+            {cartError && <p className={styles.cartError}>{cartError}</p>}
           </div>
         </div>
 
-        {/* "You may also like" — fitting view only */}
         <section className={styles.similar}>
           <div className={styles.similar__header}>
             <h2 className={styles.similar__title}>You may also like</h2>
