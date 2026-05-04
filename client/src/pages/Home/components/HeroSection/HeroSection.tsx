@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from './HeroSection.module.scss';
-import SilhouetteManImg from '../../../../assets/images/silhouette-man.svg';
-import SilhouetteWomanImg from '../../../../assets/images/silhouette-woman.svg';
+import SilhouetteManImg from '../../../../assets/images/home-male-silhouette.png';
+import SilhouetteWomanImg from '../../../../assets/images/home-female-silhouette.png';
 import { OnboardingModal } from '../OnboardingModal/OnboardingModal';
 
 export const HeroSection = () => {
