@@ -206,8 +206,8 @@
 
 .header__badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -8px;
+  right: -8px;
   background: $color-white;
   color: $color-primary;
   border-radius: 50%;
@@ -218,6 +218,7 @@
   line-height: 1;
   pointer-events: none;
   border: 1px solid $color-primary;
+  z-index: 2;
 }
 
 // ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
