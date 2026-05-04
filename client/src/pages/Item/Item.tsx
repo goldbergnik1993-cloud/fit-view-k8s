@@ -13,6 +13,8 @@ import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryB
 import styles from './Item.module.scss';
 import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
+import InfoIcon from '../../assets/icons/info.svg';
+import InfoFilledIcon from '../../assets/icons/info-filled.svg';
 import EditMeasurementsModal from '../../shared/components/EditMeasurementsModal/EditMeasurementsModal';
 import {
   calculateHEnd,
@@ -20,7 +22,7 @@ import {
   getResultLabel,
 } from '../../utils/fitCalculator';
 
-const MOCK_COLORS = ['#A0522D', '#4A5240', '#ADD8E6', '#D2B48C'];
+const MOCK_COLORS = ['#976B56', '#626044', '#B9C8DA', '#D8CAB3'];
 
 const MOCK_SIZE_GUIDE: Record<string, string> = {
   S: 'Chest 86–89" / Waist 62–65" / Hips 90–94"',
@@ -193,11 +195,12 @@ const Item = () => {
             aria-expanded={isSizeGuideOpen}
             onClick={() => setIsSizeGuideOpen((v) => !v)}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M12 11V17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              <circle cx="12" cy="7.5" r="1" fill="currentColor"/>
-            </svg>
+            <img
+              src={isSizeGuideOpen ? InfoFilledIcon : InfoIcon}
+              alt=""
+              width={24}
+              height={24}
+            />
           </button>
         </div>
         {isSizeGuideOpen && (
