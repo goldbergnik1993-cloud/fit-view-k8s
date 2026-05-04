@@ -28,11 +28,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 400;
-  width: 691px;
-
-  @include desktop {
-    width: 684px;
-  }
+  width: 448px;
 }
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
@@ -42,17 +38,16 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 0;
   border-radius: 16px 16px 0 0;
 
   @include tablet {
     border-radius: 8px;
-    max-height: 487px;
+    max-height: 80vh;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   }
 
   @include desktop {
-    max-height: 506px;
+    max-height: 80vh;
   }
 }
 
