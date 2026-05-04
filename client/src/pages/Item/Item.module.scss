@@ -4,10 +4,13 @@
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 .page {
-  padding: $spacing-16 var(--container-padding);
+  padding: $spacing-16 var(--container-padding) $spacing-88;
   max-width: 600px;
   margin: 0 auto;
-  padding-bottom: $spacing-88;
+
+  @include tablet {
+    max-width: 744px;
+  }
 
   @include desktop {
     max-width: $container-max-width;
@@ -22,25 +25,13 @@
   color: $color-input-border;
 }
 
-// ─── Desktop two-column layout ────────────────────────────────────────────────
-
-.layout {
-  @include desktop {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $spacing-32;
-    align-items: start;
-  }
-}
-
-
 // ─── Breadcrumb ───────────────────────────────────────────────────────────────
 
 .breadcrumb {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: $spacing-8;
+  margin-bottom: $spacing-16;
 }
 
 .breadcrumb__link {
@@ -54,11 +45,53 @@
   color: $color-input-border;
 }
 
+// ─── Desktop two-column layout ────────────────────────────────────────────────
+
+.layout {
+  @include desktop {
+    display: grid;
+    grid-template-columns: 1fr 1fr; // TODO: заменить на точные пропорции из Figma
+    gap: $spacing-32;
+    align-items: start;
+  }
+}
+
 // ─── Title ────────────────────────────────────────────────────────────────────
 
+// Мобайл: над картинкой — скрывается на планшете и десктопе
 .title {
-  @include h2;
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $color-text;
   margin: 0 0 $spacing-16;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+// Планшет + десктоп: под картинкой (планшет) / в правой колонке (десктоп)
+.title--right {
+  display: none;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $color-text;
+  margin: 0 0 $spacing-16;
+
+  @include tablet {
+    display: block;
+    font-size: 32px;
+    margin-top: $spacing-24;
+  }
+
+  @include desktop {
+    display: block;
+    font-size: 32px;
+    margin-top: 0;
+  }
 }
 
 .brand {
@@ -75,20 +108,14 @@
   border-radius: 16px;
   overflow: hidden;
   background: $color-card-bg;
-  margin-bottom: $spacing-16;
-
-  // mobile: fixed height 342px
-  height: 342px;
+  height: 340px;
 
   @include tablet {
-    // tablet: 490px height
     height: 490px;
-    margin-bottom: 0;
   }
 
   @include desktop {
     height: 490px;
-    margin-bottom: 0;
   }
 }
 
@@ -99,7 +126,7 @@
   object-fit: cover;
 }
 
-// ─── Favorite button — NO background circle, just the icon ───────────────────
+// ─── Favorite button ──────────────────────────────────────────────────────────
 
 .favoriteBtn {
   position: absolute;
@@ -124,12 +151,12 @@
 // ─── Description ─────────────────────────────────────────────────────────────
 
 .description {
-  @include text(14px, 400, 1.5);
+  @include text(16px, 400, 1.5);
   margin: 0 0 $spacing-8;
 }
 
 .material {
-  @include text(13px, 500);
+  @include text(14px, 400);
   margin: 0 0 4px;
 }
 
@@ -139,8 +166,13 @@
   margin-top: $spacing-16;
 }
 
+.section--first {
+  margin-top: $spacing-32;
+}
+
 .sectionLabel {
-  @include text(14px, 400);
+  @include text(16px, 400);
+  color: $color-text;
   margin: 0 0 $spacing-8;
 }
 
@@ -153,26 +185,27 @@
 }
 
 .sizeBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid $color-card-bg;
-  @include text(13px, 400);
+  width: 33px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #787880;
+  background: $color-white;
+  @include text(14px, 400);
   @include flex-center;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
 
-  &:hover { border-color: #787880; }
+  &:hover { border-color: #4C494D; }
 
   &--active {
-    border-color: #787880;
-    background: #787880;
+    border-color: #4C494D;
+    background: #4C494D;
     color: $color-white;
   }
 }
 
 .infoBtn {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   @include flex-center;
   border-radius: 50%;
   transition: background 0.2s ease, opacity 0.2s ease;
@@ -182,13 +215,11 @@
   &--active {
     background: $color-text;
 
-    img {
-      filter: invert(1);
-    }
+    img { filter: invert(1); }
   }
 }
 
-// ─── Size Guide Popup ─────────────────────────────────────────────────────────
+// ─── Size Guide ───────────────────────────────────────────────────────────────
 
 .sizeGuide {
   margin-top: $spacing-8;
@@ -217,7 +248,7 @@
 .colorDot {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 4px;
   display: block;
   flex-shrink: 0;
 }
@@ -226,39 +257,52 @@
 
 .priceRow {
   @include flex-between;
-  margin-top: $spacing-24;
+  margin-top: $spacing-32;
 }
 
 .priceLabel {
-  @include text(18px, 700);
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
 }
 
 .priceValue {
-  @include text(18px, 700);
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
 }
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
 
 .actions {
   display: flex;
-  flex-direction: column-reverse;
-  gap: $spacing-8;
+  flex-direction: column;
+  gap: $spacing-16;
   margin-top: $spacing-16;
 
   @include tablet {
     flex-direction: row;
-    align-items: stretch;
+    gap: $spacing-24;
+  }
+
+  @include desktop {
+    flex-direction: row;
+    gap: $spacing-24;
   }
 }
 
 .actions__primary {
   width: 100%;
 
-  > button {
-    width: 100%;
-  }
+  > button { width: 100%; }
 
   @include tablet {
+    flex: 1;
+  }
+
+  @include desktop {
     flex: 1;
   }
 }
@@ -272,7 +316,6 @@
 
 .tryOnBtn {
   width: 100%;
-  padding: $spacing-16;
   border-radius: 8px;
   border: 1.5px solid $color-primary;
   @include text(16px, 500);
@@ -289,10 +332,17 @@
   @include tablet {
     flex: 1;
     width: auto;
+    height: 48px;
+  }
+
+  @include desktop {
+    flex: 1;
+    width: auto;
+    height: 48px;
   }
 }
 
-// ─── Similar (fitting room only) ─────────────────────────────────────────────
+// ─── Similar ─────────────────────────────────────────────────────────────────
 
 .similar {
   margin-top: $spacing-32;
