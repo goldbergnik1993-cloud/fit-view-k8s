@@ -89,6 +89,8 @@ const Item = () => {
 
   const runFitting = useCallback(async () => {
     if (!item || !id || !selectedSizeLabel) return;
+    console.log('measurements:', JSON.stringify(item.measurements));
+    console.log('selectedSizeLabel:', selectedSizeLabel);
     setFitLoading(true);
     try {
       const result = await itemsApi.fitItem(Number(id), {
