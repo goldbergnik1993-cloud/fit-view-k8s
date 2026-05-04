@@ -8,10 +8,33 @@ import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryB
 import { useCart } from '../../providers/CartContext';
 import { ordersApi, type DeliveryMethod } from '../../services/api';
 import type { Cart, CartItem } from '../../services/api';
+
 import ChevronDownIcon from '../../assets/icons/chevron-down.svg';
-import XIcon from '../../assets/icons/x.svg';
+import BurgerCloseIcon from '../../assets/icons/burger-close.svg';
 import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
 import styles from './MyBag.module.scss';
+
+// ─── Breadcrumb Component ───────────────────────────────────────────────────
+
+interface BreadcrumbProps {
+  step: number;
+}
+
+const Breadcrumb = ({ step }: BreadcrumbProps) => (
+  <nav className={styles['breadcrumb']} aria-label="Order steps">
+    <span className={step >= 1 ? styles['breadcrumb__item--active'] : styles['breadcrumb__item']}>
+      My Bag
+    </span>
+    <span className={styles['breadcrumb__arrow']}>→</span>
+    <span className={step >= 2 ? styles['breadcrumb__item--active'] : styles['breadcrumb__item']}>
+      Checkout
+    </span>
+    <span className={styles['breadcrumb__arrow']}>→</span>
+    <span className={step >= 3 ? styles['breadcrumb__item--active'] : styles['breadcrumb__item']}>
+      Review Order
+    </span>
+  </nav>
+);
 
 // ─── Step indicators ──────────────────────────────────────────────────────────
 
@@ -44,105 +67,115 @@ interface Step1Props {
 
 const Step1 = ({ cart, onUpdateQuantity, onRemove, onCheckout, promoOpen, setPromoOpen }: Step1Props) => (
   <div className={styles['step1']}>
-    <h1 className={styles['page-title']}>My Bag</h1>
-    <p className={styles['page-subtitle']}>
-      You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
-    </p>
+    <div className={styles['step1__left']}>
+      <h1 className={styles['page-title']}>My Bag</h1>
+      <p className={styles['page-subtitle']}>
+        You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
+      </p>
 
-    <div className={styles['cart-list']}>
-      {cart.cart_items.map((ci: CartItem) => (
-        <div key={ci.id} className={styles['cart-item']}>
-          <button
-            className={styles['cart-item__remove']}
-            onClick={() => onRemove(ci.id)}
-            aria-label="Remove item"
-          >
-            <img src={XIcon} alt="" width={12} height={12} />
-          </button>
+      <div className={styles['cart-list']}>
+        {cart.cart_items.map((ci: CartItem) => (
+          <div key={ci.id} className={styles['cart-item']}>
+            <button
+              className={styles['cart-item__remove']}
+              onClick={() => onRemove(ci.id)}
+              aria-label="Remove item"
+            >
+              <img src={BurgerCloseIcon} alt="" width={12} height={12} />
+            </button>
 
-          <img
-            src={ci.item.image_url}
-            alt={ci.item.name}
-            className={styles['cart-item__image']}
-          />
+            <div className={styles['cart-item__body']}>
+              <img
+                src={ci.item.image_url}
+                alt={ci.item.name}
+                className={styles['cart-item__image']}
+              />
+              <div className={styles['cart-item__info']}>
+                <p className={styles['cart-item__name']}>{ci.item.name}</p>
+                <p className={styles['cart-item__brand']}>{ci.item.brand.name}</p>
+                {ci.size_label && (
+                  <p className={styles['cart-item__size']}>Size: {ci.size_label}</p>
+                )}
+                <div className={styles['cart-item__qty']}>
+                  <span className={styles['cart-item__qty-label']}>Quantity</span>
+                  <div className={styles['cart-item__qty-controls']}>
+                    <button
+                      className={styles['cart-item__qty-btn']}
+                      onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+                    <span className={styles['cart-item__qty-value']}>{ci.quantity}</span>
+                    <button
+                      className={styles['cart-item__qty-btn']}
+                      onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <div className={styles['cart-item__info']}>
-            <p className={styles['cart-item__name']}>{ci.item.name}</p>
-            <p className={styles['cart-item__brand']}>{ci.item.brand.name}</p>
-            {ci.size_label && (
-              <p className={styles['cart-item__brand']}>Size: {ci.size_label}</p>
-            )}
-            <div className={styles['cart-item__qty']}>
-              <button
-                className={styles['cart-item__qty-btn']}
-                onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
-                aria-label="Decrease quantity"
-              >
-                −
-              </button>
-              <span className={styles['cart-item__qty-value']}>{ci.quantity}</span>
-              <button
-                className={styles['cart-item__qty-btn']}
-                onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
+            <div className={styles['cart-item__subtotal']}>
+              <span className={styles['cart-item__subtotal-label']}>Subtotal</span>
+              <span className={styles['cart-item__subtotal-value']}>
+                ${Number(ci.item.price) * ci.quantity}
+              </span>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
 
-    <div className={styles['subtotal']}>
-      <span className={styles['subtotal__label']}>Subtotal</span>
-      <span className={styles['subtotal__value']}>${cart.total_price}</span>
-    </div>
-
-    <div className={styles['promo']}>
-      <button
-        className={styles['promo__toggle']}
-        onClick={() => setPromoOpen(!promoOpen)}
-        aria-expanded={promoOpen}
-      >
-        <span>Have a promo code?</span>
-        <img
-          src={ChevronDownIcon}
-          alt=""
-          width={20}
-          height={20}
-          className={promoOpen ? styles['promo__chevron--open'] : ''}
-        />
-      </button>
-      {promoOpen && (
-        <div className={styles['promo__body']}>
-          <input
-            type="text"
-            placeholder="Enter promo code"
-            className={styles['promo__input']}
+    <div className={styles['step1__right']}>
+      <div className={styles['promo']}>
+        <button
+          className={styles['promo__toggle']}
+          onClick={() => setPromoOpen(!promoOpen)}
+          aria-expanded={promoOpen}
+        >
+          <span>Have a promo code?</span>
+          <img
+            src={ChevronDownIcon}
+            alt=""
+            width={20}
+            height={20}
+            className={promoOpen ? styles['promo__chevron--open'] : ''}
           />
-          <button className={styles['promo__apply']}>Apply</button>
+        </button>
+        {promoOpen && (
+          <div className={styles['promo__body']}>
+            <input
+              type="text"
+              placeholder="Enter promo code"
+              className={styles['promo__input']}
+            />
+            <button className={styles['promo__apply']}>Apply</button>
+          </div>
+        )}
+      </div>
+
+      <div className={styles['summary']}>
+        <div className={styles['summary__row']}>
+          <span>Subtotal</span><span>${cart.total_price}</span>
         </div>
-      )}
-    </div>
+        <div className={styles['summary__row']}>
+          <span>Shipping</span><span>$0</span>
+        </div>
+        <div className={styles['summary__row']}>
+          <span>Tax</span><span>$0</span>
+        </div>
+        <div className={`${styles['summary__row']} ${styles['summary__row--total']}`}>
+          <span>Total</span><span>${cart.total_price}</span>
+        </div>
+      </div>
 
-    <div className={styles['summary']}>
-      <div className={styles['summary__row']}>
-        <span>Subtotal</span><span>${cart.total_price}</span>
-      </div>
-      <div className={styles['summary__row']}>
-        <span>Shipping</span><span>$0</span>
-      </div>
-      <div className={styles['summary__row']}>
-        <span>Tax</span><span>$0</span>
-      </div>
-      <div className={`${styles['summary__row']} ${styles['summary__row--total']}`}>
-        <span>Total</span><span>${cart.total_price}</span>
-      </div>
+      <PrimaryButton onClick={onCheckout}>Checkout →</PrimaryButton>
+      <StepDots current={1} total={3} />
     </div>
-
-    <PrimaryButton onClick={onCheckout}>Checkout →</PrimaryButton>
-    <StepDots current={1} total={3} />
   </div>
 );
 
@@ -176,6 +209,7 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
       <p className={styles['page-subtitle']}>
         You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
       </p>
+      <Breadcrumb step={2} />
 
       <div className={styles['cart-compact']}>
         {cart.cart_items.map((ci: CartItem) => (
@@ -259,6 +293,7 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
     <p className={styles['page-subtitle']}>
       You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag
     </p>
+    <Breadcrumb step={3} />
 
     {cart.cart_items.map((ci: CartItem) => (
       <div key={ci.id} className={styles['cart-compact__item']}>
