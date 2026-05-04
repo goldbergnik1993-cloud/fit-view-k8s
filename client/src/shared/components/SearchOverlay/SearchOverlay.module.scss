@@ -154,15 +154,18 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0;
 }
 
 .itemBrand {
   @include text(14px, 400);
   opacity: 0.6;
+  margin: 0;
 }
 
 .itemPrice {
   @include text(16px, 400);
+  margin: 0;
 }
 
 .itemLike {
