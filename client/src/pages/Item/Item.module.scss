@@ -393,18 +393,19 @@
 .fitting__left {
   display: flex;
   flex-direction: column;
-  gap: $spacing-8;
+  align-items: flex-start;
+  justify-content: space-between;
   flex-shrink: 0;
-  // ширина по контенту, но ограничена
   width: 110px;
 
-  @include tablet {
-    width: 140px;
-  }
+  @include tablet { width: 140px; }
+  @include desktop { width: 174px; }
+}
 
-  @include desktop {
-    width: 174px;
-  }
+.fitting__endLabel {
+  @include text(14px, 400);
+  color: #4C494D;
+  white-space: nowrap;
 }
 
 // ─── Силуэт: flex:1, высота фиксированная ────────────────────────────────────

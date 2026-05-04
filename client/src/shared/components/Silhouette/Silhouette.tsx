@@ -13,27 +13,13 @@ interface SilhouetteProps {
 
 const Silhouette = ({
   linePositionPct,
-  label,
   itemLengthCm,
   gender = 'female',
-  loading = false,
 }: SilhouetteProps) => {
   const src = gender === 'male' ? manSvg : womanSvg;
 
   return (
     <div className={styles.silhouette}>
-      <div className={styles.silhouette__left}>
-        <span
-          className={styles.silhouette__itemLengthLabel}
-          style={{ bottom: `${linePositionPct}%` }}
-        >
-          {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
-        </span>
-        <span className={styles.silhouette__endLabel}>
-          {loading ? '...' : label}
-        </span>
-      </div>
-
       <div className={styles.silhouette__center}>
         <div className={styles.silhouette__imageWrap}>
           <img
@@ -51,6 +37,12 @@ const Silhouette = ({
 
       <div className={styles.silhouette__right}>
         <div className={styles.silhouette__ruler} aria-hidden="true" />
+        <span
+          className={styles.silhouette__itemLengthLabel}
+          style={{ bottom: `${linePositionPct}%` }}
+        >
+          {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
+        </span>
         <span className={styles.silhouette__bottomLabel}>Item length</span>
       </div>
     </div>
