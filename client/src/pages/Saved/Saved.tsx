@@ -9,6 +9,7 @@ import type { ClothingItem } from '../../types/clothing';
 import styles from './Saved.module.scss';
 import { useAuth } from '../../hooks/useAuth';
 import { useFavorites } from '../../providers/FavoritesContext';
+import { SimilarItems } from '../../shared/components/SimilarItems/SimilarItems';
 import EmptySavedIllustration from '../../assets/illustrations/empty-saved.png';
 
 const Saved = () => {
@@ -109,6 +110,10 @@ const Saved = () => {
                   onFavoriteToggle={toggleFavorite}
                 />
               ))}
+            </div>
+
+            <div className={styles.saved__similar}>
+              <SimilarItems />
             </div>
           </div>
         )}

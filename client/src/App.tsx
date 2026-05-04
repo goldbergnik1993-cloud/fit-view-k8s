@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './providers/AuthProvider';
 import { FavoritesProvider } from './providers/FavoritesProvider';
+import { CartProvider } from './providers/CartProvider';
 import { UserProfileProvider } from './providers/UserProfileProvider';
 import Home from './pages/Home/Home';
 import Catalog from './pages/Catalog/Catalog';
@@ -15,18 +16,20 @@ const App = () => (
   <AuthProvider>
     <UserProfileProvider>
       <FavoritesProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/catalog" element={<Catalog />} />
-            <Route path="/item/:id" element={<Item />} />
-            <Route path="/saved" element={<Saved />} />
-            <Route path="/my-bag" element={<MyBag />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/brand/:slug" element={<BrandEmpty />} />
-          </Routes>
-        </BrowserRouter>
+        <CartProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/catalog" element={<Catalog />} />
+              <Route path="/item/:id" element={<Item />} />
+              <Route path="/saved" element={<Saved />} />
+              <Route path="/my-bag" element={<MyBag />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/brand/:slug" element={<BrandEmpty />} />
+            </Routes>
+          </BrowserRouter>
+        </CartProvider>
       </FavoritesProvider>
     </UserProfileProvider>
   </AuthProvider>
