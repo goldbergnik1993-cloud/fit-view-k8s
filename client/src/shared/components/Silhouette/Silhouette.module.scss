@@ -1,31 +1,27 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
-// Структура: flex row, высота 100% от родителя
-// left (авто) | center (flex:1) | right (авто)
-// Лейблы по контенту, картинка занимает оставшееся место
-
 .silhouette {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
-  height: 100%;
+  height: 276px;
+
+  @include tablet {
+    height: 469px;
+  }
+
+  @include desktop {
+    height: 446px;
+  }
 }
 
 // ─── Левая колонка ────────────────────────────────────────────────────────────
-// "Ends X cm" — позиционируется абсолютно
-// "Your Height" — прижат к низу
 
 .silhouette__left {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  padding-right: $spacing-8;
   flex-shrink: 0;
-  // ширина по самому длинному тексту
   width: min-content;
   min-width: 70px;
 }
@@ -39,16 +35,9 @@
   transform: translateY(50%);
 }
 
-.silhouette__heightLabel {
-  @include text(14px, 400);
-  color: #4C494D;
-  white-space: nowrap;
-}
-
-// ─── Центр: картинка + линии ──────────────────────────────────────────────────
+// ─── Центр ────────────────────────────────────────────────────────────────────
 
 .silhouette__center {
-  // занимает всё оставшееся место
   flex: 1;
   min-width: 0;
   position: relative;
@@ -61,7 +50,6 @@
 }
 
 .silhouette__image {
-  // картинка центрируется внутри, не растягивается
   display: block;
   margin: 0 auto;
   height: 100%;
@@ -70,7 +58,6 @@
   object-fit: contain;
 }
 
-// Горизонтальная линия — на всю ширину центра
 .silhouette__line {
   position: absolute;
   left: 0;
@@ -80,33 +67,31 @@
   transition: bottom 0.4s ease;
 }
 
-// Вертикальный ruler — правая граница центра
+// ─── Правая колонка ───────────────────────────────────────────────────────────
+
+.silhouette__right {
+  flex-shrink: 0;
+  width: 82px;
+  position: relative;
+}
+
+// Вертикальный ruler — левый край правой колонки
 .silhouette__ruler {
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   bottom: 0;
   width: 1px;
   background: #A8A8B2;
 }
 
-// ─── Правая колонка ───────────────────────────────────────────────────────────
-// "130 cm" — сверху
-// "Item length" — снизу
-
-.silhouette__right {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding-left: $spacing-8;
-  width: min-content;
-  min-width: 60px;
-}
-
-.silhouette__itemLabel {
+// "130 cm" — двигается вместе с линией
+.silhouette__itemLengthLabel {
+  position: absolute;
+  left: $spacing-8;
   @include text(14px, 400);
   color: #4C494D;
   white-space: nowrap;
+  transform: translateY(50%);
+  transition: bottom 0.4s ease;
 }
