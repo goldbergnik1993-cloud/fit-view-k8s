@@ -159,7 +159,7 @@ const Step1 = ({
                   Subtotal
                 </span>
                 <span className={styles['cart-item__subtotal-value']}>
-                  ${Number(ci.item.price) * ci.quantity}
+                  ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -199,21 +199,21 @@ const Step1 = ({
       <div className={styles['summary']}>
         <div className={styles['summary__row']}>
           <span>Subtotal</span>
-          <span>${cart.total_price}</span>
+          <span>${Number(cart.total_price).toFixed(2)}</span>
         </div>
         <div className={styles['summary__row']}>
           <span>Shipping</span>
-          <span>$0</span>
+          <span>$0.00</span>
         </div>
         <div className={styles['summary__row']}>
           <span>Tax</span>
-          <span>$0</span>
+          <span>$0.00</span>
         </div>
         <div
           className={`${styles['summary__row']} ${styles['summary__row--total']}`}
         >
           <span>Total</span>
-          <span>${cart.total_price}</span>
+          <span>${Number(cart.total_price).toFixed(2)}</span>
         </div>
       </div>
 
@@ -279,7 +279,9 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
         ))}
         <div className={styles['subtotal']}>
           <span className={styles['subtotal__label']}>Subtotal</span>
-          <span className={styles['subtotal__value']}>${cart.total_price}</span>
+          <span className={styles['subtotal__value']}>
+            ${Number(cart.total_price).toFixed(2)}
+          </span>
         </div>
       </div>
 
@@ -378,7 +380,7 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
         style={{ marginBottom: 24 }}
       >
         <span>Total</span>
-        <span>${cart.total_price}</span>
+        <span>${Number(cart.total_price).toFixed(2)}</span>
       </div>
 
       <PrimaryButton onClick={onReview}>Review Order →</PrimaryButton>
@@ -422,7 +424,9 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
 
     <div className={styles['subtotal']} style={{ marginBottom: 24 }}>
       <span className={styles['subtotal__label']}>Subtotal</span>
-      <span className={styles['subtotal__value']}>${cart.total_price}</span>
+      <span className={styles['subtotal__value']}>
+        ${Number(cart.total_price).toFixed(2)}
+      </span>
     </div>
 
     <section className={styles['form-section']}>
@@ -445,7 +449,7 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
       style={{ marginBottom: 24 }}
     >
       <span>Total</span>
-      <span>${cart.total_price}</span>
+      <span>${Number(cart.total_price).toFixed(2)}</span>
     </div>
 
     <PrimaryButton onClick={onConfirm} loading={submitting}>

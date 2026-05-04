@@ -25,7 +25,7 @@
 // ─── Breadcrumb ───────────────────────────────────────────────────────────────
 
 .breadcrumb {
-  display: none; // скрыт на мобайл
+  display: none;
   align-items: center;
   gap: $spacing-8;
   margin-bottom: $spacing-24;
@@ -72,12 +72,10 @@
 .cart-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: $spacing-16;
 }
 
 .cart-item {
-  padding: $spacing-16 0;
-  border-bottom: 1px solid $color-card-bg;
   position: relative;
 }
 
@@ -85,7 +83,7 @@
   @include flex-center;
   position: absolute;
   top: $spacing-16;
-  left: 0;
+  left: -$spacing-8;
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -98,18 +96,27 @@
   &:hover { opacity: 0.6; }
 }
 
+.cart-item__card {
+  background: $color-card-bg;
+  border-radius: 16px;
+  padding: $spacing-16;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-left: $spacing-16;
+}
+
 .cart-item__body {
   display: flex;
   gap: $spacing-16;
-  padding-left: $spacing-32; // Отступ под кнопку удаления
 }
 
 .cart-item__image {
-  width: 100px;
-  height: 130px;
+  width: 132px;
+  height: 100px;
   object-fit: cover;
-  border-radius: 12px;
-  background: $color-card-bg;
+  border-radius: 24px;
+  background: $color-white;
   flex-shrink: 0;
 }
 
@@ -124,50 +131,40 @@
 .cart-item__name {
   @include text(16px, 600);
   margin: 0;
+  word-break: break-word;
 }
 
-.cart-item__brand,
-.cart-item__size {
+.cart-item__brand {
   @include text(14px, 400);
   color: $color-input-border;
   margin: 0;
 }
 
 .cart-item__size {
-  font-size: 12px;
-}
-
-.cart-item__qty {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: auto;
-  padding-top: $spacing-8;
-}
-
-.cart-item__qty-label {
-  @include text(14px, 400);
+  @include text(12px, 400);
+  color: $color-input-border;
+  margin: 0;
 }
 
 .cart-item__qty-controls {
   display: flex;
   align-items: center;
   gap: $spacing-16;
+  margin-top: auto;
+  padding-top: $spacing-8;
 }
 
 .cart-item__qty-btn {
   @include flex-center;
-  @include text(18px, 400);
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
+  width: 24px;
+  height: 24px;
   transition: opacity 0.2s ease;
 
   &:hover { opacity: 0.6; }
 }
 
 .cart-item__qty-value {
-  @include text(14px, 400);
+  @include text(16px, 400);
   min-width: 16px;
   text-align: center;
 }
@@ -176,17 +173,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-16 0 0 $spacing-32;
-  margin-top: $spacing-8;
-  border-top: 1px solid $color-card-bg;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: $spacing-16;
 }
 
 .cart-item__subtotal-label {
-  @include text(14px, 400);
+  @include text(16px, 600);
 }
 
 .cart-item__subtotal-value {
-  @include text(14px, 600);
+  @include text(16px, 600);
 }
 
 // ─── Promo code ───────────────────────────────────────────────────────────────
@@ -200,7 +196,6 @@
   @include text(14px, 400);
   width: 100%;
   padding: $spacing-16 0;
-  cursor: pointer;
   transition: opacity 0.2s ease;
 
   &:hover { opacity: 0.6; }
@@ -235,7 +230,6 @@
   padding: $spacing-8 $spacing-16;
   border: 1px solid $color-primary;
   border-radius: 8px;
-  cursor: pointer;
   transition: opacity 0.2s ease;
   white-space: nowrap;
 
@@ -265,7 +259,68 @@
   }
 }
 
-// ─── Form & Sections ─────────────────────────────────────────────────────────
+// ─── Compact cart (steps 2 & 3) ───────────────────────────────────────────────
+
+.cart-compact {
+  margin-bottom: $spacing-24;
+}
+
+.cart-compact__item {
+  display: flex;
+  gap: $spacing-16;
+  padding: $spacing-16 0;
+  border-bottom: 1px solid $color-card-bg;
+}
+
+.cart-compact__image {
+  width: 64px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: $color-card-bg;
+  flex-shrink: 0;
+}
+
+.cart-compact__name {
+  @include text(14px, 600);
+  margin: 0 0 $spacing-4 0;
+}
+
+.cart-compact__brand {
+  @include text(12px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-4 0;
+}
+
+.cart-compact__qty {
+  @include text(12px, 400);
+  color: $color-input-border;
+  margin: 0;
+}
+
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-16 0;
+  border-top: 1px solid $color-card-bg;
+}
+
+.subtotal__label {
+  @include text(14px, 400);
+}
+
+.subtotal__value {
+  @include text(14px, 600);
+}
+
+// ─── Form & Sections ──────────────────────────────────────────────────────────
+
+.step1, .step2, .step3, .step4 {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
 
 .form-section {
   margin-bottom: $spacing-24;
@@ -306,6 +361,12 @@
   }
 }
 
+.review-text {
+  @include text(14px, 400);
+  line-height: 1.6;
+  margin: 0;
+}
+
 .radio-label {
   display: flex;
   align-items: center;
@@ -320,6 +381,42 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
+}
+
+// ─── Success ──────────────────────────────────────────────────────────────────
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $spacing-48 0;
+  gap: $spacing-16;
+}
+
+.success__illustration {
+  margin-bottom: $spacing-8;
+}
+
+.success__title {
+  @include h2;
+  margin: 0;
+}
+
+.success__text {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-8 0;
+}
+
+.success__keep-shopping {
+  @include text(14px, 400);
+  color: $color-input-border;
+  text-decoration: underline;
+  margin-top: $spacing-8;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.6; }
 }
 
 // ─── Desktop ──────────────────────────────────────────────────────────────────
