@@ -103,6 +103,7 @@
 .itemsRow {
   display: flex;
   gap: $spacing-8;
+  align-items: flex-start;
 }
 
 .itemCard {
@@ -118,6 +119,8 @@
   flex-direction: column;
   gap: $spacing-8;
   box-sizing: border-box;
+  justify-content: flex-start;
+  align-self: flex-start;
 }
 
 .itemImg {
@@ -138,13 +141,14 @@
 .itemInfo {
   display: flex;
   flex-direction: column;
-  gap: $spacing-8;
+  gap: 2px;
 }
 
 .itemPriceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 4px;
 }
 
 .itemName {
