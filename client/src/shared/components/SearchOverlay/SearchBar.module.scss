@@ -95,18 +95,16 @@
 .itemCard {
   @include hover-opacity;
   text-align: left;
-  flex: 1;
-  min-width: 0;
+  width: 0;
+  flex: 1 1 0;
   cursor: pointer;
   border: 1px solid #E9E9F7;
   border-radius: 16px;
   padding: $spacing-16;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: $spacing-8;
   box-sizing: border-box;
-  justify-content: flex-start;
-  align-self: flex-start;
 }
 
 .itemImg {
