@@ -8,28 +8,10 @@ import CreditCardIcon from '../../assets/icons/credit-card.svg';
 import LocationIcon from '../../assets/icons/location.svg';
 import HeadphonesIcon from '../../assets/icons/headphones.svg';
 import InfoIcon from '../../assets/icons/info.svg';
-import { useState, useEffect } from 'react';
-import { userApi, type ProfileResponse } from '../../services/api';
+import { useState } from 'react';
+import { useUserProfile } from '../../hooks/useUserProfile';
+import type { ProfileResponse } from '../../services/api';
 import styles from './Profile.module.scss';
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MOCK_PROFILE: ProfileResponse = {
-  id: 1,
-  user_id: 1,
-  first_name: 'John',
-  last_name: 'Doe',
-  email: 'john.doe@gmail.com',
-  phone_number: '07700 900123',
-  birth_date: '01/01/2000',
-  height_cm: null,
-  gender: null,
-  shoulders_length_cm: null,
-  breast_length_cm: null,
-  waist_length_cm: null,
-  hips_length_cm: null,
-  leg_length_cm: null,
-};
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
 
@@ -56,17 +38,9 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'help', label: 'Help', icon: HeadphonesIcon },
 ];
 
-// ─── Tabs shown on mobile/tablet ──────────────────────────────────────────────
-
-const MOBILE_TABS: TabId[] = ['personal', 'measurements', 'orders', 'payments'];
-
 // ─── Personal Details Tab ─────────────────────────────────────────────────────
 
-interface PersonalDetailsTabProps {
-  profile: ProfileResponse;
-}
-
-const PersonalDetailsTab = ({ profile }: PersonalDetailsTabProps) => (
+const PersonalDetailsTab = ({ profile }: { profile: ProfileResponse }) => (
   <div className={styles['profile__content-inner']}>
     <div className={styles['profile__card']}>
       <h2 className={styles['profile__card-title']}>Details</h2>
@@ -107,17 +81,15 @@ const PersonalDetailsTab = ({ profile }: PersonalDetailsTabProps) => (
 
 // ─── Measurement Field ────────────────────────────────────────────────────────
 
-interface MeasurementFieldProps {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}
-
 const MeasurementField = ({
   label,
   value,
   onChange,
-}: MeasurementFieldProps) => (
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) => (
   <div className={styles['profile__field']}>
     <label className={styles['profile__field-label']}>
       {label}
@@ -141,11 +113,9 @@ const MeasurementField = ({
 
 // ─── Measurements Tab ─────────────────────────────────────────────────────────
 
-interface MeasurementsTabProps {
-  profile: ProfileResponse;
-}
+const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
+  const { updateProfile } = useUserProfile();
 
-const MeasurementsTab = ({ profile }: MeasurementsTabProps) => {
   const [fields, setFields] = useState({
     shoulders_length_cm: String(profile.shoulders_length_cm ?? ''),
     breast_length_cm: String(profile.breast_length_cm ?? ''),
@@ -154,6 +124,7 @@ const MeasurementsTab = ({ profile }: MeasurementsTabProps) => {
     leg_length_cm: String(profile.leg_length_cm ?? ''),
   });
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const set = (key: keyof typeof fields) => (v: string) =>
     setFields((prev) => ({ ...prev, [key]: v }));
@@ -161,7 +132,7 @@ const MeasurementsTab = ({ profile }: MeasurementsTabProps) => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await userApi.updateProfile({
+      await updateProfile({
         shoulders_length_cm: fields.shoulders_length_cm
           ? Number(fields.shoulders_length_cm)
           : null,
@@ -178,6 +149,8 @@ const MeasurementsTab = ({ profile }: MeasurementsTabProps) => {
           ? Number(fields.leg_length_cm)
           : null,
       });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     } finally {
       setSaving(false);
     }
@@ -210,8 +183,8 @@ const MeasurementsTab = ({ profile }: MeasurementsTabProps) => {
         value={fields.leg_length_cm}
         onChange={set('leg_length_cm')}
       />
-      <PrimaryButton onClick={handleSave} loading={saving}>
-        Save Measurements
+      <PrimaryButton onClick={handleSave} loading={saving} disabled={saved}>
+        {saved ? '✓ Saved' : 'Save Measurements'}
       </PrimaryButton>
     </div>
   );
@@ -247,16 +220,7 @@ const getTabContent = (
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabId>('personal');
-  const [profile, setProfile] = useState<ProfileResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    userApi
-      .getProfile()
-      .then(setProfile)
-      .catch(() => setProfile(MOCK_PROFILE))
-      .finally(() => setLoading(false));
-  }, []);
+  const { profile, loading } = useUserProfile();
 
   return (
     <div className={styles['profile-page']}>
@@ -271,22 +235,20 @@ const Profile = () => {
           role="tablist"
           aria-label="Profile sections"
         >
-          {NAV_ITEMS.filter((item) => MOBILE_TABS.includes(item.id)).map(
-            (item) => (
-              <button
-                key={item.id}
-                role="tab"
-                aria-selected={activeTab === item.id}
-                className={`${styles['profile__tab']} ${activeTab === item.id ? styles['profile__tab--active'] : ''}`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <span className={styles['profile__tab-icon']}>
-                  <img src={item.icon} alt="" width={20} height={20} />
-                </span>
-                {item.label}
-              </button>
-            )
-          )}
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.id}
+              role="tab"
+              aria-selected={activeTab === item.id}
+              className={`${styles['profile__tab']} ${activeTab === item.id ? styles['profile__tab--active'] : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <span className={styles['profile__tab-icon']}>
+                <img src={item.icon} alt="" width={20} height={20} />
+              </span>
+              {item.label}
+            </button>
+          ))}
         </div>
 
         {/* Desktop: sidebar + content */}
