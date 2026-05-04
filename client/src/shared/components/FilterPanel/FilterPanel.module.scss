@@ -39,6 +39,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 16px 16px 0 0;
+  max-height: 90vh;
 
   @include tablet {
     border-radius: 8px;
@@ -122,6 +123,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 0 $spacing-24;
+  min-height: 0;
 }
 
 // ─── Section ──────────────────────────────────────────────────────────────────
@@ -189,8 +191,6 @@
   padding: $spacing-16 $spacing-24;
   border-top: 1px solid $color-card-bg;
   flex-shrink: 0;
-  position: sticky;
-  bottom: 0;
   background: $color-white;
 }
 
