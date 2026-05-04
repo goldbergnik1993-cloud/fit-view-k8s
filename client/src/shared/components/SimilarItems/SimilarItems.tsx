@@ -36,7 +36,7 @@ export const SimilarItems = ({ excludeId }: SimilarItemsProps) => {
       .then((data) => {
         const mapped = data
           .filter((i) => String(i.id) !== excludeId)
-          .slice(0, 4)
+          .slice(0, 8)
           .map(mapRecommendation);
         setItems(mapped);
       })
