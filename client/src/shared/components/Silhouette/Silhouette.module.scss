@@ -1,19 +1,20 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
-// Силуэт — 3 колонки: левые лейблы | картинка | правые лейблы
-// Ширина картинки фиксированная, лейблы авто
+// Структура: flex row, высота 100% от родителя
+// left (авто) | center (flex:1) | right (авто)
+// Лейблы по контенту, картинка занимает оставшееся место
 
 .silhouette {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
-  height: 100%; // высота задаётся родителем (.fitting__silhouette)
+  height: 100%;
 }
 
 // ─── Левая колонка ────────────────────────────────────────────────────────────
-// "Ends X cm from floor" — позиционируется абсолютно
+// "Ends X cm" — позиционируется абсолютно
 // "Your Height" — прижат к низу
 
 .silhouette__left {
@@ -24,15 +25,9 @@
   align-items: flex-end;
   padding-right: $spacing-8;
   flex-shrink: 0;
-  width: 90px;
-
-  @include tablet {
-    width: 110px;
-  }
-
-  @include desktop {
-    width: 110px;
-  }
+  // ширина по самому длинному тексту
+  width: min-content;
+  min-width: 70px;
 }
 
 .silhouette__endLabel {
@@ -53,18 +48,10 @@
 // ─── Центр: картинка + линии ──────────────────────────────────────────────────
 
 .silhouette__center {
-  flex-shrink: 0;
+  // занимает всё оставшееся место
+  flex: 1;
+  min-width: 0;
   position: relative;
-  // ширина фиксированная — картинка не растягивается
-  width: 120px;
-
-  @include tablet {
-    width: 160px;
-  }
-
-  @include desktop {
-    width: 160px;
-  }
 }
 
 .silhouette__imageWrap {
@@ -74,10 +61,13 @@
 }
 
 .silhouette__image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  // картинка центрируется внутри, не растягивается
   display: block;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 // Горизонтальная линия — на всю ширину центра
@@ -111,15 +101,8 @@
   justify-content: space-between;
   align-items: flex-start;
   padding-left: $spacing-8;
-  width: 80px;
-
-  @include tablet {
-    width: 90px;
-  }
-
-  @include desktop {
-    width: 90px;
-  }
+  width: min-content;
+  min-width: 60px;
 }
 
 .silhouette__itemLabel {

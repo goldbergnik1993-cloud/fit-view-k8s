@@ -5,7 +5,6 @@
 
 .page {
   padding: $spacing-16 var(--container-padding) $spacing-88;
-  max-width: 600px;
   margin: 0 auto;
 
   @include tablet {
@@ -14,7 +13,6 @@
 
   @include desktop {
     max-width: $container-max-width;
-    margin: 0 auto;
     padding: $spacing-24 var(--container-padding) $spacing-88;
   }
 }
@@ -46,7 +44,7 @@
   color: $color-input-border;
 }
 
-// ─── Card view layout ────────────────────────────────────────────────────────
+// ─── Card view layout ─────────────────────────────────────────────────────────
 
 .layout {
   @include desktop {
@@ -377,55 +375,51 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // FITTING ROOM
 // ═══════════════════════════════════════════════════════════════════════════════
-//
-// Мобайл:
-//   .fitting__body = flex row
-//     .fitting__left  = авто (toggle + editBtn)
-//     .fitting__silhouette = фиксированная ширина 300px, высота 343px
-//
-// Планшет:
-//   .fitting__silhouette = фиксированная ширина 380px, высота 469px
-//
-// Десктоп:
-//   .fitting__body = flex row
-//     .fitting__left  = 174px
-//     .fitting__silhouette = фиксированная ширина, высота 446px
-//     .fitting__right = 448px
+
+// ─── Основной ряд ─────────────────────────────────────────────────────────────
 
 .fitting__body {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  // Ширина 100% — не переполнять
+  width: 100%;
+  overflow: hidden;
 }
 
-// ─── Левая колонка ────────────────────────────────────────────────────────────
+// ─── Левая колонка: toggle + editBtn ─────────────────────────────────────────
+// Фиксированная ширина чтобы не давить силуэт
 
 .fitting__left {
   display: flex;
   flex-direction: column;
   gap: $spacing-8;
   flex-shrink: 0;
+  // ширина по контенту, но ограничена
+  width: 110px;
+
+  @include tablet {
+    width: 140px;
+  }
 
   @include desktop {
     width: 174px;
   }
 }
 
-// ─── Силуэт — фиксированная ширина и высота ───────────────────────────────────
+// ─── Силуэт: flex:1, высота фиксированная ────────────────────────────────────
 
 .fitting__silhouette {
-  flex-shrink: 0;
-  width: 300px;
+  // flex:1 — занимает оставшееся место после левой (и правой на десктопе) колонок
+  flex: 1;
+  min-width: 0;
   height: 343px;
 
   @include tablet {
-    width: 380px;
     height: 469px;
   }
 
   @include desktop {
-    // на десктопе силуэт занимает оставшееся место между левой и правой колонкой
-    flex: 1;
     height: 446px;
   }
 }
@@ -518,6 +512,7 @@
   margin-top: $spacing-24;
 
   @include desktop {
+    // не заходить под правую колонку
     padding-right: calc(448px + #{$spacing-48});
   }
 }
@@ -578,6 +573,7 @@
 }
 
 // ─── Нижние блоки (мобайл + планшет) ─────────────────────────────────────────
+// Контент центрируется внутри fitting__body-ширины
 
 .fitting__title {
   font-family: $font-family-heading;
