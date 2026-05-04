@@ -49,8 +49,13 @@
 .similar__item {
   flex: 0 0 calc(50% - 8px);
   scroll-snap-align: start;
+  min-width: 0;
 
   @include tablet {
+    flex: 0 0 348px;
+  }
+
+  @include desktop {
     flex: 0 0 calc(25% - 18px);
   }
 }
