@@ -457,7 +457,7 @@ const Item = () => {
             <span className={styles.fitting__vslider_bottom}>Your Height</span>
           </div>
 
-          {/* Центр: силуэт + Ends/Item length */}
+          {/* Центр: силуэт */}
           <div className={styles.fitting__center}>
             <div className={styles.fitting__silhouette}>
               <Silhouette
@@ -468,14 +468,6 @@ const Item = () => {
                 gender={gender}
                 loading={fitLoading}
               />
-            </div>
-            <div className={styles.fitting__footerRow}>
-              <span className={styles.fitting__endsLabel}>
-                {fitLoading ? '...' : fitLabel}
-              </span>
-              <span className={styles.fitting__itemLengthLabel}>
-                Item length
-              </span>
             </div>
           </div>
 
