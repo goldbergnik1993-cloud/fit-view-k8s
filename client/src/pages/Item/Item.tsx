@@ -442,7 +442,7 @@ const Item = () => {
 
           {/* Вертикальный слайдер — только десктоп */}
           <div className={styles.fitting__vslider}>
-            <span className={styles.fitting__vslider_top}>0 cm</span>
+            <span className={styles.fitting__vslider_top}>{height} cm</span>
             <div className={styles.fitting__vslider_track}>
               <input
                 type="range"
@@ -457,16 +457,26 @@ const Item = () => {
             <span className={styles.fitting__vslider_bottom}>Your Height</span>
           </div>
 
-          {/* Центр: силуэт */}
-          <div className={styles.fitting__silhouette}>
-            <Silhouette
-              linePositionPct={fitLoading ? 50 : linePositionPct}
-              label={fitLoading ? 'Calculating...' : fitLabel}
-              heightCm={height}
-              itemLengthCm={itemLengthCm}
-              gender={gender}
-              loading={fitLoading}
-            />
+          {/* Центр: силуэт + Ends/Item length */}
+          <div className={styles.fitting__center}>
+            <div className={styles.fitting__silhouette}>
+              <Silhouette
+                linePositionPct={fitLoading ? 50 : linePositionPct}
+                label={fitLoading ? 'Calculating...' : fitLabel}
+                heightCm={height}
+                itemLengthCm={itemLengthCm}
+                gender={gender}
+                loading={fitLoading}
+              />
+            </div>
+            <div className={styles.fitting__footerRow}>
+              <span className={styles.fitting__endsLabel}>
+                {fitLoading ? '...' : fitLabel}
+              </span>
+              <span className={styles.fitting__itemLengthLabel}>
+                Item length
+              </span>
+            </div>
           </div>
 
           {/* Правая колонка — только десктоп */}
