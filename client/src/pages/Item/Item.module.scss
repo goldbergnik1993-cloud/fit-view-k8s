@@ -457,12 +457,11 @@
 // ─── Силуэт: flex:1, высота фиксированная ────────────────────────────────────
 
 .fitting__silhouette {
-  flex: 1;
-  min-width: 0;
+  flex: 0 0 auto;
+  margin-left: auto;
+  height: 276px;
 
-  @include tablet {
-    height: 469px;
-  }
+  @include tablet { height: 469px; }
 
   @include desktop {
     height: 446px;
@@ -470,6 +469,7 @@
     margin-left: 182px;
   }
 }
+
 // ─── Правая колонка (только десктоп) ─────────────────────────────────────────
 
 .fitting__right {
