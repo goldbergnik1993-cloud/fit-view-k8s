@@ -382,9 +382,12 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  // Ширина 100% — не переполнять
   width: 100%;
   overflow: hidden;
+
+  @include desktop {
+    justify-content: center;
+  }
 }
 
 // ─── Левая колонка: toggle + editBtn ─────────────────────────────────────────
@@ -397,7 +400,11 @@
   flex-shrink: 0;
 
   @include tablet { width: 140px; }
-  @include desktop { width: 174px; }
+  
+  @include desktop { 
+    width: 174px;
+    flex-shrink: 0;
+  }
 }
 
 .fitting__endLabel {
@@ -419,8 +426,7 @@
 
   @include desktop {
     height: 446px;
-    flex: 0 0 auto;
-    width: 153px;
+    flex: 0 0 153px;
   }
 }
 
