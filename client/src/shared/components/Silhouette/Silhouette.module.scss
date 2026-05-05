@@ -35,8 +35,8 @@
 
 .silhouette__line {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   height: 1px;
   background: #A8A8B2;
   transition: bottom 0.4s ease;

@@ -395,7 +395,6 @@
   flex-direction: column;
   align-items: flex-start;
   flex-shrink: 0;
-  width: 110px;
 
   @include tablet { width: 140px; }
   @include desktop { width: 174px; }
