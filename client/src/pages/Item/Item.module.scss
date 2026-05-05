@@ -384,9 +384,19 @@
   align-items: flex-start;
   width: 100%;
   overflow: hidden;
+}
 
-  @include desktop {
-    justify-content: center;
+.fitting__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+
+  @include tablet { width: 140px; }
+
+  @include desktop { 
+    width: 168px;
+    flex-shrink: 0;
   }
 }
 
@@ -420,16 +430,14 @@
   flex: 1;
   min-width: 0;
 
-  @include tablet {
-    height: 469px;
-  }
+  @include tablet { height: 469px; }
 
   @include desktop {
     height: 446px;
     flex: 0 0 153px;
+    margin-left: 182px;
   }
 }
-
 // ─── Правая колонка (только десктоп) ─────────────────────────────────────────
 
 .fitting__right {
@@ -438,7 +446,7 @@
   @include desktop {
     display: flex;
     flex-direction: column;
-    width: 448px;
+    flex: 1;
     flex-shrink: 0;
     padding-left: $spacing-48;
   }
