@@ -409,8 +409,15 @@ const Item = () => {
       <main className={styles.page}>
         {/* ── Основной ряд ── */}
         <div className={styles.fitting__body}>
-          {/* Левая колонка: toggle + editBtn */}
+          {/* Левая колонка: back (десктоп) + toggle + editBtn */}
           <div className={styles.fitting__left}>
+            <button
+              className={styles.fitting__back}
+              onClick={() => setView('card')}
+              aria-label="Back to item"
+            >
+              <img src={ChevronLeftIcon} alt="" width={16} height={16} />
+            </button>
             <div className={styles.genderToggle}>
               {GENDER_TOGGLE.map(({ value, label }) => (
                 <button
@@ -433,6 +440,22 @@ const Item = () => {
             </button>
           </div>
 
+          {/* Вертикальный слайдер — только десктоп */}
+          <div className={styles.fitting__vslider}>
+            <span className={styles.fitting__vslider_top}>0 cm</span>
+            <input
+              type="range"
+              min={140}
+              max={210}
+              value={height}
+              onChange={(e) => setHeight(Number(e.target.value))}
+              className={styles.vslider}
+              aria-label="Your height"
+              {...({ orient: 'vertical' } as object)}
+            />
+            <span className={styles.fitting__vslider_bottom}>Your Height</span>
+          </div>
+
           {/* Центр: силуэт */}
           <div className={styles.fitting__silhouette}>
             <Silhouette
@@ -449,21 +472,18 @@ const Item = () => {
           <div className={styles.fitting__right}>
             <h1 className={styles['fitting__right-title']}>{item.name}</h1>
             <p className={styles['fitting__right-brand']}>{item.brand}</p>
-
             <div className={styles['fitting__right-sizes']}>
               {renderSizesContent(item)}
             </div>
             <div className={styles['fitting__right-colors']}>
               {renderColorsContent()}
             </div>
-
             <div className={styles['fitting__right-price']}>
               <div className={styles.priceRow}>
                 <span className={styles.priceLabel}>Price:</span>
                 <span className={styles.priceValue}>{item.price}$</span>
               </div>
             </div>
-
             <div className={styles['fitting__right-actions']}>
               {renderAddToCart(48)}
             </div>
