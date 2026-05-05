@@ -670,6 +670,16 @@
   color: #4c494d;
 }
 
+.fitting__footerRow {
+  @include flex-between;
+  margin-top: $spacing-8;
+
+  @include desktop {
+    padding-left: calc(120px + 24px + 16px + 16px);
+    padding-right: 448px;
+  }
+}
+
 .fitting__title {
   font-family: $font-family-heading;
   font-size: 24px;
