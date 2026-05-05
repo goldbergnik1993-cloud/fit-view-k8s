@@ -431,9 +431,6 @@ const Item = () => {
               Edit Measurements
               <img src={ChevronRightIcon} alt="" width={16} height={16} />
             </button>
-            <span className={styles.fitting__endLabel}>
-              {fitLoading ? '...' : fitLabel}
-            </span>
           </div>
 
           {/* Центр: силуэт */}
@@ -480,6 +477,14 @@ const Item = () => {
         />
 
         {/* ── Слайдер под силуэтом ── */}
+        <div className={styles.fitting__footerRow}>
+          <span className={styles.fitting__endsLabel}>
+            {fitLoading ? '...' : fitLabel}
+          </span>
+          <span className={styles.fitting__itemLengthLabel}>Item length</span>
+        </div>
+
+        {/* ── Слайдер ── */}
         <div className={styles['fitting__slider-wrap']}>
           <input
             type="range"

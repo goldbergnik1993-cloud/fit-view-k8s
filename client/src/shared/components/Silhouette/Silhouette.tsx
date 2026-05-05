@@ -60,7 +60,6 @@ const Silhouette = ({
         >
           {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
         </span>
-        <span className={styles.silhouette__bottomLabel}>Item length</span>
       </div>
     </div>
   );
