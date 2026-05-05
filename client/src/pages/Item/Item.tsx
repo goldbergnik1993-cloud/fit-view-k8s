@@ -443,16 +443,17 @@ const Item = () => {
           {/* Вертикальный слайдер — только десктоп */}
           <div className={styles.fitting__vslider}>
             <span className={styles.fitting__vslider_top}>0 cm</span>
-            <input
-              type="range"
-              min={140}
-              max={210}
-              value={height}
-              onChange={(e) => setHeight(Number(e.target.value))}
-              className={styles.vslider}
-              aria-label="Your height"
-              {...({ orient: 'vertical' } as object)}
-            />
+            <div className={styles.fitting__vslider_track}>
+              <input
+                type="range"
+                min={140}
+                max={210}
+                value={height}
+                onChange={(e) => setHeight(Number(e.target.value))}
+                className={styles.slider}
+                aria-label="Your height"
+              />
+            </div>
             <span className={styles.fitting__vslider_bottom}>Your Height</span>
           </div>
 
