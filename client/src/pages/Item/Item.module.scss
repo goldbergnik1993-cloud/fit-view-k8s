@@ -419,21 +419,6 @@
   overflow: hidden;
 }
 
-.fitting__left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-shrink: 0;
-
-  @include tablet {
-    width: 140px;
-  }
-
-  @include desktop {
-    width: 168px;
-    flex-shrink: 0;
-  }
-}
 
 // ─── Левая колонка: toggle + editBtn ─────────────────────────────────────────
 // Фиксированная ширина чтобы не давить силуэт
@@ -443,16 +428,86 @@
   flex-direction: column;
   align-items: flex-start;
   flex-shrink: 0;
+  width: 120px;
 
-  @include tablet {
-    width: 140px;
-  }
+  @include tablet { width: 140px; }
+
+  @include desktop { width: 100px; }
+}
+
+.fitting__back {
+  display: none;
+  width: 32px;
+  height: 32px;
+  @include flex-center;
+  @include hover-opacity;
+  margin-bottom: $spacing-16;
+
+  @include desktop { display: flex; }
+}
+
+// Вертикальный слайдер колонка
+.fitting__vslider {
+  display: none;
 
   @include desktop {
-    width: 174px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+    height: 446px;
     flex-shrink: 0;
+    margin-right: $spacing-16;
   }
 }
+
+.fitting__vslider_top {
+  @include text(14px, 400);
+  color: #4C494D;
+  margin-bottom: $spacing-8;
+  white-space: nowrap;
+}
+
+.fitting__vslider_bottom {
+  @include text(14px, 400);
+  color: #4C494D;
+  margin-top: $spacing-8;
+  white-space: nowrap;
+}
+
+// Вертикальный input range
+.vslider {
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 2px;
+  flex: 1;
+  background: #676767;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+  }
+}
+
 
 // ─── Силуэт: flex:1, высота фиксированная ────────────────────────────────────
 
@@ -466,7 +521,7 @@
   @include desktop {
     height: 446px;
     flex: 0 0 153px;
-    margin-left: 182px;
+    margin-left: 0;
   }
 }
 
@@ -559,10 +614,7 @@
 .fitting__slider-wrap {
   margin-top: $spacing-24;
 
-  @include desktop {
-    // не заходить под правую колонку
-    padding-right: calc(448px + #{$spacing-48});
-  }
+  @include desktop { display: none; }
 }
 
 .slider {
