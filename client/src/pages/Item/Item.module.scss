@@ -50,19 +50,23 @@
   @include desktop {
     display: grid;
     grid-template-columns: 1fr 142px 566px;
-    grid-template-areas: "left . right";
+    grid-template-areas: 'left . right';
     align-items: start;
   }
 }
 
 .layout__left {
-  @include desktop { grid-area: left; }
+  @include desktop {
+    grid-area: left;
+  }
 }
 
 .layout__right {
   margin-top: $spacing-16;
 
-  @include tablet { margin-top: 0; }
+  @include tablet {
+    margin-top: 0;
+  }
 
   @include desktop {
     grid-area: right;
@@ -74,7 +78,9 @@
 }
 
 .layout__right-spacer {
-  @include desktop { flex: 1; }
+  @include desktop {
+    flex: 1;
+  }
 }
 
 // ─── Title (card view) ────────────────────────────────────────────────────────
@@ -87,7 +93,9 @@
   color: $color-text;
   margin: 0 0 $spacing-16;
 
-  @include tablet { display: none; }
+  @include tablet {
+    display: none;
+  }
 }
 
 .title--right {
@@ -127,8 +135,12 @@
   background: $color-card-bg;
   height: 340px;
 
-  @include tablet { height: 490px; }
-  @include desktop { height: 490px; }
+  @include tablet {
+    height: 490px;
+  }
+  @include desktop {
+    height: 490px;
+  }
 }
 
 .image {
@@ -146,10 +158,16 @@
   height: 40px;
   @include flex-center;
   color: $color-black;
-  transition: opacity 0.2s ease, color 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease;
 
-  &:hover { opacity: 0.7; }
-  &--active { color: $color-primary; }
+  &:hover {
+    opacity: 0.7;
+  }
+  &--active {
+    color: $color-primary;
+  }
 }
 
 // ─── Description ─────────────────────────────────────────────────────────────
@@ -192,13 +210,18 @@
   background: $color-white;
   @include text(14px, 400);
   @include flex-center;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
 
-  &:hover { border-color: #4C494D; }
+  &:hover {
+    border-color: #4c494d;
+  }
 
   &--active {
-    border-color: #4C494D;
-    background: #4C494D;
+    border-color: #4c494d;
+    background: #4c494d;
     color: $color-white;
   }
 }
@@ -210,7 +233,9 @@
   border-radius: 50%;
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.7; }
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 // ─── Size Guide ───────────────────────────────────────────────────────────────
@@ -290,10 +315,16 @@
 .actions__primary {
   width: 100%;
 
-  > button { width: 100%; }
+  > button {
+    width: 100%;
+  }
 
-  @include tablet { flex: 1; }
-  @include desktop { flex: 1; }
+  @include tablet {
+    flex: 1;
+  }
+  @include desktop {
+    flex: 1;
+  }
 }
 
 .cartError {
@@ -311,7 +342,9 @@
   @include text(16px, 500);
   color: $color-primary;
   background: transparent;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
   white-space: nowrap;
 
   &:hover {
@@ -392,9 +425,11 @@
   align-items: flex-start;
   flex-shrink: 0;
 
-  @include tablet { width: 140px; }
+  @include tablet {
+    width: 140px;
+  }
 
-  @include desktop { 
+  @include desktop {
     width: 168px;
     flex-shrink: 0;
   }
@@ -409,19 +444,14 @@
   align-items: flex-start;
   flex-shrink: 0;
 
-  @include tablet { width: 140px; }
-  
-  @include desktop { 
+  @include tablet {
+    width: 140px;
+  }
+
+  @include desktop {
     width: 174px;
     flex-shrink: 0;
   }
-}
-
-.fitting__endLabel {
-  margin-top: auto;
-  @include text(14px, 400);
-  color: #4C494D;
-  white-space: nowrap;
 }
 
 // ─── Силуэт: flex:1, высота фиксированная ────────────────────────────────────
@@ -430,7 +460,9 @@
   flex: 1;
   min-width: 0;
 
-  @include tablet { height: 469px; }
+  @include tablet {
+    height: 469px;
+  }
 
   @include desktop {
     height: 446px;
@@ -499,10 +531,12 @@
   height: 32px;
   border-radius: 6px;
   @include text(14px, 400);
-  color: #A8A8B2;
+  color: #a8a8b2;
   @include flex-center;
   border: 1px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 
   &--active {
     color: $color-text;
@@ -582,8 +616,27 @@
 
   span {
     @include text(14px, 400);
-    color: #4C494D;
+    color: #4c494d;
   }
+}
+
+.fitting__footerRow {
+  @include flex-between;
+  margin-top: $spacing-8;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__endsLabel {
+  @include text(14px, 400);
+  color: #4c494d;
+}
+
+.fitting__itemLengthLabel {
+  @include text(14px, 400);
+  color: #4c494d;
 }
 
 // ─── Нижние блоки (мобайл + планшет) ─────────────────────────────────────────
@@ -596,7 +649,9 @@
   color: $color-text;
   margin: $spacing-32 0 0;
 
-  @include desktop { display: none; }
+  @include desktop {
+    display: none;
+  }
 }
 
 .fitting__brand {
@@ -604,26 +659,34 @@
   color: $color-input-border;
   margin: 4px 0 0;
 
-  @include desktop { display: none; }
+  @include desktop {
+    display: none;
+  }
 }
 
 .fitting__section {
   margin-top: $spacing-24;
 
-  @include desktop { display: none; }
+  @include desktop {
+    display: none;
+  }
 }
 
 .fitting__section--sm {
   margin-top: $spacing-16;
 
-  @include desktop { display: none; }
+  @include desktop {
+    display: none;
+  }
 }
 
 .fitting__priceRow {
   @include flex-between;
   margin-top: $spacing-32;
 
-  @include desktop { display: none; }
+  @include desktop {
+    display: none;
+  }
 }
 
 .fitting__actions {
@@ -633,8 +696,12 @@
     width: 100%;
     height: 44px;
 
-    @include tablet { height: 48px; }
+    @include tablet {
+      height: 48px;
+    }
   }
 
-  @include desktop { display: none; }
+  @include desktop {
+    display: none;
+  }
 }

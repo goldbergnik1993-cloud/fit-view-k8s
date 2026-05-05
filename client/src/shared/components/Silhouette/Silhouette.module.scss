@@ -69,10 +69,3 @@
   transform: translateY(50%);
   transition: bottom 0.4s ease;
 }
-
-.silhouette__bottomLabel {
-  @include text(14px, 400);
-  color: #4C494D;
-  white-space: nowrap;
-  padding-left: $spacing-8;
-}
