@@ -492,18 +492,26 @@
   }
 }
 
-.fitting__silhouette {
+.fitting__center {
+  display: flex;
+  flex-direction: column;
   flex: 0 0 auto;
   margin-left: auto;
+
+  @include desktop {
+    margin-left: 0;
+    flex: 0 0 200px;
+  }
+}
+
+.fitting__silhouette {
   height: 276px;
 
   @include tablet { height: 469px; }
 
   @include desktop {
     height: 446px;
-    flex: 0 0 200px;
     width: 200px;
-    margin-left: 0;
   }
 }
 
@@ -651,14 +659,6 @@
   }
 }
 
-.fitting__footerRow {
-  @include flex-between;
-  margin-top: $spacing-8;
-
-  @include desktop {
-    display: none;
-  }
-}
 
 .fitting__endsLabel {
   @include text(14px, 400);
