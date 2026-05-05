@@ -409,19 +409,17 @@
 // FITTING ROOM
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// ─── Основной ряд ─────────────────────────────────────────────────────────────
-
 .fitting__body {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   width: 100%;
   overflow: hidden;
+
+  @include desktop {
+    align-items: stretch;
+  }
 }
-
-
-// ─── Левая колонка: toggle + editBtn ─────────────────────────────────────────
-// Фиксированная ширина чтобы не давить силуэт
 
 .fitting__left {
   display: flex;
@@ -432,7 +430,10 @@
 
   @include tablet { width: 140px; }
 
-  @include desktop { width: 100px; }
+  @include desktop { 
+    width: 120px; 
+    flex-shrink: 0;
+  }
 }
 
 .fitting__back {
@@ -446,7 +447,6 @@
   @include desktop { display: flex; }
 }
 
-// Вертикальный слайдер колонка
 .fitting__vslider {
   display: none;
 
@@ -454,10 +454,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 40px;
+    width: 24px;
     height: 446px;
     flex-shrink: 0;
-    margin-right: $spacing-16;
+    margin: 0 $spacing-16;
   }
 }
 
@@ -475,10 +475,9 @@
   white-space: nowrap;
 }
 
-// Вертикальный input range
 .vslider {
-  -webkit-appearance: slider-vertical;
-  appearance: slider-vertical;
+  -webkit-appearance: none;
+  appearance: none;
   writing-mode: vertical-lr;
   direction: rtl;
   width: 2px;
@@ -487,15 +486,23 @@
   border-radius: 2px;
   cursor: pointer;
   outline: none;
+  padding: 0;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
+    appearance: none;
     width: 20px;
     height: 20px;
     border-radius: 50%;
     background: $color-white;
     border: 3px solid #676767;
     cursor: pointer;
+  }
+
+  &::-webkit-slider-runnable-track {
+    width: 2px;
+    background: #676767;
+    border-radius: 2px;
   }
 
   &::-moz-range-thumb {
@@ -506,10 +513,13 @@
     border: 3px solid #676767;
     cursor: pointer;
   }
+
+  &::-moz-range-track {
+    width: 2px;
+    background: #676767;
+    border-radius: 2px;
+  }
 }
-
-
-// ─── Силуэт: flex:1, высота фиксированная ────────────────────────────────────
 
 .fitting__silhouette {
   flex: 0 0 auto;
@@ -520,12 +530,11 @@
 
   @include desktop {
     height: 446px;
-    flex: 0 0 153px;
+    flex: 0 0 120px;
+    width: 120px;
     margin-left: 0;
   }
 }
-
-// ─── Правая колонка (только десктоп) ─────────────────────────────────────────
 
 .fitting__right {
   display: none;
@@ -533,8 +542,7 @@
   @include desktop {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    flex-shrink: 0;
+    flex: 0 0 448px;
     padding-left: $spacing-48;
   }
 }
@@ -574,8 +582,6 @@
   }
 }
 
-// ─── Gender toggle ────────────────────────────────────────────────────────────
-
 .genderToggle {
   display: flex;
   gap: $spacing-8;
@@ -608,8 +614,6 @@
   color: $color-text;
   white-space: nowrap;
 }
-
-// ─── Слайдер ─────────────────────────────────────────────────────────────────
 
 .fitting__slider-wrap {
   margin-top: $spacing-24;
@@ -690,9 +694,6 @@
   @include text(14px, 400);
   color: #4c494d;
 }
-
-// ─── Нижние блоки (мобайл + планшет) ─────────────────────────────────────────
-// Контент центрируется внутри fitting__body-ширины
 
 .fitting__title {
   font-family: $font-family-heading;
