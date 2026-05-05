@@ -7,7 +7,6 @@ from redis import Redis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from core import redis_client
 from core.logging_config import logger
 from core.redis_client import get_redis
 from database.models.user import UserModel, UserRoleEnum
@@ -19,7 +18,7 @@ optional_security = HTTPBearer(auto_error=False)
 
 
 async def get_user_by_id(
-        user_id: int, db: AsyncSession, redis_client: Redis
+    user_id: int, db: AsyncSession, redis_client: Redis
 ) -> UserModel:
     cache_key = f"auth_user:{user_id}"
 
@@ -64,9 +63,7 @@ async def get_current_user(
         )
 
     user_id = payload.get("sub")
-    return await get_user_by_id(
-        user_id=user_id, db=db, redis_client=redis_client
-    )
+    return await get_user_by_id(user_id=user_id, db=db, redis_client=redis_client)
 
 
 async def get_optional_current_user(
@@ -85,9 +82,7 @@ async def get_optional_current_user(
         return None
 
     user_id = payload.get("sub")
-    return await get_user_by_id(
-        user_id=user_id, db=db, redis_client=redis_client
-    )
+    return await get_user_by_id(user_id=user_id, db=db, redis_client=redis_client)
 
 
 async def get_user_by_email(email: str, db: AsyncSession) -> Optional[UserModel]:
