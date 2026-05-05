@@ -417,6 +417,7 @@
   overflow: hidden;
 
   @include desktop {
+    overflow: visible;
     align-items: stretch;
   }
 }
@@ -496,14 +497,12 @@
   margin-left: auto;
   height: 276px;
 
-  @include tablet {
-    height: 469px;
-  }
+  @include tablet { height: 469px; }
 
   @include desktop {
     height: 446px;
-    flex: 0 0 120px;
-    width: 120px;
+    flex: 0 0 200px;
+    width: 200px;
     margin-left: 0;
   }
 }
@@ -515,7 +514,9 @@
     display: flex;
     flex-direction: column;
     flex: 0 0 448px;
+    width: 448px;
     padding-left: $spacing-48;
+    margin-left: auto;
   }
 }
 
