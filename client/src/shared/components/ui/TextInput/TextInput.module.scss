@@ -8,29 +8,43 @@
 }
 
 .label {
-  @include text(13px, 400);
+  @include text(14px, 400);
   color: $color-black;
 }
 
 .input {
   width: 100%;
-  padding: 14px $spacing-16;
+  height: 44px;
+  padding: 0 $spacing-16;
   border-radius: 8px;
-  border: 1px solid $color-input-border;
+  border: 1px solid transparent;
   @include text(14px, 400);
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.2s ease;
-  background: $color-white;
+  background: $color-input-bg;
 
-  &::placeholder { color: #AAAAAA; }
-  &:focus { border-color: $color-primary; }
+  &::placeholder {
+    color: #aaaaaa;
+  }
+  &:focus {
+    border-color: $color-primary;
+  }
 
-  &--error   { border-color: $color-error;   color: $color-error; }
-  &--success { border-color: $color-success; color: $color-success; }
+  &--error {
+    border-color: $color-error;
+  }
+  &--success {
+    border-color: $color-success;
+  }
 }
 
 .hint {
   @include text(11px, 400);
   color: $color-error;
+}
+
+.hint--success {
+  @include text(11px, 400);
+  color: $color-success;
 }

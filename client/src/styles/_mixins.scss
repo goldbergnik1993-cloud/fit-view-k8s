@@ -111,7 +111,8 @@
 @mixin btn-primary {
   background-color: $color-primary;
   border-radius: 8px;
-  padding: $spacing-16;
+  padding: 0 $spacing-16;
+  height: 44px;
   width: 100%;
   @include text(16px, 500);
   color: $color-white;
