@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, ConfigDict, HttpUrl
+from pydantic import BaseModel, Field, ConfigDict
 
 from database.models.catalog import ItemCategoryEnum, ItemRefPointEnum
 from database.models.events import FitResultEnum
@@ -197,8 +197,8 @@ class ItemCreateSchema(BaseModel):
     brand: str = Field(..., min_length=1, max_length=50)
     category: ItemCategoryEnum = Field(...)
     gender: GenderEnum = Field(...)
-    image_url: HttpUrl
-    fitting_image_url: Optional[HttpUrl] = Field(None)
+    image_url: str
+    fitting_image_url: Optional[str] = Field(None)
     price: Decimal = Field(..., ge=0, max_digits=10, decimal_places=2)
     description: Optional[str] = Field(None, min_length=1, max_length=255)
     reference_point: ItemRefPointEnum = Field(...)
@@ -215,8 +215,8 @@ class ItemUpdateSchema(BaseModel):
     brand: Optional[str] = Field(None, min_length=1, max_length=50)
     category: Optional[ItemCategoryEnum] = Field(None)
     gender: Optional[GenderEnum] = Field(None)
-    image_url: Optional[HttpUrl] = Field(None)
-    fitting_image_url: Optional[HttpUrl] = Field(None)
+    image_url: Optional[str] = Field(None)
+    fitting_image_url: Optional[str] = Field(None)
     price: Optional[Decimal] = Field(None, ge=0, max_digits=10, decimal_places=2)
     description: Optional[str] = Field(None, min_length=1, max_length=255)
     reference_point: Optional[ItemRefPointEnum] = Field(None)
