@@ -16,23 +16,43 @@
 
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  width: 100%;
+  max-width: 343px;
+
+  @include tablet {
+    max-width: 470px;
+    position: relative;
+  }
+
+  @include desktop {
+    max-width: 448px;
+  }
+}
+
 .card {
   background: $color-white;
   border-radius: $spacing-8;
   padding: $spacing-16;
-  width: 100%;
   max-width: 343px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: $spacing-16;
-  position: relative;
 
-  @include tablet {
-    max-width: 100%;
+   @include tablet {
+    max-width: 470px;
     padding: $spacing-24;
   }
+
+  @include desktop {
+    max-width: 448px;
+  }
 }
+
 
 .card__heading {
   display: flex;
@@ -84,29 +104,13 @@
 
 // ─── Back button ──────────────────────────────────────────────────────────────
 
-.card-wrapper {
-  width: 100%;
-  max-width: 343px;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-16;
-
-  @include tablet {
-    max-width: 470px;
-    position: relative;
-  }
-
-  @include desktop {
-    max-width: 448px;
-  }
-}
-
 .back {
   @include flex-center;
   width: 24px;
   height: 24px;
   align-self: flex-start;
   transition: opacity 0.2s;
+  flex-shrink: 0;
 
   &:hover { opacity: 0.6; }
 
