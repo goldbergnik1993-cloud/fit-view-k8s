@@ -254,6 +254,7 @@ export interface FittingRoomResponse {
     breast_length_cm: number;
     shoulders_length_cm: number;
   };
+  fitting_image_url?: string | null;
 }
 
 export interface SearchSuggestion {

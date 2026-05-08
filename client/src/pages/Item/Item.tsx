@@ -468,6 +468,13 @@ const Item = () => {
                 gender={gender}
                 loading={fitLoading}
               />
+              {fitResult?.fitting_image_url && (
+                <img
+                  src={fitResult.fitting_image_url}
+                  alt={item.name}
+                  className={styles.fitting__itemImg}
+                />
+              )}
             </div>
           </div>
 
