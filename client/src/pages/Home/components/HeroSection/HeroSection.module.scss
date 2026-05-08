@@ -38,6 +38,10 @@
   display: block;
 }
 
+.hero__text {
+  display: none;
+}
+
 .hero__title {
   @include h1-hero;
   margin: 0;
@@ -52,6 +56,10 @@
   margin: 0;
   max-width: 343px;
   width: 100%;
+}
+
+.hero__description--inline {
+  display: none;
 }
 
 .hero__cta {
@@ -70,12 +78,8 @@
     background-color 0.2s ease,
     transform 0.1s ease;
 
-  &:hover {
-    background-color: $color-primary-hover;
-  }
-  &:active {
-    transform: scale(0.98);
-  }
+  &:hover { background-color: $color-primary-hover; }
+  &:active { transform: scale(0.98); }
   &:focus-visible {
     outline: 2px solid $color-black;
     outline-offset: 2px;
@@ -93,9 +97,7 @@
   text-decoration: none;
   transition: opacity 0.2s ease;
 
-  &:hover {
-    opacity: 0.7;
-  }
+  &:hover { opacity: 0.7; }
   &:focus-visible {
     outline: 2px solid $color-primary;
     outline-offset: 2px;
@@ -112,11 +114,18 @@
 
   .hero__top {
     max-width: 590px;
-    margin-bottom: 8px;
+    align-items: flex-end;
+    margin-bottom: $spacing-24;
   }
 
   .hero__silhouette-img {
     height: 132px;
+  }
+
+  .hero__text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .hero__title {
@@ -126,9 +135,13 @@
   }
 
   .hero__description {
-    font-size: 16px;
+    display: none;
+  }
+
+  .hero__description--inline {
+    display: block;
+    @include text(16px, 400, 150%);
     max-width: 484.6px;
-    margin-bottom: $spacing-24;
   }
 
   .hero__cta {
@@ -149,11 +162,18 @@
     max-width: 920px;
     justify-content: center;
     gap: $spacing-32;
-    margin-bottom: 12px;
+    align-items: flex-end;
+    margin-bottom: $spacing-24;
   }
 
   .hero__silhouette-img {
     height: 204px;
+  }
+
+  .hero__text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .hero__title {
@@ -163,15 +183,18 @@
   }
 
   .hero__description {
-    font-size: 18px;
-    line-height: 30px;
+    display: none;
+  }
+
+  .hero__description--inline {
+    display: block;
+    @include text(18px, 400, 150%);
     max-width: 684px;
-    text-align: center;
-    margin-bottom: $spacing-24;
   }
 
   .hero__cta {
     width: 212px;
     height: 44px;
+    margin: 0 auto;
   }
 }
