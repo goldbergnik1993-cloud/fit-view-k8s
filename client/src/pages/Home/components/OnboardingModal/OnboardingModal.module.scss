@@ -20,15 +20,23 @@
   border-radius: 16px 16px 0 0;
   padding: $spacing-24;
   width: 100%;
+  min-height: 482px;
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
 
-  @include tablet {
-    width: 448px;
-    height: 499px;
+   @include tablet {
+    width: 470px;
+    height: 476px;
+    min-height: unset;
+    max-width: unset;
     border-radius: 16px;
     margin: $spacing-16;
+  }
+
+  @include desktop {
+    width: 448px;
+    height: 476px;
   }
 }
 
@@ -37,8 +45,16 @@
 }
 
 .modal__title {
-  @include text(18px, 500, 150%);
+  font-family: $font-family-heading;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 150%;
   margin: 0;
+  color: $color-text;
+
+  @include tablet {
+    font-size: 20px;
+  }
 }
 
 .modal__close {
@@ -72,7 +88,7 @@
 }
 
 .modal__text {
-  @include text(14px, 400, 150%);
+  @include text(16px, 400, 150%);
   margin: 0;
 }
 
