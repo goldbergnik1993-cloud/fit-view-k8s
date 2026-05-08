@@ -4,7 +4,7 @@
 // ─── Mobile ───────────────────────────────────────────────────────────────────
 
 .section {
-  padding: 0 var(--container-padding) $spacing-32;
+  padding: 0 var(--container-padding) 80px;
   box-sizing: border-box;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .section__title {
-  @include text(18px, 600, 100%);
+  @include text(16px, 400, 100%);
   margin: 0;
 }
 
@@ -33,7 +33,9 @@
   border-radius: 8px;
   background: $color-white;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     opacity: 0.85;
@@ -50,9 +52,17 @@
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
 
 @include tablet {
+  .section {
+    padding: 0 var(--container-padding) 100px;
+  }
+
   .items-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: $card-gap-mobile;
+  }
+
+  .section__title {
+    font-size: 18px;
   }
 }
 
