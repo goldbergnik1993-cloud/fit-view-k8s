@@ -120,9 +120,9 @@
   &:hover { opacity: 0.6; }
 
   @include tablet {
-    position: absolute;
-    top: 0;
-    left: -40px;
+    position: fixed;
+    top: 100px;
+    left: $spacing-40;
   }
 }
 
