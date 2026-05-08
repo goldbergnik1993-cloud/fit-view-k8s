@@ -43,11 +43,12 @@
   margin: 0;
   font-size: 24px;
   line-height: 120%;
-  font-weight: 600;
+  font-weight: 700;
+  max-width: 237px;
 }
 
 .hero__description {
-  @include text(14px, 400, 150%);
+  @include text(16px, 400, 150%);
   margin: 0;
   max-width: 343px;
   width: 100%;
@@ -69,8 +70,12 @@
     background-color 0.2s ease,
     transform 0.1s ease;
 
-  &:hover { background-color: $color-primary-hover; }
-  &:active { transform: scale(0.98); }
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+  &:active {
+    transform: scale(0.98);
+  }
   &:focus-visible {
     outline: 2px solid $color-black;
     outline-offset: 2px;
@@ -88,7 +93,9 @@
   text-decoration: none;
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.7; }
+  &:hover {
+    opacity: 0.7;
+  }
   &:focus-visible {
     outline: 2px solid $color-primary;
     outline-offset: 2px;
@@ -113,12 +120,14 @@
   }
 
   .hero__title {
-    font-size: 28px;
+    font-size: 32px;
+    font-weight: 700;
+    max-width: 484.6px;
   }
 
   .hero__description {
     font-size: 16px;
-    max-width: 590px;
+    max-width: 484.6px;
     margin-bottom: $spacing-24;
   }
 
@@ -148,14 +157,15 @@
   }
 
   .hero__title {
-    font-size: 60px;
-    max-width: 580px;
+    font-size: 56px;
+    font-weight: 700;
+    max-width: 684px;
   }
 
   .hero__description {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 30px;
-    max-width: 920px;
+    max-width: 684px;
     text-align: center;
     margin-bottom: $spacing-24;
   }
