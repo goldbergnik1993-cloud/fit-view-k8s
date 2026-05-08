@@ -79,7 +79,6 @@ export function useAuthProvider(): AuthState {
       phone_number: phone,
       birth_date: birthDate || null,
     });
-    await login(email, password);
   };
 
   const logout = () => {
