@@ -21,22 +21,15 @@
   @include text(14px, 400);
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
   background: $color-input-bg;
 
-  &::placeholder {
-    color: #aaaaaa;
-  }
-  &:focus {
-    border-color: $color-primary;
-  }
+  &::placeholder { color: #AAAAAA; }
+  &:focus { border-color: $color-primary; }
+  &:not(:placeholder-shown) { background: #FCFCFC; }
 
-  &--error {
-    border-color: $color-error;
-  }
-  &--success {
-    border-color: $color-success;
-  }
+  &--error   { border-color: $color-error; background: #FCFCFC; }
+  &--success { border-color: $color-success; background: #FCFCFC; }
 }
 
 .hint {
