@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: $spacing-16;
+  gap: $spacing-24;
 
   @include tablet {
     max-width: 470px;
@@ -58,6 +58,14 @@
   max-width: 100%;
 }
 
+.card--otp {
+  gap: $spacing-24;
+  min-height: 317px;
+
+  @include tablet {
+    min-height: 292px;
+  }
+}
 
 .card__heading {
   display: flex;
@@ -162,18 +170,21 @@
 
 // ─── OTP ──────────────────────────────────────────────────────────────────────
 
+.otp__group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
 .otp__label {
   @include text(13px, 400);
   margin: 0;
-  margin-top: $spacing-24;
 }
 
 .resend {
   @include text(13px, 400);
   margin: 0;
-  margin-top: $spacing-24;
 }
-
 .resend__btn {
   @include text(13px, 400);
   color: $color-black;

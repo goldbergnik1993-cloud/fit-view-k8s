@@ -564,68 +564,77 @@ export const Login = () => {
                   </p>
                 </div>
 
-                <p className={styles.otp__label}>Enter code from your email</p>
-                <OtpInput
-                  value={otp}
-                  onChange={(val) => {
-                    setOtp(val);
-                    setOtpError(false);
-                    setOtpSuccess(val.every((v) => v !== ''));
-                  }}
-                  error={otpError}
-                  success={otpSuccess}
-                />
-
-                {otpError && (
-                  <p
-                    className={`${styles.otp__hints} ${styles['otp__hints--error']}`}
-                  >
-                    <img
-                      src={HintErrorIcon}
-                      alt=""
-                      width={16}
-                      height={16}
-                      aria-hidden="true"
-                    />
-                    Incorrect code.{' '}
-                    <button
-                      className={styles.resend__btn}
-                      onClick={handleResend}
+                <div className={styles.otp__group}>
+                  <p className={styles.otp__label}>
+                    Enter code from your email
+                  </p>
+                  <OtpInput
+                    value={otp}
+                    onChange={(val) => {
+                      setOtp(val);
+                      setOtpError(false);
+                      setOtpSuccess(val.every((v) => v !== ''));
+                    }}
+                    error={otpError}
+                    success={otpSuccess}
+                  />
+                  {otpError && (
+                    <p
+                      className={`${styles.otp__hints} ${styles['otp__hints--error']}`}
                     >
-                      Try again
-                    </button>
-                  </p>
-                )}
-                {otpSuccess && (
-                  <p
-                    className={`${styles.otp__hints} ${styles['otp__hints--success']}`}
-                  >
-                    <img
-                      src={HintSuccessIcon}
-                      alt=""
-                      width={16}
-                      height={16}
-                      aria-hidden="true"
-                    />
-                    Code verified successfully
-                  </p>
-                )}
-
-                <p className={styles.resend}>
-                  {canResend ? (
-                    <>
-                      Don't receive the code?{' '}
+                      <img
+                        src={HintErrorIcon}
+                        alt=""
+                        width={16}
+                        height={16}
+                        aria-hidden="true"
+                      />
+                      Incorrect code.{' '}
                       <button
                         className={styles.resend__btn}
                         onClick={handleResend}
                       >
-                        Try send again
+                        Try again
                       </button>
-                    </>
-                  ) : (
-                    <>Resend code in {String(countdown).padStart(2, '0')} s</>
+                    </p>
                   )}
-                </p>
+                  {otpSuccess && (
+                    <p
+                      className={`${styles.otp__hints} ${styles['otp__hints--success']}`}
+                    >
+                      <img
+                        src={HintSuccessIcon}
+                        alt=""
+                        width={16}
+                        height={16}
+                        aria-hidden="true"
+                      />
+                      Code verified successfully
+                    </p>
+                  )}
+                  <p className={styles.resend}>
+                    {canResend ? (
+                      <>
+                        Don't receive the code?{' '}
+                        <button
+                          className={styles.resend__btn}
+                          onClick={handleResend}
+                        >
+                          Try send again
+                        </button>
+                      </>
+                    ) : (
+                      <>Resend code in {String(countdown).padStart(2, '0')} s</>
+                    )}
+                  </p>
+                </div>
+
+                <PrimaryButton
+                  onClick={handleOtpConfirm}
+                  disabled={otp.some((v) => !v)}
+                >
+                  Continue
+                </PrimaryButton>
 
                 <PrimaryButton
                   onClick={handleOtpConfirm}
