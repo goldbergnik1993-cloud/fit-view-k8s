@@ -40,11 +40,17 @@
 }
 
 .hint {
-  @include text(11px, 400);
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  @include text(12px, 400);
   color: $color-error;
 }
 
 .hint--success {
-  @include text(11px, 400);
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  @include text(12px, 400);
   color: $color-success;
 }
