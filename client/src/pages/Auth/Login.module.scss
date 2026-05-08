@@ -96,6 +96,12 @@
   transition: opacity 0.2s;
 
   &:hover { opacity: 0.6; }
+
+  @include tablet {
+    position: absolute;
+    top: $spacing-24;
+    left: $spacing-24;
+  }
 }
 
 // ─── Password rules ───────────────────────────────────────────────────────────
@@ -167,6 +173,10 @@
   cursor: pointer;
 }
 
+.remember__input {
+  display: none;
+}
+
 .forgot {
   @include text(13px, 400);
   transition: opacity 0.2s;
@@ -178,9 +188,18 @@
 
 .divider {
   display: flex;
-  justify-content: center;
+  align-items: center;
   gap: $spacing-16;
   font-size: 13px;
+  margin-top: $spacing-24;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #A8A8B2;
+  }
 }
 
 // ─── Social ───────────────────────────────────────────────────────────────────

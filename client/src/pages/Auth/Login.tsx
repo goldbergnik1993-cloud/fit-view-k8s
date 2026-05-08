@@ -7,6 +7,8 @@ import { TextInput } from '../../shared/components/ui/TextInput/TextInput';
 import { PasswordInput } from '../../shared/components/ui/PasswordInput/PasswordInput';
 import { OtpInput } from '../../shared/components/ui/OtpInput/OtpInput';
 import ArrowLeftIcon from '../../assets/icons/arrow-left.svg';
+import CheckboxUncheckedIcon from '../../assets/icons/checkbox-unchecked.svg';
+import CheckboxCheckedIcon from '../../assets/icons/checkbox-checked.svg';
 import styles from './Login.module.scss';
 import GoogleIcon from '../../assets/icons/google.svg';
 import XIcon from '../../assets/icons/x.svg';
@@ -403,7 +405,12 @@ export const Login = () => {
 
               {error && <p className={styles.error}>{error}</p>}
 
-              <PrimaryButton onClick={handleSignupStep1}>Next</PrimaryButton>
+              <PrimaryButton
+                onClick={handleSignupStep1}
+                disabled={!email || !firstName || !lastName || !phone}
+              >
+                Next
+              </PrimaryButton>
 
               <div className={styles.dots}>
                 <span className={`${styles.dot} ${styles['dot--active']}`} />
@@ -512,7 +519,11 @@ export const Login = () => {
 
               {error && <p className={styles.error}>{error}</p>}
 
-              <PrimaryButton onClick={handleSignupStep2} loading={loading}>
+              <PrimaryButton
+                onClick={handleSignupStep2}
+                loading={loading}
+                disabled={!password || !confirmPassword}
+              >
                 Get Started
               </PrimaryButton>
 
@@ -646,6 +657,16 @@ export const Login = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
+                    className={styles.remember__input}
+                  />
+                  <img
+                    src={
+                      rememberMe ? CheckboxCheckedIcon : CheckboxUncheckedIcon
+                    }
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
                   />
                   Remember me
                 </label>
@@ -654,7 +675,11 @@ export const Login = () => {
 
               {error && <p className={styles.error}>{error}</p>}
 
-              <PrimaryButton onClick={handleSignIn} loading={loading}>
+              <PrimaryButton
+                onClick={handleSignIn}
+                loading={loading}
+                disabled={!signInEmail || !signInPassword}
+              >
                 Continue
               </PrimaryButton>
 
