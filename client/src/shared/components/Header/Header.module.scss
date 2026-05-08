@@ -96,19 +96,22 @@
 }
 
 .header__icon-btn--active {
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: $color-toggle-bg;
-    border-radius: 8px;
-    z-index: 0;
-  }
+  background-color: #4C494D;
 
   img,
-  .header__icon-wrapper {
-    position: relative;
-    z-index: 1;
+  .header__icon-wrapper img {
+    filter: brightness(0) invert(1);
+  }
+
+  .header__badge {
+    background-color: #4C494D;
+    border-color: $color-white;
+    color: $color-white;
+  }
+
+  &:hover {
+    background-color: #4C494D;
+    box-shadow: none;
   }
 }
 
