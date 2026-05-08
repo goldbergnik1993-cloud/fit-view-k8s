@@ -11,6 +11,7 @@
   gap: $spacing-24;
   text-align: center;
   box-sizing: border-box;
+  align-self: stretch;
 
   @include tablet {
     padding: $spacing-24 var(--container-padding);
