@@ -62,7 +62,7 @@
 .card__heading {
   display: flex;
   flex-direction: column;
-  gap: $spacing-4;
+  gap: $spacing-8;
 }
 
 .card__title {
@@ -134,7 +134,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: $spacing-4;
+  gap: $spacing-8;
 
   li {
     @include text(13px, 400);

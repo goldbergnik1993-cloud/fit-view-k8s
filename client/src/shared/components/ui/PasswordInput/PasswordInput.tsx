@@ -2,6 +2,8 @@ import { useState } from 'react';
 import styles from './PasswordInput.module.scss';
 import EyeIcon from '../../../../assets/icons/eye.svg';
 import EyeOffIcon from '../../../../assets/icons/eye-off.svg';
+import HintErrorIcon from '../../../../assets/icons/hint-error.svg';
+import HintSuccessIcon from '../../../../assets/icons/hint-success.svg';
 
 interface PasswordInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -10,12 +12,14 @@ interface PasswordInputProps extends Omit<
   label: string;
   error?: string;
   success?: boolean;
+  successText?: string;
 }
 
 export const PasswordInput = ({
   label,
   error,
   success,
+  successText,
   id,
   ...props
 }: PasswordInputProps) => {
@@ -55,7 +59,26 @@ export const PasswordInput = ({
       </div>
       {error && (
         <span id={`${inputId}-hint`} className={styles.hint} role="alert">
+          <img
+            src={HintErrorIcon}
+            alt=""
+            width={16}
+            height={16}
+            aria-hidden="true"
+          />
           {error}
+        </span>
+      )}
+      {!error && success && (
+        <span className={styles['hint--success']}>
+          <img
+            src={HintSuccessIcon}
+            alt=""
+            width={16}
+            height={16}
+            aria-hidden="true"
+          />
+          {successText}
         </span>
       )}
     </div>

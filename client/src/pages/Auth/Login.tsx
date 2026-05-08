@@ -125,14 +125,8 @@ export const Login = () => {
   };
 
   const validatePassword = (val: string) => {
-    if (val.length < 8) {
-      setPasswordError('Minimum 8 characters');
-      setPasswordSuccess(false);
-    } else if (!/[A-Z]/.test(val)) {
-      setPasswordError('At least one upper case letter');
-      setPasswordSuccess(false);
-    } else if (!/\d/.test(val)) {
-      setPasswordError('At least one number');
+    if (val.length < 8 || !/[A-Z]/.test(val) || !/\d/.test(val)) {
+      setPasswordError('Please enter a stronger password');
       setPasswordSuccess(false);
     } else {
       setPasswordError(null);
@@ -145,7 +139,7 @@ export const Login = () => {
       setConfirmPasswordError('Please confirm password');
       setConfirmPasswordSuccess(false);
     } else if (val !== password) {
-      setConfirmPasswordError('Passwords do not match');
+      setConfirmPasswordError('Please make sure your passwords match');
       setConfirmPasswordSuccess(false);
     } else {
       setConfirmPasswordError(null);
@@ -503,6 +497,8 @@ export const Login = () => {
                     }}
                     onBlur={() => validatePassword(password)}
                     error={passwordError ?? undefined}
+                    success={passwordSuccess}
+                    successText="Strong password"
                   />
                   <PasswordInput
                     label="Confirm Password *"
@@ -515,6 +511,8 @@ export const Login = () => {
                     }}
                     onBlur={() => validateConfirmPassword(confirmPassword)}
                     error={confirmPasswordError ?? undefined}
+                    success={confirmPasswordSuccess}
+                    successText="Passwords successfully matched"
                   />
                 </div>
 
