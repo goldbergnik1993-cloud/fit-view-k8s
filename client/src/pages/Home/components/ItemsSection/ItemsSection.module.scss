@@ -47,6 +47,10 @@
     gap: $card-gap-desktop;
   }
 
+  .section {
+    padding: 0 var(--container-padding) 40px;
+  }
+
   .section__header {
     margin-bottom: $spacing-24;
   }

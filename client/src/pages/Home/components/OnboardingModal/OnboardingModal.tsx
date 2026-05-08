@@ -8,6 +8,10 @@ import Step1Tablet from '../../../../assets/images/onboarding/step-1-tablet.png'
 import Step2Tablet from '../../../../assets/images/onboarding/step-2-tablet.png';
 import Step3Tablet from '../../../../assets/images/onboarding/step-3-tablet.png';
 import Step4Tablet from '../../../../assets/images/onboarding/step-4-tablet.png';
+import Step1Desktop from '../../../../assets/images/onboarding/step-1-desktop.png';
+import Step2Desktop from '../../../../assets/images/onboarding/step-2-desktop.png';
+import Step3Desktop from '../../../../assets/images/onboarding/step-3-desktop.png';
+import Step4Desktop from '../../../../assets/images/onboarding/step-4-desktop.png';
 import { useBreakpoint } from '../../../../hooks/useBreakpoint';
 
 interface Props {
@@ -53,11 +57,30 @@ const STEPS_TABLET = [
   },
 ];
 
+const STEPS_DESKTOP = [
+  {
+    image: Step1Desktop,
+    text: 'Click "Start Virtual Try On" on the Home page to browse our collection',
+  },
+  {
+    image: Step2Desktop,
+    text: 'Pick your favorite item from the catalog to open its details',
+  },
+  {
+    image: Step3Desktop,
+    text: 'Select your size, click "Virtual Try On" and enter your measurements for a perfect fit',
+  },
+  {
+    image: Step4Desktop,
+    text: 'Adjust your height to see the length. If you love the look, just click "Add To My Bag"',
+  },
+];
+
 export const OnboardingModal = ({ isOpen, onClose }: Props) => {
   const [step, setStep] = useState(0);
-  const { isMobile } = useBreakpoint();
+  const { isMobile, isDesktop } = useBreakpoint();
 
-  const STEPS = isMobile ? STEPS_MOBILE : STEPS_TABLET;
+  const STEPS = isMobile ? STEPS_MOBILE : isDesktop ? STEPS_DESKTOP : STEPS_TABLET;
   const isLast = step === STEPS.length - 1;
 
   const handleClose = useCallback(() => {
