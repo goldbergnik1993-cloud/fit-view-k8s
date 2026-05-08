@@ -132,6 +132,7 @@
   background: $color-white;
   z-index: 100;
   border: 1px solid $color-card-bg;
+  border-radius: 0 0 8px 8px;
   border-top: none;
   box-sizing: border-box;
   overflow: hidden;
@@ -153,14 +154,6 @@
 
 .mobile-nav__list {
   padding: 0 $spacing-16;
-}
-
-.mobile-nav__item {
-  border-bottom: 1px solid $color-card-bg;
-
-  &:last-child {
-    border-bottom: none;
-  }
 }
 
 .mobile-nav__link {
