@@ -17,11 +17,11 @@
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
 .card-wrapper {
+  width: 100%;
+  max-width: 343px;
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
-  width: 100%;
-  max-width: 343px;
 
   @include tablet {
     max-width: 470px;
@@ -37,13 +37,14 @@
   background: $color-white;
   border-radius: $spacing-8;
   padding: $spacing-16;
+  width: 100%;
   max-width: 343px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: $spacing-16;
 
-   @include tablet {
+  @include tablet {
     max-width: 470px;
     padding: $spacing-24;
   }
@@ -51,6 +52,10 @@
   @include desktop {
     max-width: 448px;
   }
+}
+
+.card--inner {
+  max-width: 100%;
 }
 
 
