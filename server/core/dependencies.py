@@ -41,6 +41,7 @@ async def get_user_by_id(
         "id": user.id,
         "email": user.email,
         "is_active": user.is_active,
+        "role": user.role,
         "ab_group": user.ab_group,
     }
     await redis_client.setex(cache_key, 300, json.dumps(user_dict))
