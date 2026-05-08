@@ -32,7 +32,7 @@ export const PasswordInput = ({
         {label}
       </label>
       <div
-        className={`${styles.field} ${error ? styles['field--error'] : ''} ${success ? styles['field--success'] : ''}`}
+        className={`${styles.field} ${error ? styles['field--error'] : ''} ${success ? styles['field--success'] : ''} ${props.value ? styles['field--filled'] : ''}`}
       >
         <input
           id={inputId}
