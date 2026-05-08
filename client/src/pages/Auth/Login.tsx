@@ -481,7 +481,7 @@ export const Login = () => {
                 />
               </button>
 
-              <div className={styles.card}>
+              <div className={`${styles.card} ${styles['card--inner']}`}>
                 <div className={styles.card__heading}>
                   <h1 className={styles.card__title}>Create Password</h1>
                   <ul className={styles.rules}>
@@ -556,7 +556,7 @@ export const Login = () => {
                 />
               </button>
 
-              <div className={styles.card}>
+              <div className={`${styles.card} ${styles['card--inner']}`}>
                 <div className={styles.card__heading}>
                   <h1 className={styles.card__title}>Confirm your email</h1>
                   <p className={styles.card__subtitle}>
