@@ -1,17 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
+// Mobile
+import Step1 from '../../../../assets/images/onboarding/step-1-mobile@2x.webp';
+import Step2 from '../../../../assets/images/onboarding/step-2-mobile@2x.webp';
+import Step3 from '../../../../assets/images/onboarding/step-3-mobile@2x.webp';
+import Step4 from '../../../../assets/images/onboarding/step-4-mobile@2x.webp';
+
+// Tablet
+import Step1Tablet from '../../../../assets/images/onboarding/step-1-tablet@2x.webp';
+import Step2Tablet from '../../../../assets/images/onboarding/step-2-tablet@2x.webp';
+import Step3Tablet from '../../../../assets/images/onboarding/step-3-tablet@2x.webp';
+import Step4Tablet from '../../../../assets/images/onboarding/step-4-tablet@2x.webp';
+
+// Desktop
+import Step1Desktop from '../../../../assets/images/onboarding/step-1-desktop@2x.webp';
+import Step2Desktop from '../../../../assets/images/onboarding/step-2-desktop@2x.webp';
+import Step3Desktop from '../../../../assets/images/onboarding/step-3-desktop@2x.webp';
+import Step4Desktop from '../../../../assets/images/onboarding/step-4-desktop@2x.webp';
+
 import styles from './OnboardingModal.module.scss';
-import Step1 from '../../../../assets/images/onboarding/step-1.png';
-import Step2 from '../../../../assets/images/onboarding/step-2.png';
-import Step3 from '../../../../assets/images/onboarding/step-3.png';
-import Step4 from '../../../../assets/images/onboarding/step-4.png';
-import Step1Tablet from '../../../../assets/images/onboarding/step-1-tablet.png';
-import Step2Tablet from '../../../../assets/images/onboarding/step-2-tablet.png';
-import Step3Tablet from '../../../../assets/images/onboarding/step-3-tablet.png';
-import Step4Tablet from '../../../../assets/images/onboarding/step-4-tablet.png';
-import Step1Desktop from '../../../../assets/images/onboarding/step-1-desktop.png';
-import Step2Desktop from '../../../../assets/images/onboarding/step-2-desktop.png';
-import Step3Desktop from '../../../../assets/images/onboarding/step-3-desktop.png';
-import Step4Desktop from '../../../../assets/images/onboarding/step-4-desktop.png';
 import { useBreakpoint } from '../../../../hooks/useBreakpoint';
 
 interface Props {
@@ -80,7 +86,11 @@ export const OnboardingModal = ({ isOpen, onClose }: Props) => {
   const [step, setStep] = useState(0);
   const { isMobile, isDesktop } = useBreakpoint();
 
-  const STEPS = isMobile ? STEPS_MOBILE : isDesktop ? STEPS_DESKTOP : STEPS_TABLET;
+  const STEPS = isMobile
+    ? STEPS_MOBILE
+    : isDesktop
+      ? STEPS_DESKTOP
+      : STEPS_TABLET;
   const isLast = step === STEPS.length - 1;
 
   const handleClose = useCallback(() => {
