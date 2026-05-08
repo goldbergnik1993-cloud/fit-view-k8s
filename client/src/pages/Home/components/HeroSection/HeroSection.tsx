@@ -7,6 +7,20 @@ import { OnboardingModal } from '../OnboardingModal/OnboardingModal';
 export const HeroSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const description = (
+    <>
+      Browse, measure, and virtually try on in seconds. Check out these brief{' '}
+      <button
+        className={styles['hero__instructions-link']}
+        onClick={() => setIsModalOpen(true)}
+        aria-haspopup="dialog"
+      >
+        instructions
+      </button>{' '}
+      before you get started
+    </>
+  );
+
   return (
     <>
       <section className={styles.hero} aria-label="Welcome section">
@@ -30,38 +44,22 @@ export const HeroSection = () => {
             </div>
           </div>
 
+          {/* Mobile only */}
           <h1 className={styles['hero__title']}>
             Find your new favorite style without the hassle
           </h1>
 
+          {/* Tablet/Desktop only */}
           <div className={styles['hero__text']}>
-            <p className={styles['hero__description--inline']}>
-              Browse, measure, and virtually try on in seconds. Check out these
-              brief{' '}
-              <button
-                className={styles['hero__instructions-link']}
-                onClick={() => setIsModalOpen(true)}
-                aria-haspopup="dialog"
-              >
-                instructions
-              </button>{' '}
-              before you get started
-            </p>
+            <h1 className={styles['hero__title--large']}>
+              Find your new favorite style without the hassle
+            </h1>
+            <p className={styles['hero__description--inline']}>{description}</p>
           </div>
         </div>
 
-        <p className={styles['hero__description']}>
-          Browse, measure, and virtually try on in seconds. Check out these
-          brief{' '}
-          <button
-            className={styles['hero__instructions-link']}
-            onClick={() => setIsModalOpen(true)}
-            aria-haspopup="dialog"
-          >
-            instructions
-          </button>{' '}
-          before you get started
-        </p>
+        {/* Mobile only */}
+        <p className={styles['hero__description']}>{description}</p>
 
         <a
           href="/catalog"
