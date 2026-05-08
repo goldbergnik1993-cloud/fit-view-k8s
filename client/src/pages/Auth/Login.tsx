@@ -307,7 +307,7 @@ export const Login = () => {
   };
 
   return (
-    <>
+    <div className={styles.layout}>
       <Header />
       <main className={styles.page}>
         <div className={styles.card}>
@@ -762,9 +762,9 @@ export const Login = () => {
             </>
           )}
         </div>
-        <Footer />
       </main>
-    </>
+      <Footer />
+    </div>
   );
 };
 
