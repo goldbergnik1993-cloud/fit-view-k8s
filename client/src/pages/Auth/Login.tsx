@@ -556,7 +556,9 @@ export const Login = () => {
                 />
               </button>
 
-              <div className={`${styles.card} ${styles['card--inner']}`}>
+              <div
+                className={`${styles.card} ${styles['card--inner']} ${styles['card--otp']}`}
+              >
                 <div className={styles.card__heading}>
                   <h1 className={styles.card__title}>Confirm your email</h1>
                   <p className={styles.card__subtitle}>
@@ -578,7 +580,20 @@ export const Login = () => {
                     error={otpError}
                     success={otpSuccess}
                   />
-                  {otpError && (
+                  {otpSuccess ? (
+                    <p
+                      className={`${styles.otp__hints} ${styles['otp__hints--success']}`}
+                    >
+                      <img
+                        src={HintSuccessIcon}
+                        alt=""
+                        width={16}
+                        height={16}
+                        aria-hidden="true"
+                      />
+                      Code verified successfully
+                    </p>
+                  ) : otpError ? (
                     <p
                       className={`${styles.otp__hints} ${styles['otp__hints--error']}`}
                     >
@@ -597,44 +612,22 @@ export const Login = () => {
                         Try again
                       </button>
                     </p>
-                  )}
-                  {otpSuccess && (
-                    <p
-                      className={`${styles.otp__hints} ${styles['otp__hints--success']}`}
-                    >
-                      <img
-                        src={HintSuccessIcon}
-                        alt=""
-                        width={16}
-                        height={16}
-                        aria-hidden="true"
-                      />
-                      Code verified successfully
+                  ) : canResend ? (
+                    <p className={styles.resend}>
+                      Don't receive the code?{' '}
+                      <button
+                        className={styles.resend__btn}
+                        onClick={handleResend}
+                      >
+                        Try send again
+                      </button>
+                    </p>
+                  ) : (
+                    <p className={styles.resend}>
+                      Resend code in {String(countdown).padStart(2, '0')} s
                     </p>
                   )}
-                  <p className={styles.resend}>
-                    {canResend ? (
-                      <>
-                        Don't receive the code?{' '}
-                        <button
-                          className={styles.resend__btn}
-                          onClick={handleResend}
-                        >
-                          Try send again
-                        </button>
-                      </>
-                    ) : (
-                      <>Resend code in {String(countdown).padStart(2, '0')} s</>
-                    )}
-                  </p>
                 </div>
-
-                <PrimaryButton
-                  onClick={handleOtpConfirm}
-                  disabled={otp.some((v) => !v)}
-                >
-                  Continue
-                </PrimaryButton>
 
                 <PrimaryButton
                   onClick={handleOtpConfirm}
