@@ -165,20 +165,33 @@
 .otp__label {
   @include text(13px, 400);
   margin: 0;
+  margin-top: $spacing-24;
 }
 
 .resend {
   @include text(13px, 400);
   margin: 0;
+  margin-top: $spacing-24;
 }
 
 .resend__btn {
-  @include text(13px, 700);
+  @include text(13px, 400);
   color: $color-black;
-  text-decoration: none;
+  text-decoration: underline;
   transition: opacity 0.2s;
 
   &:hover { opacity: 0.6; }
+}
+
+.otp__hints {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  @include text(12px, 400);
+  margin-top: $spacing-8;
+
+  &--error   { color: $color-error; }
+  &--success { color: $color-success; }
 }
 
 // ─── Sign In extras ───────────────────────────────────────────────────────────

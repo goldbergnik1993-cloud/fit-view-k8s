@@ -15,6 +15,8 @@ import XIcon from '../../assets/icons/x.svg';
 import AppleIcon from '../../assets/icons/apple.svg';
 import { Footer } from '../../shared/components/Footer/Footer';
 import { authApi } from '../../services/api';
+import HintErrorIcon from '../../assets/icons/hint-error.svg';
+import HintSuccessIcon from '../../assets/icons/hint-success.svg';
 
 type Tab = 'signup' | 'signin';
 type SignupStep = 1 | 2 | 3;
@@ -573,6 +575,41 @@ export const Login = () => {
                   error={otpError}
                   success={otpSuccess}
                 />
+
+                {otpError && (
+                  <p
+                    className={`${styles.otp__hints} ${styles['otp__hints--error']}`}
+                  >
+                    <img
+                      src={HintErrorIcon}
+                      alt=""
+                      width={16}
+                      height={16}
+                      aria-hidden="true"
+                    />
+                    Incorrect code.{' '}
+                    <button
+                      className={styles.resend__btn}
+                      onClick={handleResend}
+                    >
+                      Try again
+                    </button>
+                  </p>
+                )}
+                {otpSuccess && (
+                  <p
+                    className={`${styles.otp__hints} ${styles['otp__hints--success']}`}
+                  >
+                    <img
+                      src={HintSuccessIcon}
+                      alt=""
+                      width={16}
+                      height={16}
+                      aria-hidden="true"
+                    />
+                    Code verified successfully
+                  </p>
+                )}
 
                 <p className={styles.resend}>
                   {canResend ? (
