@@ -136,6 +136,7 @@ const Item = () => {
             breast_length_cm: profile?.breast_length_cm ?? 0,
             shoulders_length_cm: profile?.shoulders_length_cm ?? 0,
           },
+          fitting_image_url: item.fittingImageUrl ?? null,
         });
       }
     } finally {
