@@ -14,12 +14,12 @@
 }
 
 .section__title {
-  @include text(18px, 600, 100%);
+  @include text(16px, 400, 100%);
   margin: 0;
 }
 
 .section__see-all {
-  @include text(12px, 400, 100%);
+  @include text(14px, 400, 100%);
   @include hover-opacity;
   white-space: nowrap;
 }
@@ -50,18 +50,31 @@
   .section__header {
     margin-bottom: $spacing-24;
   }
+
+  .section__title {
+    font-size: 18px;
+  }
 }
 
 .item-skeleton {
   width: 100%;
   height: 345px;
   border-radius: 16px;
-  background: linear-gradient(90deg, $color-card-bg 25%, #f0f0f0 50%, $color-card-bg 75%);
+  background: linear-gradient(
+    90deg,
+    $color-card-bg 25%,
+    #f0f0f0 50%,
+    $color-card-bg 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
