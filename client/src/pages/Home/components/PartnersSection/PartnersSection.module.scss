@@ -29,17 +29,18 @@
   @include focus-visible;
   width: 100%;
   aspect-ratio: 1 / 1;
-  border: 1px solid $color-toggle-bg;
+  border: 1px solid #E9E9F7;
   border-radius: 8px;
   background: $color-white;
   cursor: pointer;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+  transition: box-shadow 0.2s ease;
 
   &:hover {
-    opacity: 0.85;
-    transform: translateY(-2px);
+    box-shadow: 0 0 10px 0 rgba(48, 48, 242, 0.25);
+  }
+
+  &:active {
+    box-shadow: 0 0 10px 0 rgba(48, 48, 242, 0.25);
   }
 }
 
