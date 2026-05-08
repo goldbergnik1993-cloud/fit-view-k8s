@@ -29,12 +29,8 @@
   position: relative;
 
   @include tablet {
-    max-width: 470px;
+    max-width: 100%;
     padding: $spacing-24;
-  }
-
-  @include desktop {
-    max-width: 448px;
   }
 }
 
@@ -88,6 +84,23 @@
 
 // ─── Back button ──────────────────────────────────────────────────────────────
 
+.card-wrapper {
+  width: 100%;
+  max-width: 343px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  @include tablet {
+    max-width: 470px;
+    position: relative;
+  }
+
+  @include desktop {
+    max-width: 448px;
+  }
+}
+
 .back {
   @include flex-center;
   width: 24px;
@@ -99,8 +112,8 @@
 
   @include tablet {
     position: absolute;
-    top: $spacing-24;
-    left: $spacing-24;
+    top: 0;
+    left: -40px;
   }
 }
 
