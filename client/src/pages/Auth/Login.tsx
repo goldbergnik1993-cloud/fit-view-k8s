@@ -463,7 +463,7 @@ export const Login = () => {
 
           {/* ── Sign Up Step 2 ── */}
           {tab === 'signup' && step === 2 && (
-            <>
+            <div className={styles['card-wrapper']}>
               <button
                 className={styles.back}
                 onClick={() => {
@@ -481,62 +481,64 @@ export const Login = () => {
                 />
               </button>
 
-              <div className={styles.card__heading}>
-                <h1 className={styles.card__title}>Create Password</h1>
-                <ul className={styles.rules}>
-                  <li>Minimum 8 characters</li>
-                  <li>At least one upper case letter</li>
-                  <li>At least one number</li>
-                </ul>
+              <div className={styles.card}>
+                <div className={styles.card__heading}>
+                  <h1 className={styles.card__title}>Create Password</h1>
+                  <ul className={styles.rules}>
+                    <li>Minimum 8 characters</li>
+                    <li>At least one upper case letter</li>
+                    <li>At least one number</li>
+                  </ul>
+                </div>
+
+                <div className={styles.card__fields}>
+                  <PasswordInput
+                    label="Password *"
+                    placeholder="••••••••••"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (passwordSuccess || passwordError)
+                        validatePassword(e.target.value);
+                    }}
+                    onBlur={() => validatePassword(password)}
+                    error={passwordError ?? undefined}
+                  />
+                  <PasswordInput
+                    label="Confirm Password *"
+                    placeholder="••••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      if (confirmPasswordSuccess || confirmPasswordError)
+                        validateConfirmPassword(e.target.value);
+                    }}
+                    onBlur={() => validateConfirmPassword(confirmPassword)}
+                    error={confirmPasswordError ?? undefined}
+                  />
+                </div>
+
+                {error && <p className={styles.error}>{error}</p>}
+
+                <PrimaryButton
+                  onClick={handleSignupStep2}
+                  loading={loading}
+                  disabled={!password || !confirmPassword}
+                >
+                  Get Started
+                </PrimaryButton>
+
+                <div className={styles.dots}>
+                  <span className={styles.dot} />
+                  <span className={`${styles.dot} ${styles['dot--active']}`} />
+                </div>
               </div>
-
-              <div className={styles.card__fields}>
-                <PasswordInput
-                  label="Password *"
-                  placeholder="••••••••••"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (passwordSuccess || passwordError)
-                      validatePassword(e.target.value);
-                  }}
-                  onBlur={() => validatePassword(password)}
-                  error={passwordError ?? undefined}
-                />
-                <PasswordInput
-                  label="Confirm Password *"
-                  placeholder="••••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    if (confirmPasswordSuccess || confirmPasswordError)
-                      validateConfirmPassword(e.target.value);
-                  }}
-                  onBlur={() => validateConfirmPassword(confirmPassword)}
-                  error={confirmPasswordError ?? undefined}
-                />
-              </div>
-
-              {error && <p className={styles.error}>{error}</p>}
-
-              <PrimaryButton
-                onClick={handleSignupStep2}
-                loading={loading}
-                disabled={!password || !confirmPassword}
-              >
-                Get Started
-              </PrimaryButton>
-
-              <div className={styles.dots}>
-                <span className={styles.dot} />
-                <span className={`${styles.dot} ${styles['dot--active']}`} />
-              </div>
-            </>
+            </div>
           )}
 
           {/* ── Sign Up Step 3 — Confirm Email ── */}
           {tab === 'signup' && step === 3 && (
-            <>
+            <div className={styles['card-wrapper']}>
               <button
                 className={styles.back}
                 onClick={() => {
@@ -554,46 +556,50 @@ export const Login = () => {
                 />
               </button>
 
-              <div className={styles.card__heading}>
-                <h1 className={styles.card__title}>Confirm your email</h1>
-                <p className={styles.card__subtitle}>We sent code to {email}</p>
+              <div className={styles.card}>
+                <div className={styles.card__heading}>
+                  <h1 className={styles.card__title}>Confirm your email</h1>
+                  <p className={styles.card__subtitle}>
+                    We sent code to {email}
+                  </p>
+                </div>
+
+                <p className={styles.otp__label}>Enter code from your email</p>
+                <OtpInput
+                  value={otp}
+                  onChange={(val) => {
+                    setOtp(val);
+                    setOtpError(false);
+                    setOtpSuccess(val.every((v) => v !== ''));
+                  }}
+                  error={otpError}
+                  success={otpSuccess}
+                />
+
+                <p className={styles.resend}>
+                  {canResend ? (
+                    <>
+                      Don't receive the code?{' '}
+                      <button
+                        className={styles.resend__btn}
+                        onClick={handleResend}
+                      >
+                        Try send again
+                      </button>
+                    </>
+                  ) : (
+                    <>Resend code in {String(countdown).padStart(2, '0')} s</>
+                  )}
+                </p>
+
+                <PrimaryButton
+                  onClick={handleOtpConfirm}
+                  disabled={otp.some((v) => !v)}
+                >
+                  Continue
+                </PrimaryButton>
               </div>
-
-              <p className={styles.otp__label}>Enter code from your email</p>
-              <OtpInput
-                value={otp}
-                onChange={(val) => {
-                  setOtp(val);
-                  setOtpError(false);
-                  setOtpSuccess(val.every((v) => v !== ''));
-                }}
-                error={otpError}
-                success={otpSuccess}
-              />
-
-              <p className={styles.resend}>
-                {canResend ? (
-                  <>
-                    Don't receive the code?{' '}
-                    <button
-                      className={styles.resend__btn}
-                      onClick={handleResend}
-                    >
-                      Try send again
-                    </button>
-                  </>
-                ) : (
-                  <>Resend code in {String(countdown).padStart(2, '0')} s</>
-                )}
-              </p>
-
-              <PrimaryButton
-                onClick={handleOtpConfirm}
-                disabled={otp.some((v) => !v)}
-              >
-                Continue
-              </PrimaryButton>
-            </>
+            </div>
           )}
 
           {/* ── Sign In ── */}
