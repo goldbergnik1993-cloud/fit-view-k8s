@@ -210,15 +210,10 @@
 
 // ─── Icon wrapper & badge ─────────────────────────────────────────────────────
 
-.header__icon-wrapper {
-  position: relative;
-  display: flex;
-}
-
 .header__badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -6px;
+  right: -6px;
   background: $color-white;
   color: $color-primary;
   border-radius: 50%;

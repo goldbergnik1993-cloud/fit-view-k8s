@@ -73,15 +73,15 @@ export const Header = () => {
       className={[
         styles['header__icon-btn'],
         isOnSaved ? styles['header__icon-btn--active'] : '',
-      ].filter(Boolean).join(' ')}
+      ]
+        .filter(Boolean)
+        .join(' ')}
       aria-label="Saved items"
     >
-      <div className={styles['header__icon-wrapper']}>
-        <img src={SavedIcon} alt="" aria-hidden="true" width={24} height={24} />
-        {favCount > 0 && (
-          <span className={styles['header__badge']}>{favCount}</span>
-        )}
-      </div>
+      <img src={SavedIcon} alt="" aria-hidden="true" width={24} height={24} />
+      {favCount > 0 && (
+        <span className={styles['header__badge']}>{favCount}</span>
+      )}
     </a>
   );
 
@@ -91,15 +91,15 @@ export const Header = () => {
       className={[
         styles['header__icon-btn'],
         isOnBag ? styles['header__icon-btn--active'] : '',
-      ].filter(Boolean).join(' ')}
+      ]
+        .filter(Boolean)
+        .join(' ')}
       aria-label="Shopping bag"
     >
-      <div className={styles['header__icon-wrapper']}>
-        <img src={BagIcon} alt="" aria-hidden="true" width={24} height={24} />
-        {cartCount > 0 && (
-          <span className={styles['header__badge']}>{cartCount}</span>
-        )}
-      </div>
+      <img src={BagIcon} alt="" aria-hidden="true" width={24} height={24} />
+      {cartCount > 0 && (
+        <span className={styles['header__badge']}>{cartCount}</span>
+      )}
     </a>
   );
 
@@ -128,7 +128,13 @@ export const Header = () => {
                 aria-label="Open menu"
                 aria-controls="mobile-nav"
               >
-                <img src={BurgerMenuIcon} alt="" aria-hidden="true" width={24} height={24} />
+                <img
+                  src={BurgerMenuIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
               </button>
 
               <a
@@ -145,10 +151,16 @@ export const Header = () => {
                 <img src={LogoIcon} alt="FitView" width={44} height={44} />
               </a>
 
-              <nav className={styles['header__nav-desktop']} aria-label="Main navigation">
+              <nav
+                className={styles['header__nav-desktop']}
+                aria-label="Main navigation"
+              >
                 <ul className={styles['header__nav-desktop-list']} role="list">
                   {NAV_ITEMS.map((item) => (
-                    <li key={item.label} className={styles['header__nav-desktop-item']}>
+                    <li
+                      key={item.label}
+                      className={styles['header__nav-desktop-item']}
+                    >
                       <a href={item.href ?? '/catalog'}>{item.label}</a>
                     </li>
                   ))}
@@ -160,7 +172,11 @@ export const Header = () => {
               <SearchBar onClose={closeSearch} />
             </div>
 
-            <div className={styles['header__icons']} role="group" aria-label="User actions">
+            <div
+              className={styles['header__icons']}
+              role="group"
+              aria-label="User actions"
+            >
               {savedIcon}
               {bagIcon}
               {profileIcon}
@@ -199,10 +215,16 @@ export const Header = () => {
                 <img src={LogoIcon} alt="FitView" width={44} height={44} />
               </a>
 
-              <nav className={styles['header__nav-desktop']} aria-label="Main navigation">
+              <nav
+                className={styles['header__nav-desktop']}
+                aria-label="Main navigation"
+              >
                 <ul className={styles['header__nav-desktop-list']} role="list">
                   {NAV_ITEMS.map((item) => (
-                    <li key={item.label} className={styles['header__nav-desktop-item']}>
+                    <li
+                      key={item.label}
+                      className={styles['header__nav-desktop-item']}
+                    >
                       <a href={item.href ?? '/catalog'}>{item.label}</a>
                     </li>
                   ))}
@@ -210,13 +232,23 @@ export const Header = () => {
               </nav>
             </div>
 
-            <div className={styles['header__icons']} role="group" aria-label="User actions">
+            <div
+              className={styles['header__icons']}
+              role="group"
+              aria-label="User actions"
+            >
               <button
                 className={styles['header__icon-btn']}
                 aria-label="Search"
                 onClick={openSearch}
               >
-                <img src={SearchIcon} alt="" aria-hidden="true" width={24} height={24} />
+                <img
+                  src={SearchIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
                 <span className={styles['header__search-text']}>Search</span>
               </button>
               {savedIcon}
@@ -239,7 +271,9 @@ export const Header = () => {
           className={[
             styles['mobile-nav'],
             isMenuOpen ? styles['mobile-nav--open'] : '',
-          ].filter(Boolean).join(' ')}
+          ]
+            .filter(Boolean)
+            .join(' ')}
           aria-label="Mobile navigation"
           inert={!isMenuOpen}
         >
@@ -256,11 +290,17 @@ export const Header = () => {
                       closeMenu();
                     }
                   }}
-                  aria-expanded={item.children ? expandedNav === item.label : undefined}
+                  aria-expanded={
+                    item.children ? expandedNav === item.label : undefined
+                  }
                 >
                   {item.label}
                   <img
-                    src={expandedNav === item.label ? ChevronUpIcon : ChevronRightIcon}
+                    src={
+                      expandedNav === item.label
+                        ? ChevronUpIcon
+                        : ChevronRightIcon
+                    }
                     alt=""
                     aria-hidden="true"
                     width={16}
@@ -296,7 +336,13 @@ export const Header = () => {
                 className={styles['mobile-nav__secondary-link']}
                 onClick={closeMenu}
               >
-                <img src={ProfileIcon} alt="" aria-hidden="true" width={24} height={24} />
+                <img
+                  src={ProfileIcon}
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                />
                 Profile
               </a>
             </li>
