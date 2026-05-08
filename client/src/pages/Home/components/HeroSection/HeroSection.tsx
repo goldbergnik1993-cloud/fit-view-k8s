@@ -30,10 +30,11 @@ export const HeroSection = () => {
             </div>
           </div>
 
+          <h1 className={styles['hero__title']}>
+            Find your new favorite style without the hassle
+          </h1>
+
           <div className={styles['hero__text']}>
-            <h1 className={styles['hero__title']}>
-              Find your new favorite style without the hassle
-            </h1>
             <p className={styles['hero__description--inline']}>
               Browse, measure, and virtually try on in seconds. Check out these
               brief{' '}
