@@ -5,7 +5,7 @@
 
 .header {
   @include flex-between;
-  padding: $spacing-16 var(--container-padding);
+  padding: $spacing-8 $spacing-16;
   position: sticky;
   top: 0;
   background: $color-white;
@@ -56,6 +56,7 @@
 .header__icons {
   display: flex;
   align-items: center;
+  gap: $spacing-16;
   margin-left: auto;
 }
 
@@ -65,10 +66,29 @@
   width: 44px;
   height: 44px;
   color: $color-black;
-  transition: opacity 0.2s ease;
   flex-shrink: 0;
+  border-radius: 8px;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
 
-  &:hover { opacity: 0.6; }
+  &:hover {
+    background-color: $color-white;
+    box-shadow: 0 0 10px rgba(#000000, 0.15);
+  }
+
+  &:active {
+    background-color: #4C494D;
+    box-shadow: none;
+
+    img {
+      filter: brightness(0) invert(1);
+    }
+
+    .header__badge {
+      background-color: #4C494D;
+      border-color: $color-white;
+      color: $color-white;
+    }
+  }
 }
 
 .header__icon-btn--desktop {
@@ -81,7 +101,7 @@
     position: absolute;
     inset: 0;
     background: $color-toggle-bg;
-    border-radius: 50%;
+    border-radius: 8px;
     z-index: 0;
   }
 
@@ -224,6 +244,14 @@
 // ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
 
 @include desktop {
+  .header {
+    padding: $spacing-16 $spacing-24;
+  }
+
+  .header__icons {
+    gap: $spacing-24;
+  }
+
   .header__burger { display: none; }
   .header__nav-desktop { display: flex; }
   .header__icon-btn--desktop { display: flex; }
