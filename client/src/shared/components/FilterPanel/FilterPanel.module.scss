@@ -56,13 +56,16 @@
 
 .header {
   @include flex-between;
-  padding: $spacing-16 $spacing-24;
-  border-bottom: 1px solid $color-card-bg;
+  padding: $spacing-16;
   flex-shrink: 0;
+
+  @include tablet {
+    padding: 20px $spacing-24;
+  }
 }
 
 .title {
-  @include text(18px, 500);
+  @include h3;
 }
 
 .headerRight {
@@ -129,7 +132,6 @@
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 .section {
-  border-bottom: 1px solid $color-card-bg;
   padding: $spacing-4 0;
 }
 
@@ -189,7 +191,6 @@
 
 .footer {
   padding: $spacing-16 $spacing-24;
-  border-top: 1px solid $color-card-bg;
   flex-shrink: 0;
   background: $color-white;
 }
