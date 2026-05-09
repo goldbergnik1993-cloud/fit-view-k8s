@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useBreakpoint } from '../../../hooks/useBreakpoint';
 import { itemsApi, type RecommendationItem } from '../../../services/api';
 import { useFavorites } from '../../../providers/FavoritesContext';
 import type { ClothingItem } from '../../../types/clothing';
@@ -29,6 +30,7 @@ export const SimilarItems = ({ excludeId }: SimilarItemsProps) => {
   const [items, setItems] = useState<ClothingItem[]>([]);
   const { isFavorite, toggleFavorite } = useFavorites();
   const listRef = useRef<HTMLDivElement>(null);
+  const { isMobile } = useBreakpoint();
 
   useEffect(() => {
     itemsApi
@@ -83,6 +85,7 @@ export const SimilarItems = ({ excludeId }: SimilarItemsProps) => {
               item={item}
               isFavorite={isFavorite(item.id)}
               onFavoriteToggle={toggleFavorite}
+              variant={isMobile ? 'mini' : 'default'}
             />
           </div>
         ))}

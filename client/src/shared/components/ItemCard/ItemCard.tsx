@@ -8,6 +8,7 @@ interface ItemCardProps {
   isActive?: boolean;
   isFavorite?: boolean;
   onFavoriteToggle?: (id: string) => void;
+  variant?: 'default' | 'large' | 'small' | 'mini';
 }
 
 const ItemCard = ({
@@ -15,6 +16,7 @@ const ItemCard = ({
   isActive = false,
   isFavorite = false,
   onFavoriteToggle,
+  variant = 'default',
 }: ItemCardProps) => {
   const navigate = useNavigate();
   const [isPopping, setIsPopping] = useState(false);
@@ -27,7 +29,13 @@ const ItemCard = ({
 
   return (
     <article
-      className={`${styles.card} ${isActive ? styles['card--active'] : ''}`}
+      className={[
+        styles.card,
+        styles[`card--${variant}`],
+        isActive ? styles['card--active'] : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       onClick={() => navigate(`/item/${item.id}`)}
       role="button"
       tabIndex={0}
@@ -68,8 +76,8 @@ const ItemCard = ({
           aria-label={isFavorite ? 'Remove from saved' : 'Save item'}
         >
           <svg
-            width="20"
-            height="20"
+            width="24"
+            height="24"
             viewBox="0 0 20 20"
             fill={isFavorite ? 'currentColor' : 'none'}
             xmlns="http://www.w3.org/2000/svg"

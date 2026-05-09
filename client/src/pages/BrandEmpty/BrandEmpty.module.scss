@@ -9,7 +9,15 @@
 
 .page__main {
   flex: 1;
-  padding: $spacing-16 var(--container-padding);
+  padding: 16px var(--container-padding) 80px;
+
+  @include tablet {
+    padding: 16px var(--container-padding) 100px;
+  }
+
+  @include desktop {
+    padding: 16px var(--container-padding) 100px;
+  }
 }
 
 .page__breadcrumbs {
