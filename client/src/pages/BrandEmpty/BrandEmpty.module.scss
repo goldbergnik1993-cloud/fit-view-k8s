@@ -35,24 +35,55 @@
   align-items: center;
   text-align: center;
   padding: $spacing-48 0;
-  gap: $spacing-16;
+  gap: 0;
+
+  .page__emptyIcon {
+    margin-bottom: $spacing-24;
+  }
+
+  .page__emptyTitle {
+    margin-bottom: $spacing-8;
+  }
+
+  .page__emptyText {
+    margin-bottom: $spacing-24;
+  }
 }
 
 .page__emptyIcon {
-  width: 120px;
-  height: auto;
+  width: 220px;
+  height: 165px;
+  object-fit: contain;
+
+  @include tablet {
+    width: 265px;
+    height: 199px;
+  }
 }
 
 .page__emptyTitle {
-  @include h2;
+  @include h3;
+  font-size: 24px;
 }
 
 .page__emptyText {
-  @include text(14px, 400);
-  color: $color-input-border;
+  @include text(16px, 400, 1.5);
+  color: #666;
+
+  @include tablet {
+    font-size: 14px;
+  }
 }
 
 .page__emptyBtn {
   @include btn-primary;
-  max-width: 400px;
+  max-width: 343px;
+
+  @include tablet {
+    max-width: 348px;
+  }
+
+  @include desktop {
+    max-width: 448px;
+  }
 }

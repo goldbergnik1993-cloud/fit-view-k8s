@@ -27,7 +27,7 @@ const BrandEmpty = () => {
 
         <div className={styles.page__empty}>
           <img
-            src="/icons/hangers.svg"
+            src="/icons/hangers.png"
             alt=""
             aria-hidden="true"
             className={styles.page__emptyIcon}

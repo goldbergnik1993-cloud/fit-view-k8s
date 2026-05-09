@@ -24,37 +24,36 @@
 }
 
 .emptyState__illustration {
-  width: 140px;
-  height: auto;
-  margin-bottom: $spacing-32;
+  width: 220px;
+  height: 165px;
+  object-fit: contain;
+  margin-bottom: $spacing-24;
 
   @include tablet {
-    width: 160px;
-  }
-
-  @include desktop {
-    width: 180px;
+    width: 265px;
+    height: 199px;
   }
 }
 
 .emptyState__title {
   @include h3;
+  font-size: 24px;
   margin: 0 0 $spacing-8;
   max-width: 280px;
 
   @include tablet {
-    font-size: 22px;
     max-width: 360px;
   }
 }
 
 .emptyState__subtitle {
-  @include text(14px, 400, 1.5);
+  @include text(16px, 400, 1.5);
   color: #666;
-  margin: 0 0 $spacing-32;
+  margin: 0 0 $spacing-24;
   max-width: 260px;
 
   @include tablet {
+    font-size: 14px;
     max-width: 340px;
   }
 }
@@ -70,19 +69,10 @@
   }
 
   @include desktop {
-    max-width: 447px;
+    max-width: 448px;
   }
 }
 
 .emptyState__recommendations {
   width: 100%;
-  padding: 0 $spacing-16;
-
-  @include tablet {
-    padding: 0 40px;
-  }
-
-  @include desktop {
-    padding: 0 40px;
-  }
 }
