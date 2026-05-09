@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useSearch } from '../../../hooks/useSearch';
 import { useBreakpoint } from '../../../hooks/useBreakpoint';
 import { mapItem } from '../../../hooks/useItems';
+import ItemCard from '../ItemCard/ItemCard';
+import { useFavorites } from '../../../providers/FavoritesContext';
 import styles from './SearchOverlay.module.scss';
 
 interface SearchOverlayProps {
@@ -34,7 +36,6 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
     }
   }, [isOpen, clearQuery]);
 
-  // Закрыть при клике вне панели
   useEffect(() => {
     if (!isOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
@@ -46,14 +47,15 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const topChoices = recommendations.slice(0, 5);
   const hasQuery = query.length >= 3;
   const activeSuggestions = hasQuery ? suggestions : [];
-  // Мобайл — "You may also like" не показываем
-  const youMayAlsoLike = isMobile ? [] : recommendations.slice(0, isMobile ? 0 : 2);
+  const youMayAlsoLike = isMobile ? [] : recommendations.slice(0, 2);
   const resultCount = suggestions.length;
+
+  if (!isOpen) return null;
 
   return (
     <>
@@ -80,7 +82,14 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                 onClick={clearQuery}
                 aria-label="Clear"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
@@ -139,29 +148,14 @@ export const SearchOverlay = ({ isOpen, onClose }: SearchOverlayProps) => {
                 {youMayAlsoLike.map((raw) => {
                   const item = mapItem(raw);
                   return (
-                    <button
-                      key={item.id}
-                      className={styles.itemCard}
-                      onClick={() => handleItemClick(Number(item.id))}
-                    >
-                      <div className={styles.itemImg}>
-                        {item.imageUrl && (
-                          <img src={item.imageUrl} alt={item.name} />
-                        )}
-                      </div>
-                      <div className={styles.itemInfo}>
-                        <p className={styles.itemName}>{item.name}</p>
-                        <p className={styles.itemBrand}>{item.brand}</p>
-                        <div className={styles.itemPriceRow}>
-                          <p className={styles.itemPrice}>${item.price}</p>
-                          <span className={styles.itemLike} onClick={(e) => e.stopPropagation()}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
-                    </button>
+                    <div key={item.id} className={styles.itemCardWrap}>
+                      <ItemCard
+                        item={item}
+                        isFavorite={isFavorite(item.id)}
+                        onFavoriteToggle={toggleFavorite}
+                        variant="search"
+                      />
+                    </div>
                   );
                 })}
               </div>

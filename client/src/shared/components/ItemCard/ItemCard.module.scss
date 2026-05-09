@@ -203,3 +203,34 @@
     }
   }
 }
+
+// ─── Variant: search ─────────────────────────────────────────────────────────
+
+.card--search {
+  padding: $spacing-16;
+
+  .card__image {
+    aspect-ratio: 5 / 3;
+    border-radius: 24px;
+  }
+
+  .card__name {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .card__meta {
+    font-size: 12px;
+  }
+
+  .card__price {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  @include desktop {
+    .card__image {
+      aspect-ratio: 2 / 1;
+    }
+  }
+}
