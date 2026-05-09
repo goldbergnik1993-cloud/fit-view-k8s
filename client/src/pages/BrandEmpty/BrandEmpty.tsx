@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import { SimilarItems } from '../../shared/components/SimilarItems/SimilarItems';
+import EmptyBrandIllustration from '../../assets/illustrations/empty-brand.png';
 import styles from './BrandEmpty.module.scss';
 
 const BRAND_DISPLAY_NAMES: Record<string, string> = {
@@ -27,7 +28,7 @@ const BrandEmpty = () => {
 
         <div className={styles.page__empty}>
           <img
-            src="/icons/hangers.png"
+            src={EmptyBrandIllustration}
             alt=""
             aria-hidden="true"
             className={styles.page__emptyIcon}
