@@ -19,12 +19,10 @@
   right: 0;
   z-index: 300;
   background: $color-white;
-  padding: $spacing-16 var(--container-padding);
-  // Закруглённые нижние углы
+  padding: $spacing-8 var(--container-padding) $spacing-16;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
-
 // ─── Input row ───────────────────────────────────────────────────────────────
 
 .inputRow {
@@ -84,8 +82,10 @@
 }
 
 .sectionTitle {
-  @include text(12px, 400);
-  opacity: 0.5;
+  font-family: $font-family-heading;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
   margin-bottom: $spacing-8;
 }
 
@@ -102,79 +102,12 @@
 
 .itemsRow {
   display: flex;
-  gap: $spacing-8;
-  align-items: flex-start;
+  gap: $spacing-24;
 }
 
-.itemCard {
-  @include hover-opacity;
-  text-align: left;
-  width: 0;
+.itemCardWrap {
   flex: 1 1 0;
-  cursor: pointer;
-  border: 1px solid #E9E9F7;
-  border-radius: 16px;
-  padding: $spacing-16;
-  display: inline-flex;
-  flex-direction: column;
-  gap: $spacing-8;
-  box-sizing: border-box;
-}
-
-.itemImg {
-  width: 100%;
-  height: 100px;
-  background: $color-card-bg;
-  border-radius: 24px;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.itemInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.itemPriceRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-}
-
-.itemName {
-  @include text(16px, 400);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-}
-
-.itemBrand {
-  @include text(14px, 400);
-  opacity: 0.6;
-  margin: 0;
-}
-
-.itemPrice {
-  @include text(16px, 400);
-  margin: 0;
-}
-
-.itemLike {
-  @include flex-center;
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  color: $color-text;
-  @include hover-opacity;
+  min-width: 0;
 }
 
 // ─── See All Results ─────────────────────────────────────────────────────────

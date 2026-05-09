@@ -8,7 +8,7 @@ interface ItemCardProps {
   isActive?: boolean;
   isFavorite?: boolean;
   onFavoriteToggle?: (id: string) => void;
-  variant?: 'default' | 'large' | 'small' | 'mini';
+  variant?: 'default' | 'large' | 'small' | 'mini' | 'search';
 }
 
 const ItemCard = ({

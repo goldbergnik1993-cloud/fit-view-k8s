@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   flex: 1;
-  max-width: 472px;
+  max-width: 456px;
 }
 
 .input {
@@ -55,7 +55,7 @@
   top: calc(36px + 12px);
   left: 50%;
   transform: translateX(-50%);
-  width: 472px;
+  width: 456px;
   max-height: 600px;
   overflow-y: auto;
   background: $color-white;
@@ -70,8 +70,8 @@
 }
 
 .sectionTitle {
-  @include text(12px, 400);
-  opacity: 0.5;
+  @include text(14px, 400);
+  color: #787880;
   margin-bottom: $spacing-8;
 }
 
@@ -88,44 +88,13 @@
 
 .itemsRow {
   display: flex;
-  gap: $spacing-8;
+  gap: $spacing-24;
   align-items: flex-start;
 }
 
-.itemCard {
-  @include hover-opacity;
-  text-align: left;
-  width: 0;
+.itemCardWrap {
   flex: 1 1 0;
-  cursor: pointer;
-  border: 1px solid #E9E9F7;
-  border-radius: 16px;
-  padding: $spacing-16;
-  display: inline-flex;
-  flex-direction: column;
-  gap: $spacing-8;
-  box-sizing: border-box;
-}
-
-.itemImg {
-  width: 100%;
-  height: 100px;
-  background: $color-card-bg;
-  border-radius: 24px;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.itemInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  min-width: 0;
 }
 
 .itemPriceRow {
@@ -135,36 +104,6 @@
   margin-top: 4px;
 }
 
-.itemName {
-  @include text(16px, 400);
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-}
-
-.itemBrand {
-  @include text(14px, 400);
-  opacity: 0.6;
-  display: block;
-  margin: 0;
-}
-
-.itemPrice {
-  @include text(16px, 400);
-  display: block;
-  margin: 0;
-}
-
-.itemLike {
-  @include flex-center;
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  color: $color-text;
-  @include hover-opacity;
-}
 
 // ─── See All Results ─────────────────────────────────────────────────────────
 
@@ -182,6 +121,10 @@
   @include hover-opacity;
   margin-top: $spacing-8;
   box-sizing: border-box;
+
+  @include desktop {
+    width: 371px;
+  }
 }
 
 .loading {
@@ -195,7 +138,7 @@
 
 @include desktop {
   .inputWrap {
-    max-width: 766px;
+    max-width: 774px;
   }
 
   .input {
@@ -203,19 +146,11 @@
   }
 
   .dropdown {
-    width: 766px;
+    width: 774px;
     top: calc(48px + 12px);
   }
 
   .itemsRow {
-    gap: $spacing-16;
-  }
-
-  .itemName {
-    font-size: 16px;
-  }
-
-  .itemPrice {
-    font-size: 16px;
+    gap: $spacing-24;
   }
 }
