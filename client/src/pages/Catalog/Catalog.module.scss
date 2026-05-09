@@ -9,14 +9,14 @@
 
 .catalog__main {
   flex: 1;
-  padding: 24px var(--container-padding) 48px;
+  padding: 16px var(--container-padding) 80px;
 
   @include tablet {
-    padding: 32px var(--container-padding) 64px;
+    padding: 16px var(--container-padding) 100px;
   }
 
   @include desktop {
-    padding: 40px var(--container-padding) 80px;
+    padding: 16px var(--container-padding) 100px;
   }
 }
 
@@ -69,7 +69,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+
+  @include tablet {
+    margin-bottom: 32px;
+  }
 }
 
 // ─── Filter pills — scrollable on mobile ─────────────────────────────────────
@@ -89,14 +93,14 @@
 }
 
 .catalog__pill {
-  @include text(13px, 400, 1);
+  @include text(14px, 400, 1);
   display: inline-flex;
   align-items: center;
   padding: 6px 16px;
-  border-radius: 20px;
-  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  border: 1px solid #787880;
   background: $color-white;
-  color: #A8A8B2;
+  color: #787880;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
@@ -177,10 +181,10 @@
   @include text(13px, 400, 1);
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid #d0d0d0;
-  border-radius: 2px;
+  gap: 8px;
+  padding: 5.5px 12px;
+  border: 1px solid #4C494D;
+  border-radius: 4px;
   cursor: pointer;
   color: $color-black;
   white-space: nowrap;
@@ -255,20 +259,19 @@
 
   @include tablet {
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
   }
 
   &--large {
     @include desktop {
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      gap: 24px;
     }
   }
 
   &--small {
     @include desktop {
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 24px 35px;
     }
   }
 }
@@ -312,7 +315,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 14px;
   margin-top: 40px;
 }
 
@@ -350,19 +353,6 @@
   @include focus-visible;
 }
 
-.catalog__pagination {
-  display: none;
-
-  @include tablet {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 40px;
-    padding: 16px 0;
-  }
-}
-
 .catalog__brandEmpty {
   @include flex-center;
   flex-direction: column;
@@ -397,7 +387,7 @@
 // ─── Load More ───────────────────────────────────────────────────────────────
 
 .catalog__loadMore {
-  margin-top: $spacing-32;
+  margin-top: $spacing-24;
 
   @include tablet {
     display: none;
@@ -431,7 +421,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 14px;
     margin-top: 40px;
   }
 }
