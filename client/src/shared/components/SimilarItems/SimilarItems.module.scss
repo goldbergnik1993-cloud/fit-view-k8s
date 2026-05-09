@@ -11,7 +11,7 @@
 }
 
 .similar__title {
-  @include h3;
+  @include text(16px, 400);
   margin: 0;
 }
 
@@ -24,9 +24,23 @@
   @include flex-center;
   width: 32px;
   height: 32px;
-  border: 1px solid $color-card-bg;
-  border-radius: 4px;
-  @include hover-opacity;
+  background: $color-white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    background-color: #4C494D;
+
+    img {
+      filter: invert(1);
+    }
+  }
 }
 
 .similar__list {
@@ -40,15 +54,19 @@
   &::-webkit-scrollbar {
     display: none;
   }
+
+  @include tablet {
+    gap: $spacing-24;
+  }
 }
 
 .similar__item {
-  flex: 0 0 calc(50% - $spacing-8);
+  flex: 0 0 calc(50% - 8px);
   min-width: 0;
   scroll-snap-align: start;
 
   @include tablet {
-    flex: 0 0 calc(50% - $spacing-8);
+    flex: 0 0 calc(50% - 12px);
   }
 
   @include desktop {
