@@ -5,7 +5,7 @@
 
 .header {
   @include flex-between;
-  padding: $spacing-8 $spacing-16;
+  padding: 0 $spacing-16;
   position: sticky;
   top: 0;
   background: $color-white;
@@ -13,6 +13,7 @@
   border-bottom: 1px solid $color-card-bg;
   box-sizing: border-box;
   width: 100%;
+  height: 60px;
 }
 
 .header__left {
@@ -68,7 +69,9 @@
   color: $color-black;
   flex-shrink: 0;
   border-radius: 8px;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover {
     background-color: $color-white;
@@ -76,7 +79,7 @@
   }
 
   &:active {
-    background-color: #4C494D;
+    background-color: #4c494d;
     box-shadow: none;
 
     img {
@@ -90,7 +93,7 @@
 }
 
 .header__icon-btn--active {
-  background-color: #4C494D;
+  background-color: #4c494d;
 
   img,
   .header__icon-wrapper img {
@@ -98,7 +101,7 @@
   }
 
   &:hover {
-    background-color: #4C494D;
+    background-color: #4c494d;
     box-shadow: none;
   }
 }
@@ -139,7 +142,9 @@
   max-height: 0;
   opacity: 0;
   pointer-events: none;
-  transition: max-height 0.3s ease, opacity 0.2s ease;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.2s ease;
 
   &--open {
     max-height: 600px;
@@ -164,7 +169,9 @@
   text-align: left;
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.6; }
+  &:hover {
+    opacity: 0.6;
+  }
 }
 
 .mobile-nav__children {
@@ -177,7 +184,9 @@
   padding: $spacing-8 0;
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.6; }
+  &:hover {
+    opacity: 0.6;
+  }
 }
 
 .mobile-nav__divider {
@@ -198,7 +207,9 @@
   @include text(16px, 400);
   transition: opacity 0.2s ease;
 
-  &:hover { opacity: 0.6; }
+  &:hover {
+    opacity: 0.6;
+  }
 }
 
 // ─── Icon wrapper & badge ─────────────────────────────────────────────────────
@@ -224,17 +235,25 @@
 
 @include desktop {
   .header {
-    padding: $spacing-16 $spacing-24;
+    padding: 0 $spacing-24;
+    height: 80px;
   }
-
   .header__icons {
     gap: $spacing-24;
   }
 
-  .header__burger { display: none; }
-  .header__nav-desktop { display: flex; }
-  .header__icon-btn--desktop { display: flex; }
-  .header__search-text { display: inline; }
+  .header__burger {
+    display: none;
+  }
+  .header__nav-desktop {
+    display: flex;
+  }
+  .header__icon-btn--desktop {
+    display: flex;
+  }
+  .header__search-text {
+    display: inline;
+  }
 
   .header__icon-btn:has(.header__search-text) {
     width: auto;
@@ -242,6 +261,10 @@
     padding: 0 $spacing-8;
   }
 
-  .mobile-nav { display: none; }
-  .mobile-nav__backdrop { display: none; }
+  .mobile-nav {
+    display: none;
+  }
+  .mobile-nav__backdrop {
+    display: none;
+  }
 }
