@@ -65,7 +65,6 @@ const Catalog = () => {
   const urlBrandId = searchParams.get('brands');
   const urlBrandName = searchParams.get('brand_name');
   const urlBreadcrumbName = searchParams.get('breadcrumb_name');
-  const isEmptyBrand = searchParams.get('empty') === 'true';
 
   const [filters, setFilters] = useState<FilterState>(() => ({
     ...EMPTY_FILTERS,
@@ -361,33 +360,8 @@ const Catalog = () => {
           </div>
         )}
 
-        {/* Empty — without items (Balenciaga) */}
-        {isEmptyBrand && !loading && (
-          <div className={styles.catalog__brandEmpty}>
-            <img
-              src="/icons/hangers.svg"
-              alt=""
-              aria-hidden="true"
-              className={styles.catalog__brandEmptyIcon}
-            />
-            <h2 className={styles.catalog__brandEmptyTitle}>
-              Coming back soon
-            </h2>
-            <p className={styles.catalog__brandEmptyText}>
-              We're currently out of stock for {urlBrandName ?? 'this brand'}
-            </p>
-            <button
-              type="button"
-              className={styles.catalog__brandEmptyBtn}
-              onClick={() => navigate('/catalog')}
-            >
-              Browse All Items
-            </button>
-          </div>
-        )}
-
         {/* Empty */}
-        {!isEmptyBrand && !loading && !error && items.length === 0 && (
+        {!loading && !error && items.length === 0 && (
           <EmptyState
             title="Oops! No matches found"
             subtitle="Try adjusting your filters or search terms."
@@ -401,7 +375,7 @@ const Catalog = () => {
         )}
 
         {/* Grid */}
-        {!isEmptyBrand && !loading && !error && items.length > 0 && (
+        {!loading && !error && items.length > 0 && (
           <div
             className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}
           >

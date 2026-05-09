@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { SimilarItems } from '../SimilarItems/SimilarItems';
 import styles from './EmptyState.module.scss';
-import DefaultIllustration from '../../../assets/illustrations/empty-catalog.svg';
+import DefaultIllustration from '../../../assets/illustrations/empty-catalog.png';
 
 interface EmptyStateProps {
   title: string;

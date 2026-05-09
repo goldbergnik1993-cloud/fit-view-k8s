@@ -357,37 +357,6 @@
   @include focus-visible;
 }
 
-.catalog__brandEmpty {
-  @include flex-center;
-  flex-direction: column;
-  gap: $spacing-16;
-  padding: $spacing-48 var(--container-padding);
-  text-align: center;
-}
-
-.catalog__brandEmptyIcon {
-  width: 160px;
-  height: auto;
-  margin-bottom: $spacing-8;
-}
-
-.catalog__brandEmptyTitle {
-  @include h3;
-  margin: 0;
-}
-
-.catalog__brandEmptyText {
-  @include text(14px, 400);
-  margin: 0;
-  color: $color-input-border;
-}
-
-.catalog__brandEmptyBtn {
-  @include btn-primary;
-  max-width: 343px;
-  margin-top: $spacing-8;
-}
-
 // ─── Load More ───────────────────────────────────────────────────────────────
 
 .catalog__loadMore {
