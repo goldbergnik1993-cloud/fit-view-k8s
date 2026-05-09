@@ -30,6 +30,11 @@
   gap: $card-gap-mobile;
   width: 100%;
   overflow: hidden;
+
+  li {
+    min-width: 0;
+    width: 100%;
+  }
 }
 
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
