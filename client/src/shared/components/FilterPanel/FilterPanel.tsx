@@ -260,9 +260,7 @@ export const FilterPanel = ({
           >
             <span>Size</span>
             <img
-              src={
-                expanded.includes('size') ? ChevronUpIcon : ChevronRightIcon
-              }
+              src={expanded.includes('size') ? ChevronUpIcon : ChevronRightIcon}
               alt=""
               width={16}
               height={16}
@@ -321,30 +319,30 @@ export const FilterPanel = ({
         <div className={styles.section}>
           <button className={styles.sectionHeader} disabled>
             <span>Color</span>
-            <img
-              src={ChevronRightIcon}
-              alt=""
-              width={16}
-              height={16}
-            />
+            <img src={ChevronRightIcon} alt="" width={16} height={16} />
           </button>
         </div>
       </div>
 
       {/* Apply button */}
-      <div className={styles.footer}>
-        <button className={styles.applyBtn} onClick={handleApply}>
-          Apply Filters
-        </button>
-      </div>
+      {hasFilters && (
+        <div className={styles.footer}>
+          <button className={styles.applyBtn} onClick={handleApply}>
+            Apply Filters
+          </button>
+        </div>
+      )}
     </div>
   );
 
   //  Mobile version
   if (isMobile) {
-    return <div className={styles.mobileOverlay}>{content}</div>;
+    return (
+      <div className={styles.mobileOverlay} onClick={onClose}>
+        <div onClick={(e) => e.stopPropagation()}>{content}</div>
+      </div>
+    );
   }
-
   //  Desktop version + Tablet
   return (
     <>

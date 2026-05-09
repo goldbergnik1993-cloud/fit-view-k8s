@@ -28,7 +28,11 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 400;
-  width: 448px;
+  width: 470px;
+
+  @include desktop {
+    width: 448px;
+  }
 }
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
@@ -43,11 +47,13 @@
 
   @include tablet {
     border-radius: 8px;
+    min-height: 353px;
     max-height: 80vh;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   }
 
   @include desktop {
+    min-height: 353px;
     max-height: 80vh;
   }
 }

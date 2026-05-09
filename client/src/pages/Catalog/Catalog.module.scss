@@ -20,7 +20,6 @@
   }
 }
 
-
 // ─── Title row and Breadcrumbs ─────────────────────────────────────────────────
 
 .catalog__titleRow {
@@ -153,8 +152,9 @@
   @include flex-center;
   width: 36px;
   height: 36px;
+  padding: 8px;
   border: 1px solid transparent;
-  border-radius: 2px;
+  border-radius: 4px;
   cursor: pointer;
   color: #b0b0b0;
   transition:
@@ -167,7 +167,7 @@
 
   &--active {
     color: $color-black;
-    border-color: #d0d0d0;
+    border-color: #787880;
   }
 
   @include focus-visible;
@@ -183,7 +183,7 @@
   align-items: center;
   gap: 8px;
   padding: 5.5px 12px;
-  border: 1px solid #4C494D;
+  border: 1px solid #4c494d;
   border-radius: 4px;
   cursor: pointer;
   color: $color-black;
@@ -196,6 +196,10 @@
   }
 
   @include focus-visible;
+
+  @include tablet {
+    border: none;
+  }
 }
 
 .catalog__filterCount {
