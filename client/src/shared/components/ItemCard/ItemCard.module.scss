@@ -13,13 +13,9 @@
   flex-direction: column;
   width: 100%;
   min-width: 0;
-  padding: $spacing-16;
+  padding: $spacing-16 $spacing-24;
   gap: $spacing-8;
   box-sizing: border-box;
-
-  @include tablet {
-    padding: $spacing-16 $spacing-24;
-  }
 
   &:hover {
     box-shadow: 0 0 10px 0 rgba(48, 48, 242, 0.25);
