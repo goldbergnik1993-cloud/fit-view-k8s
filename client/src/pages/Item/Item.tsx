@@ -52,6 +52,7 @@ const Item = () => {
   const [view, setView] = useState<View>('card');
   const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const showColors = !isSizeGuideOpen;
 
   const { isFavorite: isFav, toggleFavorite } = useFavorites();
   const { addItem } = useCart();
@@ -373,7 +374,9 @@ const Item = () => {
               <p className={styles.material}>Lining: 100% Polyester</p>
 
               <div className={styles.section}>{renderSizesContent(item)}</div>
-              <div className={styles.section}>{renderColorsContent()}</div>
+              {showColors && (
+                <div className={styles.section}>{renderColorsContent()}</div>
+              )}
 
               <div className={styles['layout__right-spacer']} />
 
@@ -383,21 +386,22 @@ const Item = () => {
               </div>
 
               <div className={styles.actions}>
+                <div className={styles.actions__primary}>
+                  {renderAddToCart(44)}
+                </div>
                 <button
                   className={styles.tryOnBtn}
                   onClick={() => setView('fitting')}
                 >
                   Virtual Try-On
                 </button>
-                <div className={styles.actions__primary}>
-                  {renderAddToCart(56)}
-                </div>
               </div>
             </div>
           </div>
 
-          <Footer />
+          {renderSimilar()}
         </main>
+        <Footer />
       </>
     );
   }
@@ -486,9 +490,11 @@ const Item = () => {
             <div className={styles['fitting__right-sizes']}>
               {renderSizesContent(item)}
             </div>
-            <div className={styles['fitting__right-colors']}>
-              {renderColorsContent()}
-            </div>
+            {showColors && (
+              <div className={styles['fitting__right-colors']}>
+                {renderColorsContent()}
+              </div>
+            )}
             <div className={styles['fitting__right-price']}>
               <div className={styles.priceRow}>
                 <span className={styles.priceLabel}>Price:</span>
@@ -539,9 +545,11 @@ const Item = () => {
         <div className={styles.fitting__section}>
           {renderSizesContent(item)}
         </div>
-        <div className={styles['fitting__section--sm']}>
-          {renderColorsContent()}
-        </div>
+        {showColors && (
+          <div className={styles['fitting__section--sm']}>
+            {renderColorsContent()}
+          </div>
+        )}
 
         <div className={styles.fitting__priceRow}>
           <span className={styles.priceLabel}>Price:</span>

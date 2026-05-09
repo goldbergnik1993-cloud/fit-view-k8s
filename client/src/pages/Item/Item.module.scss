@@ -49,8 +49,9 @@
 .layout {
   @include desktop {
     display: grid;
-    grid-template-columns: 1fr 142px 566px;
-    grid-template-areas: 'left . right';
+    grid-template-columns: 684px 566px;
+    column-gap: 142px;
+    grid-template-areas: 'left right';
     align-items: start;
   }
 }
@@ -62,10 +63,10 @@
 }
 
 .layout__right {
-  margin-top: $spacing-16;
+  margin-top: $spacing-32;
 
   @include tablet {
-    margin-top: 0;
+    margin-top: $spacing-32;
   }
 
   @include desktop {
@@ -91,9 +92,9 @@
   font-weight: 700;
   line-height: 1.2;
   color: $color-text;
-  margin: 0 0 $spacing-16;
+  margin: $spacing-16 0 0;
 
-  @include tablet {
+  @include desktop {
     display: none;
   }
 }
@@ -105,12 +106,6 @@
   line-height: 1.2;
   color: $color-text;
   margin: 0 0 $spacing-16;
-
-  @include tablet {
-    display: block;
-    font-size: 32px;
-    margin-top: $spacing-24;
-  }
 
   @include desktop {
     display: block;
@@ -132,14 +127,25 @@
   width: 100%;
   border-radius: 16px;
   overflow: hidden;
-  background: $color-card-bg;
+  background: $color-white;
+  border: 1px solid #E9E9F7;
   height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-16 $spacing-24;
+  box-sizing: border-box;
 
   @include tablet {
+    width: 590px;
     height: 490px;
+    margin: 0 auto;
   }
+
   @include desktop {
+    width: 684px;
     height: 490px;
+    margin: 0;
   }
 }
 
@@ -147,7 +153,7 @@
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .favoriteBtn {
@@ -174,24 +180,35 @@
 
 .description {
   @include text(16px, 400, 1.5);
-  margin: 0 0 $spacing-8;
+  margin: $spacing-16 0 $spacing-8;
 }
 
 .material {
   @include text(14px, 400);
   margin: 0 0 4px;
-}
 
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
 // ─── Section ─────────────────────────────────────────────────────────────────
 
 .section {
-  margin-top: $spacing-16;
+  margin-top: $spacing-32;
+
+  @include tablet {
+    margin-top: $spacing-16;
+  }
 }
 
 .sectionLabel {
   @include text(16px, 400);
   color: $color-text;
   margin: 0 0 $spacing-8;
+
+  @include desktop {
+    font-size: 18px;
+  }
 }
 
 // ─── Sizes ────────────────────────────────────────────────────────────────────
@@ -262,6 +279,7 @@
 .colors {
   display: flex;
   gap: $spacing-8;
+  margin-top: $spacing-16;
 }
 
 .colorDot {
@@ -277,8 +295,11 @@
 .priceRow {
   @include flex-between;
   margin-top: $spacing-32;
-}
 
+  @include desktop {
+    margin-top: 41px;
+  }
+}
 .priceLabel {
   font-family: $font-family-heading;
   font-size: 24px;
@@ -336,12 +357,12 @@
 
 .tryOnBtn {
   width: 100%;
-  min-height: 56px;
+  height: 44px;
   border-radius: 8px;
   border: 1.5px solid $color-primary;
   @include text(16px, 500);
   color: $color-primary;
-  background: transparent;
+  background: $color-white;
   transition:
     background 0.2s,
     color 0.2s;
@@ -355,18 +376,13 @@
   @include tablet {
     flex: 1;
     width: auto;
-    min-height: 48px;
-    height: 48px;
   }
 
   @include desktop {
     flex: 1;
     width: auto;
-    min-height: 48px;
-    height: 48px;
   }
 }
-
 // ─── Similar ─────────────────────────────────────────────────────────────────
 
 .similar {
