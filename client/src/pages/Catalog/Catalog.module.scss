@@ -57,7 +57,7 @@
   height: 36px;
   @include hover-opacity;
 
-  @include desktop {
+  @include tablet {
     display: none;
   }
 }
