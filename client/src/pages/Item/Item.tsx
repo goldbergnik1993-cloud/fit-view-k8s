@@ -398,8 +398,6 @@ const Item = () => {
               </div>
             </div>
           </div>
-
-          {renderSimilar()}
         </main>
         <Footer />
       </>
