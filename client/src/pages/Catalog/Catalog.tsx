@@ -385,6 +385,7 @@ const Catalog = () => {
                 item={item}
                 isFavorite={isFavorite(item.id)}
                 onFavoriteToggle={toggleFavorite}
+                variant={gridView === 'large' ? 'large' : 'small'}
               />
             ))}
           </div>
