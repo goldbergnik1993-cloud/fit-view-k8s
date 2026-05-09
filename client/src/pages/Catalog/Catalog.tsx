@@ -198,7 +198,6 @@ const Catalog = () => {
               className={styles.catalog__filterBtn}
               onClick={() => setIsFilterOpen((prev) => !prev)}
             >
-              <span>Filter</span>
               <img
                 src={FilterIcon}
                 alt=""
@@ -259,7 +258,7 @@ const Catalog = () => {
                 height={16}
               />
               <span>Filter</span>
-              
+
               {activeFiltersCount > 0 && (
                 <span className={styles.catalog__filterCount}>
                   {activeFiltersCount}
