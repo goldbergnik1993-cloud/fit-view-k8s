@@ -169,7 +169,17 @@ const Item = () => {
     setCartLoading(true);
     setCartError(null);
     try {
-      await addItem(Number(item.id), selectedSizeLabel, 1, item.price);
+      await addItem(Number(item.id), selectedSizeLabel, 1, item.price, {
+        name: item.name,
+        brand:
+          typeof item.brand === 'string'
+            ? { id: 0, name: item.brand }
+            : item.brand,
+        category: item.category,
+        gender: item.gender ?? '',
+        image_url: item.imageUrl,
+        is_favorite: false,
+      });
       setCartAdded(true);
       setTimeout(() => setCartAdded(false), 2000);
     } catch {

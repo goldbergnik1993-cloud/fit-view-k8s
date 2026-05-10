@@ -34,7 +34,10 @@ function guestItemsToCart(items: GuestCartItem[]): Cart {
     created_at: '',
     updated_at: '',
     total_items: items.reduce((s, i) => s + i.quantity, 0),
-    total_price: items.reduce((s, i) => s + Number(i.item.price) * i.quantity, 0),
+    total_price: items.reduce(
+      (s, i) => s + Number(i.item.price) * i.quantity,
+      0
+    ),
   };
 }
 
@@ -101,7 +104,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     item_id: number,
     size_label: string,
     quantity = 1,
-    price = 0
+    price = 0,
+    itemData?: {
+      name: string;
+      brand: { id: number; name: string };
+      category: string;
+      gender: string;
+      image_url: string;
+      is_favorite: boolean;
+    }
   ) => {
     if (isAuth) {
       const data = await cartApi.addItem(item_id, size_label, quantity);
@@ -120,13 +131,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
           quantity,
           item: {
             id: item_id,
-            name: '',
-            brand: { id: 0, name: '' },
-            category: '',
-            gender: '',
-            image_url: '',
-            price: String(price), // ← было '0'
-            is_favorite: false,
+            name: itemData?.name ?? '',
+            brand: itemData?.brand ?? { id: 0, name: '' },
+            category: itemData?.category ?? '',
+            gender: itemData?.gender ?? '',
+            image_url: itemData?.image_url ?? '',
+            price: String(price),
+            is_favorite: itemData?.is_favorite ?? false,
           },
         });
       }
