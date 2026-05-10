@@ -3,6 +3,7 @@ import { useUserProfile } from '../../../hooks/useUserProfile';
 import { PrimaryButton } from '../ui/PrimaryButton/PrimaryButton';
 import styles from './EditMeasurementsModal.module.scss';
 import InfoIcon from '../../../assets/icons/info.svg';
+import InfoFilledIcon from '../../../assets/icons/info-filled.svg';
 import BurgerCloseIcon from '../../../assets/icons/burger-close.svg';
 
 interface Measurements {
@@ -149,12 +150,17 @@ const EditMeasurementsModal = ({
                 <div className={styles.fieldLabel}>
                   <span>{label}</span>
                   <button
-                    className={`${styles.infoBtn} ${tooltip === key ? styles['infoBtn--active'] : ''}`}
+                    className={styles.infoBtn}
                     onClick={() => setTooltip(tooltip === key ? null : key)}
                     aria-label="More info"
                     type="button"
                   >
-                    <img src={InfoIcon} alt="" width={18} height={18} />
+                    <img
+                      src={tooltip === key ? InfoFilledIcon : InfoIcon}
+                      alt=""
+                      width={18}
+                      height={18}
+                    />
                   </button>
                 </div>
 
