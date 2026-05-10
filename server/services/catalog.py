@@ -2,6 +2,7 @@ import os
 import shutil
 import uuid
 import json
+import random
 from typing import Optional
 
 from fastapi import Request, HTTPException, status, UploadFile, BackgroundTasks
@@ -22,6 +23,7 @@ from database.models.catalog import (
     ItemMeasurementsModel,
 )
 from database.models.events import FitResultEnum
+from database.models.user import GenderEnum
 from schemas.catalog import (
     ItemsListSchema,
     ItemListItemSchema,
@@ -219,12 +221,12 @@ async def toggle_favorite(db: AsyncSession, user_id: int, item_id: int) -> dict:
 
 
 async def fitting_room(
-    user: UserModel,
     item_id: int,
     payload: FittingRoomRequestSchema,
     db: AsyncSession,
     redis_client: Redis,
     background_tasks: BackgroundTasks,
+    user: UserModel | None = None,
 ) -> FittingRoomResponseSchema:
     cached_item_str = await redis_client.get(_fit_item_cache_key(item_id))
     item_cache_hit = bool(cached_item_str)
@@ -278,43 +280,45 @@ async def fitting_room(
             FIT_ITEM_TTL_SECONDS,
             json.dumps(item_data),
         )
-
-    cached_profile_str = await redis_client.get(_fit_profile_cache_key(user.id))
-    profile_cache_hit = bool(cached_profile_str)
-    if profile_cache_hit:
-        profile_data = json.loads(cached_profile_str)
-    else:
-        profile_stmt = select(UserProfileModel).where(
-            UserProfileModel.user_id == user.id
-        )
-        profile_db = await db.scalar(profile_stmt)
-        profile_data = {
-            "gender": profile_db.gender.value if profile_db else "female",
-            "height_cm": profile_db.height_cm if profile_db else None,
-            "shoulders_length_cm": profile_db.shoulders_length_cm
-            if profile_db
-            else None,
-            "breast_length_cm": profile_db.breast_length_cm if profile_db else None,
-            "waist_length_cm": profile_db.waist_length_cm if profile_db else None,
-            "hips_length_cm": profile_db.hips_length_cm if profile_db else None,
-            "leg_length_cm": profile_db.leg_length_cm if profile_db else None,
-        }
-        await redis_client.setex(
-            _fit_profile_cache_key(user.id),
-            FIT_PROFILE_TTL_SECONDS,
-            json.dumps(profile_data),
-        )
+    profile_data = None
+    profile_cache_hit = False
+    if user:
+        cached_profile_str = await redis_client.get(_fit_profile_cache_key(user.id))
+        profile_cache_hit = bool(cached_profile_str)
+        if profile_cache_hit:
+            profile_data = json.loads(cached_profile_str)
+        else:
+            profile_stmt = select(UserProfileModel).where(
+                UserProfileModel.user_id == user.id
+            )
+            profile_db = await db.scalar(profile_stmt)
+            profile_data = {
+                "gender": profile_db.gender.value if profile_db else "female",
+                "height_cm": profile_db.height_cm if profile_db else None,
+                "shoulders_length_cm": profile_db.shoulders_length_cm
+                if profile_db
+                else None,
+                "breast_length_cm": profile_db.breast_length_cm if profile_db else None,
+                "waist_length_cm": profile_db.waist_length_cm if profile_db else None,
+                "hips_length_cm": profile_db.hips_length_cm if profile_db else None,
+                "leg_length_cm": profile_db.leg_length_cm if profile_db else None,
+            }
+            await redis_client.setex(
+                _fit_profile_cache_key(user.id),
+                FIT_PROFILE_TTL_SECONDS,
+                json.dumps(profile_data),
+            )
 
     active_body = {
-        "gender": profile_data["gender"],
-        "height_cm": payload.height_cm or profile_data["height_cm"],
+        "gender": profile_data["gender"] if profile_data else GenderEnum.FEMALE,
+        "height_cm": payload.height_cm or (profile_data and profile_data["height_cm"]),
         "shoulders_length_cm": payload.shoulders_length_cm
-        or profile_data["shoulders_length_cm"],
+        or (profile_data and profile_data["shoulders_length_cm"]),
         "breast_length_cm": payload.breast_length_cm
-        or profile_data["breast_length_cm"],
-        "waist_length_cm": payload.waist_length_cm or profile_data["waist_length_cm"],
-        "hips_length_cm": payload.hips_length_cm or profile_data["hips_length_cm"],
-        "leg_length_cm": payload.leg_length_cm or profile_data["leg_length_cm"],
+        or (profile_data and profile_data["breast_length_cm"]),
+        "waist_length_cm": payload.waist_length_cm or (profile_data and profile_data["waist_length_cm"]),
+        "hips_length_cm": payload.hips_length_cm or (profile_data and profile_data["hips_length_cm"]),
+        "leg_length_cm": payload.leg_length_cm or (profile_data and profile_data["leg_length_cm"]),
     }
     item_category = ItemCategoryEnum(item_data["category"])
     required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(item_category, ["height_cm"])
@@ -378,22 +382,22 @@ async def fitting_room(
         user_val=active_body["hips_length_cm"],  # type: ignore
         min_val=size_chart["hips_min_cm"],
         max_val=size_chart["hips_max_cm"],
-    )
+    ) if "hips_length_cm" in required_fields else None
     waist_fit = does_it_fit(
         user_val=active_body["waist_length_cm"],  # type: ignore
         min_val=size_chart["waist_min_cm"],
         max_val=size_chart["waist_max_cm"],
-    )
+    ) if "waist_length_cm" in required_fields else None
     breast_fit = does_it_fit(
         user_val=active_body["breast_length_cm"],  # type: ignore
         min_val=size_chart["breast_min_cm"],
         max_val=size_chart["breast_max_cm"],
-    )
+    ) if "breast_length_cm" in required_fields else None
     shoulders_fit = does_it_fit(
         user_val=active_body["shoulders_length_cm"],  # type: ignore
         min_val=size_chart["shoulders_min_cm"],
         max_val=size_chart["shoulders_max_cm"],
-    )
+    ) if "shoulders_length_cm" in required_fields else None
     result = FittingRoomResponseSchema(
         item_id=item_id,
         size_label=size_chart["size_label"],
@@ -414,7 +418,7 @@ async def fitting_room(
 
     background_tasks.add_task(
         save_fitting_room_telemetry,
-        user_id=user.id,
+        user_id=user.id if user else None,
         item_id=item_id,
         fit_data={
             "height_cm": user_height,
@@ -424,12 +428,12 @@ async def fitting_room(
             "waist_fit": waist_fit,
             "hips_fit": hips_fit,
         },
-        ab_group=user.ab_group,
+        ab_group=user.ab_group if user else random.choice(["A", "B"]),
     )
 
     logger.info(
         "fitting_room_result",
-        user_id=user.id,
+        user_id=user.id if user else None,
         item_cache_hit=item_cache_hit,
         profile_cache_hit=profile_cache_hit,
         body_fields_used=[
@@ -616,13 +620,15 @@ async def item_delete(item_id: int, db: AsyncSession, redis_client: Redis) -> di
         )
 
     image_url = item_db.image_url
+    fitting_image_url = item_db.fitting_image_url
 
     try:
         await db.delete(item_db)
         await db.commit()
         await _invalidate_fit_item_cache(redis_client=redis_client, item_id=item_id)
-        if image_url:
-            filename = image_url.split("/")[-1]
+        
+        for url in filter(None, [image_url, fitting_image_url]):
+            filename = url.split("/")[-1]
             file_path = os.path.join("static", "items_images", filename)
             if os.path.exists(file_path):
                 try:
@@ -633,14 +639,15 @@ async def item_delete(item_id: int, db: AsyncSession, redis_client: Redis) -> di
                         file_path=file_path,
                         error=str(e),
                     )
+                    
         return {"message": f"Item with ID {item_id} has been successfully deleted."}
 
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while attempting to delete item ID "
-            f"{item_id}. Database rolled back.",
+            f"{item_id}. Database rolled back. Error: {e}",
         )
 
 
