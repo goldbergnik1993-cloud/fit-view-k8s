@@ -33,15 +33,41 @@
   margin-bottom: $spacing-24;
 }
 
-.saved__title {
-  @include h2;
-  margin: 0 0 $spacing-4;
+.saved__label {
+  @include text(14px, 500);
+  margin: 0 0 $spacing-8;
+
+  @include desktop {
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.saved__countRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-16;
 }
 
 .saved__count {
-  @include text(14px, 400, 1.4);
-  color: #666;
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
   margin: 0;
+}
+
+.saved__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: $color-white;
+  border-radius: 8px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: $color-text;
+  user-select: none;
 }
 
 // ─── Grid ─────────────────────────────────────────────────────────────────────
@@ -126,4 +152,18 @@
 
 .saved__similar {
   margin-top: $spacing-48;
+}
+
+// ─── Empty state ─────────────────────────────────────────────────────────────
+
+.saved__emptyWrap {
+  padding: 64px $spacing-16 $spacing-48;
+
+  @include tablet {
+    padding: 128px 40px $spacing-48;
+  }
+
+  @include desktop {
+    padding: 128px 40px 80px;
+  }
 }

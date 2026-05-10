@@ -85,20 +85,30 @@ const Saved = () => {
         )}
 
         {isEmpty && (
-          <EmptyState
-            title="You haven't saved any items yet!"
-            subtitle="Discover jackets and save your top picks for later"
-            buttonText="Browse All Items"
-            buttonPath="/catalog"
-            illustration={EmptySavedIllustration}
-          />
+          <div className={styles.saved__emptyWrap}>
+            <p className={styles.saved__label}>Saved</p>
+            <EmptyState
+              title="You haven't saved any items yet!"
+              subtitle="Discover jackets and save your top picks for later"
+              buttonText="Browse Items"
+              buttonPath="/catalog"
+              illustration={EmptySavedIllustration}
+              showRecommendations={true}
+            />
+          </div>
         )}
 
         {!loading && !error && savedItems.length > 0 && (
           <div className={styles.saved__content}>
             <div className={styles.saved__heading}>
-              <h1 className={styles.saved__title}>Saved</h1>
-              <p className={styles.saved__count}>{savedItems.length} items</p>
+              <p className={styles.saved__label}>Saved</p>
+              <div className={styles.saved__countRow}>
+                <h1 className={styles.saved__count}>
+                  {savedItems.length}{' '}
+                  {savedItems.length === 1 ? 'item' : 'items'}
+                </h1>
+                <span className={styles.saved__dots}>···</span>
+              </div>
             </div>
 
             <div className={styles.saved__grid}>
@@ -106,6 +116,7 @@ const Saved = () => {
                 <ItemCard
                   key={item.id}
                   item={item}
+                  variant="saved"
                   isFavorite={isFavorite(item.id)}
                   onFavoriteToggle={toggleFavorite}
                 />
