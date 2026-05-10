@@ -7,8 +7,12 @@
   flex: 1;
   padding: $spacing-16 var(--container-padding) $spacing-32;
 
+  @include tablet {
+    padding: $spacing-16 var(--container-padding) $spacing-16;
+  }
+
   @include desktop {
-    padding: $spacing-24 var(--container-padding) $spacing-32;
+    padding: $spacing-24 var(--container-padding) $spacing-24;
   }
 }
 
