@@ -5,10 +5,10 @@
 
 .page {
   flex: 1;
-  padding: $spacing-16 var(--container-padding) $spacing-32;
+  padding: $spacing-16 var(--container-padding) 80px;
 
   @include tablet {
-    padding: $spacing-16 var(--container-padding) $spacing-16;
+    padding: $spacing-16 var(--container-padding) 111px;
   }
 
   @include desktop {
