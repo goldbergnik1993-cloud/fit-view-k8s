@@ -50,6 +50,7 @@
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  padding: 4px 2px;
 
   &::-webkit-scrollbar {
     display: none;

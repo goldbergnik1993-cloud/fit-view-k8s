@@ -194,10 +194,26 @@
   cursor: pointer;
   padding: 0;
   border-radius: 50%;
-  transition: opacity 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
   align-self: flex-end;
+  color: $color-text;
 
-  &:hover { opacity: 0.6; }
+  &:hover {
+    color: $color-primary;
+    transform: scale(1.15);
+  }
+
+  &--active {
+    color: $color-primary;
+
+    img {
+      filter: invert(13%) sepia(94%) saturate(7469%) hue-rotate(243deg) brightness(93%) contrast(97%);
+    }
+  }
+
+  &--pop {
+    animation: heart-pop 0.35s ease forwards;
+  }
 
   @include focus-visible;
 }

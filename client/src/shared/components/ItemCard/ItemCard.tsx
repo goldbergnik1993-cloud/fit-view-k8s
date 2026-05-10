@@ -22,6 +22,8 @@ const ItemCard = ({
 }: ItemCardProps) => {
   const navigate = useNavigate();
   const [isPopping, setIsPopping] = useState(false);
+  const [isBagPopping, setIsBagPopping] = useState(false);
+  const [isBagAdded, setIsBagAdded] = useState(false);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,11 +68,20 @@ const ItemCard = ({
 
         {variant === 'saved' ? (
           <button
-            className={styles.card__bag}
+            className={[
+              styles.card__bag,
+              isBagAdded ? styles['card__bag--active'] : '',
+              isBagPopping ? styles['card__bag--pop'] : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
             onClick={(e) => {
               e.stopPropagation();
+              setIsBagPopping(true);
+              setIsBagAdded(true);
               onAddToBag?.(item.id);
             }}
+            onAnimationEnd={() => setIsBagPopping(false)}
             type="button"
             aria-label="Add to bag"
           >
