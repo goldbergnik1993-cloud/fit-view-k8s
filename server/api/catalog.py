@@ -230,7 +230,7 @@ async def fit_it(
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
     background_tasks: BackgroundTasks = BackgroundTasks(),
-    current_user: Optional[UserModel] = Depends(get_optional_current_user)
+    current_user: Optional[UserModel] = Depends(get_optional_current_user),
 ):
     """
     Executes the core Virtual Fitting Room analysis engine.

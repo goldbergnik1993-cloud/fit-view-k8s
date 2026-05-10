@@ -316,9 +316,12 @@ async def fitting_room(
         or (profile_data and profile_data["shoulders_length_cm"]),
         "breast_length_cm": payload.breast_length_cm
         or (profile_data and profile_data["breast_length_cm"]),
-        "waist_length_cm": payload.waist_length_cm or (profile_data and profile_data["waist_length_cm"]),
-        "hips_length_cm": payload.hips_length_cm or (profile_data and profile_data["hips_length_cm"]),
-        "leg_length_cm": payload.leg_length_cm or (profile_data and profile_data["leg_length_cm"]),
+        "waist_length_cm": payload.waist_length_cm
+        or (profile_data and profile_data["waist_length_cm"]),
+        "hips_length_cm": payload.hips_length_cm
+        or (profile_data and profile_data["hips_length_cm"]),
+        "leg_length_cm": payload.leg_length_cm
+        or (profile_data and profile_data["leg_length_cm"]),
     }
     item_category = ItemCategoryEnum(item_data["category"])
     required_fields = REQUIRED_FIELDS_BY_CATEGORY.get(item_category, ["height_cm"])
@@ -378,26 +381,42 @@ async def fitting_room(
             return FitResultEnum.LOOSE
         return FitResultEnum.PERFECT
 
-    hips_fit = does_it_fit(
-        user_val=active_body["hips_length_cm"],  # type: ignore
-        min_val=size_chart["hips_min_cm"],
-        max_val=size_chart["hips_max_cm"],
-    ) if "hips_length_cm" in required_fields else None
-    waist_fit = does_it_fit(
-        user_val=active_body["waist_length_cm"],  # type: ignore
-        min_val=size_chart["waist_min_cm"],
-        max_val=size_chart["waist_max_cm"],
-    ) if "waist_length_cm" in required_fields else None
-    breast_fit = does_it_fit(
-        user_val=active_body["breast_length_cm"],  # type: ignore
-        min_val=size_chart["breast_min_cm"],
-        max_val=size_chart["breast_max_cm"],
-    ) if "breast_length_cm" in required_fields else None
-    shoulders_fit = does_it_fit(
-        user_val=active_body["shoulders_length_cm"],  # type: ignore
-        min_val=size_chart["shoulders_min_cm"],
-        max_val=size_chart["shoulders_max_cm"],
-    ) if "shoulders_length_cm" in required_fields else None
+    hips_fit = (
+        does_it_fit(
+            user_val=active_body["hips_length_cm"],  # type: ignore
+            min_val=size_chart["hips_min_cm"],
+            max_val=size_chart["hips_max_cm"],
+        )
+        if "hips_length_cm" in required_fields
+        else None
+    )
+    waist_fit = (
+        does_it_fit(
+            user_val=active_body["waist_length_cm"],  # type: ignore
+            min_val=size_chart["waist_min_cm"],
+            max_val=size_chart["waist_max_cm"],
+        )
+        if "waist_length_cm" in required_fields
+        else None
+    )
+    breast_fit = (
+        does_it_fit(
+            user_val=active_body["breast_length_cm"],  # type: ignore
+            min_val=size_chart["breast_min_cm"],
+            max_val=size_chart["breast_max_cm"],
+        )
+        if "breast_length_cm" in required_fields
+        else None
+    )
+    shoulders_fit = (
+        does_it_fit(
+            user_val=active_body["shoulders_length_cm"],  # type: ignore
+            min_val=size_chart["shoulders_min_cm"],
+            max_val=size_chart["shoulders_max_cm"],
+        )
+        if "shoulders_length_cm" in required_fields
+        else None
+    )
     result = FittingRoomResponseSchema(
         item_id=item_id,
         size_label=size_chart["size_label"],
@@ -626,7 +645,7 @@ async def item_delete(item_id: int, db: AsyncSession, redis_client: Redis) -> di
         await db.delete(item_db)
         await db.commit()
         await _invalidate_fit_item_cache(redis_client=redis_client, item_id=item_id)
-        
+
         for url in filter(None, [image_url, fitting_image_url]):
             filename = url.split("/")[-1]
             file_path = os.path.join("static", "items_images", filename)
@@ -639,7 +658,7 @@ async def item_delete(item_id: int, db: AsyncSession, redis_client: Redis) -> di
                         file_path=file_path,
                         error=str(e),
                     )
-                    
+
         return {"message": f"Item with ID {item_id} has been successfully deleted."}
 
     except SQLAlchemyError as e:
