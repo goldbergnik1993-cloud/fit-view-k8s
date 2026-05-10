@@ -47,13 +47,6 @@
 // ─── Card view layout ─────────────────────────────────────────────────────────
 
 .layout {
-  @include tablet {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-areas: 'left' 'left';
-    align-items: start;
-  }
-
   @include desktop {
     display: grid;
     grid-template-columns: 684px 566px;
@@ -64,10 +57,6 @@
 }
 
 .layout__left {
-  @include tablet {
-    grid-area: left;
-  }
-
   @include desktop {
     grid-area: left;
   }
@@ -75,11 +64,6 @@
 
 .layout__right {
   margin-top: $spacing-32;
-
-  @include tablet {
-    margin-top: $spacing-32;
-    grid-area: left;
-  }
 
   @include desktop {
     grid-area: right;
@@ -107,10 +91,6 @@
   margin: $spacing-16 0 0;
 
   @include tablet {
-    margin: $spacing-32 0 0;
-  }
-
-  @include desktop {
     display: none;
   }
 }
@@ -122,6 +102,12 @@
   line-height: 1.2;
   color: $color-text;
   margin: 0 0 $spacing-16;
+
+  @include tablet {
+    display: block;
+    font-size: 32px;
+    margin-top: 0;
+  }
 
   @include desktop {
     display: block;
