@@ -23,6 +23,7 @@ import {
   getLinePositionPct,
   getResultLabel,
 } from '../../utils/fitCalculator';
+import { useAuth } from '../../hooks/useAuth';
 
 const MOCK_COLORS = ['#976B56', '#626044', '#B9C8DA', '#D8CAB3'];
 
@@ -52,11 +53,14 @@ const Item = () => {
 
   const [view, setView] = useState<View>('card');
   const [isMeasurementsOpen, setIsMeasurementsOpen] = useState(false);
+  const [isMeasurementsForFitting, setIsMeasurementsForFitting] =
+    useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const showColors = !isSizeGuideOpen;
 
   const { isFavorite: isFav, toggleFavorite } = useFavorites();
   const { addItem } = useCart();
+  const { user } = useAuth();
 
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [selectedSizeLabel, setSelectedSizeLabel] = useState<string | null>(
@@ -382,7 +386,14 @@ const Item = () => {
               <div className={styles.actions}>
                 <button
                   className={styles.tryOnBtn}
-                  onClick={() => setView('fitting')}
+                  onClick={() => {
+                    if (user) {
+                      setView('fitting');
+                    } else {
+                      setIsMeasurementsForFitting(true);
+                      setIsMeasurementsOpen(true);
+                    }
+                  }}
                 >
                   Virtual Try-On
                 </button>
@@ -393,6 +404,21 @@ const Item = () => {
             </div>
           </div>
         </main>
+        <EditMeasurementsModal
+          isOpen={isMeasurementsOpen}
+          onClose={() => {
+            setIsMeasurementsOpen(false);
+            setIsMeasurementsForFitting(false);
+          }}
+          onSave={() => {
+            setIsMeasurementsOpen(false);
+            setIsMeasurementsForFitting(false);
+            if (isMeasurementsForFitting) {
+              setView('fitting');
+            }
+          }}
+          mode={isMeasurementsForFitting ? 'enter' : 'edit'}
+        />
         <Footer />
       </>
     );

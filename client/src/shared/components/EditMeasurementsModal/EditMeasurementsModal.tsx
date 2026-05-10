@@ -19,6 +19,7 @@ interface Props {
   onClose: () => void;
   onSave: (measurements: Measurements) => void;
   initialValues?: Partial<Measurements>;
+  mode?: 'edit' | 'enter';
 }
 
 const FIELDS: {
@@ -58,6 +59,7 @@ const EditMeasurementsModal = ({
   onClose,
   onSave,
   initialValues,
+  mode = 'edit',
 }: Props) => {
   const { profile, updateProfile } = useUserProfile();
 
@@ -132,7 +134,11 @@ const EditMeasurementsModal = ({
 
         <div className={styles.content}>
           <div className={styles.header}>
-            <h2 className={styles.title}>Edit Measurements</h2>
+            <h2 className={styles.title}>
+              {mode === 'enter'
+                ? 'Enter Your Measurements'
+                : 'Edit Measurements'}
+            </h2>
             <button
               className={styles.closeBtn}
               onClick={onClose}
@@ -157,9 +163,7 @@ const EditMeasurementsModal = ({
                   </button>
                 </div>
 
-                {tooltip === key && (
-                  <div className={styles.tooltip}>{tip}</div>
-                )}
+                {tooltip === key && <div className={styles.tooltip}>{tip}</div>}
 
                 <input
                   className={styles.input}
@@ -175,7 +179,7 @@ const EditMeasurementsModal = ({
           </div>
 
           <PrimaryButton onClick={handleSave} loading={saving}>
-            Save Measurements
+            {mode === 'enter' ? 'Continue' : 'Save Measurements'}
           </PrimaryButton>
         </div>
       </div>
