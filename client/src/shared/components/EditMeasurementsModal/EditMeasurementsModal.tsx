@@ -73,7 +73,13 @@ const EditMeasurementsModal = ({
   const [tooltip, setTooltip] = useState<keyof Measurements | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // ─── Подставляем мерки из профиля (авторизованный или гость из localStorage)
+  useEffect(() => {
+    if (!tooltip) return;
+    const handleClick = () => setTooltip(null);
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [tooltip]);
+
   useEffect(() => {
     if (!isOpen) return;
     if (initialValues) {
