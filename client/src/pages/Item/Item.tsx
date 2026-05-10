@@ -330,19 +330,16 @@ const Item = () => {
       <>
         <Header />
         <main className={styles.page}>
-          <Breadcrumb
-            items={[
-              { label: 'Home', href: '/' },
-              { label: 'Catalog', href: '/catalog' },
-              {
-                label: item.brand,
-                href: item.brandId
-                  ? `/catalog?brands=${item.brandId}`
-                  : '/catalog',
-              },
-              { label: item.name },
-            ]}
-          />
+          <div className={styles.breadcrumbWrap}>
+            <Breadcrumb
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Catalog', href: '/catalog' },
+                { label: item.brand, href: `/catalog?brands=${item.brand}` },
+                { label: item.name },
+              ]}
+            />
+          </div>
 
           <div className={styles.layout}>
             <div className={styles.layout__left}>
