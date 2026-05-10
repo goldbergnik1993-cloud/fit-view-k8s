@@ -5,7 +5,20 @@ export interface CartContextValue {
   cart: Cart | null;
   count: number;
   loading: boolean;
-  addItem: (item_id: number, size_label: string, quantity?: number, price?: number) => Promise<void>;
+  addItem: (
+    item_id: number,
+    size_label: string,
+    quantity?: number,
+    price?: number,
+    itemData?: {
+      name: string;
+      brand: { id: number; name: string };
+      category: string;
+      gender: string;
+      image_url: string;
+      is_favorite: boolean;
+    }
+  ) => Promise<void>;
   updateQuantity: (item_id: number, quantity: number) => Promise<void>;
   removeItem: (item_id: number) => Promise<void>;
   clearCart: () => Promise<void>;
