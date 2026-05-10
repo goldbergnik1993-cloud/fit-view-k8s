@@ -116,7 +116,6 @@ const Saved = () => {
                 <ItemCard
                   key={item.id}
                   item={item}
-                  variant="saved"
                   isFavorite={isFavorite(item.id)}
                   onFavoriteToggle={toggleFavorite}
                 />

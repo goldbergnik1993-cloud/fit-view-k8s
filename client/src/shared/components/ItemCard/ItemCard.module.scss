@@ -180,44 +180,6 @@
   }
 }
 
-// ─── Bag ─────────────────────────────────────────────────────────────────────
-
-.card__bag {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  border-radius: 50%;
-  transition: color 0.2s ease, transform 0.2s ease;
-  align-self: flex-end;
-  color: $color-text;
-
-  &:hover {
-    color: $color-primary;
-    transform: scale(1.15);
-  }
-
-  &--active {
-    color: $color-primary;
-
-    img {
-      filter: invert(13%) sepia(94%) saturate(7469%) hue-rotate(243deg) brightness(93%) contrast(97%);
-    }
-  }
-
-  &--pop {
-    animation: heart-pop 0.35s ease forwards;
-  }
-
-  @include focus-visible;
-}
-
 // ─── Variant: mini ────────────────────────────────────────────────────────────
 
 .card--mini {
@@ -242,30 +204,9 @@
   }
 }
 
-// ─── Variant: saved ──────────────────────────────────────────────────────────
 
-.card--saved {
-  padding: $spacing-16;
 
-  .card__image {
-    aspect-ratio: 1.45;
-    border-radius: 24px;
-  }
 
-  .card__name {
-    font-size: 20px;
-    font-weight: 600;
-  }
-
-  .card__meta {
-    font-size: 16px;
-  }
-
-  .card__price {
-    font-size: 20px;
-    font-weight: 600;
-  }
-}
 
 // ─── Variant: search ─────────────────────────────────────────────────────────
 
