@@ -553,7 +553,14 @@ async def item_update(
     db: AsyncSession,
     redis_client: Redis,
 ):
-    item_stmt = select(ItemsModel).where(ItemsModel.id == item_id)
+    item_stmt = (
+        select(ItemsModel)
+        .where(ItemsModel.id == item_id)
+        .options(
+            selectinload(ItemsModel.size_charts),
+            selectinload(ItemsModel.measurements),
+        )
+    )
     item_db = await db.scalar(item_stmt)
     if not item_db:
         raise HTTPException(
@@ -588,6 +595,7 @@ async def item_update(
             else:
                 new_chart = SizeChartModel(item_id=item_db.id, **chart_data)
                 db.add(new_chart)
+
     if "measurements" in update_data:
         incoming_measurements = update_data.pop("measurements")
         existing_measurements = {m.size_label: m for m in item_db.measurements}
