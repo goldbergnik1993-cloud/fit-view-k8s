@@ -386,15 +386,15 @@ const Item = () => {
               </div>
 
               <div className={styles.actions}>
-                <div className={styles.actions__primary}>
-                  {renderAddToCart(44)}
-                </div>
                 <button
                   className={styles.tryOnBtn}
                   onClick={() => setView('fitting')}
                 >
                   Virtual Try-On
                 </button>
+                <div className={styles.actions__primary}>
+                  {renderAddToCart(44)}
+                </div>
               </div>
             </div>
           </div>
