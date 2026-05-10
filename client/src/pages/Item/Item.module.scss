@@ -4,8 +4,8 @@
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 .page {
+  flex: 1;
   padding: $spacing-16 var(--container-padding) $spacing-32;
-  min-height: calc(100vh - 80px);
 
   @include desktop {
     padding: $spacing-24 var(--container-padding) $spacing-32;

@@ -68,6 +68,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
 @include tablet {
   :root {
