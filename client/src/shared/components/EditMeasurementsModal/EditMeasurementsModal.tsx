@@ -4,7 +4,6 @@ import { PrimaryButton } from '../ui/PrimaryButton/PrimaryButton';
 import styles from './EditMeasurementsModal.module.scss';
 import InfoIcon from '../../../assets/icons/info.svg';
 import BurgerCloseIcon from '../../../assets/icons/burger-close.svg';
-import { Header } from '../../components/Header/Header';
 
 interface Measurements {
   shoulders_length_cm: number;
@@ -128,10 +127,6 @@ const EditMeasurementsModal = ({
         aria-modal="true"
         aria-label="Edit Measurements"
       >
-        <div className={styles.mobileHeader}>
-          <Header />
-        </div>
-
         <div className={styles.content}>
           <div className={styles.header}>
             <h2 className={styles.title}>
@@ -154,7 +149,7 @@ const EditMeasurementsModal = ({
                 <div className={styles.fieldLabel}>
                   <span>{label}</span>
                   <button
-                    className={styles.infoBtn}
+                    className={`${styles.infoBtn} ${tooltip === key ? styles['infoBtn--active'] : ''}`}
                     onClick={() => setTooltip(tooltip === key ? null : key)}
                     aria-label="More info"
                     type="button"
