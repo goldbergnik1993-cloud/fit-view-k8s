@@ -114,7 +114,7 @@ class ProfileUpdateSchema(BaseModel):
         if not re.search(r"\d", v) or not re.search(r"[A-Z]", v):
             raise ValueError("Password must contain a number and uppercase letter.")
         return v
-    
+
     @model_validator(mode="after")
     def validate_body_proportions(self) -> "ProfileUpdateSchema":
         height = self.height_cm
