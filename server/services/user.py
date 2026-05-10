@@ -40,7 +40,9 @@ async def profile_update(
     update_data = payload.model_dump(exclude_unset=True)
     if update_data.get("email") or update_data.get("password"):
         user_stmt = select(UserModel).where(UserModel.id == user.id)
-        user = await db.scalar(user_stmt)
+        user = await db.scalar(user_stmt)  # type: ignore
+        assert user is not None, "User not found in the database."
+
     new_email = None
     if update_data.get("email"):
         new_email = update_data.pop("email")
@@ -138,10 +140,11 @@ async def verify_email_change(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="This email is no longer available.",
         )
-    
+
     user_stmt = select(UserModel).where(UserModel.id == user.id)
-    user = await db.scalar(user_stmt)
-    
+    user = await db.scalar(user_stmt)  # type: ignore
+    assert user is not None, "User not found in the database."
+
     user.email = new_email
 
     try:
