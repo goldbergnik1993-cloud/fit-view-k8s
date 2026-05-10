@@ -20,7 +20,7 @@
   }
 }
 
-// ─── Title row and Breadcrumbs ─────────────────────────────────────────────────
+// ─── Title row ─────────────────────────────────────────────────
 
 .catalog__titleRow {
   display: flex;
@@ -29,23 +29,6 @@
   margin-bottom: $spacing-16;
 }
 
-.catalog__breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: $spacing-8;
-  @include text(14px, 500);
-  flex-wrap: wrap;
-}
-
-.catalog__breadcrumbLink {
-  text-decoration: underline;
-  @include hover-opacity;
-}
-
-.catalog__breadcrumbSep {
-  color: $color-text;
-  opacity: 0.4;
-}
 
 // ─── Filter button mobile ─────────────────────────────────────────────────────
 

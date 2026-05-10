@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
+import { Breadcrumb } from '../../shared/components/Breadcrumb/Breadcrumb';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
 import {
@@ -118,40 +119,29 @@ const Catalog = () => {
       <main className={styles.catalog__main}>
         {/* Breadcrumbs + filter button mobile */}
         <div className={styles.catalog__titleRow}>
-          <nav className={styles.catalog__breadcrumbs} aria-label="Breadcrumb">
-            <a href="/" className={styles.catalog__breadcrumbLink}>
-              Home
-            </a>
-            <span className={styles.catalog__breadcrumbSep}>/</span>
-
-            {urlName ? (
-              <>
-                <a href="/catalog" className={styles.catalog__breadcrumbLink}>
-                  Catalog
-                </a>
-                <span className={styles.catalog__breadcrumbSep}>/</span>
-                <span>Search results for "{urlName}"</span>
-              </>
-            ) : urlBrandName ? (
-              <>
-                <a href="/catalog" className={styles.catalog__breadcrumbLink}>
-                  Catalog
-                </a>
-                <span className={styles.catalog__breadcrumbSep}>/</span>
-                <span>{urlBrandName}</span>
-              </>
-            ) : urlBreadcrumbName ? (
-              <>
-                <a href="/catalog" className={styles.catalog__breadcrumbLink}>
-                  Catalog
-                </a>
-                <span className={styles.catalog__breadcrumbSep}>/</span>
-                <span>{urlBreadcrumbName}</span>
-              </>
-            ) : (
-              <span>Catalog</span>
-            )}
-          </nav>
+          <Breadcrumb
+            items={
+              urlName
+                ? [
+                    { label: 'Home', href: '/' },
+                    { label: 'Catalog', href: '/catalog' },
+                    { label: `Search results for "${urlName}"` },
+                  ]
+                : urlBrandName
+                  ? [
+                      { label: 'Home', href: '/' },
+                      { label: 'Catalog', href: '/catalog' },
+                      { label: urlBrandName },
+                    ]
+                  : urlBreadcrumbName
+                    ? [
+                        { label: 'Home', href: '/' },
+                        { label: 'Catalog', href: '/catalog' },
+                        { label: urlBreadcrumbName },
+                      ]
+                    : [{ label: 'Home', href: '/' }, { label: 'Catalog' }]
+            }
+          />
 
           <button
             type="button"
