@@ -13,7 +13,7 @@ class CartBaseSchema(BaseModel):
 
 class CartItemCreateSchema(BaseModel):
     item_id: int
-    size_label: str
+    size_label: str = Field(..., min_length=1, max_length=4)
     quantity: int = Field(default=1, gt=0)
 
 
