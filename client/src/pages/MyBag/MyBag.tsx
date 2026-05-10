@@ -84,7 +84,7 @@ const CartCompact = ({ cart }: CartCompactProps) => (
     {cart.cart_items.map((ci: CartItem) => (
       <div key={ci.id} className={styles['cart-compact__item']}>
         <img
-          src={ci.item.image_url}
+          src={ci.item.image_url || 'https://placehold.co/80x100?text=Item'}
           alt={ci.item.name}
           className={styles['cart-compact__image']}
         />
