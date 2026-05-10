@@ -1,7 +1,27 @@
 version: '3.8'
 
-services:
+# Общий блок переменных, чтобы не повторяться
+x-environment: &common-env
+  DATABASE_URL: postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
+  PGHOST: ${PGHOST}
+  PGDATABASE: ${PGDATABASE}
+  PGUSER: ${PGUSER}
+  PGPASSWORD: ${PGPASSWORD}
+  PGCHANNELBINDING: ${PGCHANNELBINDING}
+  SECRET_KEY: ${SECRET_KEY}
+  ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+  REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
+  ACTIVATION_CODE_EXPIRE_MINUTES: ${ACTIVATION_CODE_EXPIRE_MINUTES}
+  RESET_TOKEN_EXPIRE_MINUTES: ${RESET_TOKEN_EXPIRE_MINUTES}
+  STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+  STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+  STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+  REDIS_URL: ${REDIS_URL}
+  ENV: development
+  SMTP_HOST: ${SMTP_HOST}
+  SMTP_PORT: ${SMTP_PORT}
 
+services:
   nginx:
     image: nginx:stable-alpine
     container_name: fitview_nginx
@@ -39,38 +59,9 @@ services:
       - ./server:/app
       - /app/.venv
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
-      - PGHOST=${PGHOST}
-      - PGDATABASE=${PGDATABASE}
-      - PGUSER=${PGUSER}
-      - PGPASSWORD=${PGPASSWORD}
-      - PGCHANNELBINDING=${PGCHANNELBINDING}
-      - SECRET_KEY=${SECRET_KEY}
-      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
-      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
-      - ACTIVATION_CODE_EXPIRE_MINUTES=${ACTIVATION_CODE_EXPIRE_MINUTES}
-      - RESET_TOKEN_EXPIRE_MINUTES=${RESET_TOKEN_EXPIRE_MINUTES}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - REDIS_URL=${REDIS_URL}
-      - ENV=development
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
+    environment: *common-env
     depends_on:
       - redis
-    networks:
-      - fit-network
-
-  adminer:
-    image: adminer
-    container_name: fitview_adminer
-    ports:
-      - "8080:8080"
     networks:
       - fit-network
 
@@ -82,30 +73,32 @@ services:
     volumes:
       - ./server:/app
       - /app/.venv
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
-      - PGHOST=${PGHOST}
-      - PGDATABASE=${PGDATABASE}
-      - PGUSER=${PGUSER}
-      - PGPASSWORD=${PGPASSWORD}
-      - PGCHANNELBINDING=${PGCHANNELBINDING}
-      - SECRET_KEY=${SECRET_KEY}
-      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
-      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
-      - ACTIVATION_CODE_EXPIRE_MINUTES=${ACTIVATION_CODE_EXPIRE_MINUTES}
-      - RESET_TOKEN_EXPIRE_MINUTES=${RESET_TOKEN_EXPIRE_MINUTES}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - REDIS_URL=${REDIS_URL}
-      - ENV=development
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
+    environment: *common-env
     depends_on:
       - redis
+    networks:
+      - fit-network
+
+  celery_beat:
+    build:
+      context: ./server
+    container_name: fitview_beat
+    command: celery -A core.celery_app beat --loglevel=info
+    volumes:
+      - ./server:/app
+      - /app/.venv
+    environment: *common-env
+    depends_on:
+      - redis
+    networks:
+      - fit-network
+
+  # Остальные сервисы без изменений, так как у них свои настройки
+  adminer:
+    image: adminer
+    container_name: fitview_adminer
+    ports:
+      - "8080:8080"
     networks:
       - fit-network
 
@@ -128,41 +121,6 @@ services:
     networks:
       - fit-network
 
-  celery_beat:
-    build:
-      context: ./server
-    container_name: fitview_beat
-    command: celery -A core.celery_app beat --loglevel=info
-    volumes:
-      - ./server:/app
-      - /app/.venv
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}
-      - PGHOST=${PGHOST}
-      - PGDATABASE=${PGDATABASE}
-      - PGUSER=${PGUSER}
-      - PGPASSWORD=${PGPASSWORD}
-      - PGCHANNELBINDING=${PGCHANNELBINDING}
-      - SECRET_KEY=${SECRET_KEY}
-      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
-      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
-      - ACTIVATION_CODE_EXPIRE_MINUTES=${ACTIVATION_CODE_EXPIRE_MINUTES}
-      - RESET_TOKEN_EXPIRE_MINUTES=${RESET_TOKEN_EXPIRE_MINUTES}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - REDIS_URL=${REDIS_URL}
-      - ENV=development
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-    depends_on:
-      - redis
-    networks:
-      - fit-network
-
   flower:
     image: mher/flower:latest
     container_name: fitview_flower
@@ -180,4 +138,3 @@ services:
 networks:
   fit-network:
     driver: bridge
-
