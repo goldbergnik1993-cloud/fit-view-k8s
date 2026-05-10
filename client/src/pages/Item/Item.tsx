@@ -12,6 +12,7 @@ import Silhouette from '../../shared/components/Silhouette/Silhouette';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
 import styles from './Item.module.scss';
+import { Breadcrumb } from '../../shared/components/Breadcrumb/Breadcrumb';
 import ChevronLeftIcon from '../../assets/icons/chevron-left.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import InfoIcon from '../../assets/icons/info.svg';
@@ -329,23 +330,14 @@ const Item = () => {
       <>
         <Header />
         <main className={styles.page}>
-          <nav className={styles.breadcrumb} aria-label="breadcrumb">
-            <a href="/" className={styles.breadcrumb__link}>
-              Home
-            </a>
-            <span className={styles.breadcrumb__sep}>/</span>
-            <a href="/catalog" className={styles.breadcrumb__link}>
-              Catalog
-            </a>
-            <span className={styles.breadcrumb__sep}>/</span>
-            <a
-              href={`/catalog?brands=${item.brand}`}
-              className={styles.breadcrumb__link}
-            >
-              {item.brand}
-            </a>
-            <span className={styles.breadcrumb__sep}>/</span>
-          </nav>
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Catalog', href: '/catalog' },
+              { label: item.brand, href: `/catalog?brands=${item.brand}` },
+              { label: item.name },
+            ]}
+          />
 
           <div className={styles.layout}>
             <div className={styles.layout__left}>
