@@ -7,7 +7,10 @@ from database.session_postgresql import SessionLocal
 
 
 async def save_fitting_room_telemetry(
-    user_id: int, item_id: int, fit_data: dict, ab_group: str
+    item_id: int,
+    fit_data: dict,
+    ab_group: str,
+    user_id: int | None = None,
 ):
     async with SessionLocal() as db:
         try:
