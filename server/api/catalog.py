@@ -227,10 +227,10 @@ async def favorite(
 async def fit_it(
     item_id: int,
     payload: FittingRoomRequestSchema,
-    current_user: UserModel = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
     background_tasks: BackgroundTasks = BackgroundTasks(),
+    current_user: Optional[UserModel] = Depends(get_optional_current_user),
 ):
     """
     Executes the core Virtual Fitting Room analysis engine.
@@ -243,12 +243,12 @@ async def fit_it(
     shoulders, allowing the frontend to visually render the fit to the user.
     """
     return await fitting_room(
-        user=current_user,
         item_id=item_id,
         payload=payload,
         db=db,
         redis_client=redis_client,
         background_tasks=background_tasks,
+        user=current_user,
     )
 
 
