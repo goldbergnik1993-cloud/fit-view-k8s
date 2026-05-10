@@ -339,7 +339,12 @@ const Item = () => {
               items={[
                 { label: 'Home', href: '/' },
                 { label: 'Catalog', href: '/catalog' },
-                { label: item.brand, href: `/catalog?brands=${item.brand}` },
+                {
+                  label: item.brand,
+                  href: item.brandId
+                    ? `/catalog?brands=${item.brandId}`
+                    : '/catalog',
+                },
                 { label: item.name },
               ]}
             />
