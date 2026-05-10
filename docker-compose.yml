@@ -17,8 +17,8 @@ x-environment: &common-env
   STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
   STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
   REDIS_URL: ${REDIS_URL}
-  ENV: development
-  SMTP_HOST: ${SMTP_HOST}
+  ENV: developments
+  SMTP_HOST: ${SMTP_HOST}s
   SMTP_PORT: ${SMTP_PORT}
 
 services:
