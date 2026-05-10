@@ -31,6 +31,7 @@ export interface ClothingItem {
   fittingImageUrl?: string | null;
   price: number;
   isFavorite: boolean;
+  brandId?: number;
   gender?: string;
   description?: string | null;
   mandatoryFields?: string[];

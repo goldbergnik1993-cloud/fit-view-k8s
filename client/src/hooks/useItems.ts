@@ -12,6 +12,11 @@ export function mapItem(item: BackendItem): ClothingItem {
       ? item.brand.name
       : String(item.brand);
 
+  const brandId =
+    typeof item.brand === 'object' && item.brand !== null
+      ? item.brand.id
+      : undefined;
+
   const sizes = (item.available_sizes ?? []).map((s) => ({
     id: s.id,
     sizeLabel: s.size_label,
@@ -34,6 +39,7 @@ export function mapItem(item: BackendItem): ClothingItem {
     fittingImageUrl: item.fitting_image_url ?? null,
     price: Number(item.price),
     isFavorite: item.is_favorite ?? false,
+    brandId,
     gender: item.gender,
     description: item.description ?? null,
     mandatoryFields: item.mandatory_fields ?? [],
