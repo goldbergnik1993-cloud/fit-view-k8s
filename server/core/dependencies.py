@@ -17,21 +17,9 @@ security = HTTPBearer()
 optional_security = HTTPBearer(auto_error=False)
 
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(get_db),
-    redis_client: Redis = Depends(get_redis),
-):
-    token = credentials.credentials
-    payload = decode_access_token(token)
-    if not payload:
-        logger.warning("auth_failed", reason="invalid_token")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-        )
-
-    user_id = payload.get("sub")
+async def get_user_by_id(
+    user_id: int, db: AsyncSession, redis_client: Redis
+) -> UserModel:
     cache_key = f"auth_user:{user_id}"
 
     cached_user_str = await redis_client.get(cache_key)
@@ -53,6 +41,7 @@ async def get_current_user(
         "id": user.id,
         "email": user.email,
         "is_active": user.is_active,
+        "role": user.role,
         "ab_group": user.ab_group,
     }
     await redis_client.setex(cache_key, 300, json.dumps(user_dict))
@@ -60,9 +49,28 @@ async def get_current_user(
     return user
 
 
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
+):
+    token = credentials.credentials
+    payload = decode_access_token(token)
+    if not payload:
+        logger.warning("auth_failed", reason="invalid_token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
+
+    user_id = payload.get("sub")
+    return await get_user_by_id(user_id=user_id, db=db, redis_client=redis_client)
+
+
 async def get_optional_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security),
     db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
 ) -> Optional[UserModel]:
     if not credentials:
         return None
@@ -75,13 +83,7 @@ async def get_optional_current_user(
         return None
 
     user_id = payload.get("sub")
-    if not user_id:
-        logger.warning("auth_failed", reason="user_not_found", user_id=user_id)
-        return None
-
-    user_stmt = select(UserModel).where(UserModel.id == int(user_id))
-    result = await db.execute(user_stmt)
-    return result.scalar_one_or_none()
+    return await get_user_by_id(user_id=user_id, db=db, redis_client=redis_client)
 
 
 async def get_user_by_email(email: str, db: AsyncSession) -> Optional[UserModel]:
