@@ -4,13 +4,13 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: transparent;
   z-index: 300;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.4);
 
   @include tablet {
-    background: rgba(0, 0, 0, 0.4);
     align-items: center;
     justify-content: center;
   }
@@ -19,16 +19,19 @@
 .modal {
   background: $color-white;
   width: 100%;
-  flex: 1;
-  border-radius: 0;
-  padding: 0;
+  border-radius: 16px 16px 0 0;
   overflow-y: auto;
 
   @include tablet {
-    flex: none;
-    width: 480px;
+    width: 470px;
+    height: 582px;
     border-radius: 16px;
-    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  @include desktop {
+    width: 448px;
+    height: 582px;
   }
 }
 
@@ -40,8 +43,16 @@
 }
 
 .title {
-  @include text(22px, 700);
+  font-family: $font-family-heading;
+  font-size: 20px;
+  font-weight: 700;
+  color: $color-text;
   margin: 0;
+
+  @include tablet {
+    font-size: 24px;
+    font-weight: 600;
+  }
 }
 
 .closeBtn {
@@ -82,6 +93,12 @@
   height: 24px;
   @include hover-opacity;
   flex-shrink: 0;
+  border-radius: 50%;
+  transition: filter 0.2s ease;
+
+  &--active {
+    filter: brightness(0);
+  }
 }
 
 .tooltip {
@@ -93,25 +110,34 @@
   padding: $spacing-8 $spacing-16;
 }
 
+// ─── Input ────────────────────────────────────────────────────────────────────
+
 .input {
   width: 100%;
-  height: 52px;
-  border: 1px solid $color-input-border;
+  height: 44px;
+  background: #E9E9F7;
+  border: 1px solid transparent;
   border-radius: 8px;
   padding: 0 $spacing-16;
   @include text(16px, 400);
+  color: $color-text;
   outline: none;
-  transition: border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 
   &::placeholder {
-    color: $color-card-bg;
+    color: $color-input-border;
   }
 
   &:focus {
+    background: $color-white;
     border-color: $color-text;
   }
 
-  // hide number arrows
+  &:not(:placeholder-shown) {
+    background: #FCFCFC;
+    border-color: #E9E9F7;
+  }
+
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -120,14 +146,12 @@
   -moz-appearance: textfield;
 }
 
-// ─── Mobile Header & Content ──────────────────────────────────────────────────
-
-.mobileHeader {
-  @include tablet {
-    display: none;
-  }
-}
+// ─── Content ─────────────────────────────────────────────────────────────────
 
 .content {
-  padding: $spacing-24 var(--container-padding) $spacing-32;
+  padding: $spacing-16;
+
+  @include tablet {
+    padding: 20px $spacing-24;
+  }
 }
