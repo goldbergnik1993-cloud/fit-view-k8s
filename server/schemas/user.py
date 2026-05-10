@@ -7,6 +7,7 @@ from pydantic import (
     EmailStr,
     ConfigDict,
     field_validator,
+    model_validator,
     Field,
     AfterValidator,
 )
@@ -113,6 +114,16 @@ class ProfileUpdateSchema(BaseModel):
         if not re.search(r"\d", v) or not re.search(r"[A-Z]", v):
             raise ValueError("Password must contain a number and uppercase letter.")
         return v
+    
+    @model_validator(mode="after")
+    def validate_body_proportions(self) -> "ProfileUpdateSchema":
+        height = self.height_cm
+        leg = self.leg_length_cm
+
+        if height and leg and leg >= height:
+            raise ValueError("leg_length_cm must be less than height_cm")
+
+        return self
 
 
 class ProfileViewSchema(BaseModel):
