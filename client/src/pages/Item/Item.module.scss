@@ -33,9 +33,28 @@
 }
 
 .breadcrumb__link {
-  @include text(12px, 400);
-  color: $color-input-border;
+  @include text(14px, 400);
+  color: $color-text;
+  text-decoration: underline;
+  text-decoration-style: solid;
   @include hover-opacity;
+
+  @include desktop {
+    font-family: $font-family-heading;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.breadcrumb__sep {
+  @include text(14px, 400);
+  color: $color-text;
+
+  @include desktop {
+    font-family: $font-family-heading;
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 
 .breadcrumb__sep {
