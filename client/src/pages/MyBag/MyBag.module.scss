@@ -94,9 +94,9 @@
 
 .cart-item__remove {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  z-index: 1;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
   width: 24px;
   height: 24px;
   @include flex-center;
@@ -163,11 +163,11 @@
 }
 
 .cart-item__qty-label {
-  @include text(14px);
+  display: none;
 
   @include tablet {
-    font-size: 18px;
-    font-weight: 500;
+    display: block;
+    @include text(18px, 500);
   }
 }
 
