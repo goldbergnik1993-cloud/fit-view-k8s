@@ -25,13 +25,10 @@ const Saved = () => {
   }, [favorites]);
 
   const fetchFavorites = useCallback(async () => {
-    console.log('fetchFavorites called, user:', user);
-    console.log('favoritesRef.current:', favoritesRef.current);
     if (!user) {
       const guestIds = Object.entries(favoritesRef.current)
         .filter(([, v]) => v)
         .map(([id]) => id);
-      console.log('guestIds:', guestIds);
 
       if (guestIds.length === 0) {
         setLoading(false);
