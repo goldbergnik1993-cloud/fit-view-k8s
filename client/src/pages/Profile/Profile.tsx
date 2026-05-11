@@ -134,7 +134,7 @@ const MeasurementField = ({
   return (
     <div className={styles['profile__field']}>
       <label className={styles['profile__field-label']}>
-        {label}
+        <span>{label}</span>
         <span className={styles['profile__field-tooltip-wrap']}>
           <button
             type="button"

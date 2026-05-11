@@ -45,15 +45,25 @@
   gap: $spacing-8;
   padding: $spacing-8 $spacing-16;
   border: 1px solid $color-card-bg;
-  border-radius: 8px;
+  border-radius: 4px;
   white-space: nowrap;
-  @include text(14px, 400);
+  @include text(16px, 400);
   flex-shrink: 0;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  background: $color-white;
+  color: $color-text;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(&--active) {
+    border-color: $color-nav-active;
+    opacity: 0.7;
+  }
 
   &--active {
-    border-color: $color-text;
-    background-color: $color-white;
+    background: $color-nav-active;
+    color: $color-white;
+    border-color: $color-nav-active;
+
+    img { filter: invert(1) brightness(2); }
   }
 }
 
@@ -62,14 +72,14 @@
   width: 20px;
   height: 20px;
 
-  img, svg { width: 20px; height: 20px; }
+  img { width: 20px; height: 20px; }
 }
 
 // ─── Desktop layout ───────────────────────────────────────────────────────────
 
 .profile__layout {
   display: flex;
-  gap: $spacing-32;
+  gap: 142px;
 }
 
 // ─── Sidebar (hidden on mobile/tablet) ───────────────────────────────────────
@@ -85,7 +95,7 @@
   min-width: 0;
 }
 
-// ─── Content inner — mobile: 343px centered ──────────────────────────────────
+// ─── Content inner — центрирование карточек ──────────────────────────────────
 
 .profile__content-inner {
   display: flex;
@@ -98,19 +108,15 @@
 // ─── Cards ────────────────────────────────────────────────────────────────────
 
 .profile__card {
-  border: 1px solid $color-card-bg;
-  border-radius: 12px;
-  padding: $spacing-16;
+  background: $color-white;
+  border-radius: 16px;
+  padding: 10px $spacing-16;
+  width: 343px;
+  box-sizing: border-box;
 }
 
 .profile__card-title {
   @include h3;
-  margin-bottom: $spacing-16;
-}
-
-.profile__card-divider {
-  height: 1px;
-  background: $color-card-bg;
   margin-bottom: $spacing-16;
 }
 
@@ -129,19 +135,16 @@
 
 .profile__edit-btn {
   width: 100%;
-  height: 48px;
-  padding: $spacing-8 $spacing-16;
+  height: 44px;
+  padding: 0 $spacing-16;
   border: 1px solid $color-primary;
   border-radius: 8px;
   @include text(16px, 500);
   color: $color-primary;
   box-sizing: border-box;
   transition: background-color 0.2s ease, color 0.2s ease;
-
-  &:hover {
-    background-color: $color-primary;
-    color: $color-white;
-  }
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 // ─── Measurement fields ───────────────────────────────────────────────────────
@@ -156,7 +159,10 @@
   display: flex;
   align-items: center;
   gap: $spacing-8;
-  @include text(14px, 400);
+
+  span {
+    @include text(14px, 400);
+  }
 }
 
 // ─── Tooltip ─────────────────────────────────────────────────────────────────
@@ -169,60 +175,61 @@
 
 .profile__field-info-btn {
   @include flex-center;
-  width: 20px;
-  height: 20px;
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
+  width: 24px;
+  height: 24px;
+  @include hover-opacity;
   flex-shrink: 0;
-
-  &:hover { opacity: 1; }
-
-  img { display: block; }
+  border-radius: 50%;
+  transition: filter 0.2s ease;
 }
 
 .profile__field-tooltip {
+  @include text(14px, 400, 1.5);
+  background: #FCFCFC;
+  border-radius: 8px;
+  padding: $spacing-8 $spacing-16;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
   z-index: 10;
-  background: $color-white;
-  border: 1px solid $color-card-bg;
-  border-radius: 8px;
-  padding: $spacing-16;
-  @include text(14px, 400);
-  line-height: 1.5;
   width: 280px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   pointer-events: none;
 }
 
-// ─── Input ────────────────────────────────────────────────────────────────────
+// ─── Input (из EditMeasurementsModal) ────────────────────────────────────────
 
 .profile__field-input {
   width: 100%;
-  height: 48px;
-  padding: $spacing-8 $spacing-16;
-  border: 1px solid $color-card-bg;
+  height: 44px;
+  background: $color-input-bg;
+  border: 1px solid transparent;
   border-radius: 8px;
-  @include text(14px, 400);
+  padding: 0 $spacing-16;
+  @include text(16px, 400);
   color: $color-text;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease;
+  outline: none;
+  transition: background 0.2s, border-color 0.2s;
 
-  &::placeholder { color: $color-card-bg; }
+  &::placeholder { color: $color-input-border; }
 
   &:focus {
-    outline: none;
-    border-color: $color-input-border;
+    background: $color-white;
+    border-color: $color-text;
+  }
+
+  &:not(:placeholder-shown) {
+    background: #fcfcfc;
+    border-color: $color-input-bg;
   }
 
   &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  &::-webkit-inner-spin-button { -webkit-appearance: none; }
   appearance: textfield;
   -moz-appearance: textfield;
 }
 
-// ─── Placeholder ──────────────────────────────────────────────────────────────
+// ─── Placeholder tab ──────────────────────────────────────────────────────────
 
 .profile__placeholder {
   @include text(14px, 400);
@@ -236,7 +243,10 @@
 @include tablet {
   .profile__content-inner {
     width: 470px;
-    margin: 0 auto;
+  }
+
+  .profile__card {
+    width: 470px;
   }
 
   .profile__field-tooltip {
@@ -257,8 +267,22 @@
 
   .profile__sidebar {
     display: block;
-    width: 240px;
+    width: 330px;
     flex-shrink: 0;
+  }
+
+  // ─── Sidebar card ───────────────────────────────────────────────────────────
+
+  .profile__sidebar-card {
+    background: $color-white;
+    border-radius: 8px;
+    padding: $spacing-16;
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-16;
+    }
   }
 
   .profile__nav-item {
@@ -267,16 +291,22 @@
     gap: $spacing-16;
     width: 100%;
     padding: $spacing-16;
-    border-radius: 8px;
+    border-radius: 4px;
     @include text(16px, 400);
     text-align: left;
-    transition: background-color 0.2s ease;
+    background: transparent;
+    color: $color-text;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
-    &:hover { background-color: $color-toggle-bg; }
+    &:hover:not(&--active) {
+      background-color: $color-toggle-bg;
+    }
 
     &--active {
-      border: 1px solid $color-text;
-      border-radius: 8px;
+      background: $color-nav-active;
+      color: $color-white;
+
+      img { filter: invert(1) brightness(2); }
     }
   }
 
@@ -286,12 +316,19 @@
     height: 24px;
     flex-shrink: 0;
 
-    img, svg { width: 24px; height: 24px; }
+    img { width: 24px; height: 24px; }
   }
+
+  // ─── Content ────────────────────────────────────────────────────────────────
 
   .profile__content-inner {
     width: 448px;
-    margin: 0 auto;
+    margin: 0;
+  }
+
+  .profile__card {
+    width: 448px;
+    padding: 10px $spacing-16;
   }
 
   .profile__field-tooltip {
