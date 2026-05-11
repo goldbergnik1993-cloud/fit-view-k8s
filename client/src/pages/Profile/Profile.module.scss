@@ -254,10 +254,6 @@
   .profile__card {
     width: 470px;
   }
-
-  .profile__field-tooltip {
-    width: 340px;
-  }
 }
 
 // ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
@@ -335,9 +331,5 @@
   .profile__card {
     width: 448px;
     padding: $spacing-16;
-  }
-
-  .profile__field-tooltip {
-    width: 360px;
   }
 }
