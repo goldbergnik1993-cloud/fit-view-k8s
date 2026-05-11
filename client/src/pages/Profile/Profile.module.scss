@@ -155,7 +155,6 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-8;
-  position: relative;
 }
 
 .profile__field-label {
@@ -188,16 +187,11 @@
 
 .profile__field-tooltip {
   @include text(14px, 400, 1.5);
+  color: $color-text;
   background: #FCFCFC;
   border-radius: 8px;
   padding: $spacing-8 $spacing-16;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 10;
-  width: 280px;
-  pointer-events: none;
 }
 
 // ─── Input (из EditMeasurementsModal) ────────────────────────────────────────
