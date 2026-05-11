@@ -110,7 +110,7 @@
 .profile__card {
   background: $color-white;
   border-radius: 16px;
-  padding: 10px $spacing-16;
+  padding: $spacing-16;
   width: 343px;
   box-sizing: border-box;
 }
@@ -129,6 +129,8 @@
 
 .profile__card-info {
   @include text(14px, 400);
+  margin: 0;
+  padding: 0;
 }
 
 // ─── Edit button ──────────────────────────────────────────────────────────────
@@ -328,7 +330,7 @@
 
   .profile__card {
     width: 448px;
-    padding: 10px $spacing-16;
+    padding: $spacing-16;
   }
 
   .profile__field-tooltip {
