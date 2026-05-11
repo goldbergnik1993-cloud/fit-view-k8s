@@ -88,7 +88,11 @@ type MeasurementKey =
   | 'waist_length_cm'
   | 'leg_length_cm';
 
-const MEASUREMENT_FIELDS: { key: MeasurementKey; label: string; tip: string }[] = [
+const MEASUREMENT_FIELDS: {
+  key: MeasurementKey;
+  label: string;
+  tip: string;
+}[] = [
   {
     key: 'shoulders_length_cm',
     label: 'Enter shoulder width (cm)',
@@ -182,11 +186,21 @@ const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
     setSaving(true);
     try {
       await updateProfile({
-        shoulders_length_cm: fields.shoulders_length_cm ? Number(fields.shoulders_length_cm) : null,
-        breast_length_cm: fields.breast_length_cm ? Number(fields.breast_length_cm) : null,
-        hips_length_cm: fields.hips_length_cm ? Number(fields.hips_length_cm) : null,
-        waist_length_cm: fields.waist_length_cm ? Number(fields.waist_length_cm) : null,
-        leg_length_cm: fields.leg_length_cm ? Number(fields.leg_length_cm) : null,
+        shoulders_length_cm: fields.shoulders_length_cm
+          ? Number(fields.shoulders_length_cm)
+          : null,
+        breast_length_cm: fields.breast_length_cm
+          ? Number(fields.breast_length_cm)
+          : null,
+        hips_length_cm: fields.hips_length_cm
+          ? Number(fields.hips_length_cm)
+          : null,
+        waist_length_cm: fields.waist_length_cm
+          ? Number(fields.waist_length_cm)
+          : null,
+        leg_length_cm: fields.leg_length_cm
+          ? Number(fields.leg_length_cm)
+          : null,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -197,18 +211,20 @@ const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
 
   return (
     <div className={styles['profile__content-inner']}>
-      {MEASUREMENT_FIELDS.map(({ key, label, tip }) => (
-        <MeasurementField
-          key={key}
-          label={label}
-          tip={tip}
-          value={fields[key]}
-          onChange={set(key)}
-        />
-      ))}
-      <PrimaryButton onClick={handleSave} loading={saving} disabled={saved}>
-        {saved ? '✓ Saved' : 'Save Measurements'}
-      </PrimaryButton>
+      <div className={styles['profile__card']}>
+        {MEASUREMENT_FIELDS.map(({ key, label, tip }) => (
+          <MeasurementField
+            key={key}
+            label={label}
+            tip={tip}
+            value={fields[key]}
+            onChange={set(key)}
+          />
+        ))}
+        <PrimaryButton onClick={handleSave} loading={saving} disabled={saved}>
+          {saved ? '✓ Saved' : 'Save Measurements'}
+        </PrimaryButton>
+      </div>
     </div>
   );
 };
