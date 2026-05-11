@@ -231,6 +231,13 @@
   -moz-appearance: textfield;
 }
 
+.profile__fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-bottom: $spacing-16;
+}
+
 // ─── Placeholder tab ──────────────────────────────────────────────────────────
 
 .profile__placeholder {
