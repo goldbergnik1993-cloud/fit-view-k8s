@@ -18,6 +18,7 @@ import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import InfoIcon from '../../assets/icons/info.svg';
 import InfoFilledIcon from '../../assets/icons/info-filled.svg';
 import EditMeasurementsModal from '../../shared/components/EditMeasurementsModal/EditMeasurementsModal';
+import { AddedToBagModal } from '../../shared/components/AddedToBagModal/AddedToBagModal';
 import {
   calculateHEnd,
   getLinePositionPct,
@@ -68,6 +69,7 @@ const Item = () => {
   );
   const [cartLoading, setCartLoading] = useState(false);
   const [cartAdded, setCartAdded] = useState(false);
+  const [isAddedModalOpen, setIsAddedModalOpen] = useState(false);
   const [cartError, setCartError] = useState<string | null>(null);
 
   const [height, setHeight] = useState(170);
@@ -181,6 +183,7 @@ const Item = () => {
         is_favorite: false,
       });
       setCartAdded(true);
+      setIsAddedModalOpen(true);
       setTimeout(() => setCartAdded(false), 2000);
     } catch {
       setCartError('Failed to add to bag');
@@ -434,6 +437,12 @@ const Item = () => {
           }}
           mode={isMeasurementsForFitting ? 'enter' : 'edit'}
         />
+        <AddedToBagModal
+          isOpen={isAddedModalOpen}
+          onClose={() => setIsAddedModalOpen(false)}
+          item={item}
+          selectedSizeLabel={selectedSizeLabel}
+        />
         <Footer />
       </>
     );
@@ -592,6 +601,13 @@ const Item = () => {
         <div className={styles.fitting__actions}>{renderAddToCart(44)}</div>
 
         {renderSimilar()}
+
+        <AddedToBagModal
+          isOpen={isAddedModalOpen}
+          onClose={() => setIsAddedModalOpen(false)}
+          item={item}
+          selectedSizeLabel={selectedSizeLabel}
+        />
 
         <Footer />
       </main>

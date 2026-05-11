@@ -1,0 +1,275 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+// ─── Backdrop ─────────────────────────────────────────────────────────────────
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  @include tablet {
+    align-items: center;
+  }
+}
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+
+.modal {
+  background: $color-white;
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  padding: $spacing-24 $spacing-16;
+  box-sizing: border-box;
+
+  @include tablet {
+    border-radius: 16px;
+    width: auto;
+    max-width: 600px;
+    padding: $spacing-24;
+  }
+
+  @include desktop {
+    max-width: 880px;
+    padding: $spacing-32;
+  }
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+
+  @include tablet {
+    margin-bottom: $spacing-24;
+  }
+}
+
+.title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0;
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  @include flex-center;
+  @include hover-opacity;
+  flex-shrink: 0;
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  @include tablet {
+    flex-direction: row;
+    gap: $spacing-24;
+    align-items: flex-start;
+  }
+}
+
+// ─── Image ────────────────────────────────────────────────────────────────────
+
+.imageWrap {
+  width: 100%;
+  height: 308px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: $color-card-bg;
+  flex-shrink: 0;
+
+  @include tablet {
+    width: 306px;
+    height: 300px;
+  }
+
+  @include desktop {
+    width: 306px;
+    height: 300px;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// ─── Info ─────────────────────────────────────────────────────────────────────
+
+.info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.itemName {
+  font-family: $font-family-heading;
+  font-size: 20px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0 0 4px;
+
+  @include tablet {
+    font-size: 24px;
+  }
+}
+
+.brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-16;
+}
+
+// ─── Meta (Size / Color) ──────────────────────────────────────────────────────
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  margin-bottom: $spacing-8;
+}
+
+.metaLabel {
+  @include text(14px, 400);
+  color: $color-text;
+}
+
+.metaValue {
+  @include text(14px, 400);
+  color: $color-text;
+}
+
+// ─── Quantity ─────────────────────────────────────────────────────────────────
+
+.quantity {
+  @include flex-between;
+  margin-top: $spacing-16;
+}
+
+.quantityLabel {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-16;
+}
+
+.quantityBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid $color-card-bg;
+  @include flex-center;
+  @include hover-opacity;
+  transition: opacity 0.2s ease;
+}
+
+.quantityValue {
+  @include text(16px, 400);
+  min-width: 16px;
+  text-align: center;
+}
+
+// ─── Divider ──────────────────────────────────────────────────────────────────
+
+.divider {
+  height: 1px;
+  background: $color-card-bg;
+  margin: $spacing-16 0;
+}
+
+// ─── Total ────────────────────────────────────────────────────────────────────
+
+.total {
+  @include flex-between;
+}
+
+.totalLabel {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.totalValue {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+// ─── Actions ─────────────────────────────────────────────────────────────────
+
+.actions {
+  display: none;
+
+  @include tablet {
+    display: flex;
+    gap: $spacing-16;
+    margin-top: $spacing-24;
+  }
+}
+
+.actionsMobile {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-top: $spacing-24;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.keepBtn {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  border: 1.5px solid $color-primary;
+  background: $color-white;
+  @include text(16px, 500);
+  color: $color-primary;
+  @include flex-center;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+}
+
+.viewBtn {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  background: $color-primary;
+  @include text(16px, 500);
+  color: $color-white;
+  @include flex-center;
+  gap: $spacing-8;
+  width: 100%;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $color-primary-hover;
+  }
+}
