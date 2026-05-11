@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
@@ -19,9 +19,14 @@ const Saved = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const favoritesRef = useRef(favorites);
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
+
   const fetchFavorites = useCallback(async () => {
     if (!user) {
-      const guestIds = Object.entries(favorites)
+      const guestIds = Object.entries(favoritesRef.current)
         .filter(([, v]) => v)
         .map(([id]) => id);
 
@@ -54,7 +59,7 @@ const Saved = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, favorites]);
+  }, [user]);
 
   useEffect(() => {
     if (!authLoading) fetchFavorites();
