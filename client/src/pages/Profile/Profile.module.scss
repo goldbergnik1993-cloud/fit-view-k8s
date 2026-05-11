@@ -155,6 +155,7 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-8;
+  position: relative;
 }
 
 .profile__field-label {
