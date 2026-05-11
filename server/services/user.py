@@ -38,6 +38,11 @@ async def profile_update(
     profile_db = await db.scalar(profile_stmt)
 
     update_data = payload.model_dump(exclude_unset=True)
+    if update_data.get("email") or update_data.get("password"):
+        user_stmt = select(UserModel).where(UserModel.id == user.id)
+        user = await db.scalar(user_stmt)  # type: ignore
+        assert user is not None, "User not found in the database."
+
     new_email = None
     if update_data.get("email"):
         new_email = update_data.pop("email")
@@ -136,17 +141,21 @@ async def verify_email_change(
             detail="This email is no longer available.",
         )
 
+    user_stmt = select(UserModel).where(UserModel.id == user.id)
+    user = await db.scalar(user_stmt)  # type: ignore
+    assert user is not None, "User not found in the database."
+
     user.email = new_email
 
     try:
         await db.commit()
         await db.refresh(user)
 
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Something went wrong while updating your email. Try again later.",
+            detail=f"Something went wrong while updating your email. Try again later. Error: {str(e)}",
         )
 
     await redis_client.delete(redis_key)
