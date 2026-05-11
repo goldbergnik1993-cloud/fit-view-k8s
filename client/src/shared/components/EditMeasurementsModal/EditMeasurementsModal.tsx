@@ -2,17 +2,13 @@ import { useState, useEffect } from 'react';
 import { useUserProfile } from '../../../hooks/useUserProfile';
 import { PrimaryButton } from '../ui/PrimaryButton/PrimaryButton';
 import styles from './EditMeasurementsModal.module.scss';
-import InfoIcon from '../../../assets/icons/info.svg';
-import InfoFilledIcon from '../../../assets/icons/info-filled.svg';
+import {
+  MeasurementFields,
+  type MeasurementValues,
+} from '../MeasurementFields/MeasurementFields';
 import BurgerCloseIcon from '../../../assets/icons/burger-close.svg';
 
-interface Measurements {
-  shoulders_length_cm: number;
-  breast_length_cm: number;
-  hips_length_cm: number;
-  waist_length_cm: number;
-  leg_length_cm: number;
-}
+type Measurements = MeasurementValues;
 
 interface Props {
   isOpen: boolean;
@@ -21,38 +17,6 @@ interface Props {
   initialValues?: Partial<Measurements>;
   mode?: 'edit' | 'enter';
 }
-
-const FIELDS: {
-  key: keyof Measurements;
-  label: string;
-  tip: string;
-}[] = [
-  {
-    key: 'shoulders_length_cm',
-    label: 'Enter shoulder width (cm)',
-    tip: 'Measure across the back from the edge of one shoulder to the other.',
-  },
-  {
-    key: 'breast_length_cm',
-    label: 'Enter chest girth (cm)',
-    tip: 'Measure horizontally around the fullest part of the chest.',
-  },
-  {
-    key: 'hips_length_cm',
-    label: 'Enter hip girth (cm)',
-    tip: 'Measure horizontally around the widest part of the hips.',
-  },
-  {
-    key: 'waist_length_cm',
-    label: 'Enter waist girth (cm)',
-    tip: 'Measure horizontally around the narrowest part of the waistline (typically just above the belly button).',
-  },
-  {
-    key: 'leg_length_cm',
-    label: 'Enter inseam length (cm)',
-    tip: 'Measure from the crotch to the bottom of the leg.',
-  },
-];
 
 const EditMeasurementsModal = ({
   isOpen,
@@ -70,15 +34,7 @@ const EditMeasurementsModal = ({
     waist_length_cm: 0,
     leg_length_cm: 0,
   });
-  const [tooltip, setTooltip] = useState<keyof Measurements | null>(null);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (!tooltip) return;
-    const handleClick = () => setTooltip(null);
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [tooltip]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -151,38 +107,15 @@ const EditMeasurementsModal = ({
           </div>
 
           <div className={styles.fields}>
-            {FIELDS.map(({ key, label, tip }) => (
-              <div key={key} className={styles.field}>
-                <div className={styles.fieldLabel}>
-                  <span>{label}</span>
-                  <button
-                    className={styles.infoBtn}
-                    onClick={() => setTooltip(tooltip === key ? null : key)}
-                    aria-label="More info"
-                    type="button"
-                  >
-                    <img
-                      src={tooltip === key ? InfoFilledIcon : InfoIcon}
-                      alt=""
-                      width={18}
-                      height={18}
-                    />
-                  </button>
-                </div>
-
-                {tooltip === key && <div className={styles.tooltip}>{tip}</div>}
-
-                <input
-                  className={styles.input}
-                  type="number"
-                  min={0}
-                  max={200}
-                  value={values[key] || ''}
-                  placeholder="0 cm"
-                  onChange={(e) => handleChange(key, e.target.value)}
-                />
-              </div>
-            ))}
+            <MeasurementFields
+              values={values}
+              onChange={handleChange}
+              fieldClassName={styles.field}
+              fieldLabelClassName={styles.fieldLabel}
+              infoBtnClassName={styles.infoBtn}
+              tooltipClassName={styles.tooltip}
+              inputClassName={styles.input}
+            />
           </div>
 
           <PrimaryButton onClick={handleSave} loading={saving}>

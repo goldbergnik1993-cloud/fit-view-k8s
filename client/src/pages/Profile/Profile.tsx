@@ -7,7 +7,10 @@ import BoxIcon from '../../assets/icons/box.svg';
 import CreditCardIcon from '../../assets/icons/credit-card.svg';
 import LocationIcon from '../../assets/icons/location.svg';
 import HeadphonesIcon from '../../assets/icons/headphones.svg';
-import InfoIcon from '../../assets/icons/info.svg';
+import {
+  MeasurementFields,
+  type MeasurementValues,
+} from '../../shared/components/MeasurementFields/MeasurementFields';
 import { useState } from 'react';
 import { useUserProfile } from '../../hooks/useUserProfile';
 import type { ProfileResponse } from '../../services/api';
@@ -79,128 +82,35 @@ const PersonalDetailsTab = ({ profile }: { profile: ProfileResponse }) => (
   </div>
 );
 
-// ─── Measurement fields config ────────────────────────────────────────────────
-
-type MeasurementKey =
-  | 'shoulders_length_cm'
-  | 'breast_length_cm'
-  | 'hips_length_cm'
-  | 'waist_length_cm'
-  | 'leg_length_cm';
-
-const MEASUREMENT_FIELDS: {
-  key: MeasurementKey;
-  label: string;
-  tip: string;
-}[] = [
-  {
-    key: 'shoulders_length_cm',
-    label: 'Enter shoulder width (cm)',
-    tip: 'Measure across the back from the edge of one shoulder to the other.',
-  },
-  {
-    key: 'breast_length_cm',
-    label: 'Enter chest girth (cm)',
-    tip: 'Measure horizontally around the fullest part of the chest.',
-  },
-  {
-    key: 'hips_length_cm',
-    label: 'Enter hip girth (cm)',
-    tip: 'Measure horizontally around the widest part of the hips.',
-  },
-  {
-    key: 'waist_length_cm',
-    label: 'Enter waist girth (cm)',
-    tip: 'Measure horizontally around the narrowest part of the waistline (typically just above the belly button).',
-  },
-  {
-    key: 'leg_length_cm',
-    label: 'Enter inseam length (cm)',
-    tip: 'Measure from the crotch to the bottom of the leg.',
-  },
-];
-
-// ─── Measurement Field ────────────────────────────────────────────────────────
-
-const MeasurementField = ({
-  label,
-  tip,
-  value,
-  onChange,
-}: {
-  label: string;
-  tip: string;
-  value: string;
-  onChange: (v: string) => void;
-}) => {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
-  return (
-    <div className={styles['profile__field']}>
-      <label className={styles['profile__field-label']}>
-        <span>{label}</span>
-        <span className={styles['profile__field-tooltip-wrap']}>
-          <button
-            type="button"
-            className={styles['profile__field-info-btn']}
-            onClick={() => setTooltipOpen((v) => !v)}
-            aria-label="Show tip"
-          >
-            <img src={InfoIcon} alt="" width={16} height={16} />
-          </button>
-          {tooltipOpen && (
-            <span className={styles['profile__field-tooltip']}>{tip}</span>
-          )}
-        </span>
-      </label>
-      <input
-        type="number"
-        className={styles['profile__field-input']}
-        placeholder="0 cm"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
-};
-
 // ─── Measurements Tab ─────────────────────────────────────────────────────────
 
 const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
   const { updateProfile } = useUserProfile();
 
-  const [fields, setFields] = useState<Record<MeasurementKey, string>>({
-    shoulders_length_cm: String(profile.shoulders_length_cm ?? ''),
-    breast_length_cm: String(profile.breast_length_cm ?? ''),
-    hips_length_cm: String(profile.hips_length_cm ?? ''),
-    waist_length_cm: String(profile.waist_length_cm ?? ''),
-    leg_length_cm: String(profile.leg_length_cm ?? ''),
+  const [fields, setFields] = useState<MeasurementValues>({
+    shoulders_length_cm: profile.shoulders_length_cm ?? 0,
+    breast_length_cm: profile.breast_length_cm ?? 0,
+    hips_length_cm: profile.hips_length_cm ?? 0,
+    waist_length_cm: profile.waist_length_cm ?? 0,
+    leg_length_cm: profile.leg_length_cm ?? 0,
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const set = (key: MeasurementKey) => (v: string) =>
-    setFields((prev) => ({ ...prev, [key]: v }));
+  const handleChange = (key: keyof MeasurementValues, raw: string) => {
+    const num = parseInt(raw.replace(/\D/g, ''), 10);
+    setFields((prev) => ({ ...prev, [key]: isNaN(num) ? 0 : num }));
+  };
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await updateProfile({
-        shoulders_length_cm: fields.shoulders_length_cm
-          ? Number(fields.shoulders_length_cm)
-          : null,
-        breast_length_cm: fields.breast_length_cm
-          ? Number(fields.breast_length_cm)
-          : null,
-        hips_length_cm: fields.hips_length_cm
-          ? Number(fields.hips_length_cm)
-          : null,
-        waist_length_cm: fields.waist_length_cm
-          ? Number(fields.waist_length_cm)
-          : null,
-        leg_length_cm: fields.leg_length_cm
-          ? Number(fields.leg_length_cm)
-          : null,
+        shoulders_length_cm: fields.shoulders_length_cm || null,
+        breast_length_cm: fields.breast_length_cm || null,
+        hips_length_cm: fields.hips_length_cm || null,
+        waist_length_cm: fields.waist_length_cm || null,
+        leg_length_cm: fields.leg_length_cm || null,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -212,17 +122,19 @@ const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
   return (
     <div className={styles['profile__content-inner']}>
       <div className={styles['profile__card']}>
-        {MEASUREMENT_FIELDS.map(({ key, label, tip }) => (
-          <MeasurementField
-            key={key}
-            label={label}
-            tip={tip}
-            value={fields[key]}
-            onChange={set(key)}
+        <div className={styles['profile__fields']}>
+          <MeasurementFields
+            values={fields}
+            onChange={handleChange}
+            fieldClassName={styles['profile__field']}
+            fieldLabelClassName={styles['profile__field-label']}
+            infoBtnClassName={styles['profile__field-info-btn']}
+            tooltipClassName={styles['profile__field-tooltip']}
+            inputClassName={styles['profile__field-input']}
           />
-        ))}
+        </div>
         <PrimaryButton onClick={handleSave} loading={saving} disabled={saved}>
-          {saved ? '✓ Saved' : 'Save Measurements'}
+          {saved ? 'Saved' : 'Save Measurements'}
         </PrimaryButton>
       </div>
     </div>
@@ -291,21 +203,23 @@ const Profile = () => {
 
         <div className={styles['profile__layout']}>
           <aside className={styles['profile__sidebar']}>
-            <nav aria-label="Profile navigation">
-              {NAV_ITEMS.map((item) => (
-                <button
-                  key={item.id}
-                  className={`${styles['profile__nav-item']} ${activeTab === item.id ? styles['profile__nav-item--active'] : ''}`}
-                  onClick={() => setActiveTab(item.id)}
-                  aria-current={activeTab === item.id ? 'page' : undefined}
-                >
-                  <span className={styles['profile__nav-icon']}>
-                    <img src={item.icon} alt="" width={24} height={24} />
-                  </span>
-                  {item.label}
-                </button>
-              ))}
-            </nav>
+            <div className={styles['profile__sidebar-card']}>
+              <nav aria-label="Profile navigation">
+                {NAV_ITEMS.map((item) => (
+                  <button
+                    key={item.id}
+                    className={`${styles['profile__nav-item']} ${activeTab === item.id ? styles['profile__nav-item--active'] : ''}`}
+                    onClick={() => setActiveTab(item.id)}
+                    aria-current={activeTab === item.id ? 'page' : undefined}
+                  >
+                    <span className={styles['profile__nav-icon']}>
+                      <img src={item.icon} alt="" width={24} height={24} />
+                    </span>
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
           </aside>
 
           <div className={styles['profile__content']}>
