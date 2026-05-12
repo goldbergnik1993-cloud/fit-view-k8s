@@ -15,6 +15,7 @@ import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
 import MinusIcon from '../../assets/icons/minus.svg';
 import PlusIcon from '../../assets/icons/plus.svg';
 import ArrowRightIcon from '../../assets/icons/arrow-right-white.svg';
+import ArrowRightDarkIcon from '../../assets/icons/arrow-right.svg';
 import styles from './MyBag.module.scss';
 
 // ─── Breadcrumb (desktop only) ────────────────────────────────────────────────
@@ -36,7 +37,7 @@ const Breadcrumb = ({ step }: BreadcrumbProps) => (
         </span>
         {i < STEPS.length - 1 && (
           <img
-            src={ArrowRightIcon}
+            src={ArrowRightDarkIcon}
             alt=""
             width={16}
             height={16}
