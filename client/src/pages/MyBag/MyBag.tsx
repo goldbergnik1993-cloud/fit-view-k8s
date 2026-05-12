@@ -91,18 +91,20 @@ const CartCompact = ({ cart }: CartCompactProps) => (
           className={styles['cart-compact__image']}
         />
         <div className={styles['cart-compact__info']}>
-          <p className={styles['cart-compact__name']}>{ci.item.name}</p>
-          <p className={styles['cart-compact__brand']}>{ci.item.brand.name}</p>
-          <p className={styles['cart-compact__qty']}>Quantity: {ci.quantity}</p>
+          <div className={styles['cart-compact__info-top']}>
+            <p className={styles['cart-compact__name']}>{ci.item.name}</p>
+            <p className={styles['cart-compact__brand']}>{ci.item.brand.name}</p>
+            <p className={styles['cart-compact__qty']}>Quantity: {ci.quantity}</p>
+          </div>
+          <div className={styles['cart-compact__subtotal']}>
+            <span className={styles['cart-compact__subtotal-label']}>Subtotal</span>
+            <span className={styles['cart-compact__subtotal-value']}>
+              ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+            </span>
+          </div>
         </div>
       </div>
     ))}
-    <div className={styles['cart-compact__subtotal']}>
-      <span className={styles['cart-compact__subtotal-label']}>Subtotal</span>
-      <span className={styles['cart-compact__subtotal-value']}>
-        ${Number(cart.total_price).toFixed(2)}
-      </span>
-    </div>
   </div>
 );
 
