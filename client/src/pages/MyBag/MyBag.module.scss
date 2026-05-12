@@ -88,19 +88,11 @@
   flex-direction: column;
   gap: $spacing-16;
   margin-top: $spacing-16;
-  align-items: center;
   width: 100%;
-  max-width: 343px;
-
-  @include tablet {
-    max-width: 590px;
-  }
 
   @include desktop {
     margin-top: 0;
-    align-items: flex-start;
     width: 448px;
-    max-width: unset;
   }
 }
 
@@ -322,14 +314,8 @@
   border-radius: 16px;
   padding: $spacing-16;
   width: 100%;
-  max-width: 343px;
-
-  @include tablet {
-    max-width: 590px;
-  }
 
   @include desktop {
-    max-width: 448px;
     width: 448px;
   }
 }
