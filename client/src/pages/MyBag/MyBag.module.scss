@@ -20,13 +20,8 @@
 }
 
 .page-subtitle {
-  @include text(14px);
-  margin: 0 0 $spacing-16;
-
-  @include desktop {
-    font-size: 16px;
-    font-weight: 600;
-  }
+  @include text(14px, 500);
+  margin: 0;
 }
 
 // ─── Step Dots ────────────────────────────────────────────────────────────────
