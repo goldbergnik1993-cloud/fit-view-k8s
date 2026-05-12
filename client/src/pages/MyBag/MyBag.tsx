@@ -97,10 +97,10 @@ const CartCompact = ({ cart }: CartCompactProps) => (
               <p className={styles['cart-compact__brand']}>
                 {ci.item.brand.name}
               </p>
-              <p className={styles['cart-compact__qty']}>
-                Quantity: {ci.quantity}
-              </p>
             </div>
+            <p className={styles['cart-compact__qty']}>
+              Quantity: {ci.quantity}
+            </p>
             <div className={styles['cart-compact__subtotal-desktop']}>
               <span className={styles['cart-compact__subtotal-label']}>
                 Subtotal
