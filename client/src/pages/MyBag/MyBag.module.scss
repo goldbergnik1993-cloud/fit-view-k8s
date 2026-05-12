@@ -90,9 +90,15 @@
   margin-top: $spacing-16;
   width: 100%;
 
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
+
   @include desktop {
     margin-top: 0;
     width: 448px;
+    align-self: auto;
   }
 }
 
