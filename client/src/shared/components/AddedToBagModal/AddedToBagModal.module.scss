@@ -1,7 +1,5 @@
-@use '../../../styles/variables' as *;
-@use '../../../styles/mixins' as *;
-
-// ─── Backdrop ─────────────────────────────────────────────────────────────────
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
 
 .backdrop {
   position: fixed;
@@ -17,13 +15,11 @@
   }
 }
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
-
 .modal {
   background: $color-white;
   border-radius: 16px 16px 0 0;
   width: 100%;
-  padding: $spacing-24 $spacing-16;
+  padding: $spacing-16;
   box-sizing: border-box;
 
   @include tablet {
@@ -35,11 +31,9 @@
 
   @include desktop {
     max-width: 880px;
-    padding: $spacing-32;
+    padding: $spacing-24;
   }
 }
-
-// ─── Header ───────────────────────────────────────────────────────────────────
 
 .header {
   @include flex-between;
@@ -59,14 +53,12 @@
 }
 
 .closeBtn {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   @include flex-center;
   @include hover-opacity;
   flex-shrink: 0;
 }
-
-// ─── Body ─────────────────────────────────────────────────────────────────────
 
 .body {
   display: flex;
@@ -79,8 +71,6 @@
     align-items: flex-start;
   }
 }
-
-// ─── Image ────────────────────────────────────────────────────────────────────
 
 .imageWrap {
   width: 100%;
@@ -104,10 +94,8 @@
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
-
-// ─── Info ─────────────────────────────────────────────────────────────────────
 
 .info {
   display: flex;
@@ -117,12 +105,16 @@
 
 .itemName {
   font-family: $font-family-heading;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
   color: $color-text;
   margin: 0 0 4px;
 
   @include tablet {
+    font-size: 24px;
+  }
+
+  @include desktop {
     font-size: 24px;
   }
 }
@@ -133,13 +125,10 @@
   margin: 0 0 $spacing-16;
 }
 
-// ─── Meta (Size / Color) ──────────────────────────────────────────────────────
-
 .meta {
   display: flex;
   align-items: center;
   gap: $spacing-8;
-  margin-bottom: $spacing-8;
 }
 
 .metaLabel {
@@ -152,18 +141,28 @@
   color: $color-text;
 }
 
-// ─── Quantity ─────────────────────────────────────────────────────────────────
-
 .quantity {
   @include flex-between;
   margin-top: $spacing-16;
 }
 
 .quantityLabel {
-  font-family: $font-family;
-  font-size: 16px;
-  font-weight: 700;
+  font-family: $font-family-heading;
+  font-size: 18px;
+  font-weight: 600;
   color: $color-text;
+
+  @include tablet {
+    font-family: $font-family;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  @include desktop {
+    font-family: $font-family;
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 
 .quantityControls {
@@ -175,7 +174,7 @@
 .quantityBtn {
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid $color-card-bg;
   @include flex-center;
   @include hover-opacity;
@@ -188,15 +187,11 @@
   text-align: center;
 }
 
-// ─── Divider ──────────────────────────────────────────────────────────────────
-
 .divider {
   height: 1px;
   background: $color-card-bg;
   margin: $spacing-16 0;
 }
-
-// ─── Total ────────────────────────────────────────────────────────────────────
 
 .total {
   @include flex-between;
@@ -215,8 +210,6 @@
   font-weight: 700;
   color: $color-text;
 }
-
-// ─── Actions ─────────────────────────────────────────────────────────────────
 
 .actions {
   display: none;
