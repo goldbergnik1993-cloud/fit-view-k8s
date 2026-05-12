@@ -5,6 +5,7 @@ import { Footer } from '../../shared/components/Footer/Footer';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
 import { SimilarItems } from '../../shared/components/SimilarItems/SimilarItems';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
+import { TextInput } from '../../shared/components/ui/TextInput/TextInput';
 import { useCart } from '../../providers/CartContext';
 import { ordersApi, type DeliveryMethod } from '../../services/api';
 import type { Cart, CartItem } from '../../services/api';
@@ -271,11 +272,60 @@ interface Step2Props {
   onReview: () => void;
 }
 
+const REQUIRED_FIELDS: (keyof FormState)[] = [
+  'firstName',
+  'lastName',
+  'address',
+  'city',
+  'zip',
+  'phone',
+];
+
+const FIELD_LABELS: Partial<Record<keyof FormState, string>> = {
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  address: 'Address',
+  city: 'City',
+  zip: 'Zip Code',
+  phone: 'Phone Number',
+};
+
 const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
+  const [touched, setTouched] = useState<
+    Partial<Record<keyof FormState, boolean>>
+  >({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
   const set =
     (field: keyof FormState) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       setForm({ ...form, [field]: e.target.value });
+    };
+
+  const handleBlur = (field: keyof FormState) => () => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const getError = (field: keyof FormState): string | undefined => {
+    if (!REQUIRED_FIELDS.includes(field)) return undefined;
+    if (!touched[field] && !submitAttempted) return undefined;
+    if (!form[field].trim()) return `${FIELD_LABELS[field]} is required`;
+    return undefined;
+  };
+
+  const handleReview = () => {
+    setSubmitAttempted(true);
+    const hasErrors = REQUIRED_FIELDS.some((f) => !form[f].trim());
+    if (hasErrors) {
+      const firstEmpty = REQUIRED_FIELDS.find((f) => !form[f].trim());
+      if (firstEmpty) {
+        const el = document.getElementById(firstEmpty);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    onReview();
+  };
 
   return (
     <>
@@ -300,98 +350,74 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
           <div className={styles['form-section']}>
             <h2 className={styles['form-section__title']}>Shipping Details</h2>
             <div className={styles['form-grid']}>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>
-                  First Name *
-                </label>
-                <input
-                  type="text"
-                  placeholder="John"
-                  value={form.firstName}
-                  onChange={set('firstName')}
-                  className={styles['form-field__input']}
-                />
-              </div>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>
-                  Last Name *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Doe"
-                  value={form.lastName}
-                  onChange={set('lastName')}
-                  className={styles['form-field__input']}
-                />
-              </div>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>Address *</label>
-                <input
-                  type="text"
-                  placeholder="Address line 1"
-                  value={form.address}
-                  onChange={set('address')}
-                  className={styles['form-field__input']}
-                />
-              </div>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>
-                  Address 2 (optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="Address line 2"
-                  value={form.address2}
-                  onChange={set('address2')}
-                  className={styles['form-field__input']}
-                />
-              </div>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>City *</label>
-                <input
-                  type="text"
-                  placeholder="London"
-                  value={form.city}
-                  onChange={set('city')}
-                  className={styles['form-field__input']}
-                />
-              </div>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>
-                  Zip Code *
-                </label>
-                <input
-                  type="text"
-                  placeholder="NR32 1UE"
-                  value={form.zip}
-                  onChange={set('zip')}
-                  className={styles['form-field__input']}
-                />
-              </div>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>
-                  Phone Number *
-                </label>
-                <input
-                  type="tel"
-                  placeholder="+07700 900123"
-                  value={form.phone}
-                  onChange={set('phone')}
-                  className={styles['form-field__input']}
-                />
-              </div>
-              <div className={styles['form-field']}>
-                <label className={styles['form-field__label']}>
-                  Email (optional)
-                </label>
-                <input
-                  type="email"
-                  placeholder="mailbox@gmail.com"
-                  value={form.email}
-                  onChange={set('email')}
-                  className={styles['form-field__input']}
-                />
-              </div>
+              <TextInput
+                id="firstName"
+                label="First Name *"
+                placeholder="John"
+                value={form.firstName}
+                onChange={set('firstName')}
+                onBlur={handleBlur('firstName')}
+                error={getError('firstName')}
+              />
+              <TextInput
+                id="lastName"
+                label="Last Name *"
+                placeholder="Doe"
+                value={form.lastName}
+                onChange={set('lastName')}
+                onBlur={handleBlur('lastName')}
+                error={getError('lastName')}
+              />
+              <TextInput
+                id="address"
+                label="Address *"
+                placeholder="Address line 1"
+                value={form.address}
+                onChange={set('address')}
+                onBlur={handleBlur('address')}
+                error={getError('address')}
+              />
+              <TextInput
+                id="address2"
+                label="Address 2 (optional)"
+                placeholder="Address line 2"
+                value={form.address2}
+                onChange={set('address2')}
+              />
+              <TextInput
+                id="city"
+                label="City *"
+                placeholder="London"
+                value={form.city}
+                onChange={set('city')}
+                onBlur={handleBlur('city')}
+                error={getError('city')}
+              />
+              <TextInput
+                id="zip"
+                label="Zip Code *"
+                placeholder="NR32 1UE"
+                value={form.zip}
+                onChange={set('zip')}
+                onBlur={handleBlur('zip')}
+                error={getError('zip')}
+              />
+              <TextInput
+                id="phone"
+                label="Phone Number *"
+                placeholder="+07700 900123"
+                value={form.phone}
+                onChange={set('phone')}
+                onBlur={handleBlur('phone')}
+                error={getError('phone')}
+              />
+              <TextInput
+                id="email"
+                label="Email (optional)"
+                placeholder="mailbox@gmail.com"
+                value={form.email}
+                onChange={set('email')}
+              />
             </div>
           </div>
 
@@ -428,7 +454,7 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
                 </span>
               </div>
             </div>
-            <PrimaryButton onClick={onReview}>
+            <PrimaryButton onClick={handleReview}>
               Review Order{' '}
               <img src={ArrowRightIcon} alt="" width={16} height={16} />
             </PrimaryButton>
@@ -469,7 +495,7 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
               </span>
             </div>
           </div>
-          <PrimaryButton onClick={onReview}>
+          <PrimaryButton onClick={handleReview}>
             Review Order{' '}
             <img src={ArrowRightIcon} alt="" width={16} height={16} />
           </PrimaryButton>
