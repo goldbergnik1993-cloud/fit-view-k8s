@@ -4,7 +4,7 @@
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 .main {
-  padding: $spacing-16 var(--container-padding) 0;
+  padding: $spacing-16 var(--container-padding) 80px;
   flex: 1;
   position: relative;
 }
@@ -73,10 +73,12 @@
   gap: $spacing-16;
   margin-top: $spacing-16;
   align-items: center;
+  width: 100%;
 
   @include desktop {
     margin-top: 0;
     align-items: flex-start;
+    width: 448px;
   }
 }
 
@@ -101,14 +103,16 @@
   position: relative;
   background: $color-white;
   border-radius: 16px;
-  width: 343px;
+  width: 100%;
+  max-width: 343px;
   padding: $spacing-16;
 
   @include tablet {
-    width: 590px;
+    max-width: 590px;
   }
 
   @include desktop {
+    max-width: 684px;
     width: 684px;
   }
 }
@@ -301,13 +305,15 @@
   background: $color-white;
   border-radius: 16px;
   padding: $spacing-16;
-  width: 343px;
+  width: 100%;
+  max-width: 343px;
 
   @include tablet {
-    width: 590px;
+    max-width: 590px;
   }
 
   @include desktop {
+    max-width: 448px;
     width: 448px;
   }
 }
