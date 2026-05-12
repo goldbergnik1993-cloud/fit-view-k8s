@@ -426,17 +426,18 @@
   }
 }
 
+.cart-compact__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .cart-compact__item {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: $spacing-16;
   align-items: flex-start;
   padding: $spacing-16;
-
-  @include tablet {
-    flex-wrap: nowrap;
-    padding-bottom: 0;
-  }
+  padding-bottom: 0;
 }
 
 .cart-compact__image {
@@ -486,8 +487,7 @@
 
 .cart-compact__subtotal-mobile {
   @include flex-between;
-  padding: $spacing-16 0 0;
-  width: 100%;
+  padding: $spacing-16;
 
   @include tablet {
     display: none;

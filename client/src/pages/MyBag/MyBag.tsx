@@ -84,29 +84,31 @@ interface CartCompactProps {
 const CartCompact = ({ cart }: CartCompactProps) => (
   <div className={styles['cart-compact']}>
     {cart.cart_items.map((ci: CartItem) => (
-      <div key={ci.id} className={styles['cart-compact__item']}>
-        <img
-          src={ci.item.image_url || 'https://placehold.co/80x100?text=Item'}
-          alt={ci.item.name}
-          className={styles['cart-compact__image']}
-        />
-        <div className={styles['cart-compact__info']}>
-          <div className={styles['cart-compact__info-top']}>
-            <p className={styles['cart-compact__name']}>{ci.item.name}</p>
-            <p className={styles['cart-compact__brand']}>
-              {ci.item.brand.name}
-            </p>
-            <p className={styles['cart-compact__qty']}>
-              Quantity: {ci.quantity}
-            </p>
-          </div>
-          <div className={styles['cart-compact__subtotal-desktop']}>
-            <span className={styles['cart-compact__subtotal-label']}>
-              Subtotal
-            </span>
-            <span className={styles['cart-compact__subtotal-value']}>
-              ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
-            </span>
+      <div key={ci.id} className={styles['cart-compact__wrapper']}>
+        <div className={styles['cart-compact__item']}>
+          <img
+            src={ci.item.image_url || 'https://placehold.co/80x100?text=Item'}
+            alt={ci.item.name}
+            className={styles['cart-compact__image']}
+          />
+          <div className={styles['cart-compact__info']}>
+            <div className={styles['cart-compact__info-top']}>
+              <p className={styles['cart-compact__name']}>{ci.item.name}</p>
+              <p className={styles['cart-compact__brand']}>
+                {ci.item.brand.name}
+              </p>
+              <p className={styles['cart-compact__qty']}>
+                Quantity: {ci.quantity}
+              </p>
+            </div>
+            <div className={styles['cart-compact__subtotal-desktop']}>
+              <span className={styles['cart-compact__subtotal-label']}>
+                Subtotal
+              </span>
+              <span className={styles['cart-compact__subtotal-value']}>
+                ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+              </span>
+            </div>
           </div>
         </div>
         <div className={styles['cart-compact__subtotal-mobile']}>
@@ -121,7 +123,6 @@ const CartCompact = ({ cart }: CartCompactProps) => (
     ))}
   </div>
 );
-
 // ─── Step 1 — My Bag ──────────────────────────────────────────────────────────
 
 interface Step1Props {
