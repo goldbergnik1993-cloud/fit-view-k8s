@@ -170,23 +170,25 @@ const Step1 = ({
                     <span className={styles['cart-item__qty-label']}>
                       Quantity
                     </span>
-                    <button
-                      className={styles['cart-item__qty-btn']}
-                      onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
-                      aria-label="Decrease quantity"
-                    >
-                      <img src={MinusIcon} alt="" width={16} height={16} />
-                    </button>
-                    <span className={styles['cart-item__qty-value']}>
-                      {ci.quantity}
-                    </span>
-                    <button
-                      className={styles['cart-item__qty-btn']}
-                      onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
-                      aria-label="Increase quantity"
-                    >
-                      <img src={PlusIcon} alt="" width={16} height={16} />
-                    </button>
+                    <div className={styles['cart-item__qty-controls']}>
+                      <button
+                        className={styles['cart-item__qty-btn']}
+                        onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
+                        aria-label="Decrease quantity"
+                      >
+                        <img src={MinusIcon} alt="" width={16} height={16} />
+                      </button>
+                      <span className={styles['cart-item__qty-value']}>
+                        {ci.quantity}
+                      </span>
+                      <button
+                        className={styles['cart-item__qty-btn']}
+                        onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        <img src={PlusIcon} alt="" width={16} height={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

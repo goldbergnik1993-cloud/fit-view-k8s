@@ -221,11 +221,19 @@
 
   @include tablet {
     margin-top: $spacing-16;
+    justify-content: space-between;
   }
 
   @include desktop {
     margin-top: 15px;
+    justify-content: space-between;
   }
+}
+
+.cart-item__qty-controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
 }
 
 .cart-item__qty-label {
