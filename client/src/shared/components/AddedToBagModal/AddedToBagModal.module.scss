@@ -225,10 +225,16 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
-  margin-top: $spacing-24;
+  margin-top: $spacing-16;
 
   @include tablet {
     display: none;
+  }
+
+  .keepBtn,
+  .viewBtn {
+    height: 48px;
+    width: 100%;
   }
 }
 

@@ -81,7 +81,6 @@ const ModalContent = ({
           <div className={styles.quantity}>
             <span className={styles.quantityLabel}>Quantity</span>
             <div className={styles.quantityControls}>
-              <span className={styles.quantityValue}>{quantity}</span>
               <button
                 className={styles.quantityBtn}
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -95,6 +94,7 @@ const ModalContent = ({
                   aria-hidden="true"
                 />
               </button>
+              <span className={styles.quantityValue}>{quantity}</span>
               <button
                 className={styles.quantityBtn}
                 onClick={() => setQuantity((q) => q + 1)}
