@@ -278,153 +278,201 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
       setForm({ ...form, [field]: e.target.value });
 
   return (
-    <div className={styles['step2']}>
-      {/* Left */}
-      <div className={styles['step2__left']}>
-        <p className={styles['page-title']}>My Bag</p>
-        <p className={styles['page-subtitle']}>
-          You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''}{' '}
-          in the bag
-        </p>
-
-        <CartCompact cart={cart} />
-
-        <div className={styles['form-section']}>
-          <h2 className={styles['form-section__title']}>Shipping Details</h2>
-          <div className={styles['form-grid']}>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>
-                First Name *
-              </label>
-              <input
-                type="text"
-                placeholder="John"
-                value={form.firstName}
-                onChange={set('firstName')}
-                className={styles['form-field__input']}
-              />
-            </div>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>Last Name *</label>
-              <input
-                type="text"
-                placeholder="Doe"
-                value={form.lastName}
-                onChange={set('lastName')}
-                className={styles['form-field__input']}
-              />
-            </div>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>Address *</label>
-              <input
-                type="text"
-                placeholder="Address line 1"
-                value={form.address}
-                onChange={set('address')}
-                className={styles['form-field__input']}
-              />
-            </div>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>
-                Address 2 (optional)
-              </label>
-              <input
-                type="text"
-                placeholder="Address line 2"
-                value={form.address2}
-                onChange={set('address2')}
-                className={styles['form-field__input']}
-              />
-            </div>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>City *</label>
-              <input
-                type="text"
-                placeholder="London"
-                value={form.city}
-                onChange={set('city')}
-                className={styles['form-field__input']}
-              />
-            </div>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>Zip Code *</label>
-              <input
-                type="text"
-                placeholder="NR32 1UE"
-                value={form.zip}
-                onChange={set('zip')}
-                className={styles['form-field__input']}
-              />
-            </div>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>
-                Phone Number *
-              </label>
-              <input
-                type="tel"
-                placeholder="+07700 900123"
-                value={form.phone}
-                onChange={set('phone')}
-                className={styles['form-field__input']}
-              />
-            </div>
-            <div className={styles['form-field']}>
-              <label className={styles['form-field__label']}>
-                Email (optional)
-              </label>
-              <input
-                type="email"
-                placeholder="mailbox@gmail.com"
-                value={form.email}
-                onChange={set('email')}
-                className={styles['form-field__input']}
-              />
-            </div>
-          </div>
+    <>
+      <div className={styles['step1__top']}>
+        <div className={styles['step1__header']}>
+          <p className={styles['page-title']}>My Bag</p>
+          <p className={styles['page-subtitle']}>
+            You've got {cart.total_items} item
+            {cart.total_items !== 1 ? 's' : ''} in the bag
+          </p>
         </div>
+        <Breadcrumb step={2} />
       </div>
 
-      {/* Right */}
-      <div className={styles['step2__right']}>
-        <div className={styles['payment-block']}>
-          <h2 className={styles['payment-block__title']}>Payment details</h2>
-          <label className={styles['radio-label']}>
-            <input
-              type="radio"
-              name="payment"
-              defaultChecked
-              className={styles['radio-input']}
-            />
-            <span className={styles['radio-custom']} />
-            Card
-          </label>
-          <label className={styles['radio-label']}>
-            <input
-              type="radio"
-              name="payment"
-              className={styles['radio-input']}
-            />
-            <span className={styles['radio-custom']} />
-            Cash on delivery
-          </label>
-          <div className={styles['payment-block__total']}>
-            <span className={styles['payment-block__total-label']}>Total</span>
-            <span className={styles['payment-block__total-value']}>
-              ${Number(cart.total_price).toFixed(2)}
-            </span>
+      <div className={styles['step2']}>
+        {/* Left */}
+        <div className={styles['step2__left']}>
+          <CartCompact cart={cart} />
+
+          <div className={styles['form-section']}>
+            <h2 className={styles['form-section__title']}>Shipping Details</h2>
+            <div className={styles['form-grid']}>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>
+                  First Name *
+                </label>
+                <input
+                  type="text"
+                  placeholder="John"
+                  value={form.firstName}
+                  onChange={set('firstName')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>
+                  Last Name *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Doe"
+                  value={form.lastName}
+                  onChange={set('lastName')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>Address *</label>
+                <input
+                  type="text"
+                  placeholder="Address line 1"
+                  value={form.address}
+                  onChange={set('address')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>
+                  Address 2 (optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Address line 2"
+                  value={form.address2}
+                  onChange={set('address2')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>City *</label>
+                <input
+                  type="text"
+                  placeholder="London"
+                  value={form.city}
+                  onChange={set('city')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>
+                  Zip Code *
+                </label>
+                <input
+                  type="text"
+                  placeholder="NR32 1UE"
+                  value={form.zip}
+                  onChange={set('zip')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+07700 900123"
+                  value={form.phone}
+                  onChange={set('phone')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+              <div className={styles['form-field']}>
+                <label className={styles['form-field__label']}>
+                  Email (optional)
+                </label>
+                <input
+                  type="email"
+                  placeholder="mailbox@gmail.com"
+                  value={form.email}
+                  onChange={set('email')}
+                  className={styles['form-field__input']}
+                />
+              </div>
+            </div>
           </div>
+
+          <div className={styles['payment-block']}>
+            <h2 className={styles['payment-block__title']}>Payment details</h2>
+            <label className={styles['radio-label']}>
+              <input
+                type="radio"
+                name="payment"
+                defaultChecked
+                className={styles['radio-input']}
+              />
+              <span className={styles['radio-custom']} />
+              Card
+            </label>
+            <label className={styles['radio-label']}>
+              <input
+                type="radio"
+                name="payment"
+                className={styles['radio-input']}
+              />
+              <span className={styles['radio-custom']} />
+              Cash on delivery
+            </label>
+            <div className={styles['payment-block__total']}>
+              <span className={styles['payment-block__total-label']}>
+                Total
+              </span>
+              <span className={styles['payment-block__total-value']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          <PrimaryButton onClick={onReview}>
+            Review Order{' '}
+            <img src={ArrowRightIcon} alt="" width={16} height={16} />
+          </PrimaryButton>
+          <StepDots current={2} total={3} />
         </div>
 
-        <PrimaryButton onClick={onReview}>
-          Review Order{' '}
-          <img src={ArrowRightIcon} alt="" width={16} height={16} />
-        </PrimaryButton>
-        <StepDots current={2} total={3} />
+        {/* Right — desktop only */}
+        <div className={styles['step2__right']}>
+          <CartCompact cart={cart} />
+          <div className={styles['payment-block']}>
+            <h2 className={styles['payment-block__title']}>Payment details</h2>
+            <label className={styles['radio-label']}>
+              <input
+                type="radio"
+                name="payment2"
+                defaultChecked
+                className={styles['radio-input']}
+              />
+              <span className={styles['radio-custom']} />
+              Card
+            </label>
+            <label className={styles['radio-label']}>
+              <input
+                type="radio"
+                name="payment2"
+                className={styles['radio-input']}
+              />
+              <span className={styles['radio-custom']} />
+              Cash on delivery
+            </label>
+            <div className={styles['payment-block__total']}>
+              <span className={styles['payment-block__total-label']}>
+                Total
+              </span>
+              <span className={styles['payment-block__total-value']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+          </div>
+          <PrimaryButton onClick={onReview}>
+            Review Order{' '}
+            <img src={ArrowRightIcon} alt="" width={16} height={16} />
+          </PrimaryButton>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
-
 // ─── Step 3 — Review Order ────────────────────────────────────────────────────
 
 interface Step3Props {
