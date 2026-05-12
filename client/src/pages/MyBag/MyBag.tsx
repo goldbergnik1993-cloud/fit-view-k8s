@@ -293,7 +293,9 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
       <div className={styles['step2']}>
         {/* Left */}
         <div className={styles['step2__left']}>
-          <CartCompact cart={cart} />
+          <div className={styles['step2__left-compact']}>
+            <CartCompact cart={cart} />
+          </div>
 
           <div className={styles['form-section']}>
             <h2 className={styles['form-section__title']}>Shipping Details</h2>
@@ -393,42 +395,45 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
             </div>
           </div>
 
-          <div className={styles['payment-block']}>
-            <h2 className={styles['payment-block__title']}>Payment details</h2>
-            <label className={styles['radio-label']}>
-              <input
-                type="radio"
-                name="payment"
-                defaultChecked
-                className={styles['radio-input']}
-              />
-              <span className={styles['radio-custom']} />
-              Card
-            </label>
-            <label className={styles['radio-label']}>
-              <input
-                type="radio"
-                name="payment"
-                className={styles['radio-input']}
-              />
-              <span className={styles['radio-custom']} />
-              Cash on delivery
-            </label>
-            <div className={styles['payment-block__total']}>
-              <span className={styles['payment-block__total-label']}>
-                Total
-              </span>
-              <span className={styles['payment-block__total-value']}>
-                ${Number(cart.total_price).toFixed(2)}
-              </span>
+          <div className={styles['step2__mobile-payment']}>
+            <div className={styles['payment-block']}>
+              <h2 className={styles['payment-block__title']}>
+                Payment details
+              </h2>
+              <label className={styles['radio-label']}>
+                <input
+                  type="radio"
+                  name="payment"
+                  defaultChecked
+                  className={styles['radio-input']}
+                />
+                <span className={styles['radio-custom']} />
+                Card
+              </label>
+              <label className={styles['radio-label']}>
+                <input
+                  type="radio"
+                  name="payment"
+                  className={styles['radio-input']}
+                />
+                <span className={styles['radio-custom']} />
+                Cash on delivery
+              </label>
+              <div className={styles['payment-block__total']}>
+                <span className={styles['payment-block__total-label']}>
+                  Total
+                </span>
+                <span className={styles['payment-block__total-value']}>
+                  ${Number(cart.total_price).toFixed(2)}
+                </span>
+              </div>
             </div>
+            <PrimaryButton onClick={onReview}>
+              Review Order{' '}
+              <img src={ArrowRightIcon} alt="" width={16} height={16} />
+            </PrimaryButton>
+            <StepDots current={2} total={3} />
           </div>
-
-          <PrimaryButton onClick={onReview}>
-            Review Order{' '}
-            <img src={ArrowRightIcon} alt="" width={16} height={16} />
-          </PrimaryButton>
-          <StepDots current={2} total={3} />
         </div>
 
         {/* Right — desktop only */}
