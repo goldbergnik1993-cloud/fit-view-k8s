@@ -35,7 +35,6 @@
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: $spacing-16;
 
   @include desktop {
     display: none;
@@ -114,6 +113,11 @@
   display: flex;
   flex-direction: row;
   width: 100%;
+  min-height: 100px;
+
+  @include tablet {
+    min-height: 170px;
+  }
 }
 
 .cart-item__image {
@@ -122,6 +126,7 @@
   object-fit: contain;
   flex-shrink: 0;
   display: block;
+  align-self: flex-start;
 
   @include tablet {
     width: 224px;
@@ -135,6 +140,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  min-width: 0;
 }
 
 .cart-item__name {
