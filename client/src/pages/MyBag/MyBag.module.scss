@@ -437,7 +437,6 @@
   gap: $spacing-16;
   align-items: flex-start;
   padding: $spacing-16;
-  padding-bottom: 0;
 }
 
 .cart-compact__image {
@@ -482,7 +481,6 @@
 
 .cart-compact__qty {
   @include text(14px);
-  margin: 0;
 }
 
 .cart-compact__subtotal-mobile {
@@ -524,7 +522,7 @@
 .step2__left {
   display: flex;
   flex-direction: column;
-  gap: $spacing-16;
+  gap: $spacing-32;
   width: 100%;
 
   @include tablet {
@@ -806,7 +804,7 @@
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $spacing-16;
+    gap: $spacing-24;
   }
 }
 
