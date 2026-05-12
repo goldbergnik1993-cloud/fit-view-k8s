@@ -456,12 +456,17 @@
   flex-direction: column;
   flex: 1;
   justify-content: space-between;
+  min-height: 100px;
+
+  @include tablet {
+    min-height: 170px;
+  }
 }
 
 .cart-compact__info-top {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $spacing-8;
 }
 
 .cart-compact__name {
