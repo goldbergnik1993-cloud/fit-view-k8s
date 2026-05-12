@@ -24,13 +24,7 @@
 
   @include tablet {
     border-radius: 16px;
-    width: auto;
-    max-width: 660px;
-    padding: $spacing-24;
-  }
-
-  @include desktop {
-    max-width: 880px;
+    width: 684px;
     padding: $spacing-24;
   }
 }
@@ -161,9 +155,7 @@
   color: $color-text;
 
   @include tablet {
-    font-family: $font-family;
     font-size: 16px;
-    font-weight: 600;
   }
 }
 
@@ -195,6 +187,10 @@
   height: 1px;
   background: $color-card-bg;
   margin: $spacing-16 0;
+
+  @include tablet {
+    display: none;
+  }
 }
 
 .total {
