@@ -71,9 +71,15 @@
   flex-direction: column;
   gap: $spacing-16;
   align-items: center;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
 
   @include desktop {
     align-items: flex-start;
+    width: 684px;
   }
 }
 
