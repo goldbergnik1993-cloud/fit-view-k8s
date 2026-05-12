@@ -57,18 +57,38 @@ const ModalContent = ({
       </div>
 
       <div className={styles.body}>
-        <div className={styles.imageWrap}>
-          <img
-            src={item.imageUrl}
-            alt={item.name}
-            className={styles.image}
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                'https://placehold.co/400x500?text=No+Image';
-            }}
-          />
+        {/* Левая колонка: картинка + кнопки (планшет/десктоп) */}
+        <div className={styles.imageCol}>
+          <div className={styles.imageWrap}>
+            <img
+              src={item.imageUrl}
+              alt={item.name}
+              className={styles.image}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://placehold.co/400x500?text=No+Image';
+              }}
+            />
+          </div>
+          {/* Кнопки под картинкой — планшет/десктоп */}
+          <div className={styles.actionsDesktop}>
+            <button className={styles.keepBtn} onClick={onClose}>
+              Keep Shopping
+            </button>
+            <a href="/my-bag" className={styles.viewBtn}>
+              View My Bag
+              <img
+                src={ArrowRightWhiteIcon}
+                alt=""
+                width={16}
+                height={16}
+                aria-hidden="true"
+              />
+            </a>
+          </div>
         </div>
 
+        {/* Правая колонка: инфо */}
         <div className={styles.info}>
           <h3 className={styles.itemName}>{item.name}</h3>
           <p className={styles.brand}>{item.brand}</p>
@@ -117,25 +137,10 @@ const ModalContent = ({
             <span className={styles.totalLabel}>Total:</span>
             <span className={styles.totalValue}>${total}</span>
           </div>
-
-          <div className={styles.actions}>
-            <button className={styles.keepBtn} onClick={onClose}>
-              Keep Shopping
-            </button>
-            <a href="/my-bag" className={styles.viewBtn}>
-              View My Bag
-              <img
-                src={ArrowRightWhiteIcon}
-                alt=""
-                width={16}
-                height={16}
-                aria-hidden="true"
-              />
-            </a>
-          </div>
         </div>
       </div>
 
+      {/* buttons — mobile */}
       <div className={styles.actionsMobile}>
         <a href="/my-bag" className={styles.viewBtn}>
           View My Bag

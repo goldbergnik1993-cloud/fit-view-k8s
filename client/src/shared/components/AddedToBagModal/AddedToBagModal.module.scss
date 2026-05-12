@@ -219,20 +219,23 @@
   }
 }
 
-.actions {
+.imageCol {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.actionsDesktop {
   display: none;
 
   @include tablet {
     display: flex;
-    align-items: stretch;
-    gap: $spacing-16;
-    margin-top: $spacing-24;
+    gap: $spacing-8;
+    margin-top: $spacing-16;
 
     .keepBtn,
     .viewBtn {
       flex: 1;
-      height: 44px;
-      min-height: 44px;
     }
   }
 }
@@ -247,7 +250,6 @@
     display: none;
   }
 }
-
 .keepBtn {
   display: flex;
   align-items: center;
