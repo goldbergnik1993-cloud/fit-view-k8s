@@ -74,10 +74,16 @@
   margin-top: $spacing-16;
   align-items: center;
   width: 100%;
+  max-width: 343px;
+
+  @include tablet {
+    max-width: 590px;
+  }
 
   @include desktop {
     margin-top: 0;
     align-items: flex-start;
+    max-width: 448px;
     width: 448px;
   }
 }
@@ -704,10 +710,24 @@
     display: flex;
     align-items: center;
     gap: $spacing-8;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
   }
+}
+
+.step1__top {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-16;
+  }
+}
+
+.step1__header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
 }
 
 .breadcrumb__item-wrap {
