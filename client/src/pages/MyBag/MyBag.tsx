@@ -14,7 +14,7 @@ import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
 import MinusIcon from '../../assets/icons/minus.svg';
 import PlusIcon from '../../assets/icons/plus.svg';
-import ArrowRightIcon from '../../assets/icons/arrow-right.svg';
+import ArrowRightIcon from '../../assets/icons/arrow-right-white.svg';
 import styles from './MyBag.module.scss';
 
 // ─── Breadcrumb (desktop only) ────────────────────────────────────────────────
