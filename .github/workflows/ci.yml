@@ -127,3 +127,10 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+  deploy-staging:
+    needs: quality-and-build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/deploy-stage.yml
+    with:
+      environment: staging
+    secrets: inherit
