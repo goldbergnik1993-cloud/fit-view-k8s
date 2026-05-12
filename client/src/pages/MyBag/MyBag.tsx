@@ -154,16 +154,18 @@ const Step1 = ({
                   alt={ci.item.name}
                   className={styles['cart-item__image']}
                 />
-                <div className={styles['cart-item__info']}>
-                  <p className={styles['cart-item__name']}>{ci.item.name}</p>
-                  <p className={styles['cart-item__brand']}>
-                    {ci.item.brand.name}
-                  </p>
-                  {ci.size_label && (
-                    <p className={styles['cart-item__size']}>
-                      Size: {ci.size_label}
+                <div className={styles['cart-item__details']}>
+                  <div className={styles['cart-item__info']}>
+                    <p className={styles['cart-item__name']}>{ci.item.name}</p>
+                    <p className={styles['cart-item__brand']}>
+                      {ci.item.brand.name}
                     </p>
-                  )}
+                    {ci.size_label && (
+                      <p className={styles['cart-item__size']}>
+                        Size: {ci.size_label}
+                      </p>
+                    )}
+                  </div>
                   <div className={styles['cart-item__qty']}>
                     <span className={styles['cart-item__qty-label']}>
                       Quantity
