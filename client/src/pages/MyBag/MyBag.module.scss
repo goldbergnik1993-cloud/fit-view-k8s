@@ -414,6 +414,10 @@
   gap: $spacing-16;
   align-items: flex-start;
   padding: $spacing-16;
+
+  @include tablet {
+    padding-bottom: 0;
+  }
 }
 
 .cart-compact__image {
@@ -429,6 +433,11 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+
+  @include tablet {
+    justify-content: space-between;
+    min-height: 100px;
+  }
 }
 
 .cart-compact__name {
@@ -449,6 +458,11 @@
 .cart-compact__subtotal {
   @include flex-between;
   padding: $spacing-16;
+
+  @include tablet {
+    border-top: none;
+    padding-top: 0;
+  }
 }
 
 .cart-compact__subtotal-label,
