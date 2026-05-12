@@ -264,20 +264,20 @@
 // ─── Cart Item Subtotal ───────────────────────────────────────────────────────
 
 .cart-item__subtotal-mobile {
-  @include flex-between;
-  padding: $spacing-16 0 0;
-
-  @include tablet {
-    display: none;
-  }
-}
-
-.cart-item__subtotal-desktop {
   display: none;
 
   @include tablet {
     @include flex-between;
     padding: $spacing-16 0 0;
+  }
+}
+
+.cart-item__subtotal-desktop {
+  @include flex-between;
+  padding: $spacing-16 0 0;
+
+  @include tablet {
+    display: none;
   }
 }
 
