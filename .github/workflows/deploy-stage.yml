@@ -1,0 +1,66 @@
+name: Reusable Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      DATABASE_URL:
+        required: true
+      SECRET_KEY:
+        required: true
+      PGPASSWORD:
+        required: true
+      STRIPE_PUBLISHABLE_KEY:
+        required: true
+      STRIPE_SECRET_KEY:
+        required: true
+      STRIPE_WEBHOOK_SECRET:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Helm Lint & Dry Run
+        run: |
+          helm lint ./k8s/fitview-chart
+
+          helm template ${{ vars.RELEASE_NAME }} ./k8s/fitview-chart \
+            --set images.backend="goldbernik/fitview-backend:${{ github.sha }}" \
+            --set images.frontend="goldbernik/fitview-frontend:${{ github.sha }}" \
+            --set config.VITE_API_URL="${{ vars.VITE_API_URL }}" \
+            --set config.FRONTEND_URL="${{ vars.FRONTEND_URL }}" \
+            --set config.PGHOST="${{ vars.PGHOST }}" \
+            --set config.PGDATABASE="${{ vars.PGDATABASE }}" \
+            --set config.PGUSER="${{ vars.PGUSER }}" \
+            --set config.PGSSLMODE="${{ vars.PGSSLMODE }}" \
+            --set config.PGCHANNELBINDING="${{ vars.PGCHANNELBINDING }}" \
+            --set config.ACCESS_TOKEN_EXPIRE_MINUTES="${{ vars.ACCESS_TOKEN_EXPIRE_MINUTES }}" \
+            --set config.REFRESH_TOKEN_EXPIRE_DAYS="${{ vars.REFRESH_TOKEN_EXPIRE_DAYS }}" \
+            --set config.ACTIVATION_CODE_EXPIRE_MINUTES="${{ vars.ACTIVATION_CODE_EXPIRE_MINUTES }}" \
+            --set config.RESET_TOKEN_EXPIRE_MINUTES="${{ vars.RESET_TOKEN_EXPIRE_MINUTES }}" \
+            --set config.REDIS_URL="${{ vars.REDIS_URL }}" \
+            --set config.SMTP_HOST="${{ vars.SMTP_HOST }}" \
+            --set config.SMTP_PORT="${{ vars.SMTP_PORT }}" \
+            --set secrets.DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            --set secrets.SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+            --set secrets.PGPASSWORD="${{ secrets.PGPASSWORD }}" \
+            --set secrets.STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
+            --set secrets.STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
+            --set secrets.STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
+
+      - name: Mock Helm Install
+        run: |
+          echo "--- MOCK DEPLOY TO ${{ inputs.environment }} ---"
+          echo "Release Name: ${{ vars.RELEASE_NAME }}"
+          echo "Status: Success. Helm manifests generated and validated."
