@@ -119,123 +119,131 @@ const Step1 = ({
   onRemove,
   onCheckout,
 }: Step1Props) => (
-  <div className={styles['step1']}>
-    {/* Left: cart items */}
-    <div className={styles['step1__left']}>
-      <p className={styles['page-title']}>My Bag</p>
-      <p className={styles['page-subtitle']}>
-        You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in
-        the bag
-      </p>
+  <>
+    <div className={styles['step1__top']}>
+      <div className={styles['step1__header']}>
+        <p className={styles['page-title']}>My Bag</p>
+        <p className={styles['page-subtitle']}>
+          You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''}{' '}
+          in the bag
+        </p>
+      </div>
+      <Breadcrumb step={1} />
+    </div>
 
-      <div className={styles['cart-list']}>
-        {cart.cart_items.map((ci: CartItem) => (
-          <div key={ci.id} className={styles['cart-item']}>
-            {/* Remove button — outside card, top-left */}
-            <button
-              className={styles['cart-item__remove']}
-              onClick={() => onRemove(ci.id)}
-              aria-label="Remove item"
-            >
-              <img src={CircleXIcon} alt="" width={24} height={24} />
-            </button>
+    <div className={styles['step1']}>
+      {/* Left: cart items */}
+      <div className={styles['step1__left']}>
+        <div className={styles['cart-list']}>
+          {cart.cart_items.map((ci: CartItem) => (
+            <div key={ci.id} className={styles['cart-item']}>
+              {/* Remove button — outside card, top-left */}
+              <button
+                className={styles['cart-item__remove']}
+                onClick={() => onRemove(ci.id)}
+                aria-label="Remove item"
+              >
+                <img src={CircleXIcon} alt="" width={24} height={24} />
+              </button>
 
-            {/* Card */}
-            <div className={styles['cart-item__card']}>
-              <img
-                src={ci.item.image_url}
-                alt={ci.item.name}
-                className={styles['cart-item__image']}
-              />
-              <div className={styles['cart-item__info']}>
-                <p className={styles['cart-item__name']}>{ci.item.name}</p>
-                <p className={styles['cart-item__brand']}>
-                  {ci.item.brand.name}
-                </p>
-                {ci.size_label && (
-                  <p className={styles['cart-item__size']}>
-                    Size: {ci.size_label}
+              {/* Card */}
+              <div className={styles['cart-item__card']}>
+                <img
+                  src={ci.item.image_url}
+                  alt={ci.item.name}
+                  className={styles['cart-item__image']}
+                />
+                <div className={styles['cart-item__info']}>
+                  <p className={styles['cart-item__name']}>{ci.item.name}</p>
+                  <p className={styles['cart-item__brand']}>
+                    {ci.item.brand.name}
                   </p>
-                )}
-                <div className={styles['cart-item__qty']}>
-                  <span className={styles['cart-item__qty-label']}>
-                    Quantity
-                  </span>
-                  <button
-                    className={styles['cart-item__qty-btn']}
-                    onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
-                    aria-label="Decrease quantity"
-                  >
-                    <img src={MinusIcon} alt="" width={16} height={16} />
-                  </button>
-                  <span className={styles['cart-item__qty-value']}>
-                    {ci.quantity}
-                  </span>
-                  <button
-                    className={styles['cart-item__qty-btn']}
-                    onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
-                    aria-label="Increase quantity"
-                  >
-                    <img src={PlusIcon} alt="" width={16} height={16} />
-                  </button>
+                  {ci.size_label && (
+                    <p className={styles['cart-item__size']}>
+                      Size: {ci.size_label}
+                    </p>
+                  )}
+                  <div className={styles['cart-item__qty']}>
+                    <span className={styles['cart-item__qty-label']}>
+                      Quantity
+                    </span>
+                    <button
+                      className={styles['cart-item__qty-btn']}
+                      onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
+                      aria-label="Decrease quantity"
+                    >
+                      <img src={MinusIcon} alt="" width={16} height={16} />
+                    </button>
+                    <span className={styles['cart-item__qty-value']}>
+                      {ci.quantity}
+                    </span>
+                    <button
+                      className={styles['cart-item__qty-btn']}
+                      onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
+                      aria-label="Increase quantity"
+                    >
+                      <img src={PlusIcon} alt="" width={16} height={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
+              <div className={styles['cart-item__subtotal']}>
+                <span className={styles['cart-item__subtotal-label']}>
+                  Subtotal
+                </span>
+                <span className={styles['cart-item__subtotal-value']}>
+                  ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+                </span>
+              </div>
             </div>
-            <div className={styles['cart-item__subtotal']}>
-              <span className={styles['cart-item__subtotal-label']}>
+          ))}
+        </div>
+      </div>
+
+      {/* Right: promo + summary */}
+      <div className={styles['step1__right']}>
+        {/* Promo + Summary */}
+        <div className={styles['summary-card']}>
+          <div className={styles['promo__toggle']}>
+            <span>Have a promo code?</span>
+            <img src={ChevronRightIcon} alt="" width={20} height={20} />
+          </div>
+          <div className={styles['summary']}>
+            <div className={styles['summary__row']}>
+              <span className={styles['summary__row-label--bold']}>
                 Subtotal
               </span>
-              <span className={styles['cart-item__subtotal-value']}>
-                ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+              <span className={styles['summary__row-value--bold']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+            <div className={styles['summary__row']}>
+              <span className={styles['summary__row-label']}>Shipping</span>
+              <span className={styles['summary__row-value']}>$0.00</span>
+            </div>
+            <div className={styles['summary__row']}>
+              <span className={styles['summary__row-label']}>Tax</span>
+              <span className={styles['summary__row-value']}>$0.00</span>
+            </div>
+            <div
+              className={`${styles['summary__row']} ${styles['summary__row--total']}`}
+            >
+              <span className={styles['summary__total-label']}>Total</span>
+              <span className={styles['summary__total-value']}>
+                ${Number(cart.total_price).toFixed(2)}
               </span>
             </div>
           </div>
-        ))}
+        </div>
+
+        <PrimaryButton onClick={onCheckout}>
+          Checkout <img src={ArrowRightIcon} alt="" width={16} height={16} />
+        </PrimaryButton>
+        <StepDots current={1} total={3} />
       </div>
     </div>
-
-    {/* Right: promo + summary */}
-    <div className={styles['step1__right']}>
-      {/* Promo + Summary */}
-      <div className={styles['summary-card']}>
-        <div className={styles['promo__toggle']}>
-          <span>Have a promo code?</span>
-          <img src={ChevronRightIcon} alt="" width={20} height={20} />
-        </div>
-        <div className={styles['summary']}>
-          <div className={styles['summary__row']}>
-            <span className={styles['summary__row-label--bold']}>Subtotal</span>
-            <span className={styles['summary__row-value--bold']}>
-              ${Number(cart.total_price).toFixed(2)}
-            </span>
-          </div>
-          <div className={styles['summary__row']}>
-            <span className={styles['summary__row-label']}>Shipping</span>
-            <span className={styles['summary__row-value']}>$0.00</span>
-          </div>
-          <div className={styles['summary__row']}>
-            <span className={styles['summary__row-label']}>Tax</span>
-            <span className={styles['summary__row-value']}>$0.00</span>
-          </div>
-          <div
-            className={`${styles['summary__row']} ${styles['summary__row--total']}`}
-          >
-            <span className={styles['summary__total-label']}>Total</span>
-            <span className={styles['summary__total-value']}>
-              ${Number(cart.total_price).toFixed(2)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <PrimaryButton onClick={onCheckout}>
-        Checkout <img src={ArrowRightIcon} alt="" width={16} height={16} />
-      </PrimaryButton>
-      <StepDots current={1} total={3} />
-    </div>
-  </div>
+  </>
 );
-
 // ─── Step 2 — Checkout ────────────────────────────────────────────────────────
 
 interface FormState {
@@ -617,7 +625,6 @@ const MyBag = () => {
     <>
       <Header />
       <main className={styles.main}>
-        {step !== 4 && !isEmpty && <Breadcrumb step={step} />}
         {isEmpty && step !== 4 ? (
           <EmptyState
             title="Nothing in your bag yet!"
