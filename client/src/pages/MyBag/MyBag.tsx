@@ -196,37 +196,35 @@ const Step1 = ({
 
     {/* Right: promo + summary */}
     <div className={styles['step1__right']}>
-      {/* Promo */}
-      <div className={styles['promo']}>
+      {/* Promo + Summary */}
+      <div className={styles['summary-card']}>
         <div className={styles['promo__toggle']}>
           <span>Have a promo code?</span>
           <img src={ChevronRightIcon} alt="" width={20} height={20} />
         </div>
-      </div>
-
-      {/* Summary */}
-      <div className={styles['summary']}>
-        <div className={styles['summary__row']}>
-          <span className={styles['summary__row-label--bold']}>Subtotal</span>
-          <span className={styles['summary__row-value--bold']}>
-            ${Number(cart.total_price).toFixed(2)}
-          </span>
-        </div>
-        <div className={styles['summary__row']}>
-          <span className={styles['summary__row-label']}>Shipping</span>
-          <span className={styles['summary__row-value']}>$0.00</span>
-        </div>
-        <div className={styles['summary__row']}>
-          <span className={styles['summary__row-label']}>Tax</span>
-          <span className={styles['summary__row-value']}>$0.00</span>
-        </div>
-        <div
-          className={`${styles['summary__row']} ${styles['summary__row--total']}`}
-        >
-          <span className={styles['summary__total-label']}>Total</span>
-          <span className={styles['summary__total-value']}>
-            ${Number(cart.total_price).toFixed(2)}
-          </span>
+        <div className={styles['summary']}>
+          <div className={styles['summary__row']}>
+            <span className={styles['summary__row-label--bold']}>Subtotal</span>
+            <span className={styles['summary__row-value--bold']}>
+              ${Number(cart.total_price).toFixed(2)}
+            </span>
+          </div>
+          <div className={styles['summary__row']}>
+            <span className={styles['summary__row-label']}>Shipping</span>
+            <span className={styles['summary__row-value']}>$0.00</span>
+          </div>
+          <div className={styles['summary__row']}>
+            <span className={styles['summary__row-label']}>Tax</span>
+            <span className={styles['summary__row-value']}>$0.00</span>
+          </div>
+          <div
+            className={`${styles['summary__row']} ${styles['summary__row--total']}`}
+          >
+            <span className={styles['summary__total-label']}>Total</span>
+            <span className={styles['summary__total-value']}>
+              ${Number(cart.total_price).toFixed(2)}
+            </span>
+          </div>
         </div>
       </div>
 

@@ -71,10 +71,12 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
-  margin-top: $spacing-32;
+  margin-top: $spacing-16;
+  align-items: center;
 
   @include desktop {
     margin-top: 0;
+    align-items: flex-start;
   }
 }
 
@@ -84,7 +86,11 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
-  align-items: flex-start;
+  align-items: center;
+
+  @include desktop {
+    align-items: flex-start;
+  }
 }
 
 // ─── Cart Item ────────────────────────────────────────────────────────────────
@@ -95,7 +101,7 @@
   position: relative;
   background: $color-white;
   border-radius: 16px;
-  width: 100%;
+  width: 343px;
   padding: $spacing-16;
 
   @include tablet {
@@ -231,15 +237,9 @@
 }
 
 // ─── Promo ────────────────────────────────────────────────────────────────────
-.promo {
-  background: $color-white;
-  border-radius: 16px;
-  padding: 0 $spacing-16;
-}
 
 .promo__toggle {
   @include flex-between;
-  @include hover-opacity;
   @include text(16px);
   width: 100%;
   padding: $spacing-16 0;
@@ -297,13 +297,26 @@
 }
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
+.summary-card {
+  background: $color-white;
+  border-radius: 16px;
+  padding: $spacing-16;
+  width: 343px;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 448px;
+  }
+}
+
 .summary {
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
-  background: $color-white;
-  border-radius: 16px;
-  padding: $spacing-16;
+  padding-top: $spacing-16;
 }
 
 .summary__row {
