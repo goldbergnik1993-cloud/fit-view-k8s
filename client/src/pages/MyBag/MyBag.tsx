@@ -161,11 +161,6 @@ const Step1 = ({
                     <p className={styles['cart-item__brand']}>
                       {ci.item.brand.name}
                     </p>
-                    {ci.size_label && (
-                      <p className={styles['cart-item__size']}>
-                        Size: {ci.size_label}
-                      </p>
-                    )}
                   </div>
                   <div className={styles['cart-item__qty']}>
                     <span className={styles['cart-item__qty-label']}>
@@ -191,9 +186,17 @@ const Step1 = ({
                       </button>
                     </div>
                   </div>
+                  <div className={styles['cart-item__subtotal-mobile']}>
+                    <span className={styles['cart-item__subtotal-label']}>
+                      Subtotal
+                    </span>
+                    <span className={styles['cart-item__subtotal-value']}>
+                      ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className={styles['cart-item__subtotal']}>
+              <div className={styles['cart-item__subtotal-desktop']}>
                 <span className={styles['cart-item__subtotal-label']}>
                   Subtotal
                 </span>
