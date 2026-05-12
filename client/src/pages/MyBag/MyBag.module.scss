@@ -59,6 +59,11 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
+  align-items: center;
+
+  @include desktop {
+    align-items: start;
+  }
 }
 
 .step1__left {
