@@ -111,8 +111,6 @@ interface Step1Props {
   onUpdateQuantity: (itemId: number, qty: number) => void;
   onRemove: (itemId: number) => void;
   onCheckout: () => void;
-  promoOpen: boolean;
-  setPromoOpen: (v: boolean) => void;
 }
 
 const Step1 = ({
@@ -120,8 +118,6 @@ const Step1 = ({
   onUpdateQuantity,
   onRemove,
   onCheckout,
-  promoOpen,
-  setPromoOpen,
 }: Step1Props) => (
   <div className={styles['step1']}>
     {/* Left: cart items */}
@@ -202,24 +198,10 @@ const Step1 = ({
     <div className={styles['step1__right']}>
       {/* Promo */}
       <div className={styles['promo']}>
-        <button
-          className={styles['promo__toggle']}
-          onClick={() => setPromoOpen(!promoOpen)}
-          aria-expanded={promoOpen}
-        >
+        <div className={styles['promo__toggle']}>
           <span>Have a promo code?</span>
-          <img
-            src={ChevronRightIcon}
-            alt=""
-            width={20}
-            height={20}
-            className={
-              promoOpen
-                ? styles['promo__chevron--open']
-                : styles['promo__chevron']
-            }
-          />
-        </button>
+          <img src={ChevronRightIcon} alt="" width={20} height={20} />
+        </div>
       </div>
 
       {/* Summary */}
@@ -598,7 +580,6 @@ const MyBag = () => {
   const { cart, loading, updateQuantity, removeItem } = useCart();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
-  const [promoOpen, setPromoOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const isEmpty = !cart || cart.cart_items.length === 0;
@@ -653,8 +634,6 @@ const MyBag = () => {
             onUpdateQuantity={updateQuantity}
             onRemove={removeItem}
             onCheckout={() => setStep(2)}
-            promoOpen={promoOpen}
-            setPromoOpen={setPromoOpen}
           />
         ) : step === 2 && cart ? (
           <Step2
