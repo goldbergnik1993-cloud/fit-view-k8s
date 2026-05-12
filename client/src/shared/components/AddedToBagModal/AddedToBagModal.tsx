@@ -95,7 +95,6 @@ const ModalContent = ({
                   aria-hidden="true"
                 />
               </button>
-              <span className={styles.quantityValue}>{quantity}</span>
               <button
                 className={styles.quantityBtn}
                 onClick={() => setQuantity((q) => q + 1)}
@@ -138,9 +137,6 @@ const ModalContent = ({
       </div>
 
       <div className={styles.actionsMobile}>
-        <button className={styles.keepBtn} onClick={onClose}>
-          Keep Shopping
-        </button>
         <a href="/my-bag" className={styles.viewBtn}>
           View My Bag
           <img
@@ -150,6 +146,9 @@ const ModalContent = ({
             height={16}
             aria-hidden="true"
           />
+        </a>
+        <a href="/catalog" className={styles.keepBtn}>
+          Keep Shopping
         </a>
       </div>
     </div>
