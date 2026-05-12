@@ -21,7 +21,15 @@
 
 .page-subtitle {
   @include text(14px, 500);
-  margin: 0;
+  margin: 0 0 $spacing-16;
+
+  @include tablet {
+    margin: 0 0 $spacing-24;
+  }
+
+  @include desktop {
+    margin: 0 0 $spacing-32;
+  }
 }
 
 // ─── Step Dots ────────────────────────────────────────────────────────────────
@@ -407,6 +415,15 @@
   background: $color-white;
   border-radius: 16px;
   overflow: hidden;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 448px;
+  }
 }
 
 .cart-compact__item {
@@ -421,11 +438,15 @@
 }
 
 .cart-compact__image {
-  width: 80px;
+  width: 132px;
   height: 100px;
-  object-fit: cover;
-  border-radius: 8px;
+  object-fit: contain;
   flex-shrink: 0;
+
+  @include tablet {
+    width: 224px;
+    height: 170px;
+  }
 }
 
 .cart-compact__info {
