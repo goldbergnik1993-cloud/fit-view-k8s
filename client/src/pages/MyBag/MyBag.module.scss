@@ -84,6 +84,7 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
+  align-items: flex-start;
 }
 
 // ─── Cart Item ────────────────────────────────────────────────────────────────
@@ -96,6 +97,14 @@
   border-radius: 16px;
   width: 100%;
   padding: $spacing-16;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 684px;
+  }
 }
 
 .cart-item__remove {
@@ -716,12 +725,13 @@
     margin: 0 auto;
   }
 
-  .step1 {
-    display: grid;
-    grid-template-columns: 684px 448px;
-    column-gap: 260px;
-    align-items: start;
-  }
+.step1 {
+  display: grid;
+  grid-template-columns: 684px 448px;
+  column-gap: 260px;
+  align-items: start;
+  padding-top: $spacing-32;
+}
 
   .step2 {
     display: grid;
