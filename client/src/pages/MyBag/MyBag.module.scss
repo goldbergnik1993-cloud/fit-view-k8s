@@ -537,6 +537,11 @@
   color: $color-text;
   cursor: pointer;
   margin-bottom: $spacing-8;
+
+  &--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 .radio-input {
