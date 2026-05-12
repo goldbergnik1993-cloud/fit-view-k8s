@@ -452,6 +452,11 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
+  align-items: center;
+
+  @include desktop {
+    align-items: start;
+  }
 }
 
 .step2__left {
@@ -459,6 +464,14 @@
   flex-direction: column;
   gap: $spacing-16;
   width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 684px;
+  }
 }
 
 .step2__right {
@@ -586,7 +599,10 @@
     &::after {
       content: '';
       position: absolute;
-      inset: 4px;
+      width: 6px;
+      height: 6px;
+      top: 8px;
+      left: 8px;
       border-radius: 50%;
       background: $color-text;
     }
