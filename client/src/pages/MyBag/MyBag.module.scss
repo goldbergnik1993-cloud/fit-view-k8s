@@ -126,15 +126,9 @@
   background: $color-white;
   border-radius: 16px;
   width: 100%;
-  max-width: 343px;
   padding: $spacing-16;
 
-  @include tablet {
-    max-width: 590px;
-  }
-
   @include desktop {
-    max-width: 684px;
     width: 684px;
   }
 }
@@ -343,16 +337,15 @@
 .summary {
   display: flex;
   flex-direction: column;
-  gap: $spacing-16;
-  padding-top: $spacing-16;
 }
 
 .summary__row {
   @include flex-between;
+  align-items: center;
+  padding: $spacing-16 0;
 
   &--total {
     border-top: 1px solid $color-card-bg;
-    padding-top: $spacing-16;
   }
 }
 
