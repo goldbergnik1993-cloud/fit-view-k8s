@@ -436,10 +436,13 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
                 <span className={styles['radio-custom']} />
                 Card
               </label>
-              <label className={styles['radio-label']}>
+              <label
+                className={`${styles['radio-label']} ${styles['radio-label--disabled']}`}
+              >
                 <input
                   type="radio"
                   name="payment"
+                  disabled
                   className={styles['radio-input']}
                 />
                 <span className={styles['radio-custom']} />
@@ -477,10 +480,13 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
               <span className={styles['radio-custom']} />
               Card
             </label>
-            <label className={styles['radio-label']}>
+            <label
+              className={`${styles['radio-label']} ${styles['radio-label--disabled']}`}
+            >
               <input
                 type="radio"
                 name="payment2"
+                disabled
                 className={styles['radio-input']}
               />
               <span className={styles['radio-custom']} />
