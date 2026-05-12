@@ -171,10 +171,12 @@
 
   @include tablet {
     padding: 0 0 0 39px;
+    justify-content: space-between;
   }
 
   @include desktop {
     padding: 0 0 0 80px;
+    justify-content: space-between;
   }
 }
 
