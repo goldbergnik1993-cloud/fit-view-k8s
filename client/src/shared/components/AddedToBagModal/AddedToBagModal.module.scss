@@ -230,25 +230,21 @@
   @include tablet {
     display: none;
   }
-
-  .keepBtn,
-  .viewBtn {
-    height: 48px;
-    width: 100%;
-  }
 }
 
 .keepBtn {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 48px;
+  min-height: 48px;
   border-radius: 8px;
   border: 1.5px solid $color-primary;
   background: $color-white;
   @include text(16px, 500);
   color: $color-primary;
-  @include flex-center;
   transition: background 0.2s, color 0.2s;
-  width: 100%;
 
   &:hover {
     background: $color-primary;
@@ -257,15 +253,17 @@
 }
 
 .viewBtn {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 48px;
+  min-height: 48px;
   border-radius: 8px;
   background: $color-primary;
   @include text(16px, 500);
   color: $color-white;
-  @include flex-center;
   gap: $spacing-8;
-  width: 100%;
   transition: background 0.2s;
 
   &:hover {
