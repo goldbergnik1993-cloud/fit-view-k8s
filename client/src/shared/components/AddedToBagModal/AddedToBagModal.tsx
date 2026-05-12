@@ -57,7 +57,7 @@ const ModalContent = ({
       </div>
 
       <div className={styles.body}>
-        {/* Левая колонка: картинка + кнопки (планшет/десктоп) */}
+        {/* left column */}
         <div className={styles.imageCol}>
           <div className={styles.imageWrap}>
             <img
@@ -70,12 +70,73 @@ const ModalContent = ({
               }}
             />
           </div>
-          {/* Кнопки под картинкой — планшет/десктоп */}
-          <div className={styles.actionsDesktop}>
-            <button className={styles.keepBtn} onClick={onClose}>
-              Keep Shopping
-            </button>
-            <a href="/my-bag" className={styles.viewBtn}>
+          {/* Keep Shopping — for tablet/desktop */}
+          <button
+            className={`${styles.keepBtn} ${styles['keepBtn--desktop']}`}
+            onClick={onClose}
+          >
+            Keep Shopping
+          </button>
+        </div>
+
+        {/* right column */}
+        <div className={styles.info}>
+          <div className={styles.infoTop}>
+            <h3 className={styles.itemName}>{item.name}</h3>
+            <p className={styles.brand}>{item.brand}</p>
+
+            <div className={styles.meta}>
+              <span className={styles.metaLabel}>Size:</span>
+              <span className={styles.metaValue}>
+                {selectedSizeLabel ?? '—'}
+              </span>
+            </div>
+
+            <div className={styles.quantity}>
+              <span className={styles.quantityLabel}>Quantity</span>
+              <div className={styles.quantityControls}>
+                <button
+                  className={styles.quantityBtn}
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  aria-label="Decrease quantity"
+                >
+                  <img
+                    src={MinusIcon}
+                    alt=""
+                    width={16}
+                    height={16}
+                    aria-hidden="true"
+                  />
+                </button>
+                <span className={styles.quantityValue}>{quantity}</span>
+                <button
+                  className={styles.quantityBtn}
+                  onClick={() => setQuantity((q) => q + 1)}
+                  aria-label="Increase quantity"
+                >
+                  <img
+                    src={PlusIcon}
+                    alt=""
+                    width={16}
+                    height={16}
+                    aria-hidden="true"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.infoBottom}>
+            <div className={styles.divider} />
+            <div className={styles.total}>
+              <span className={styles.totalLabel}>Total:</span>
+              <span className={styles.totalValue}>${total}</span>
+            </div>
+            {/* View My Bag — for tablet/desktop */}
+            <a
+              href="/my-bag"
+              className={`${styles.viewBtn} ${styles['viewBtn--desktop']}`}
+            >
               View My Bag
               <img
                 src={ArrowRightWhiteIcon}
@@ -87,60 +148,9 @@ const ModalContent = ({
             </a>
           </div>
         </div>
-
-        {/* Правая колонка: инфо */}
-        <div className={styles.info}>
-          <h3 className={styles.itemName}>{item.name}</h3>
-          <p className={styles.brand}>{item.brand}</p>
-
-          <div className={styles.meta}>
-            <span className={styles.metaLabel}>Size:</span>
-            <span className={styles.metaValue}>{selectedSizeLabel ?? '—'}</span>
-          </div>
-
-          <div className={styles.quantity}>
-            <span className={styles.quantityLabel}>Quantity</span>
-            <div className={styles.quantityControls}>
-              <button
-                className={styles.quantityBtn}
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                aria-label="Decrease quantity"
-              >
-                <img
-                  src={MinusIcon}
-                  alt=""
-                  width={16}
-                  height={16}
-                  aria-hidden="true"
-                />
-              </button>
-              <span className={styles.quantityValue}>{quantity}</span>
-              <button
-                className={styles.quantityBtn}
-                onClick={() => setQuantity((q) => q + 1)}
-                aria-label="Increase quantity"
-              >
-                <img
-                  src={PlusIcon}
-                  alt=""
-                  width={16}
-                  height={16}
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
-          </div>
-
-          <div className={styles.divider} />
-
-          <div className={styles.total}>
-            <span className={styles.totalLabel}>Total:</span>
-            <span className={styles.totalValue}>${total}</span>
-          </div>
-        </div>
       </div>
 
-      {/* buttons — mobile */}
+      {/* buttons - mobile */}
       <div className={styles.actionsMobile}>
         <a href="/my-bag" className={styles.viewBtn}>
           View My Bag
