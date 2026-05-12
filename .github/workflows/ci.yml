@@ -7,6 +7,9 @@ on:
       - 'server/**'
       - 'client/**'
       - '.github/workflows/**'
+      - 'docker-compose*'
+      - 'nginx.conf'
+      - 'README.md'
   pull_request:
     branches: [ main ]
     paths:
@@ -114,6 +117,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -127,9 +131,10 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+
   deploy-staging:
     needs: quality-and-build
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') && success()
     uses: ./.github/workflows/deploy-stage.yml
     with:
       environment: staging
