@@ -56,3 +56,6 @@ Thumbs.db
 # Celerybeat
 celerybeat-schedule*
 stripe.exe
+
+# VSCode
+.vscode/
