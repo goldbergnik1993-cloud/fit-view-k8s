@@ -428,11 +428,13 @@
 
 .cart-compact__item {
   display: flex;
+  flex-wrap: wrap;
   gap: $spacing-16;
   align-items: flex-start;
   padding: $spacing-16;
 
   @include tablet {
+    flex-wrap: nowrap;
     padding-bottom: 0;
   }
 }
@@ -477,9 +479,23 @@
   margin: 0;
 }
 
-.cart-compact__subtotal {
+.cart-compact__subtotal-mobile {
   @include flex-between;
-  padding-top: $spacing-16;
+  padding: $spacing-16 0 0;
+  width: 100%;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.cart-compact__subtotal-desktop {
+  display: none;
+
+  @include tablet {
+    @include flex-between;
+    padding-top: $spacing-16;
+  }
 }
 
 .cart-compact__subtotal-label,
