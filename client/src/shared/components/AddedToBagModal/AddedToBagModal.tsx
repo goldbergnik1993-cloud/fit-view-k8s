@@ -1,6 +1,6 @@
 import styles from './AddedToBagModal.module.scss';
 import { useState, useEffect } from 'react';
-import ArrowRightIcon from '../../../assets/icons/arrow-right.svg';
+import ArrowRightWhiteIcon from '../../../assets/icons/arrow-right-white.svg';
 import MinusIcon from '../../../assets/icons/minus.svg';
 import PlusIcon from '../../../assets/icons/plus.svg';
 
@@ -125,7 +125,7 @@ const ModalContent = ({
             <a href="/my-bag" className={styles.viewBtn}>
               View My Bag
               <img
-                src={ArrowRightIcon}
+                src={ArrowRightWhiteIcon}
                 alt=""
                 width={16}
                 height={16}
@@ -140,7 +140,7 @@ const ModalContent = ({
         <a href="/my-bag" className={styles.viewBtn}>
           View My Bag
           <img
-            src={ArrowRightIcon}
+            src={ArrowRightWhiteIcon}
             alt=""
             width={16}
             height={16}
