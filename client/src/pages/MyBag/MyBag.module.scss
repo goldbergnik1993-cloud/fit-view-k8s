@@ -221,12 +221,10 @@
 
   @include tablet {
     margin-top: $spacing-16;
-    justify-content: space-between;
   }
 
   @include desktop {
     margin-top: 15px;
-    justify-content: space-between;
   }
 }
 
