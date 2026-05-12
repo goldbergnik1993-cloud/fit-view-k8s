@@ -459,12 +459,18 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
+  width: 100%;
 }
 
 .step2__right {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-16;
+  display: none;
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-32;
+    width: 448px;
+  }
 }
 
 // ─── Form ─────────────────────────────────────────────────────────────────────
@@ -609,7 +615,7 @@
 .payment-block {
   background: $color-white;
   border-radius: 16px;
-  padding: $spacing-16;
+  padding: $spacing-16 $spacing-16 $spacing-8;
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
@@ -797,20 +803,19 @@
     margin: 0 auto;
   }
 
-.step1 {
-  display: grid;
-  grid-template-columns: 684px 448px;
-  column-gap: 260px;
-  align-items: start;
-  padding-top: $spacing-32;
-}
+  .step1 {
+    display: grid;
+    grid-template-columns: 684px 448px;
+    column-gap: 260px;
+    align-items: start;
+    padding-top: $spacing-32;
+  }
 
   .step2 {
     display: grid;
     grid-template-columns: 684px 448px;
     column-gap: 260px;
     align-items: start;
-    gap: 0;
   }
 
   .step2__left {
