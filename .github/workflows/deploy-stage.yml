@@ -13,6 +13,8 @@ on:
         required: true
       PGPASSWORD:
         required: true
+      STRIPE_PUBLISHABLE_KEY:
+        required: true
       STRIPE_SECRET_KEY:
         required: true
       STRIPE_WEBHOOK_SECRET:
@@ -53,14 +55,12 @@ jobs:
             --set secrets.DATABASE_URL="${{ secrets.DATABASE_URL }}" \
             --set secrets.SECRET_KEY="${{ secrets.SECRET_KEY }}" \
             --set secrets.PGPASSWORD="${{ secrets.PGPASSWORD }}" \
+            --set secrets.STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
             --set secrets.STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
-            --set secrets.STRIPE_PUBLISHABLE_KEY="${{ vars.STRIPE_PUBLISHABLE_KEY }}" \
             --set secrets.STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
 
       - name: Mock Helm Install
         run: |
           echo "--- MOCK DEPLOY TO ${{ inputs.environment }} ---"
-          echo "Release: ${{ vars.RELEASE_NAME }}"
-          echo "Backend Image: goldbernik/fitview-backend:${{ github.sha }}"
-          echo "Frontend Image: goldbernik/fitview-frontend:${{ github.sha }}"
-          echo "Status: Helm chart configuration is valid."
+          echo "Release Name: ${{ vars.RELEASE_NAME }}"
+          echo "Status: Success. Helm manifests generated and validated."
