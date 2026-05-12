@@ -439,7 +439,6 @@
 .cart-compact__subtotal {
   @include flex-between;
   padding: $spacing-16;
-  border-top: 1px solid $color-card-bg;
 }
 
 .cart-compact__subtotal-label,
@@ -473,11 +472,38 @@
   }
 }
 
+.step2__left-compact {
+  display: block;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.step2__mobile-payment {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  @include desktop {
+    display: none;
+  }
+}
+
 // ─── Form ─────────────────────────────────────────────────────────────────────
 .form-section {
   background: $color-white;
   border-radius: 16px;
   padding: $spacing-16;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 684px;
+  }
 }
 
 .form-section__title {
@@ -546,23 +572,23 @@
 }
 
 .radio-custom {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  border: 2px solid $color-input-border;
+  border: 1px solid $color-text;
   flex-shrink: 0;
   position: relative;
   transition: border-color 0.2s ease;
 
   .radio-input:checked + & {
-    border-color: $color-primary;
+    border-color: $color-text;
 
     &::after {
       content: '';
       position: absolute;
-      inset: 3px;
+      inset: 4px;
       border-radius: 50%;
-      background: $color-primary;
+      background: $color-text;
     }
   }
 }
