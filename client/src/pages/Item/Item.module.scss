@@ -441,12 +441,6 @@
   flex-direction: row;
   align-items: flex-start;
   width: 100%;
-  overflow: hidden;
-
-  @include desktop {
-    overflow: visible;
-    align-items: stretch;
-  }
 }
 
 .fitting__left {
@@ -454,16 +448,7 @@
   flex-direction: column;
   align-items: flex-start;
   flex-shrink: 0;
-  width: 120px;
-
-  @include tablet {
-    width: 140px;
-  }
-
-  @include desktop {
-    width: 120px;
-    flex-shrink: 0;
-  }
+  width: 168px;
 }
 
 .fitting__back {
@@ -481,6 +466,15 @@
 
 .fitting__vslider {
   display: none;
+
+  @include tablet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    height: 446px;
+    margin: 0 $spacing-16;
+  }
 
   @include desktop {
     display: flex;
@@ -522,13 +516,8 @@
 .fitting__center {
   display: flex;
   flex-direction: column;
-  flex: 0 0 auto;
-  margin-left: auto;
-
-  @include desktop {
-    margin-left: 0;
-    flex: 0 0 200px;
-  }
+  flex: 1;
+  min-width: 0;
 }
 
 .fitting__silhouette {
@@ -536,12 +525,11 @@
   position: relative;
 
   @include tablet {
-    height: 469px;
+    height: 446px;
   }
 
   @include desktop {
     height: 446px;
-    width: 200px;
   }
 }
 
@@ -564,7 +552,6 @@
     flex: 0 0 448px;
     width: 448px;
     padding-left: $spacing-48;
-    margin-left: auto;
   }
 }
 
