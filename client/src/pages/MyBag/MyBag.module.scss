@@ -19,16 +19,15 @@
   margin: 0 0 4px;
 }
 
-.page-subtitle {
-  @include text(14px, 500);
-  margin: 0 0 $spacing-16;
+.empty-wrap {
+  padding: $spacing-16 0 $spacing-48;
 
   @include tablet {
-    margin: 0 0 $spacing-24;
+    padding: $spacing-16 0 100px;
   }
 
   @include desktop {
-    margin: 0 0 $spacing-32;
+    padding: $spacing-16 0 100px;
   }
 }
 
