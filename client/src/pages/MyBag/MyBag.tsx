@@ -661,19 +661,19 @@ const Step3 = ({
 const Step4 = () => {
   const { user } = useAuth();
   return (
-  <div className={styles['step4']}>
-    <p className={styles['page-title']}>My Bag</p>
-    <EmptyState
-      title="Thanks for your order!"
-      subtitle="A confirmation email has been sent to your inbox"
-      buttonText="Track Order →"
-      buttonPath={user ? '/profile' : '/login'}
-      secondaryButtonText="Keep Shopping"
-      secondaryButtonPath="/catalog"
-      illustration={OrderSuccessIllustration}
-      showRecommendations={true}
-    />
-  </div>
+    <div className={styles['step4']}>
+      <p className={styles['page-title']}>My Bag</p>
+      <EmptyState
+        title="Thanks for your order!"
+        subtitle="A confirmation email has been sent to your inbox"
+        buttonText="Track Order →"
+        buttonPath={user ? '/profile' : '/login'}
+        secondaryButtonText="Keep Shopping"
+        secondaryButtonPath="/catalog"
+        illustration={OrderSuccessIllustration}
+        showRecommendations={true}
+      />
+    </div>
   );
 };
 
@@ -741,13 +741,16 @@ const MyBag = () => {
       <Header />
       <main className={styles.main}>
         {isEmpty && step !== 4 ? (
-          <EmptyState
-            title="Nothing in your bag yet!"
-            subtitle="Browse our store, find items & happy shopping!"
-            buttonText="Browse Items"
-            buttonPath="/catalog"
-            illustration={EmptyBagIllustration}
-          />
+          <div className={styles['empty-wrap']}>
+            <p className={styles['page-title']}>My Bag</p>
+            <EmptyState
+              title="Nothing in your bag yet!"
+              subtitle="Browse our store, find items & happy shopping!"
+              buttonText="Browse Items"
+              buttonPath="/catalog"
+              illustration={EmptyBagIllustration}
+            />
+          </div>
         ) : step === 1 && cart ? (
           <Step1
             cart={cart}
