@@ -769,6 +769,7 @@
 .step4 {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .success {
@@ -942,6 +943,6 @@
   .step4 {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
   }
 }
