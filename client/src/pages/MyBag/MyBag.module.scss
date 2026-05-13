@@ -911,8 +911,6 @@
 @include desktop {
   .main {
     padding: $spacing-32 var(--container-padding) $spacing-88;
-    max-width: $container-max-width;
-    margin: 0 auto;
   }
 
   .step1__top {
