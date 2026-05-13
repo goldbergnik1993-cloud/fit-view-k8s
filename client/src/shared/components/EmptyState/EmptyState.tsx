@@ -11,6 +11,8 @@ interface EmptyStateProps {
   onButtonClick?: () => void;
   showRecommendations?: boolean;
   illustration?: string;
+  secondaryButtonText?: string;
+  secondaryButtonPath?: string;
 }
 
 const EmptyState = ({
@@ -21,6 +23,8 @@ const EmptyState = ({
   onButtonClick,
   showRecommendations = true,
   illustration,
+  secondaryButtonText,
+  secondaryButtonPath,
 }: EmptyStateProps) => {
   const navigate = useNavigate();
 
@@ -52,6 +56,15 @@ const EmptyState = ({
         >
           {buttonText}
         </button>
+        {secondaryButtonText && secondaryButtonPath && (
+          <button
+            className={styles.emptyState__buttonSecondary}
+            onClick={() => navigate(secondaryButtonPath)}
+            type="button"
+          >
+            {secondaryButtonText}
+          </button>
+        )}
       </div>
 
       {showRecommendations && (

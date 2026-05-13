@@ -73,6 +73,36 @@
   }
 }
 
+.emptyState__buttonSecondary {
+  width: 100%;
+  max-width: 343px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1.5px solid $color-primary;
+  background: transparent;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 500;
+  color: $color-primary;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  margin-top: $spacing-16;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+
+  @include tablet {
+    max-width: 348px;
+  }
+
+  @include desktop {
+    max-width: 448px;
+  }
+}
+
 .emptyState__recommendations {
   width: 100%;
   padding: 0 $spacing-16;

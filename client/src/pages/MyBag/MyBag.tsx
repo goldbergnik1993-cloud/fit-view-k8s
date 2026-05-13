@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
-import { SimilarItems } from '../../shared/components/SimilarItems/SimilarItems';
 import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
 import { TextInput } from '../../shared/components/ui/TextInput/TextInput';
 import { useCart } from '../../providers/CartContext';
@@ -13,6 +11,7 @@ import type { Cart, CartItem } from '../../services/api';
 import CircleXIcon from '../../assets/icons/circle-x-error.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
+import OrderSuccessIllustration from '../../assets/illustrations/order-success.png';
 import MinusIcon from '../../assets/icons/minus.svg';
 import PlusIcon from '../../assets/icons/plus.svg';
 import ArrowRightIcon from '../../assets/icons/arrow-right-white.svg';
@@ -651,85 +650,16 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
 const Step4 = () => (
   <div className={styles['step4']}>
     <p className={styles['page-title']}>My Bag</p>
-
-    <div className={styles['success']}>
-      <div className={styles['success__illustration']} aria-hidden="true">
-        <svg
-          width="160"
-          height="160"
-          viewBox="0 0 160 160"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle
-            cx="80"
-            cy="60"
-            r="40"
-            stroke="#0D0C0D"
-            strokeWidth="2"
-            fill="none"
-          />
-          <polyline
-            points="62,60 76,74 100,48"
-            stroke="#0D0C0D"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-          <rect
-            x="40"
-            y="95"
-            width="30"
-            height="50"
-            rx="4"
-            stroke="#0D0C0D"
-            strokeWidth="2"
-            fill="none"
-          />
-          <rect
-            x="75"
-            y="85"
-            width="45"
-            height="60"
-            rx="4"
-            stroke="#0D0C0D"
-            strokeWidth="2"
-            fill="none"
-          />
-          <path
-            d="M50 95 Q55 80 60 95"
-            stroke="#0D0C0D"
-            strokeWidth="2"
-            fill="none"
-          />
-          <path
-            d="M85 85 Q97 68 109 85"
-            stroke="#0D0C0D"
-            strokeWidth="2"
-            fill="none"
-          />
-        </svg>
-      </div>
-
-      <h2 className={styles['success__title']}>Thanks for your order!</h2>
-      <p className={styles['success__text']}>
-        A confirmation email has been sent to your inbox
-      </p>
-
-      <div className={styles['success__actions']}>
-        <PrimaryButton>
-          Track Order <img src={ArrowRightIcon} alt="" width={16} height={16} />
-        </PrimaryButton>
-        <Link to="/catalog">
-          <button className={styles['success__keep-shopping']}>
-            Keep Shopping
-          </button>
-        </Link>
-      </div>
-    </div>
-
-    <SimilarItems />
+    <EmptyState
+      title="Thanks for your order!"
+      subtitle="A confirmation email has been sent to your inbox"
+      buttonText="Track Order →"
+      buttonPath="/profile"
+      secondaryButtonText="Keep Shopping"
+      secondaryButtonPath="/catalog"
+      illustration={OrderSuccessIllustration}
+      showRecommendations={true}
+    />
   </div>
 );
 
