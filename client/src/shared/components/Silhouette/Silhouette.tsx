@@ -10,12 +10,15 @@ interface SilhouetteProps {
   itemLengthCm?: number | null;
   gender?: 'male' | 'female';
   loading?: boolean;
+  onHeightChange?: (height: number) => void;
 }
 
 const Silhouette = ({
   linePositionPct,
   itemLengthCm,
+  heightCm,
   gender = 'female',
+  onHeightChange,
 }: SilhouetteProps) => {
   const src = gender === 'male' ? manSvg : womanSvg;
   const imgRef = useRef<HTMLImageElement>(null);
@@ -33,6 +36,24 @@ const Silhouette = ({
 
   return (
     <div className={styles.silhouette}>
+      {/* Вертикальный слайдер — tablet + desktop */}
+      <div className={styles.silhouette__vslider}>
+        <span className={styles.silhouette__vslider_top}>{heightCm} cm</span>
+        <div className={styles.silhouette__vslider_track}>
+          <input
+            type="range"
+            min={140}
+            max={210}
+            value={heightCm}
+            onChange={(e) => onHeightChange?.(Number(e.target.value))}
+            className={styles.silhouette__vslider_input}
+            aria-label="Your height"
+          />
+        </div>
+        <span className={styles.silhouette__vslider_bottom}>Your Height</span>
+      </div>
+
+      {/* Силуэт */}
       <div className={styles.silhouette__center}>
         <div className={styles.silhouette__imageWrap}>
           <img
@@ -52,6 +73,7 @@ const Silhouette = ({
         </div>
       </div>
 
+      {/* Ruler + item length */}
       <div className={styles.silhouette__right}>
         <div className={styles.silhouette__ruler} aria-hidden="true" />
         <span

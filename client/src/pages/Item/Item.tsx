@@ -487,23 +487,6 @@ const Item = () => {
             </button>
           </div>
 
-          {/* Вертикальный слайдер — только десктоп */}
-          <div className={styles.fitting__vslider}>
-            <span className={styles.fitting__vslider_top}>{height} cm</span>
-            <div className={styles.fitting__vslider_track}>
-              <input
-                type="range"
-                min={140}
-                max={210}
-                value={height}
-                onChange={(e) => setHeight(Number(e.target.value))}
-                className={styles.slider}
-                aria-label="Your height"
-              />
-            </div>
-            <span className={styles.fitting__vslider_bottom}>Your Height</span>
-          </div>
-
           {/* Центр: силуэт */}
           <div className={styles.fitting__center}>
             <div className={styles.fitting__silhouette}>
@@ -514,6 +497,7 @@ const Item = () => {
                 itemLengthCm={itemLengthCm}
                 gender={gender}
                 loading={fitLoading}
+                onHeightChange={setHeight}
               />
               {fitResult?.fitting_image_url && (
                 <img
