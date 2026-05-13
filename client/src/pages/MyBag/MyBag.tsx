@@ -17,6 +17,7 @@ import PlusIcon from '../../assets/icons/plus.svg';
 import ArrowRightIcon from '../../assets/icons/arrow-right-white.svg';
 import ArrowRightDarkIcon from '../../assets/icons/arrow-right.svg';
 import styles from './MyBag.module.scss';
+import { useAuth } from '../../hooks/useAuth';
 
 // ─── Breadcrumb (desktop only) ────────────────────────────────────────────────
 
@@ -561,9 +562,16 @@ interface Step3Props {
   form: FormState;
   onConfirm: () => void;
   submitting: boolean;
+  checkoutError: string | null;
 }
 
-const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
+const Step3 = ({
+  cart,
+  form,
+  onConfirm,
+  submitting,
+  checkoutError,
+}: Step3Props) => (
   <>
     <div className={styles['step1__top']}>
       <div className={styles['step1__header']}>
@@ -620,6 +628,9 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
           <PrimaryButton onClick={onConfirm} loading={submitting}>
             Payment <img src={ArrowRightIcon} alt="" width={16} height={16} />
           </PrimaryButton>
+          {checkoutError && (
+            <p className={styles['checkout-error']}>{checkoutError}</p>
+          )}
           <StepDots current={3} total={3} />
         </div>
       </div>
@@ -647,21 +658,24 @@ const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
 
 // ─── Step 4 — Success ─────────────────────────────────────────────────────────
 
-const Step4 = () => (
+const Step4 = () => {
+  const { user } = useAuth();
+  return (
   <div className={styles['step4']}>
     <p className={styles['page-title']}>My Bag</p>
     <EmptyState
       title="Thanks for your order!"
       subtitle="A confirmation email has been sent to your inbox"
       buttonText="Track Order →"
-      buttonPath="/profile"
+      buttonPath={user ? '/profile' : '/login'}
       secondaryButtonText="Keep Shopping"
       secondaryButtonPath="/catalog"
       illustration={OrderSuccessIllustration}
       showRecommendations={true}
     />
   </div>
-);
+  );
+};
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -683,11 +697,13 @@ const MyBag = () => {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const isEmpty = !cart || cart.cart_items.length === 0;
 
   const handleConfirm = async () => {
     setSubmitting(true);
+    setCheckoutError(null);
     try {
       const order = await ordersApi.create({
         delivery_info: {
@@ -701,8 +717,11 @@ const MyBag = () => {
       const session = await ordersApi.checkout(order.id);
       window.location.href = session.checkout_url;
     } catch (err) {
-      console.warn('Checkout failed:', err);
-      setStep(4);
+      setCheckoutError(
+        err instanceof Error
+          ? err.message
+          : 'Something went wrong. Please try again.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -749,6 +768,7 @@ const MyBag = () => {
             form={form}
             onConfirm={handleConfirm}
             submitting={submitting}
+            checkoutError={checkoutError}
           />
         ) : (
           <Step4 />

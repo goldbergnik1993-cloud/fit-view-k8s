@@ -56,6 +56,13 @@
   }
 }
 
+.checkout-error {
+  @include text(14px, 400);
+  color: $color-error;
+  text-align: center;
+  margin: 0;
+}
+
 // ─── Step 1 ───────────────────────────────────────────────────────────────────
 
 .step1 {
