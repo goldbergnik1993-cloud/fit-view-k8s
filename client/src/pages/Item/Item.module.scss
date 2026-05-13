@@ -51,6 +51,7 @@
 
 .layout__right {
   margin-top: $spacing-32;
+  overflow: visible;
 
   @include desktop {
     grid-area: right;
@@ -59,6 +60,7 @@
     flex-direction: column;
     height: 490px;
     padding-right: $spacing-24;
+    overflow: visible;
   }
 }
 
@@ -185,6 +187,8 @@
 
 .section {
   margin-top: $spacing-32;
+  position: relative;
+  overflow: visible;
 
   @include tablet {
     margin-top: $spacing-16;
