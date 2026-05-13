@@ -29,7 +29,9 @@
   grid-template-columns: 1fr;
   gap: $card-gap-mobile;
   width: 100%;
-  overflow: hidden;
+  padding: 8px;
+  margin: -8px;
+  box-sizing: border-box;
 
   li {
     min-width: 0;
