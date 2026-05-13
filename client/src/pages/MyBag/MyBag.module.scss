@@ -646,18 +646,55 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
+  align-items: center;
+
+  @include desktop {
+    align-items: start;
+  }
 }
 
 .step3__left {
   display: flex;
   flex-direction: column;
-  gap: $spacing-16;
+  gap: $spacing-32;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 684px;
+  }
 }
 
-.step3__right {
+.step3__left-compact {
+  display: block;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.step3__mobile-payment {
   display: flex;
   flex-direction: column;
   gap: $spacing-16;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.step3__right {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-32;
+    width: 448px;
+  }
 }
 
 .review-text {
@@ -667,14 +704,10 @@
   color: $color-text;
   display: flex;
   flex-direction: column;
-  gap: $spacing-8;
+  gap: $spacing-16;
   margin: 0;
 
   @include tablet {
-    gap: $spacing-24;
-  }
-
-  @include desktop {
     gap: $spacing-24;
   }
 }
@@ -900,13 +933,8 @@
     grid-template-columns: 684px 448px;
     column-gap: 260px;
     align-items: start;
-    gap: 0;
   }
-
-  .step3__right {
-    gap: $spacing-32;
-  }
-
+  
   .step4 {
     align-items: center;
   }
