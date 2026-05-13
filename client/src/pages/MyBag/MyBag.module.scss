@@ -481,6 +481,7 @@
 
 .cart-compact__qty {
   @include text(14px);
+  margin: 0;
 }
 
 .cart-compact__subtotal-mobile {

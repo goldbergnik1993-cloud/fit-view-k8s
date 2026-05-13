@@ -310,6 +310,31 @@ const FIELD_LABELS: Partial<Record<keyof FormState, string>> = {
   phone: 'Phone Number',
 };
 
+const validateField = (
+  field: keyof FormState,
+  value: string
+): string | undefined => {
+  if (REQUIRED_FIELDS.includes(field) && !value.trim()) {
+    return `${FIELD_LABELS[field]} is required`;
+  }
+  if (field === 'phone' && value.trim()) {
+    if (!/^\+?[\d\s\-()]{7,}$/.test(value.trim())) {
+      return 'Please enter a valid phone number';
+    }
+  }
+  if (field === 'email' && value.trim()) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+      return 'Please enter a valid email';
+    }
+  }
+  if (field === 'zip' && value.trim()) {
+    if (value.trim().length < 3) {
+      return 'Zip code is too short';
+    }
+  }
+  return undefined;
+};
+
 const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
   const [touched, setTouched] = useState<
     Partial<Record<keyof FormState, boolean>>
@@ -327,15 +352,15 @@ const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
   };
 
   const getError = (field: keyof FormState): string | undefined => {
-    if (!REQUIRED_FIELDS.includes(field)) return undefined;
     if (!touched[field] && !submitAttempted) return undefined;
-    if (!form[field].trim()) return `${FIELD_LABELS[field]} is required`;
-    return undefined;
+    return validateField(field, form[field] as string);
   };
 
   const handleReview = () => {
     setSubmitAttempted(true);
-    const hasErrors = REQUIRED_FIELDS.some((f) => !form[f].trim());
+    const hasErrors = (Object.keys(form) as (keyof FormState)[]).some((f) =>
+      validateField(f, form[f] as string)
+    );
     if (hasErrors) {
       const firstEmpty = REQUIRED_FIELDS.find((f) => !form[f].trim());
       if (firstEmpty) {
@@ -705,7 +730,7 @@ const MyBag = () => {
     try {
       const order = await ordersApi.create({
         delivery_info: {
-          country: form.country,
+          country: form.country || 'US',
           city: form.city,
           delivery_method: form.deliveryMethod,
           zip_code: form.zip || null,
