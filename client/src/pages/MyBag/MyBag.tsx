@@ -16,6 +16,7 @@ import PlusIcon from '../../assets/icons/plus.svg';
 import ArrowRightIcon from '../../assets/icons/arrow-right-white.svg';
 import ArrowRightDarkIcon from '../../assets/icons/arrow-right.svg';
 import styles from './MyBag.module.scss';
+import { useAuth } from '../../hooks/useAuth';
 
 // ─── Breadcrumb (desktop only) ────────────────────────────────────────────────
 
@@ -649,6 +650,9 @@ const Step3 = ({
         <PrimaryButton onClick={onConfirm} loading={submitting}>
           Payment <img src={ArrowRightIcon} alt="" width={16} height={16} />
         </PrimaryButton>
+        {checkoutError && (
+          <p className={styles['checkout-error']}>{checkoutError}</p>
+        )}
       </div>
     </div>
   </>
@@ -670,6 +674,7 @@ const INITIAL_FORM: FormState = {
 };
 
 const MyBag = () => {
+  const { user } = useAuth();
   const { cart, loading, updateQuantity, removeItem } = useCart();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
@@ -733,7 +738,7 @@ const MyBag = () => {
             cart={cart}
             onUpdateQuantity={updateQuantity}
             onRemove={removeItem}
-            onCheckout={() => setStep(2)}
+            onCheckout={() => user ? setStep(2) : window.location.href = '/login'}
           />
         ) : step === 2 && cart ? (
           <Step2
