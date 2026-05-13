@@ -637,6 +637,10 @@
 .fitting__slider-wrap {
   margin-top: $spacing-24;
 
+  @include tablet {
+    display: none;
+  }
+
   @include desktop {
     display: none;
   }
