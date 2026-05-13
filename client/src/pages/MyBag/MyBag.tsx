@@ -565,54 +565,85 @@ interface Step3Props {
 }
 
 const Step3 = ({ cart, form, onConfirm, submitting }: Step3Props) => (
-  <div className={styles['step3']}>
-    <div className={styles['step3__left']}>
-      <p className={styles['page-title']}>My Bag</p>
-      <p className={styles['page-subtitle']}>
-        You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in
-        the bag
-      </p>
-
-      <CartCompact cart={cart} />
-
-      <div className={styles['form-section']}>
-        <h2 className={styles['form-section__title']}>Shipping details</h2>
-        <div className={styles['review-text']}>
-          <span className={styles['review-text__line']}>
-            {form.firstName} {form.lastName}
-          </span>
-          <span className={styles['review-text__line']}>
-            {form.address}
-            {form.address2 ? `, ${form.address2}` : ''}
-          </span>
-          <span className={styles['review-text__line']}>
-            {form.city}
-            {form.zip ? `, ${form.zip}` : ''}
-          </span>
-          <span className={styles['review-text__line']}>{form.phone}</span>
-          <span className={styles['review-text__line']}>{form.email}</span>
-        </div>
+  <>
+    <div className={styles['step1__top']}>
+      <div className={styles['step1__header']}>
+        <p className={styles['page-title']}>My Bag</p>
+        <p className={styles['page-subtitle']}>
+          You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''}{' '}
+          in the bag
+        </p>
       </div>
+      <Breadcrumb step={3} />
     </div>
 
-    <div className={styles['step3__right']}>
-      <div className={styles['payment-block']}>
-        <h2 className={styles['payment-block__title']}>Payment details</h2>
-        <p className={styles['payment-block__value']}>Card</p>
-        <div className={styles['payment-block__total']}>
-          <span className={styles['payment-block__total-label']}>Total</span>
-          <span className={styles['payment-block__total-value']}>
-            ${Number(cart.total_price).toFixed(2)}
-          </span>
+    <div className={styles['step3']}>
+      {/* Left */}
+      <div className={styles['step3__left']}>
+        <div className={styles['step3__left-compact']}>
+          <CartCompact cart={cart} />
+        </div>
+
+        <div className={styles['form-section']}>
+          <h2 className={styles['form-section__title']}>Shipping details</h2>
+          <div className={styles['review-text']}>
+            <span className={styles['review-text__line']}>
+              {form.firstName} {form.lastName}
+            </span>
+            <span className={styles['review-text__line']}>
+              {form.address}
+              {form.address2 ? `, ${form.address2}` : ''}
+            </span>
+            <span className={styles['review-text__line']}>
+              {form.city}
+              {form.zip ? `, ${form.zip}` : ''}
+            </span>
+            <span className={styles['review-text__line']}>{form.phone}</span>
+            {form.email && (
+              <span className={styles['review-text__line']}>{form.email}</span>
+            )}
+          </div>
+        </div>
+
+        <div className={styles['step3__mobile-payment']}>
+          <div className={styles['payment-block']}>
+            <h2 className={styles['payment-block__title']}>Payment details</h2>
+            <p className={styles['payment-block__value']}>Card</p>
+            <div className={styles['payment-block__total']}>
+              <span className={styles['payment-block__total-label']}>
+                Total
+              </span>
+              <span className={styles['payment-block__total-value']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+          </div>
+          <PrimaryButton onClick={onConfirm} loading={submitting}>
+            Payment <img src={ArrowRightIcon} alt="" width={16} height={16} />
+          </PrimaryButton>
+          <StepDots current={3} total={3} />
         </div>
       </div>
 
-      <PrimaryButton onClick={onConfirm} loading={submitting}>
-        Payment <img src={ArrowRightIcon} alt="" width={16} height={16} />
-      </PrimaryButton>
-      <StepDots current={3} total={3} />
+      {/* Right — desktop only */}
+      <div className={styles['step3__right']}>
+        <CartCompact cart={cart} />
+        <div className={styles['payment-block']}>
+          <h2 className={styles['payment-block__title']}>Payment details</h2>
+          <p className={styles['payment-block__value']}>Card</p>
+          <div className={styles['payment-block__total']}>
+            <span className={styles['payment-block__total-label']}>Total</span>
+            <span className={styles['payment-block__total-value']}>
+              ${Number(cart.total_price).toFixed(2)}
+            </span>
+          </div>
+        </div>
+        <PrimaryButton onClick={onConfirm} loading={submitting}>
+          Payment <img src={ArrowRightIcon} alt="" width={16} height={16} />
+        </PrimaryButton>
+      </div>
     </div>
-  </div>
+  </>
 );
 
 // ─── Step 4 — Success ─────────────────────────────────────────────────────────
