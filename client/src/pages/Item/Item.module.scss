@@ -253,10 +253,7 @@
 // ─── Size Guide ───────────────────────────────────────────────────────────────
 
 .sizeGuide {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 10;
+  margin-top: $spacing-8;
   padding: $spacing-16;
   background: $color-white;
   border-radius: 8px;
@@ -268,6 +265,15 @@
   box-sizing: border-box;
 
   @include tablet {
+    width: 343px;
+  }
+
+  @include desktop {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 10;
+    margin-top: 0;
     width: 343px;
   }
 }
