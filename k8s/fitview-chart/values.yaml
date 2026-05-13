@@ -67,6 +67,7 @@ config:
   SMTP_PORT: "1025"
 
 secrets:
+  DATABASE_URL: ""
   PGPASSWORD: ""
   SECRET_KEY: ""
   STRIPE_SECRET_KEY: ""
