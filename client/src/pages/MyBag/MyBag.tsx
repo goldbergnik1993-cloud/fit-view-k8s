@@ -11,13 +11,11 @@ import type { Cart, CartItem } from '../../services/api';
 import CircleXIcon from '../../assets/icons/circle-x-error.svg';
 import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
 import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
-import OrderSuccessIllustration from '../../assets/illustrations/order-success.png';
 import MinusIcon from '../../assets/icons/minus.svg';
 import PlusIcon from '../../assets/icons/plus.svg';
 import ArrowRightIcon from '../../assets/icons/arrow-right-white.svg';
 import ArrowRightDarkIcon from '../../assets/icons/arrow-right.svg';
 import styles from './MyBag.module.scss';
-import { useAuth } from '../../hooks/useAuth';
 
 // ─── Breadcrumb (desktop only) ────────────────────────────────────────────────
 
@@ -656,27 +654,6 @@ const Step3 = ({
   </>
 );
 
-// ─── Step 4 — Success ─────────────────────────────────────────────────────────
-
-const Step4 = () => {
-  const { user } = useAuth();
-  return (
-    <div className={styles['step4']}>
-      <p className={styles['page-title']}>My Bag</p>
-      <EmptyState
-        title="Thanks for your order!"
-        subtitle="A confirmation email has been sent to your inbox"
-        buttonText="Track Order →"
-        buttonPath={user ? '/profile' : '/login'}
-        secondaryButtonText="Keep Shopping"
-        secondaryButtonPath="/catalog"
-        illustration={OrderSuccessIllustration}
-        showRecommendations={true}
-      />
-    </div>
-  );
-};
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 const INITIAL_FORM: FormState = {
@@ -694,7 +671,7 @@ const INITIAL_FORM: FormState = {
 
 const MyBag = () => {
   const { cart, loading, updateQuantity, removeItem } = useCart();
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -740,7 +717,7 @@ const MyBag = () => {
     <>
       <Header />
       <main className={styles.main}>
-        {isEmpty && step !== 4 ? (
+        {isEmpty ? (
           <div className={styles['empty-wrap']}>
             <p className={styles['page-title']}>My Bag</p>
             <EmptyState
@@ -773,9 +750,7 @@ const MyBag = () => {
             submitting={submitting}
             checkoutError={checkoutError}
           />
-        ) : (
-          <Step4 />
-        )}
+        ) : null}
       </main>
       <Footer />
     </>

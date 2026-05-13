@@ -11,6 +11,8 @@ import MyBag from './pages/MyBag/MyBag';
 import Login from './pages/Auth/Login';
 import Profile from './pages/Profile/Profile';
 import BrandEmpty from './pages/BrandEmpty/BrandEmpty';
+import PaymentSuccess from './pages/PaymentSuccess/PaymentSuccess';
+import PaymentCanceled from './pages/PaymentCanceled/PaymentCanceled';
 
 const App = () => (
   <AuthProvider>
@@ -27,6 +29,8 @@ const App = () => (
               <Route path="/my-bag" element={<MyBag />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/brand/:slug" element={<BrandEmpty />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/payment-canceled" element={<PaymentCanceled />} />
             </Routes>
           </BrowserRouter>
         </CartProvider>
