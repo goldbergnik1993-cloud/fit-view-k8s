@@ -265,6 +265,7 @@ export const Login = () => {
     setLoading(true);
     try {
       await authApi.verifyEmail({ email, code });
+      await login(email, password);
       setOtpError(false);
       setOtpSuccess(true);
       navigate('/profile');
