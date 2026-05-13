@@ -207,6 +207,7 @@
   display: flex;
   align-items: center;
   gap: $spacing-8;
+  position: relative;
 }
 
 .sizeBtn {
@@ -248,7 +249,10 @@
 // ─── Size Guide ───────────────────────────────────────────────────────────────
 
 .sizeGuide {
-  margin-top: $spacing-8;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
   padding: $spacing-16;
   background: $color-white;
   border-radius: 8px;
