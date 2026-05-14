@@ -1,18 +1,29 @@
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
 
+// ─── Внешний контейнер ────────────────────────────────────────────────────────
+
 .silhouette {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
   width: 100%;
   height: 276px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @include tablet { height: 446px; }
   @include desktop { height: 446px; }
 }
 
-// ─── Вертикальный слайдер (tablet + desktop) ──────────────────────────────────
+// ─── Единый блок: слайдер + силуэт + ruler ────────────────────────────────────
+
+.silhouette__viewer {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 100%;
+}
+
+// ─── Вертикальный слайдер ─────────────────────────────────────────────────────
 
 .silhouette__vslider {
   display: none;
@@ -22,15 +33,8 @@
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
-    width: 80px;
-  }
-
-  @include desktop {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-shrink: 0;
-    width: 80px;
+    width: 60px;
+    margin-right: 24px;
   }
 }
 
@@ -54,6 +58,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  width: 60px;
 }
 
 .silhouette__vslider_input {
@@ -102,24 +107,16 @@
 
 // ─── Силуэт ───────────────────────────────────────────────────────────────────
 
-.silhouette__center {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-}
-
 .silhouette__imageWrap {
   position: relative;
-  width: 100%;
+  flex-shrink: 0;
   height: 100%;
 }
 
 .silhouette__image {
   display: block;
-  margin: 0 auto;
   height: 100%;
   width: auto;
-  max-width: 100%;
   object-fit: contain;
 }
 
@@ -131,11 +128,12 @@
   transition: bottom 0.4s ease;
 }
 
-// ─── Ruler + item length ──────────────────────────────────────────────────────
+// ─── Ruler ────────────────────────────────────────────────────────────────────
 
-.silhouette__right {
+.silhouette__ruler_wrap {
   flex-shrink: 0;
-  width: 82px;
+  width: 90px;
+  margin-left: 32px;
   position: relative;
 }
 
