@@ -412,6 +412,8 @@ export const Login = () => {
                       formatted = `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
                     } else if (digits.length > 2) {
                       formatted = `${digits.slice(0, 2)}-${digits.slice(2)}`;
+                    } else {
+                      formatted = digits;
                     }
                     setBirthday(formatted);
                   }}
