@@ -70,7 +70,7 @@ class ItemsModel(Base):
         Enum(GenderEnum), index=True, default=GenderEnum.FEMALE
     )
     image_url: Mapped[str] = mapped_column(String(255), nullable=True)
-    fitting_image_url: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    fitting_image_url: Mapped[Optional[str]] = mapped_column(String(255))
     price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), default=Decimal("0.00"))
     description: Mapped[str] = mapped_column(Text, nullable=True)
     reference_point: Mapped[ItemRefPointEnum] = mapped_column(Enum(ItemRefPointEnum))
