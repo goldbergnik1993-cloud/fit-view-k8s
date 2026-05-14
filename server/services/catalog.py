@@ -434,7 +434,7 @@ async def fitting_room(
             shoulders_fit=shoulders_fit,
         ),
         user_body=UserBodySchema(**active_body),  # type: ignore
-        fitting_image_url=item_data.get("fitting_image_url")
+        fitting_image_url=item_data.get("fitting_image_url"),
     )
 
     background_tasks.add_task(
