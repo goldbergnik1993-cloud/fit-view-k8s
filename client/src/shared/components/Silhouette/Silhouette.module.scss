@@ -32,14 +32,7 @@
     flex-direction: row;
     align-items: stretch;
     flex-shrink: 0;
-    margin-right: 24px;
-  }
-
-  @include desktop {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    flex-shrink: 0;
+    height: 446px;
     margin-right: 24px;
   }
 }
