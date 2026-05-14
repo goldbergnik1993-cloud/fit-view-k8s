@@ -441,6 +441,7 @@
   flex-direction: row;
   align-items: flex-start;
   width: 100%;
+  position: relative;
 }
 
 .fitting__left {
@@ -449,15 +450,29 @@
   align-items: flex-start;
   flex-shrink: 0;
   width: 168px;
+  gap: $spacing-16;
+  position: relative;
+
+  @include tablet {
+    gap: $spacing-24;
+    padding-left: 94px;
+  }
+
+  @include desktop {
+    gap: $spacing-24;
+    padding-left: 94px;
+  }
 }
 
 .fitting__back {
   display: none;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   @include flex-center;
   @include hover-opacity;
-  margin-bottom: $spacing-16;
+  position: absolute;
+  left: var(--container-padding);
+  top: 0;
 
   @include desktop {
     display: flex;
