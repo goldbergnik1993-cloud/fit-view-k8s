@@ -18,8 +18,12 @@
   align-items: stretch;
   height: 276px;
 
-  @include tablet { height: 446px; }
-  @include desktop { height: 446px; }
+  @include tablet {
+    height: 446px;
+  }
+  @include desktop {
+    height: 446px;
+  }
 }
 
 // ─── Левая колонка: цифра + слайдер + Your Height ─────────────────────────────
@@ -61,7 +65,8 @@
 .silhouette__sliderTrack {
   position: relative;
   flex-shrink: 0;
-  height: 100%;
+  width: 20px;
+  align-self: stretch;
 }
 
 .silhouette__sliderInput {
@@ -73,8 +78,11 @@
   border-radius: 2px;
   cursor: pointer;
   outline: none;
-  transform: rotate(-90deg);
-  transform-origin: center center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: 50% 50%;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
