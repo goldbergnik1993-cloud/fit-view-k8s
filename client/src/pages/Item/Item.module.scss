@@ -582,6 +582,8 @@
     width: 448px;
     padding-left: $spacing-48;
     overflow: visible;
+    height: 446px;
+    flex-shrink: 0;
   }
 }
 
