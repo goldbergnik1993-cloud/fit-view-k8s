@@ -704,11 +704,25 @@
 .fitting__endsLabel {
   @include text(14px, 400);
   color: #4c494d;
+
+  @include tablet {
+    display: none;
+  }
+  @include desktop {
+    display: none;
+  }
 }
 
 .fitting__itemLengthLabel {
   @include text(14px, 400);
   color: #4c494d;
+
+  @include tablet {
+    display: none;
+  }
+  @include desktop {
+    display: none;
+  }
 }
 
 .fitting__footerRow {
