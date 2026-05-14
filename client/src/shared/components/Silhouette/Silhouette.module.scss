@@ -59,11 +59,9 @@
 }
 
 .silhouette__sliderTrack {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-  width: 20px;
+  position: relative;
+  flex-shrink: 0;
+  height: 100%;
 }
 
 .silhouette__sliderInput {

@@ -592,9 +592,8 @@ const Item = () => {
           item={item}
           selectedSizeLabel={selectedSizeLabel}
         />
-
-        <Footer />
       </main>
+      <Footer />
     </>
   );
 };
