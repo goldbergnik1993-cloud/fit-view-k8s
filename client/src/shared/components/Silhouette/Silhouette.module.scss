@@ -5,66 +5,63 @@
 
 .silhouette {
   width: 100%;
-  height: 276px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  @include tablet { height: 446px; }
-  @include desktop { height: 446px; }
 }
 
-// ─── Единый блок: слайдер + силуэт + ruler ────────────────────────────────────
+// ─── Viewer: слайдер + силуэт + ruler ────────────────────────────────────────
 
 .silhouette__viewer {
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  height: 100%;
+  height: 276px;
+
+  @include tablet { height: 446px; }
+  @include desktop { height: 446px; }
 }
 
-// ─── Вертикальный слайдер ─────────────────────────────────────────────────────
+// ─── Левая колонка: цифра + слайдер + Your Height ─────────────────────────────
 
-.silhouette__vslider {
+.silhouette__sliderCol {
   display: none;
 
   @include tablet {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     flex-shrink: 0;
-    width: 60px;
     margin-right: 24px;
   }
 }
 
-.silhouette__vslider_top {
+.silhouette__sliderTop {
   @include text(14px, 400);
   color: #4c494d;
-  margin-bottom: $spacing-8;
   white-space: nowrap;
 }
 
-.silhouette__vslider_bottom {
+.silhouette__sliderBottom {
   @include text(14px, 400);
   color: #4c494d;
-  margin-top: $spacing-8;
   white-space: nowrap;
 }
 
-.silhouette__vslider_track {
+.silhouette__sliderTrack {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  width: 60px;
+  width: 20px;
 }
 
-.silhouette__vslider_input {
+.silhouette__sliderInput {
   -webkit-appearance: none;
   appearance: none;
-  width: 380px;
+  width: 446px;
   height: 2px;
   background: #676767;
   border-radius: 2px;
@@ -81,6 +78,7 @@
     background: $color-white;
     border: 3px solid #676767;
     cursor: pointer;
+    margin-top: -9px;
   }
 
   &::-webkit-slider-runnable-track {
@@ -128,13 +126,16 @@
   transition: bottom 0.4s ease;
 }
 
-// ─── Ruler ────────────────────────────────────────────────────────────────────
+// ─── Правая колонка: ruler + метки ────────────────────────────────────────────
 
-.silhouette__ruler_wrap {
+.silhouette__rulerCol {
   flex-shrink: 0;
   width: 90px;
-  margin-left: 32px;
+  margin-left: 24px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .silhouette__ruler {
@@ -154,4 +155,33 @@
   white-space: nowrap;
   transform: translateY(50%);
   transition: bottom 0.4s ease;
+}
+
+.silhouette__itemLengthText {
+  @include text(14px, 400);
+  color: #4c494d;
+  white-space: nowrap;
+  padding-left: $spacing-8;
+  margin-bottom: 0;
+}
+
+// ─── Ends from floor ──────────────────────────────────────────────────────────
+
+.silhouette__endsLabel {
+  @include text(14px, 400);
+  color: #4c494d;
+  margin: 0;
+  display: none;
+
+  @include tablet {
+    display: block;
+    margin-top: $spacing-16;
+    text-align: center;
+  }
+
+  @include desktop {
+    display: block;
+    margin-top: $spacing-24;
+    text-align: center;
+  }
 }

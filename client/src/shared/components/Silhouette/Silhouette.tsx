@@ -17,6 +17,7 @@ const Silhouette = ({
   linePositionPct,
   itemLengthCm,
   heightCm,
+  label,
   gender = 'female',
   onHeightChange,
 }: SilhouetteProps) => {
@@ -37,24 +38,25 @@ const Silhouette = ({
   return (
     <div className={styles.silhouette}>
       <div className={styles.silhouette__viewer}>
-        {/* Вертикальный слайдер — tablet + desktop */}
-        <div className={styles.silhouette__vslider}>
-          <span className={styles.silhouette__vslider_top}>{heightCm} cm</span>
-          <div className={styles.silhouette__vslider_track}>
+
+        {/* Левая колонка: цифра + слайдер + Your Height */}
+        <div className={styles.silhouette__sliderCol}>
+          <span className={styles.silhouette__sliderTop}>{heightCm} cm</span>
+          <div className={styles.silhouette__sliderTrack}>
             <input
               type="range"
               min={140}
               max={210}
               value={heightCm}
               onChange={(e) => onHeightChange?.(Number(e.target.value))}
-              className={styles.silhouette__vslider_input}
+              className={styles.silhouette__sliderInput}
               aria-label="Your height"
             />
           </div>
-          <span className={styles.silhouette__vslider_bottom}>Your Height</span>
+          <span className={styles.silhouette__sliderBottom}>Your Height</span>
         </div>
 
-        {/* Силуэт */}
+        {/* Центр: силуэт */}
         <div className={styles.silhouette__imageWrap}>
           <img
             ref={imgRef}
@@ -72,8 +74,8 @@ const Silhouette = ({
           />
         </div>
 
-        {/* Ruler + item length */}
-        <div className={styles.silhouette__ruler_wrap}>
+        {/* Правая колонка: ruler + item length label */}
+        <div className={styles.silhouette__rulerCol}>
           <div className={styles.silhouette__ruler} aria-hidden="true" />
           <span
             className={styles.silhouette__itemLengthLabel}
@@ -81,8 +83,13 @@ const Silhouette = ({
           >
             {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
           </span>
+          <span className={styles.silhouette__itemLengthText}>Item length</span>
         </div>
+
       </div>
+
+      {/* Ends from floor — под силуэтом */}
+      <p className={styles.silhouette__endsLabel}>{label}</p>
     </div>
   );
 };
