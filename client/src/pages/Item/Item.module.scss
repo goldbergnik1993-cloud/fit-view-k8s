@@ -14,7 +14,7 @@
   }
 
   @include desktop {
-    padding: $spacing-24 var(--container-padding) 100px; ;
+    padding: $spacing-24 var(--container-padding) 100px;
     display: block;
   }
 }
@@ -616,7 +616,7 @@
   margin-top: $spacing-16;
 
   > button {
-    width: 448px;
+    width: 100%;
     height: 44px;
   }
 }
@@ -774,6 +774,8 @@
 
   @include tablet {
     font-size: 32px;
+    width: 590px;
+    align-self: center;
   }
 
   @include desktop {
@@ -786,6 +788,11 @@
   color: $color-input-border;
   margin: $spacing-8 0 0;
 
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
+
   @include desktop {
     display: none;
   }
@@ -796,6 +803,11 @@
   position: relative;
   overflow: visible;
 
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
+
   @include desktop {
     display: none;
   }
@@ -803,6 +815,11 @@
 
 .fitting__section--sm {
   margin-top: $spacing-16;
+
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
 
   @include desktop {
     display: none;
