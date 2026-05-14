@@ -220,13 +220,21 @@ export const Login = () => {
 
     setLoading(true);
     try {
+      const formatBirthday = (val: string) => {
+        const parts = val.split('-');
+        if (parts.length === 3 && parts[2].length === 4) {
+          return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        return val;
+      };
+
       await signup(
         email,
         password,
         firstName,
         lastName,
         phone,
-        birthday || undefined
+        birthday ? formatBirthday(birthday) : undefined
       );
       setStep(3);
     } catch (err: unknown) {
@@ -394,16 +402,16 @@ export const Login = () => {
                 />
                 <TextInput
                   label="Birthday"
-                  placeholder="YYYY-MM-DD"
+                  placeholder="DD-MM-YYYY"
                   onChange={(e) => {
                     const digits = e.target.value
                       .replace(/\D/g, '')
                       .slice(0, 8);
                     let formatted = digits;
-                    if (digits.length > 6) {
-                      formatted = `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
-                    } else if (digits.length > 4) {
-                      formatted = `${digits.slice(0, 4)}-${digits.slice(4)}`;
+                    if (digits.length > 4) {
+                      formatted = `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4)}`;
+                    } else if (digits.length > 2) {
+                      formatted = `${digits.slice(0, 2)}-${digits.slice(2)}`;
                     }
                     setBirthday(formatted);
                   }}
