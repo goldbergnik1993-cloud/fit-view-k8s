@@ -71,6 +71,13 @@ export function useAuthProvider(): AuthState {
     phone: string,
     birthDate?: string
   ) => {
+    console.log('signup payload:', {
+      email,
+      firstName,
+      lastName,
+      phone,
+      birth_date: birthDate,
+    });
     await authApi.signup({
       email,
       password,
