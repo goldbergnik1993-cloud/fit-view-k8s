@@ -36,25 +36,25 @@ const Silhouette = ({
 
   return (
     <div className={styles.silhouette}>
-      {/* Вертикальный слайдер — tablet + desktop */}
-      <div className={styles.silhouette__vslider}>
-        <span className={styles.silhouette__vslider_top}>{heightCm} cm</span>
-        <div className={styles.silhouette__vslider_track}>
-          <input
-            type="range"
-            min={140}
-            max={210}
-            value={heightCm}
-            onChange={(e) => onHeightChange?.(Number(e.target.value))}
-            className={styles.silhouette__vslider_input}
-            aria-label="Your height"
-          />
+      <div className={styles.silhouette__viewer}>
+        {/* Вертикальный слайдер — tablet + desktop */}
+        <div className={styles.silhouette__vslider}>
+          <span className={styles.silhouette__vslider_top}>{heightCm} cm</span>
+          <div className={styles.silhouette__vslider_track}>
+            <input
+              type="range"
+              min={140}
+              max={210}
+              value={heightCm}
+              onChange={(e) => onHeightChange?.(Number(e.target.value))}
+              className={styles.silhouette__vslider_input}
+              aria-label="Your height"
+            />
+          </div>
+          <span className={styles.silhouette__vslider_bottom}>Your Height</span>
         </div>
-        <span className={styles.silhouette__vslider_bottom}>Your Height</span>
-      </div>
 
-      {/* Силуэт */}
-      <div className={styles.silhouette__center}>
+        {/* Силуэт */}
         <div className={styles.silhouette__imageWrap}>
           <img
             ref={imgRef}
@@ -71,17 +71,17 @@ const Silhouette = ({
             aria-hidden="true"
           />
         </div>
-      </div>
 
-      {/* Ruler + item length */}
-      <div className={styles.silhouette__right}>
-        <div className={styles.silhouette__ruler} aria-hidden="true" />
-        <span
-          className={styles.silhouette__itemLengthLabel}
-          style={{ bottom: `${linePositionPct}%` }}
-        >
-          {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
-        </span>
+        {/* Ruler + item length */}
+        <div className={styles.silhouette__ruler_wrap}>
+          <div className={styles.silhouette__ruler} aria-hidden="true" />
+          <span
+            className={styles.silhouette__itemLengthLabel}
+            style={{ bottom: `${linePositionPct}%` }}
+          >
+            {itemLengthCm != null ? `${itemLengthCm} cm` : '— cm'}
+          </span>
+        </div>
       </div>
     </div>
   );
