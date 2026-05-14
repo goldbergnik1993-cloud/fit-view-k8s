@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef} from 'react';
 import styles from './Silhouette.module.scss';
 import womanSvg from '../../../assets/images/silhouette-woman.svg';
 import manSvg from '../../../assets/images/silhouette-man.svg';
@@ -23,17 +23,6 @@ const Silhouette = ({
 }: SilhouetteProps) => {
   const src = gender === 'male' ? manSvg : womanSvg;
   const imgRef = useRef<HTMLImageElement>(null);
-  const [imgWidth, setImgWidth] = useState<number | null>(null);
-
-  useEffect(() => {
-    const img = imgRef.current;
-    if (!img) return;
-    const update = () => setImgWidth(img.offsetWidth);
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(img);
-    return () => ro.disconnect();
-  }, []);
 
   return (
     <div className={styles.silhouette}>
@@ -69,7 +58,6 @@ const Silhouette = ({
             className={styles.silhouette__line}
             style={{
               bottom: `${linePositionPct}%`,
-              width: imgWidth ? `${imgWidth}px` : '100%',
             }}
             aria-hidden="true"
           />
