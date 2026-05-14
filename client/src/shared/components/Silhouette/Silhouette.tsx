@@ -38,10 +38,12 @@ const Silhouette = ({
   return (
     <div className={styles.silhouette}>
       <div className={styles.silhouette__viewer}>
-
         {/* Левая колонка: цифра + слайдер + Your Height */}
         <div className={styles.silhouette__sliderCol}>
-          <span className={styles.silhouette__sliderTop}>{heightCm} cm</span>
+          <div className={styles.silhouette__sliderLabels}>
+            <span className={styles.silhouette__sliderTop}>{heightCm} cm</span>
+            <span className={styles.silhouette__sliderBottom}>Your Height</span>
+          </div>
           <div className={styles.silhouette__sliderTrack}>
             <input
               type="range"
@@ -53,7 +55,6 @@ const Silhouette = ({
               aria-label="Your height"
             />
           </div>
-          <span className={styles.silhouette__sliderBottom}>Your Height</span>
         </div>
 
         {/* Центр: силуэт */}
@@ -85,7 +86,6 @@ const Silhouette = ({
           </span>
           <span className={styles.silhouette__itemLengthText}>Item length</span>
         </div>
-
       </div>
 
       {/* Ends from floor — под силуэтом */}
