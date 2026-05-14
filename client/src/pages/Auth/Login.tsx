@@ -394,15 +394,15 @@ export const Login = () => {
                 />
                 <TextInput
                   label="Birthday"
-                  placeholder="DD-MM-YYYY"
+                  placeholder="YYYY-MM-DD"
                   value={birthday}
                   onChange={(e) => {
                     const digits = e.target.value.replace(/\D/g, '');
                     let formatted = digits;
-                    if (digits.length >= 3 && digits.length <= 4) {
-                      formatted = `${digits.slice(0, 2)}-${digits.slice(2)}`;
-                    } else if (digits.length >= 5) {
-                      formatted = `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4, 8)}`;
+                    if (digits.length >= 5) {
+                      formatted = `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`;
+                    } else if (digits.length >= 3) {
+                      formatted = `${digits.slice(0, 4)}-${digits.slice(4)}`;
                     }
                     setBirthday(formatted);
                   }}
