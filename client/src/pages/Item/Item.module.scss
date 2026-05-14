@@ -451,17 +451,11 @@
   flex-shrink: 0;
   width: 168px;
   gap: $spacing-16;
-  position: relative;
 
   @include tablet {
     gap: $spacing-24;
-    padding-left: 94px;
   }
 
-  @include desktop {
-    gap: $spacing-24;
-    padding-left: 94px;
-  }
 }
 
 .fitting__back {
@@ -473,7 +467,9 @@
     height: 24px;
     @include flex-center;
     @include hover-opacity;
-    margin-bottom: $spacing-16;
+    position: absolute;
+    left: var(--container-padding);
+    top: 0;
   }
 }
 
@@ -611,8 +607,8 @@
   margin-top: $spacing-16;
 
   > button {
-    width: 100%;
-    height: 48px;
+    width: 448px;
+    height: 44px;
   }
 }
 
@@ -815,7 +811,8 @@
     height: 44px;
 
     @include tablet {
-      height: 48px;
+      width: 590px;
+      height: 55px;
     }
   }
 
