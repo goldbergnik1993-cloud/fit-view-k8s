@@ -172,11 +172,20 @@
 }
 
 .silhouette__itemLengthText {
+  display: none;
   @include text(14px, 400);
   color: #4c494d;
   white-space: nowrap;
   padding-left: $spacing-8;
   margin-bottom: 0;
+
+  @include tablet {
+    display: block;
+  }
+
+  @include desktop {
+    display: block;
+  }
 }
 
 // ─── Ends from floor ──────────────────────────────────────────────────────────
