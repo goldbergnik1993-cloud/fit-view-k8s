@@ -460,7 +460,11 @@
   }
 
   @include desktop {
-    gap: 94px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: auto;
+    gap: 0;
   }
 }
 
@@ -473,9 +477,8 @@
     height: 24px;
     @include flex-center;
     @include hover-opacity;
-    position: absolute;
-    left: var(--container-padding);
-    top: 0;
+    margin-right: 94px;
+    align-self: center;
   }
 }
 
@@ -621,6 +624,10 @@
 .genderToggle {
   display: flex;
   gap: $spacing-8;
+
+  @include desktop {
+    flex-basis: auto;
+  }
 }
 
 .genderBtn {
@@ -649,6 +656,12 @@
   @include hover-opacity;
   color: $color-text;
   white-space: nowrap;
+
+  @include desktop {
+    flex-basis: 100%;
+    margin-top: $spacing-24;
+    padding-left: calc(24px + 94px);
+  }
 }
 
 .fitting__slider-wrap {
