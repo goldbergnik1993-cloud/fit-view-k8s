@@ -476,6 +476,8 @@
 
   @include desktop {
     display: flex;
+    position: static;
+    margin-bottom: $spacing-16;
   }
 }
 
