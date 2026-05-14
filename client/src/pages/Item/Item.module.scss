@@ -8,11 +8,11 @@
   padding: $spacing-16 var(--container-padding) 80px;
 
   @include tablet {
-    padding: $spacing-16 var(--container-padding) $spacing-48;
+    padding: $spacing-16 var(--container-padding) 100px;
   }
 
   @include desktop {
-    padding: $spacing-24 var(--container-padding) $spacing-24;
+    padding: $spacing-24 var(--container-padding) 100px;
   }
 }
 
@@ -466,17 +466,13 @@
 
 .fitting__back {
   display: none;
-  width: 24px;
-  height: 24px;
-  @include flex-center;
-  @include hover-opacity;
-  position: absolute;
-  left: var(--container-padding);
-  top: 0;
 
   @include desktop {
     display: flex;
-    position: static;
+    width: 24px;
+    height: 24px;
+    @include flex-center;
+    @include hover-opacity;
     margin-bottom: $spacing-16;
   }
 }
@@ -588,17 +584,19 @@
   font-size: 32px;
   font-weight: 700;
   color: $color-text;
-  margin: 0 0 4px;
+  margin: 0;
 }
 
 .fitting__right-brand {
   @include text(14px, 400);
   color: $color-input-border;
-  margin: 0 0 $spacing-16;
+  margin: $spacing-8 0 0;
 }
 
 .fitting__right-sizes {
-  margin-top: $spacing-16;
+  margin-top: $spacing-32;
+  position: relative;
+  overflow: visible;
 }
 
 .fitting__right-colors {
@@ -606,7 +604,7 @@
 }
 
 .fitting__right-price {
-  margin-top: 84px;
+  margin-top: $spacing-88;
 }
 
 .fitting__right-actions {
@@ -759,6 +757,10 @@
   color: $color-text;
   margin: $spacing-32 0 0;
 
+  @include tablet {
+    font-size: 32px;
+  }
+
   @include desktop {
     display: none;
   }
@@ -767,7 +769,7 @@
 .fitting__brand {
   @include text(14px, 400);
   color: $color-input-border;
-  margin: 4px 0 0;
+  margin: $spacing-8 0 0;
 
   @include desktop {
     display: none;
@@ -776,6 +778,8 @@
 
 .fitting__section {
   margin-top: $spacing-24;
+  position: relative;
+  overflow: visible;
 
   @include desktop {
     display: none;
@@ -792,7 +796,11 @@
 
 .fitting__priceRow {
   @include flex-between;
-  margin-top: $spacing-32;
+  margin-top: $spacing-24;
+
+  @include tablet {
+    margin-top: $spacing-32;
+  }
 
   @include desktop {
     display: none;
