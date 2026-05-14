@@ -9,10 +9,13 @@
 
   @include tablet {
     padding: $spacing-16 var(--container-padding) 100px;
+    display: flex;
+    flex-direction: column;
   }
 
   @include desktop {
-    padding: $spacing-24 var(--container-padding) 100px;
+    padding: $spacing-24 var(--container-padding) 100px; ;
+    display: block;
   }
 }
 
@@ -456,6 +459,9 @@
     gap: $spacing-24;
   }
 
+  @include desktop {
+    gap: 94px;
+  }
 }
 
 .fitting__back {
@@ -796,6 +802,10 @@
 
   @include tablet {
     margin-top: $spacing-32;
+    width: 590px;
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   @include desktop {
@@ -805,6 +815,9 @@
 
 .fitting__actions {
   margin-top: $spacing-16;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
   > button {
     width: 100%;
@@ -813,6 +826,7 @@
     @include tablet {
       width: 590px;
       height: 55px;
+      align-self: center;
     }
   }
 
