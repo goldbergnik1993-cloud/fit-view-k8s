@@ -8,7 +8,7 @@
   padding: $spacing-16 var(--container-padding) 80px;
 
   @include tablet {
-    padding: $spacing-16 var(--container-padding) 111px;
+    padding: $spacing-16 var(--container-padding) $spacing-48;
   }
 
   @include desktop {
