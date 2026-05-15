@@ -123,6 +123,9 @@
   position: relative;
   flex-shrink: 0;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .silhouette__image {
@@ -153,6 +156,7 @@
   transition: bottom 0.4s ease;
   left: 8px;
   right: 0;
+  z-index: 3;
 
   @include tablet {
     width: 153px;
