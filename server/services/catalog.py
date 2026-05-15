@@ -252,6 +252,7 @@ async def fitting_room(
             "gender": item_db.gender.value,
             "reference_point": item_db.reference_point.value,
             "ref_coefficient": item_db.ref_coefficient,
+            "fitting_image_url": item_db.fitting_image_url,
             "size_charts": [
                 {
                     "size_label": size.size_label,
@@ -433,6 +434,7 @@ async def fitting_room(
             shoulders_fit=shoulders_fit,
         ),
         user_body=UserBodySchema(**active_body),  # type: ignore
+        fitting_image_url=item_data.get("fitting_image_url"),
     )
 
     background_tasks.add_task(
@@ -507,6 +509,7 @@ async def item_create(payload: ItemCreateSchema, db: AsyncSession) -> ItemsModel
             category=payload.category,
             gender=payload.gender,
             image_url=str(payload.image_url),
+            fitting_image_url=str(payload.fitting_image_url),
             price=payload.price,
             description=payload.description,
             reference_point=payload.reference_point,
@@ -609,7 +612,7 @@ async def item_update(
                 new_meas = ItemMeasurementsModel(item_id=item_db.id, **meas_data)
                 db.add(new_meas)
     for field, value in update_data.items():
-        if field == "image_url" and value is not None:
+        if field in ("image_url", "fitting_image_url") and value is not None:
             value = str(value)
         setattr(item_db, field, value)
 
