@@ -504,6 +504,7 @@ const Item = () => {
                 loading={fitLoading}
                 onHeightChange={setHeight}
                 hasFittingImage={!!fitResult?.fitting_image_url}
+                fittingImageUrl={fitResult?.fitting_image_url}
               />
               {fitResult?.fitting_image_url && (
                 <img

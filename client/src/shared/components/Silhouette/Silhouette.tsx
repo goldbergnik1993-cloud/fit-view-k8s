@@ -12,6 +12,7 @@ interface SilhouetteProps {
   loading?: boolean;
   onHeightChange?: (height: number) => void;
   hasFittingImage?: boolean;
+  fittingImageUrl?: string | null;
 }
 
 const Silhouette = ({
@@ -22,6 +23,7 @@ const Silhouette = ({
   gender = 'female',
   onHeightChange,
   hasFittingImage = false,
+  fittingImageUrl,
 }: SilhouetteProps) => {
   const src = gender === 'male' ? manSvg : womanSvg;
   const imgRef = useRef<HTMLImageElement>(null);
@@ -56,11 +58,16 @@ const Silhouette = ({
             alt={gender === 'male' ? 'Male silhouette' : 'Female silhouette'}
             className={`${styles.silhouette__image} ${hasFittingImage ? styles['silhouette__image--hidden'] : ''}`}
           />
+          {fittingImageUrl && (
+            <img
+              src={fittingImageUrl}
+              alt="Fitting"
+              className={styles.silhouette__fittingImg}
+            />
+          )}
           <div
             className={styles.silhouette__line}
-            style={{
-              bottom: `${linePositionPct}%`,
-            }}
+            style={{ bottom: `${linePositionPct}%` }}
             aria-hidden="true"
           />
         </div>

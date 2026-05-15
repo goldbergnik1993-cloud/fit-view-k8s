@@ -136,6 +136,15 @@
   opacity: 0;
 }
 
+.silhouette__fittingImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+}
+
 .silhouette__line {
   position: absolute;
   width: 85px;
