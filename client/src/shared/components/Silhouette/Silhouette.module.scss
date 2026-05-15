@@ -139,11 +139,15 @@
 
 .silhouette__fittingImg {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  top: 0;
+  left: 0;
+  display: block;
   height: 100%;
+  width: auto;
   object-fit: contain;
   z-index: 2;
+  margin: 0 auto;
+  right: 0;
 }
 
 .silhouette__line {
