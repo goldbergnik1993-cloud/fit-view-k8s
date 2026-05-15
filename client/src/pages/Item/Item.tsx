@@ -466,17 +466,22 @@ const Item = () => {
               <img src={ChevronLeftIcon} alt="" width={16} height={16} />
             </button>
             <div className={styles.genderToggle}>
-              {GENDER_TOGGLE.map(({ value, label }) => (
-                <button
-                  key={value}
-                  className={`${styles.genderBtn} ${
-                    gender === value ? styles['genderBtn--active'] : ''
-                  }`}
-                  onClick={() => setGender(value)}
-                >
-                  {label}
-                </button>
-              ))}
+              {GENDER_TOGGLE.map(({ value, label }) => {
+                const isDisabled =
+                  item?.gender !== 'unisex' && item?.gender !== value;
+                return (
+                  <button
+                    key={value}
+                    className={`${styles.genderBtn} ${
+                      gender === value ? styles['genderBtn--active'] : ''
+                    } ${isDisabled ? styles['genderBtn--disabled'] : ''}`}
+                    onClick={() => !isDisabled && setGender(value)}
+                    disabled={isDisabled}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
             <button
               className={styles.editBtn}
@@ -498,6 +503,7 @@ const Item = () => {
                 gender={gender}
                 loading={fitLoading}
                 onHeightChange={setHeight}
+                hasFittingImage={!!fitResult?.fitting_image_url}
               />
               {fitResult?.fitting_image_url && (
                 <img

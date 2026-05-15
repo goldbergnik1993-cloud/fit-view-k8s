@@ -1,4 +1,4 @@
-import { useRef} from 'react';
+import { useRef } from 'react';
 import styles from './Silhouette.module.scss';
 import womanSvg from '../../../assets/images/silhouette-woman.svg';
 import manSvg from '../../../assets/images/silhouette-man.svg';
@@ -11,6 +11,7 @@ interface SilhouetteProps {
   gender?: 'male' | 'female';
   loading?: boolean;
   onHeightChange?: (height: number) => void;
+  hasFittingImage?: boolean;
 }
 
 const Silhouette = ({
@@ -20,6 +21,7 @@ const Silhouette = ({
   label,
   gender = 'female',
   onHeightChange,
+  hasFittingImage = false,
 }: SilhouetteProps) => {
   const src = gender === 'male' ? manSvg : womanSvg;
   const imgRef = useRef<HTMLImageElement>(null);
@@ -52,7 +54,7 @@ const Silhouette = ({
             ref={imgRef}
             src={src}
             alt={gender === 'male' ? 'Male silhouette' : 'Female silhouette'}
-            className={styles.silhouette__image}
+            className={`${styles.silhouette__image} ${hasFittingImage ? styles['silhouette__image--hidden'] : ''}`}
           />
           <div
             className={styles.silhouette__line}
