@@ -552,6 +552,8 @@
   height: 276px;
   position: relative;
   width: 100%;
+  display: flex;
+  justify-content: center;
 
   @include tablet {
     height: 446px;
@@ -648,6 +650,11 @@
   &--active {
     color: $color-text;
     border-color: $color-text;
+  }
+
+  &--disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 }
 

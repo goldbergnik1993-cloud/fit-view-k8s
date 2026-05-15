@@ -132,6 +132,10 @@
   object-fit: contain;
 }
 
+.silhouette__image--hidden {
+  opacity: 0;
+}
+
 .silhouette__line {
   position: absolute;
   width: 85px;
