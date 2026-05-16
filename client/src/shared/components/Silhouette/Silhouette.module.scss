@@ -119,7 +119,6 @@
 .silhouette__imageWrap {
   flex: 1;
   min-width: 0;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,9 +127,8 @@
 
 // оба изображения в одной grid-ячейке — автоматически одинаковый размер
 .silhouette__stack {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
+  display: inline-grid;
+  position: relative;
   height: 276px;
 
   @include tablet { height: 446px; }
@@ -159,7 +157,6 @@
   object-position: center;
 }
 
-// линия позиционируется относительно imageWrap
 .silhouette__line {
   position: absolute;
   height: 1px;
