@@ -171,7 +171,7 @@
 
 .silhouette__rulerCol {
   flex-shrink: 0;
-  width: 0;
+  width: 1px;
   margin-left: $spacing-8;
   position: relative;
   display: flex;
@@ -182,7 +182,11 @@
   @include tablet {
     width: 90px;
     margin-left: 24px;
-    overflow: visible;
+  }
+
+  @include desktop {
+    width: 90px;
+    margin-left: 24px;
   }
 }
 
