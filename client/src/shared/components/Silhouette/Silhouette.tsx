@@ -61,12 +61,12 @@ const Silhouette = ({
                 className={styles.silhouette__fittingImg}
               />
             )}
+            <div
+              className={styles.silhouette__line}
+              style={{ bottom: `${linePositionPct}%` }}
+              aria-hidden="true"
+            />
           </div>
-          <div
-            className={styles.silhouette__line}
-            style={{ bottom: `${linePositionPct}%` }}
-            aria-hidden="true"
-          />
         </div>
 
         <div className={styles.silhouette__rulerCol}>
