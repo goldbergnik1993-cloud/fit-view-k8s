@@ -4,6 +4,7 @@
 .silhouette {
   display: flex;
   flex-direction: column;
+  overflow: visible;
 }
 
 .silhouette__viewer {
@@ -11,6 +12,7 @@
   flex-direction: row;
   align-items: stretch;
   height: 276px;
+  overflow: visible;
 
   @include tablet { height: 446px; }
   @include desktop { height: 446px; }
@@ -58,6 +60,7 @@
   flex-shrink: 0;
   width: 20px;
   align-self: stretch;
+  overflow: visible;
 }
 
 .silhouette__sliderInput {
