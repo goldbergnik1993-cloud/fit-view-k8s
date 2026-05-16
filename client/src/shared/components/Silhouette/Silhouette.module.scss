@@ -4,10 +4,8 @@
 // ─── Внешний контейнер ────────────────────────────────────────────────────────
 
 .silhouette {
-  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
 }
 
 // ─── Viewer: слайдер + силуэт + ruler ────────────────────────────────────────
@@ -17,21 +15,27 @@
   flex-direction: row;
   align-items: stretch;
   height: 276px;
+  flex: 1;
 
-  @include tablet {
-    height: 446px;
-  }
-  @include desktop {
-    height: 446px;
-  }
+  @include tablet { height: 446px; }
+  @include desktop { height: 446px; }
 }
 
-// ─── Левая колонка: цифра + слайдер + Your Height ─────────────────────────────
+// ─── Левая колонка: цифра + слайдер + Your Height ────────────────────────────
 
 .silhouette__sliderCol {
   display: none;
 
   @include tablet {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-shrink: 0;
+    height: 446px;
+    margin-right: 24px;
+  }
+
+  @include desktop {
     display: flex;
     flex-direction: row;
     align-items: stretch;
@@ -121,15 +125,18 @@
 
 .silhouette__imageWrap {
   position: relative;
-  flex: 0 0 auto;
+  flex: 1;
+  min-width: 0;
   height: 100%;
+  overflow: visible;
 }
 
 .silhouette__image {
   display: block;
   height: 100%;
-  width: auto;
+  width: 100%;
   object-fit: contain;
+  object-position: center;
 }
 
 .silhouette__image--hidden {
@@ -138,30 +145,33 @@
 
 .silhouette__fittingImg {
   position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  width: auto;
   object-fit: contain;
+  object-position: center;
   z-index: 2;
-  margin: 0 auto;
-  right: 0;
 }
 
 .silhouette__line {
   position: absolute;
-  width: 85px;
   height: 1px;
   background: #a8a8b2;
   transition: bottom 0.4s ease;
-  left: 8px;
+  left: 0;
   right: 0;
   z-index: 3;
 
   @include tablet {
-    width: 153px;
     left: 9px;
+    right: auto;
+    width: 153px;
+  }
+
+  @include desktop {
+    left: 9px;
+    right: auto;
+    width: 153px;
   }
 }
 
@@ -180,13 +190,11 @@
   @include tablet {
     width: 90px;
     margin-left: 24px;
-    overflow: visible;
   }
 
   @include desktop {
     width: 90px;
     margin-left: 24px;
-    overflow: visible;
   }
 }
 
