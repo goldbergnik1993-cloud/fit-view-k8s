@@ -333,3 +333,24 @@
     padding: $spacing-16;
   }
 }
+
+.profile__logout-btn {
+  width: 100%;
+  margin-top: $spacing-16;
+  padding: $spacing-16;
+  border-radius: 4px;
+  @include text(16px, 400);
+  color: $color-error;
+  text-align: left;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-toggle-bg;
+  }
+}
+
+.profile__tab--logout {
+  color: $color-error;
+  border-color: $color-error;
+  flex-shrink: 0;
+}

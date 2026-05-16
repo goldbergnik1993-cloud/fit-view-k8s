@@ -13,6 +13,8 @@ import {
 } from '../../shared/components/MeasurementFields/MeasurementFields';
 import { useState } from 'react';
 import { useUserProfile } from '../../hooks/useUserProfile';
+import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import type { ProfileResponse } from '../../services/api';
 import styles from './Profile.module.scss';
 
@@ -172,6 +174,13 @@ const getTabContent = (
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabId>('personal');
   const { profile, loading } = useUserProfile();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className={styles['profile-page']}>
@@ -199,6 +208,12 @@ const Profile = () => {
               {item.label}
             </button>
           ))}
+          <button
+            className={`${styles['profile__tab']} ${styles['profile__tab--logout']}`}
+            onClick={handleLogout}
+          >
+            Log Out
+          </button>
         </div>
 
         <div className={styles['profile__layout']}>
@@ -219,6 +234,12 @@ const Profile = () => {
                   </button>
                 ))}
               </nav>
+              <button
+                className={styles['profile__logout-btn']}
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
             </div>
           </aside>
 
