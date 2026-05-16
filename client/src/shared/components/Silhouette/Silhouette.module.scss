@@ -136,17 +136,13 @@
 .silhouette__imageInner {
   position: relative;
   height: 100%;
-  width: auto;
-  display: flex;
-  align-items: center;
+  flex-shrink: 0;
 }
 
 .silhouette__image {
   display: block;
   height: 100%;
   width: auto;
-  object-fit: contain;
-  object-position: center;
 }
 
 .silhouette__image--hidden {
