@@ -12,8 +12,12 @@
   align-items: stretch;
   height: 276px;
 
-  @include tablet { height: 446px; }
-  @include desktop { height: 446px; }
+  @include tablet {
+    height: 446px;
+  }
+  @include desktop {
+    height: 446px;
+  }
 }
 
 .silhouette__sliderCol {
@@ -129,10 +133,18 @@
 .silhouette__stack {
   display: inline-grid;
   position: relative;
+  width: 85px;
   height: 276px;
 
-  @include tablet { height: 446px; }
-  @include desktop { height: 446px; }
+  @include tablet {
+    width: 153px;
+    height: 446px;
+  }
+
+  @include desktop {
+    width: 153px;
+    height: 446px;
+  }
 }
 
 .silhouette__image {
@@ -171,7 +183,7 @@
 
 .silhouette__rulerCol {
   flex-shrink: 0;
-  width: 0;
+  width: 85px;
   margin-left: $spacing-8;
   position: relative;
   display: flex;
@@ -180,16 +192,15 @@
   overflow: visible;
 
   @include tablet {
-    width: 90px;
+    width: 153px;
     margin-left: 24px;
   }
 
   @include desktop {
-    width: 90px;
+    width: 153px;
     margin-left: 24px;
   }
 }
-
 .silhouette__ruler {
   position: absolute;
   left: 0;
@@ -217,8 +228,12 @@
   padding-left: $spacing-8;
   margin-bottom: 0;
 
-  @include tablet { display: block; }
-  @include desktop { display: block; }
+  @include tablet {
+    display: block;
+  }
+  @include desktop {
+    display: block;
+  }
 }
 
 .silhouette__endsLabel {
