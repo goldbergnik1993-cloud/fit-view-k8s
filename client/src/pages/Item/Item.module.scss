@@ -536,16 +536,6 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
-
-  @include tablet {
-    flex: 0 0 auto;
-    width: calc(100% - 168px - 80px);
-  }
-
-  @include desktop {
-    flex: 1;
-    min-width: 0;
-  }
 }
 
 .fitting__silhouette {
