@@ -52,24 +52,26 @@ const Silhouette = ({
 
         {/* Центр: силуэт */}
         <div className={styles.silhouette__imageWrap}>
-          <img
-            ref={imgRef}
-            src={src}
-            alt={gender === 'male' ? 'Male silhouette' : 'Female silhouette'}
-            className={`${styles.silhouette__image} ${hasFittingImage ? styles['silhouette__image--hidden'] : ''}`}
-          />
-          {fittingImageUrl && (
+          <div className={styles.silhouette__imageInner}>
             <img
-              src={fittingImageUrl}
-              alt="Fitting"
-              className={styles.silhouette__fittingImg}
+              ref={imgRef}
+              src={src}
+              alt={gender === 'male' ? 'Male silhouette' : 'Female silhouette'}
+              className={`${styles.silhouette__image} ${hasFittingImage ? styles['silhouette__image--hidden'] : ''}`}
             />
-          )}
-          <div
-            className={styles.silhouette__line}
-            style={{ bottom: `${linePositionPct}%` }}
-            aria-hidden="true"
-          />
+            {fittingImageUrl && (
+              <img
+                src={fittingImageUrl}
+                alt="Fitting"
+                className={styles.silhouette__fittingImg}
+              />
+            )}
+            <div
+              className={styles.silhouette__line}
+              style={{ bottom: `${linePositionPct}%` }}
+              aria-hidden="true"
+            />
+          </div>
         </div>
 
         {/* Правая колонка: ruler + item length label */}
