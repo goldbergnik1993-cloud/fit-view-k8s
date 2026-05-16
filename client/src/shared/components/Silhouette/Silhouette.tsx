@@ -27,7 +27,10 @@ const Silhouette = ({
 }: SilhouetteProps) => {
   const src = gender === 'male' ? manSvg : womanSvg;
   const imgRef = useRef<HTMLImageElement>(null);
-  const [imgBounds, setImgBounds] = useState<{ width: number; height: number } | null>(null);
+  const [imgBounds, setImgBounds] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
 
   const handleImgLoad = () => {
     const el = imgRef.current;
@@ -60,7 +63,7 @@ const Silhouette = ({
         <div className={styles.silhouette__imageWrap}>
           <div
             className={styles.silhouette__imageInner}
-            style={imgBounds ? { width: imgBounds.width, height: imgBounds.height } : undefined}
+            style={imgBounds ? { width: imgBounds.width } : undefined}
           >
             <img
               ref={imgRef}
