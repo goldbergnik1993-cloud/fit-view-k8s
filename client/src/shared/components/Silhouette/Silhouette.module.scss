@@ -159,12 +159,13 @@
 
 .silhouette__fittingImg {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   height: 100%;
+  width: auto;
   max-width: none;
-  object-fit: contain;
-  object-position: center;
   z-index: 2;
 }
 
