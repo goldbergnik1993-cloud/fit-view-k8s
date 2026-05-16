@@ -4,6 +4,7 @@
 // ─── Внешний контейнер ────────────────────────────────────────────────────────
 
 .silhouette {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -16,7 +17,6 @@
   flex-direction: row;
   align-items: stretch;
   height: 276px;
-  width: 100%;
 
   @include tablet {
     height: 446px;
@@ -170,7 +170,7 @@
 
 .silhouette__rulerCol {
   flex-shrink: 0;
-  width: 1px;
+  width: 0;
   margin-left: $spacing-8;
   position: relative;
   display: flex;
@@ -181,11 +181,13 @@
   @include tablet {
     width: 90px;
     margin-left: 24px;
+    overflow: visible;
   }
 
   @include desktop {
     width: 90px;
     margin-left: 24px;
+    overflow: visible;
   }
 }
 
