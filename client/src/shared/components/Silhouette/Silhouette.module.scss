@@ -135,6 +135,10 @@
 .silhouette__imageInner {
   position: relative;
   flex-shrink: 0;
+  height: 276px;
+
+  @include tablet { height: 446px; }
+  @include desktop { height: 446px; }
 }
 
 .silhouette__image {
