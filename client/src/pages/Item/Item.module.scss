@@ -544,12 +544,9 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  overflow: visible;
 
   @include tablet {
-    height: 446px;
-  }
-
-  @include desktop {
     height: 446px;
   }
 }

@@ -28,15 +28,7 @@
     flex-shrink: 0;
     height: 446px;
     margin-right: $spacing-24;
-  }
-
-  @include desktop {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    flex-shrink: 0;
-    height: 446px;
-    margin-right: $spacing-24;
+    overflow: visible;
   }
 }
 
