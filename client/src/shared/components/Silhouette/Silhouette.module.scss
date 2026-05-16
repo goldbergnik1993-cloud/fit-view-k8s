@@ -126,24 +126,20 @@
 .silhouette__imageWrap {
   flex: 1;
   min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-}
-
-.silhouette__imageInner {
   position: relative;
   height: 276px;
-  flex-shrink: 0;
 
   @include tablet { height: 446px; }
+  @include desktop { height: 446px; }
 }
 
 .silhouette__image {
-  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  width: auto;
+  object-fit: contain;
+  object-position: center;
 }
 
 .silhouette__image--hidden {
