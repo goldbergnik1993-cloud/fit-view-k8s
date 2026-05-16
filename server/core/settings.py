@@ -7,8 +7,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FitView"
-    VITE_API_URL: str = "http://127.0.0.1:8000"
-    FRONTEND_URL: str = "http://localhost:3000"
+    VITE_API_URL: str
+    FRONTEND_URL: str
 
     DATABASE_URL: str
     SECRET_KEY: str

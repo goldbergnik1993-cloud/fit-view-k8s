@@ -89,23 +89,21 @@ async def process_stripe_webhook(
         return {"status": "ignored", "reason": "Event type not handled"}
 
     session = event["data"]["object"]
-    session_id = session.id
+    session_id = session["id"]
 
     stmt = select(PaymentsModel).where(PaymentsModel.external_payment_id == session_id)
     payment_db = await db.scalar(stmt)
 
     if not payment_db:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found"
-        )
+        logger.warning(f"Webhook received for unknown session: {session_id}")
+        return {"status": "ignored", "reason": "Payment not found"}
 
     order_stmt = select(OrderModel).where(OrderModel.id == payment_db.order_id)
     order_db = await db.scalar(order_stmt)
 
     if not order_db:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
-        )
+        logger.warning(f"Webhook received for unknown order: {payment_db.order_id}")
+        return {"status": "ignored", "reason": "Order not found"}
 
     if event["type"] == "checkout.session.completed":
         payment_db.status = PaymentStatusEnum.SUCCESSFUL
