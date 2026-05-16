@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import styles from './Silhouette.module.scss';
 import womanSvg from '../../../assets/images/silhouette-woman.svg';
 import manSvg from '../../../assets/images/silhouette-man.svg';
@@ -25,10 +26,20 @@ const Silhouette = ({
   fittingImageUrl,
 }: SilhouetteProps) => {
   const src = gender === 'male' ? manSvg : womanSvg;
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [stackWidth, setStackWidth] = useState<number | null>(null);
+
+  const handleSvgLoad = () => {
+    if (imgRef.current) {
+      setStackWidth(imgRef.current.offsetWidth);
+    }
+  };
 
   return (
     <div className={styles.silhouette}>
       <div className={styles.silhouette__viewer}>
+
+        {/* Левая колонка: слайдер */}
         <div className={styles.silhouette__sliderCol}>
           <div className={styles.silhouette__sliderLabels}>
             <span className={styles.silhouette__sliderTop}>{heightCm} cm</span>
@@ -47,12 +58,18 @@ const Silhouette = ({
           </div>
         </div>
 
+        {/* Центр: силуэт */}
         <div className={styles.silhouette__imageWrap}>
-          <div className={styles.silhouette__stack}>
+          <div
+            className={styles.silhouette__stack}
+            style={stackWidth ? { width: stackWidth } : undefined}
+          >
             <img
+              ref={imgRef}
               src={src}
               alt={gender === 'male' ? 'Male silhouette' : 'Female silhouette'}
               className={`${styles.silhouette__image} ${hasFittingImage ? styles['silhouette__image--hidden'] : ''}`}
+              onLoad={handleSvgLoad}
             />
             {fittingImageUrl && (
               <img
@@ -69,6 +86,7 @@ const Silhouette = ({
           </div>
         </div>
 
+        {/* Правая колонка: ruler */}
         <div className={styles.silhouette__rulerCol}>
           <div className={styles.silhouette__ruler} aria-hidden="true" />
           <span
@@ -79,6 +97,7 @@ const Silhouette = ({
           </span>
           <span className={styles.silhouette__itemLengthText}>Item length</span>
         </div>
+
       </div>
 
       <p className={styles.silhouette__endsLabel}>{label}</p>
