@@ -1,5 +1,5 @@
 import styles from './AddedToBagModal.module.scss';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import ArrowRightWhiteIcon from '../../../assets/icons/arrow-right-white.svg';
 import MinusIcon from '../../../assets/icons/minus.svg';
 import PlusIcon from '../../../assets/icons/plus.svg';
@@ -14,20 +14,25 @@ interface AddedToBagModalProps {
     price: number;
   };
   selectedSizeLabel: string | null;
+  quantity: number;
+  onQuantityChange: (q: number) => Promise<void>;
 }
 
 interface ModalContentProps {
   item: AddedToBagModalProps['item'];
   selectedSizeLabel: string | null;
   onClose: () => void;
+  quantity: number;
+  onQuantityChange: (q: number) => Promise<void>;
 }
 
 const ModalContent = ({
   item,
   selectedSizeLabel,
   onClose,
+  quantity,
+  onQuantityChange,
 }: ModalContentProps) => {
-  const [quantity, setQuantity] = useState(1);
   const total = item.price * quantity;
 
   return (
@@ -97,7 +102,7 @@ const ModalContent = ({
               <div className={styles.quantityControls}>
                 <button
                   className={styles.quantityBtn}
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
                   aria-label="Decrease quantity"
                 >
                   <img
@@ -111,7 +116,7 @@ const ModalContent = ({
                 <span className={styles.quantityValue}>{quantity}</span>
                 <button
                   className={styles.quantityBtn}
-                  onClick={() => setQuantity((q) => q + 1)}
+                  onClick={() => onQuantityChange(quantity + 1)}
                   aria-label="Increase quantity"
                 >
                   <img
@@ -175,6 +180,8 @@ export const AddedToBagModal = ({
   onClose,
   item,
   selectedSizeLabel,
+  quantity,
+  onQuantityChange,
 }: AddedToBagModalProps) => {
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -197,6 +204,8 @@ export const AddedToBagModal = ({
         item={item}
         selectedSizeLabel={selectedSizeLabel}
         onClose={onClose}
+        quantity={quantity}
+        onQuantityChange={onQuantityChange}
       />
     </div>
   );
