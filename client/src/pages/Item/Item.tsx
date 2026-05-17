@@ -60,7 +60,7 @@ const Item = () => {
   const showColors = !isSizeGuideOpen;
 
   const { isFavorite: isFav, toggleFavorite } = useFavorites();
-  const { addItem } = useCart();
+  const { addItem, cart, updateQuantity } = useCart();
   const { user } = useAuth();
 
   const [favoriteLoading, setFavoriteLoading] = useState(false);
@@ -71,6 +71,18 @@ const Item = () => {
   const [cartAdded, setCartAdded] = useState(false);
   const [isAddedModalOpen, setIsAddedModalOpen] = useState(false);
   const [cartError, setCartError] = useState<string | null>(null);
+  const [modalQuantity, setModalQuantity] = useState(1);
+
+  const handleModalQuantityChange = async (q: number) => {
+    setModalQuantity(q);
+    const cartItem = cart?.cart_items.find(
+      (ci) =>
+        ci.item.id === Number(item?.id) && ci.size_label === selectedSizeLabel
+    );
+    if (cartItem) {
+      await updateQuantity(cartItem.id, q);
+    }
+  };
 
   const [height, setHeight] = useState(170);
   const [gender, setGender] = useState<'male' | 'female'>('female');
@@ -171,17 +183,23 @@ const Item = () => {
     setCartLoading(true);
     setCartError(null);
     try {
-      await addItem(Number(item.id), selectedSizeLabel, 1, item.price, {
-        name: item.name,
-        brand:
-          typeof item.brand === 'string'
-            ? { id: 0, name: item.brand }
-            : item.brand,
-        category: item.category,
-        gender: item.gender ?? '',
-        image_url: item.imageUrl,
-        is_favorite: false,
-      });
+      await addItem(
+        Number(item.id),
+        selectedSizeLabel,
+        modalQuantity,
+        item.price,
+        {
+          name: item.name,
+          brand:
+            typeof item.brand === 'string'
+              ? { id: 0, name: item.brand }
+              : item.brand,
+          category: item.category,
+          gender: item.gender ?? '',
+          image_url: item.imageUrl,
+          is_favorite: false,
+        }
+      );
       setCartAdded(true);
       setIsAddedModalOpen(true);
       setTimeout(() => setCartAdded(false), 2000);
@@ -439,9 +457,14 @@ const Item = () => {
         />
         <AddedToBagModal
           isOpen={isAddedModalOpen}
-          onClose={() => setIsAddedModalOpen(false)}
+          onClose={() => {
+            setIsAddedModalOpen(false);
+            setModalQuantity(1);
+          }}
           item={item}
           selectedSizeLabel={selectedSizeLabel}
+          quantity={modalQuantity}
+          onQuantityChange={handleModalQuantityChange}
         />
         <Footer />
       </>
@@ -588,9 +611,14 @@ const Item = () => {
 
         <AddedToBagModal
           isOpen={isAddedModalOpen}
-          onClose={() => setIsAddedModalOpen(false)}
+          onClose={() => {
+            setIsAddedModalOpen(false);
+            setModalQuantity(1);
+          }}
           item={item}
           selectedSizeLabel={selectedSizeLabel}
+          quantity={modalQuantity}
+          onQuantityChange={handleModalQuantityChange}
         />
       </main>
       <Footer />

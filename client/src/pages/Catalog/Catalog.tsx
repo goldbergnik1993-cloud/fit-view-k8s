@@ -70,6 +70,9 @@ const Catalog = () => {
   const [filters, setFilters] = useState<FilterState>(() => ({
     ...EMPTY_FILTERS,
     brands: urlBrandId ? [Number(urlBrandId)] : [],
+    gender: searchParams.get('gender')
+      ? [searchParams.get('gender') as string]
+      : [],
   }));
 
   const itemsParams = useMemo(
