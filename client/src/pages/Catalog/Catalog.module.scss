@@ -9,51 +9,26 @@
 
 .catalog__main {
   flex: 1;
-  padding: 24px 16px 48px;
+  padding: 16px var(--container-padding) 80px;
 
   @include tablet {
-    padding: 32px 40px 64px;
+    padding: 16px var(--container-padding) 100px;
   }
 
   @include desktop {
-    padding: 40px 120px 80px;
+    padding: 16px var(--container-padding) 100px;
   }
 }
 
-// ─── Back ─────────────────────────────────────────────────────────────────────
-
-.catalog__back {
-  display: none;
-  color: $color-black;
-  margin-bottom: 20px;
-  width: fit-content;
-  @include hover-opacity;
-
-  @include tablet {
-    display: flex;
-    align-items: center;
-  }
-}
-
-// ─── Title row ────────────────────────────────────────────────────────────────
+// ─── Title row ─────────────────────────────────────────────────
 
 .catalog__titleRow {
-  @include flex-between;
-  margin-bottom: 20px;
-
-  @include tablet {
-    margin-bottom: 24px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-16;
 }
 
-.catalog__title {
-  @include text(28px, 700, 1.2);
-  margin: 0;
-
-  @include tablet {
-    font-size: 32px;
-  }
-}
 
 // ─── Filter button mobile ─────────────────────────────────────────────────────
 
@@ -76,7 +51,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+
+  @include tablet {
+    margin-bottom: 32px;
+  }
 }
 
 // ─── Filter pills — scrollable on mobile ─────────────────────────────────────
@@ -96,14 +75,14 @@
 }
 
 .catalog__pill {
-  @include text(13px, 400, 1);
+  @include text(14px, 400, 1);
   display: inline-flex;
   align-items: center;
   padding: 6px 16px;
-  border-radius: 20px;
-  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  border: 1px solid #787880;
   background: $color-white;
-  color: $color-black;
+  color: #787880;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
@@ -113,12 +92,12 @@
     border-color 0.15s ease;
 
   &:hover {
-    border-color: $color-black;
+    border-color: $color-input-border;
   }
 
   &--active {
-    background: $color-black;
-    border-color: $color-black;
+    background: $color-input-border;
+    border-color: $color-input-border;
     color: $color-white;
   }
 
@@ -156,8 +135,9 @@
   @include flex-center;
   width: 36px;
   height: 36px;
+  padding: 8px;
   border: 1px solid transparent;
-  border-radius: 2px;
+  border-radius: 4px;
   cursor: pointer;
   color: #b0b0b0;
   transition:
@@ -170,7 +150,7 @@
 
   &--active {
     color: $color-black;
-    border-color: #d0d0d0;
+    border-color: #787880;
   }
 
   @include focus-visible;
@@ -184,10 +164,10 @@
   @include text(13px, 400, 1);
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid #d0d0d0;
-  border-radius: 2px;
+  gap: 8px;
+  padding: 5.5px 12px;
+  border: 1px solid #4c494d;
+  border-radius: 4px;
   cursor: pointer;
   color: $color-black;
   white-space: nowrap;
@@ -199,16 +179,25 @@
   }
 
   @include focus-visible;
+
+  @include tablet {
+    border: none;
+  }
 }
 
 .catalog__filterCount {
   @include flex-center;
-  width: 18px;
-  height: 18px;
-  background: $color-black;
-  color: $color-white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  background: $color-white;
+  color: $color-primary;
+  border: 1px solid $color-primary;
   border-radius: 50%;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 400;
 }
 
 // ─── Active filter tags ───────────────────────────────────────────────────────
@@ -240,7 +229,7 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  border: 1px solid $color-black;
+  border: 1px solid $color-text;
   border-radius: 20px;
   cursor: pointer;
   white-space: nowrap;
@@ -257,20 +246,19 @@
 
   @include tablet {
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
   }
 
   &--large {
     @include desktop {
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      gap: 24px;
     }
   }
 
   &--small {
     @include desktop {
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 24px 35px;
     }
   }
 }
@@ -314,32 +302,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 14px;
   margin-top: 40px;
 }
 
 .catalog__pageBtn {
   @include text(14px, 400, 1);
   @include flex-center;
-  min-width: 36px;
-  height: 36px;
-  padding: 0 10px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   background: $color-white;
-  border: 1px solid #e0e0e0;
-  border-radius: 2px;
+  border: 1px solid $color-primary;
+  border-radius: 4px;
   cursor: pointer;
-  color: $color-black;
+  color: $color-primary;
   transition:
     background-color 0.15s ease,
-    border-color 0.15s ease;
+    border-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover:not(:disabled) {
-    border-color: $color-black;
+    opacity: 0.8;
   }
 
   &--active {
-    background: $color-black;
-    border-color: $color-black;
+    background: $color-primary;
+    border-color: $color-primary;
     color: $color-white;
   }
 
@@ -349,4 +338,46 @@
   }
 
   @include focus-visible;
+}
+
+// ─── Load More ───────────────────────────────────────────────────────────────
+
+.catalog__loadMore {
+  margin-top: $spacing-24;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.catalog__loadMoreText {
+  @include text(13px, 400);
+  text-align: center;
+  color: $color-input-border;
+  margin-bottom: $spacing-16;
+}
+
+.catalog__loadMoreBtn {
+  @include text(14px, 500);
+  @include flex-center;
+  width: 100%;
+  height: 48px;
+  border: 1px solid $color-primary;
+  border-radius: 8px;
+  color: $color-primary;
+  cursor: pointer;
+  @include hover-opacity;
+}
+
+// пагинация только на планшете+
+.catalog__pagination {
+  display: none;
+
+  @include tablet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 40px;
+  }
 }

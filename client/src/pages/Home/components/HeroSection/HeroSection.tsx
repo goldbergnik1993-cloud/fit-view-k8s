@@ -1,37 +1,66 @@
+import { useState } from 'react';
 import styles from './HeroSection.module.scss';
-import SilhouetteManImg from '../../../../assets/images/silhouette-man.svg';
-import SilhouetteWomanImg from '../../../../assets/images/silhouette-woman.svg';
+import SilhouetteManImg from '../../../../assets/images/home-male-silhouette.png';
+import SilhouetteWomanImg from '../../../../assets/images/home-female-silhouette.png';
+import { OnboardingModal } from '../OnboardingModal/OnboardingModal';
 
-export const HeroSection = () => (
-  <section className={styles.hero} aria-label="Welcome section">
-    <div className={styles['hero__content']}>
-      <div className={styles['hero__media']} aria-hidden="true">
-        <div className={styles['hero__silhouette']}>
-          <img
-            src={SilhouetteManImg}
-            alt=""
-            aria-hidden="true"
-            className={styles['hero__silhouette-img']}
-          />
-        </div>
-        <div className={styles['hero__silhouette']}>
-          <img
-            src={SilhouetteWomanImg}
-            alt=""
-            aria-hidden="true"
-            className={styles['hero__silhouette-img']}
-          />
-        </div>
-      </div>
+export const HeroSection = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-      <div className={styles['hero__text']}>
-        <h1 className={styles['hero__title']}>
-          Find your new favorite style without the hassle
-        </h1>
-        <p className={styles['hero__description']}>
-          Browse our stylish outerwear, enter your body measurements, and try
-          items on virtually in seconds. Love the look? Buy with confidence.
-        </p>
+  const description = (
+    <>
+      Browse, measure, and virtually try on in seconds. Check out these brief{' '}
+      <button
+        className={styles['hero__instructions-link']}
+        onClick={() => setIsModalOpen(true)}
+        aria-haspopup="dialog"
+      >
+        instructions
+      </button>{' '}
+      before you get started
+    </>
+  );
+
+  return (
+    <>
+      <section className={styles.hero} aria-label="Welcome section">
+        <div className={styles['hero__top']}>
+          <div className={styles['hero__media']} aria-hidden="true">
+            <div className={styles['hero__silhouette']}>
+              <img
+                src={SilhouetteManImg}
+                alt=""
+                aria-hidden="true"
+                className={styles['hero__silhouette-img']}
+              />
+            </div>
+            <div className={styles['hero__silhouette']}>
+              <img
+                src={SilhouetteWomanImg}
+                alt=""
+                aria-hidden="true"
+                className={styles['hero__silhouette-img']}
+              />
+            </div>
+          </div>
+
+          {/* Mobile only */}
+          <h1 className={styles['hero__title']}>
+            Find your new favorite style without the hassle
+          </h1>
+
+          {/* Tablet/Desktop only */}
+          <div className={styles['hero__text']}>
+            <h1 className={styles['hero__title--large']}>
+              Find your new favorite style without the hassle
+            </h1>
+            <p className={styles['hero__description--inline']}>{description}</p>
+          </div>
+        </div>
+
+        {/* Mobile only */}
+        <p className={styles['hero__description']}>{description}</p>
+
         <a
           href="/catalog"
           className={styles['hero__cta']}
@@ -39,7 +68,13 @@ export const HeroSection = () => (
         >
           Start Virtual Try-On
         </a>
-      </div>
-    </div>
-  </section>
-);
+      </section>
+
+      <OnboardingModal
+        key={isModalOpen ? 'open' : 'closed'}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
+  );
+};

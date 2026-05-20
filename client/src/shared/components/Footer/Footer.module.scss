@@ -2,14 +2,21 @@
 @use '../../../styles/mixins' as *;
 
 .footer {
-  margin-top: $spacing-88;
-  padding: $spacing-32 var(--container-padding);
+  width: 100%;
+  background: $color-white;
+  padding: $spacing-16 var(--container-padding);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing-16;
+  gap: $spacing-24;
   text-align: center;
   box-sizing: border-box;
+  align-self: stretch;
+
+  @include tablet {
+    padding: $spacing-24 var(--container-padding);
+    gap: $spacing-16;
+  }
 }
 
 .footer__logo {
@@ -17,26 +24,41 @@
   @include hover-opacity;
   width: 48px;
   height: 48px;
-  border-radius: 50%;
   flex-shrink: 0;
 }
 
 .footer__social {
-  @include text(14px, 400);
+  @include text(14px, 500);
   margin: 0;
+}
+
+.footer__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-16;
+
+  @include tablet {
+    flex-direction: row;
+    gap: $spacing-24;
+  }
 }
 
 .footer__links {
   display: flex;
   gap: $spacing-16;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .footer__link {
   @include text(12px, 400);
-  @include hover-opacity;
+  color: #888;
 }
 
 .footer__contact {
   @include text(12px, 400);
+  color: #888;
   margin: 0;
 }

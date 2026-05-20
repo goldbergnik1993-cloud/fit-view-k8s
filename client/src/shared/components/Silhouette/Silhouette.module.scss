@@ -1,0 +1,254 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.silhouette {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.silhouette__viewer {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 276px;
+  overflow: visible;
+
+  @include tablet { height: 446px; }
+  @include desktop { height: 446px; }
+}
+
+// ─── Левая колонка ────────────────────────────────────────────────────────────
+
+.silhouette__sliderCol {
+  display: none;
+
+  @include tablet {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-shrink: 0;
+    height: 446px;
+    margin-right: $spacing-24;
+    overflow: visible;
+  }
+}
+
+.silhouette__sliderLabels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-right: $spacing-8;
+  padding: 2px 0;
+}
+
+.silhouette__sliderTop {
+  @include text(14px, 400);
+  color: #4c494d;
+  white-space: nowrap;
+}
+
+.silhouette__sliderBottom {
+  @include text(14px, 400);
+  color: #4c494d;
+  white-space: nowrap;
+}
+
+.silhouette__sliderTrack {
+  position: relative;
+  flex-shrink: 0;
+  width: 20px;
+  align-self: stretch;
+  overflow: visible;
+}
+
+.silhouette__sliderInput {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 446px;
+  height: 2px;
+  background: #676767;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: 50% 50%;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+    margin-top: -9px;
+  }
+
+  &::-webkit-slider-runnable-track {
+    height: 2px;
+    background: #676767;
+    border-radius: 2px;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+  }
+
+  &::-moz-range-track {
+    height: 2px;
+    background: #676767;
+    border-radius: 2px;
+  }
+}
+
+// ─── Центр ────────────────────────────────────────────────────────────────────
+
+.silhouette__imageWrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+// стек занимает ровно размер SVG — ширина задаётся из JS через inline style
+.silhouette__stack {
+  position: relative;
+  width: 74px;
+  height: 276px;
+  flex-shrink: 0;
+
+  @include tablet {
+    width: 120px;
+    height: 446px;
+  }
+
+  @include desktop {
+    width: 120px;
+    height: 446px;
+  }
+}
+
+.silhouette__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+}
+
+.silhouette__image--hidden {
+  opacity: 0;
+}
+
+.silhouette__fittingImg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: auto;
+  max-width: none;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.silhouette__line {
+  position: absolute;
+  left: 0;
+  right: -$spacing-8;
+  height: 1px;
+  background: #a8a8b2;
+  transition: bottom 0.4s ease;
+  z-index: 3;
+
+  @include tablet { right: -24px; }
+  @include desktop { right: -24px; }
+}
+
+// ─── Правая колонка ───────────────────────────────────────────────────────────
+
+.silhouette__rulerCol {
+  flex-shrink: 0;
+  width: 0;
+  margin-left: $spacing-8;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: visible;
+
+  @include tablet {
+    width: 90px;
+    margin-left: $spacing-24;
+  }
+
+  @include desktop {
+    width: 90px;
+    margin-left: $spacing-24;
+  }
+}
+
+.silhouette__ruler {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #a8a8b2;
+}
+
+.silhouette__itemLengthLabel {
+  position: absolute;
+  left: $spacing-8;
+  @include text(14px, 400);
+  color: #4c494d;
+  white-space: nowrap;
+  transform: translateY(50%);
+  transition: bottom 0.4s ease;
+}
+
+.silhouette__itemLengthText {
+  display: none;
+  @include text(14px, 400);
+  color: #4c494d;
+  white-space: nowrap;
+  padding-left: $spacing-8;
+  margin-bottom: 0;
+
+  @include tablet { display: block; }
+  @include desktop { display: block; }
+}
+
+// ─── Ends from floor ──────────────────────────────────────────────────────────
+
+.silhouette__endsLabel {
+  @include text(14px, 400);
+  color: #4c494d;
+  margin: 0;
+  display: none;
+
+  @include tablet {
+    display: block;
+    margin-top: $spacing-16;
+    text-align: center;
+  }
+
+  @include desktop {
+    display: block;
+    margin-top: $spacing-24;
+    text-align: center;
+  }
+}

@@ -1,0 +1,306 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  @include tablet {
+    align-items: center;
+  }
+}
+
+.modal {
+  background: $color-white;
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  padding: $spacing-16;
+  box-sizing: border-box;
+
+  @include tablet {
+    border-radius: 16px;
+    width: 684px;
+    padding: $spacing-24;
+  }
+}
+
+.header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+
+  @include tablet {
+    margin-bottom: $spacing-24;
+  }
+}
+
+.title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0;
+}
+
+.closeBtn {
+  width: 24px;
+  height: 24px;
+  @include flex-center;
+  @include hover-opacity;
+  flex-shrink: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  @include tablet {
+    flex-direction: row;
+    gap: $spacing-24;
+    align-items: stretch;
+  }
+}
+
+// ─── Левая колонка ────────────────────────────────────────────────────────────
+
+.imageCol {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+
+  @include tablet {
+    justify-content: space-between;
+  }
+}
+
+.imageWrap {
+  width: 100%;
+  height: 308px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $color-white;
+  border: 1px solid #E9E9F7;
+  box-sizing: border-box;
+
+  @include tablet {
+    width: 270px;
+    height: 300px;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+// ─── Правая колонка ───────────────────────────────────────────────────────────
+
+.info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  @include tablet {
+    justify-content: space-between;
+  }
+}
+
+.infoTop {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoBottom {
+  display: flex;
+  flex-direction: column;
+}
+
+.itemName {
+  font-family: $font-family-heading;
+  font-size: 18px;
+  font-weight: 600;
+  color: $color-text;
+  margin: 0 0 4px;
+
+  @include tablet {
+    font-size: 24px;
+  }
+}
+
+.brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-16;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.quantity {
+  @include flex-between;
+  margin-top: $spacing-16;
+}
+
+.quantityLabel {
+  font-family: $font-family-heading;
+  font-size: 18px;
+  font-weight: 600;
+  color: $color-text;
+
+  @include tablet {
+    font-size: 16px;
+  }
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-16;
+}
+
+.quantityBtn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 8px;
+  border: 1px solid $color-card-bg;
+  @include flex-center;
+  @include hover-opacity;
+  flex-shrink: 0;
+}
+
+.quantityValue {
+  @include text(16px, 400);
+  min-width: 16px;
+  text-align: center;
+}
+
+.divider {
+  height: 1px;
+  background: $color-card-bg;
+  margin: $spacing-16 0;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.total {
+  @include flex-between;
+}
+
+.totalLabel {
+  font-family: $font-family-heading;
+  font-size: 18px;
+  font-weight: 600;
+  color: $color-text;
+
+  @include tablet {
+    font-size: 24px;
+  }
+}
+
+.totalValue {
+  font-family: $font-family-heading;
+  font-size: 18px;
+  font-weight: 600;
+  color: $color-text;
+
+  @include tablet {
+    font-size: 24px;
+  }
+}
+
+// ─── Кнопки ───────────────────────────────────────────────────────────────────
+
+.metaLabel {
+  @include text(14px, 400);
+  color: $color-text;
+}
+
+.metaValue {
+  @include text(14px, 400);
+  color: $color-text;
+}
+
+.keepBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1.5px solid $color-primary;
+  background: $color-white;
+  box-sizing: border-box;
+  @include text(16px, 500);
+  color: $color-primary;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+
+  &--desktop {
+    display: none;
+
+    @include tablet {
+      display: flex;
+      margin-top: $spacing-16;
+    }
+  }
+}
+
+.viewBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+  background: $color-primary;
+  box-sizing: border-box;
+  @include text(16px, 500);
+  color: $color-white;
+  gap: $spacing-8;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $color-primary-hover;
+  }
+
+  &--desktop {
+    display: none;
+
+    @include tablet {
+      display: flex;
+      margin-top: $spacing-16;
+    }
+  }
+}
+
+// ─── Mobile actions ───────────────────────────────────────────────────────────
+
+.actionsMobile {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-top: $spacing-16;
+
+  @include tablet {
+    display: none;
+  }
+}

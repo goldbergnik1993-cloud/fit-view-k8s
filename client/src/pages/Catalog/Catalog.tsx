@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
+import { Breadcrumb } from '../../shared/components/Breadcrumb/Breadcrumb';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
 import {
@@ -12,30 +13,34 @@ import { useItems } from '../../hooks/useItems';
 import FilterIcon from '../../assets/icons/filter.svg';
 import GridLargeIcon from '../../assets/icons/grid-large.svg';
 import GridSmallIcon from '../../assets/icons/grid-small.svg';
+import { useFavorites } from '../../providers/FavoritesContext';
 import styles from './Catalog.module.scss';
 
 const CATEGORIES = [
-  { label: 'All',     value: 'All' },
-  { label: 'Dress',   value: 'dress' },
-  { label: 'Pants',   value: 'pants' },
+  { label: 'All', value: 'All' },
+  { label: 'Dress', value: 'dress' },
+  { label: 'Pants', value: 'pants' },
   { label: 'T-Shirt', value: 't_shirt' },
-  { label: 'Skirt',   value: 'skirt' },
-  { label: 'Blouse',  value: 'blouse' },
-  { label: 'Shirt',   value: 'shirt' },
-  { label: 'Coat',    value: 'coat' },
+  { label: 'Skirt', value: 'skirt' },
+  { label: 'Blouse', value: 'blouse' },
+  { label: 'Shirt', value: 'shirt' },
+  { label: 'Coat', value: 'coat' },
   { label: 'Sweater', value: 'sweater' },
 ];
 
 const GENDER_LABELS: Record<string, string> = {
   male: 'Man',
   female: 'Woman',
-  unisex: 'Unisex',
 };
 
 const BRAND_NAMES: Record<number, string> = {
-  1: 'Zara', 2: 'Patagonia', 3: "Levi's",
-  4: 'The North Face', 5: 'Mango',
-  6: 'Cos', 7: 'Ralph Lauren', 8: 'Superdry',
+  1: 'Zara',
+  2: 'Mango',
+  3: 'Cos',
+  4: 'Uniqlo',
+  5: 'H&M',
+  6: 'Ralph Lauren',
+  7: 'The North Face',
 };
 
 type GridView = 'large' | 'small';
@@ -48,11 +53,27 @@ const EMPTY_FILTERS: FilterState = {
 };
 
 const Catalog = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('All');
   const [page, setPage] = useState(1);
   const [gridView, setGridView] = useState<GridView>('large');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
+
+  const { isFavorite, toggleFavorite } = useFavorites();
+
+  const urlName = searchParams.get('name');
+  const urlBrandId = searchParams.get('brands');
+  const urlBrandName = searchParams.get('brand_name');
+  const urlBreadcrumbName = searchParams.get('breadcrumb_name');
+
+  const [filters, setFilters] = useState<FilterState>(() => ({
+    ...EMPTY_FILTERS,
+    brands: urlBrandId ? [Number(urlBrandId)] : [],
+    gender: searchParams.get('gender')
+      ? [searchParams.get('gender') as string]
+      : [],
+  }));
 
   const itemsParams = useMemo(
     () => ({
@@ -60,14 +81,16 @@ const Catalog = () => {
       page,
       per_page: 12,
       sort_by: filters.sort_by || undefined,
-      gender: filters.gender[0] as 'male' | 'female' | 'unisex' | undefined,
+      gender: filters.gender[0] as 'male' | 'female' | undefined,
       size: filters.size[0] || undefined,
       brands: filters.brands.length > 0 ? filters.brands : undefined,
+      name: urlName || undefined,
     }),
-    [activeCategory, page, filters]
+    [activeCategory, page, filters, urlName]
   );
 
-  const { items, loading, error, totalPages } = useItems(itemsParams);
+  const { items, loading, error, totalPages, totalItems } =
+    useItems(itemsParams);
 
   const handleCategoryChange = (value: string) => {
     setActiveCategory(value);
@@ -97,27 +120,49 @@ const Catalog = () => {
       <Header />
 
       <main className={styles.catalog__main}>
-        <Link to="/" className={styles.catalog__back} aria-label="Go back">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="1.5"
-              strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
-
-        {/* Title row */}
+        {/* Breadcrumbs + filter button mobile */}
         <div className={styles.catalog__titleRow}>
-          <h1 className={styles.catalog__title}>Catalog</h1>
+          <Breadcrumb
+            items={
+              urlName
+                ? [
+                    { label: 'Home', href: '/' },
+                    { label: 'Catalog', href: '/catalog' },
+                    { label: `Search results for "${urlName}"` },
+                  ]
+                : urlBrandName
+                  ? [
+                      { label: 'Home', href: '/' },
+                      { label: 'Catalog', href: '/catalog' },
+                      { label: urlBrandName },
+                    ]
+                  : urlBreadcrumbName
+                    ? [
+                        { label: 'Home', href: '/' },
+                        { label: 'Catalog', href: '/catalog' },
+                        { label: urlBreadcrumbName },
+                      ]
+                    : [{ label: 'Home', href: '/' }, { label: 'Catalog' }]
+            }
+          />
 
-          {/* Filter button — mobile only */}
           <button
             type="button"
             className={styles.catalog__filterBtnMobile}
             onClick={() => setIsFilterOpen(true)}
             aria-label="Filter"
           >
-            <img src={FilterIcon} alt="" aria-hidden="true" width={20} height={20} />
+            <img
+              src={FilterIcon}
+              alt=""
+              aria-hidden="true"
+              width={20}
+              height={20}
+            />
             {activeFiltersCount > 0 && (
-              <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
+              <span className={styles.catalog__filterCount}>
+                {activeFiltersCount}
+              </span>
             )}
           </button>
         </div>
@@ -133,7 +178,7 @@ const Catalog = () => {
                 className={`${styles.catalog__pill} ${activeCategory === value ? styles['catalog__pill--active'] : ''}`}
                 onClick={() => handleCategoryChange(value)}
               >
-                {label}
+                {value === 'All' ? `All (${totalItems})` : label}
               </button>
             ))}
           </div>
@@ -145,10 +190,17 @@ const Catalog = () => {
               className={styles.catalog__filterBtn}
               onClick={() => setIsFilterOpen((prev) => !prev)}
             >
-              <span>Filter</span>
-              <img src={FilterIcon} alt="" aria-hidden="true" width={16} height={16} />
+              <img
+                src={FilterIcon}
+                alt=""
+                aria-hidden="true"
+                width={16}
+                height={16}
+              />
               {activeFiltersCount > 0 && (
-                <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
+                <span className={styles.catalog__filterCount}>
+                  {activeFiltersCount}
+                </span>
               )}
             </button>
           </div>
@@ -161,7 +213,13 @@ const Catalog = () => {
               onClick={() => setGridView('small')}
               aria-label="Small grid"
             >
-              <img src={GridSmallIcon} alt="" aria-hidden="true" width={18} height={18} />
+              <img
+                src={GridSmallIcon}
+                alt=""
+                aria-hidden="true"
+                width={18}
+                height={18}
+              />
             </button>
 
             <button
@@ -170,7 +228,13 @@ const Catalog = () => {
               onClick={() => setGridView('large')}
               aria-label="Large grid"
             >
-              <img src={GridLargeIcon} alt="" aria-hidden="true" width={18} height={18} />
+              <img
+                src={GridLargeIcon}
+                alt=""
+                aria-hidden="true"
+                width={18}
+                height={18}
+              />
             </button>
 
             <button
@@ -178,10 +242,19 @@ const Catalog = () => {
               className={styles.catalog__filterBtn}
               onClick={() => setIsFilterOpen((prev) => !prev)}
             >
+              <img
+                src={FilterIcon}
+                alt=""
+                aria-hidden="true"
+                width={16}
+                height={16}
+              />
               <span>Filter</span>
-              <img src={FilterIcon} alt="" aria-hidden="true" width={16} height={16} />
+
               {activeFiltersCount > 0 && (
-                <span className={styles.catalog__filterCount}>{activeFiltersCount}</span>
+                <span className={styles.catalog__filterCount}>
+                  {activeFiltersCount}
+                </span>
               )}
             </button>
           </div>
@@ -195,7 +268,10 @@ const Catalog = () => {
                 key={g}
                 className={styles.catalog__activeTag}
                 onClick={() => {
-                  setFilters(prev => ({ ...prev, gender: prev.gender.filter(x => x !== g) }));
+                  setFilters((prev) => ({
+                    ...prev,
+                    gender: prev.gender.filter((x) => x !== g),
+                  }));
                   setPage(1);
                 }}
               >
@@ -207,7 +283,10 @@ const Catalog = () => {
                 key={s}
                 className={styles.catalog__activeTag}
                 onClick={() => {
-                  setFilters(prev => ({ ...prev, size: prev.size.filter(x => x !== s) }));
+                  setFilters((prev) => ({
+                    ...prev,
+                    size: prev.size.filter((x) => x !== s),
+                  }));
                   setPage(1);
                 }}
               >
@@ -219,7 +298,10 @@ const Catalog = () => {
                 key={b}
                 className={styles.catalog__activeTag}
                 onClick={() => {
-                  setFilters(prev => ({ ...prev, brands: prev.brands.filter(x => x !== b) }));
+                  setFilters((prev) => ({
+                    ...prev,
+                    brands: prev.brands.filter((x) => x !== b),
+                  }));
                   setPage(1);
                 }}
               >
@@ -230,14 +312,24 @@ const Catalog = () => {
               <button
                 className={styles.catalog__activeTag}
                 onClick={() => {
-                  setFilters(prev => ({ ...prev, sort_by: '' }));
+                  setFilters((prev) => ({ ...prev, sort_by: '' }));
                   setPage(1);
                 }}
               >
-                × {filters.sort_by === 'price_asc' ? 'Price (Low - High)' : 'Price (High - Low)'}
+                ×{' '}
+                {filters.sort_by === 'price_asc'
+                  ? 'Price (Low - High)'
+                  : filters.sort_by === 'price_desc'
+                    ? 'Price (High - Low)'
+                    : filters.sort_by === 'new'
+                      ? 'New'
+                      : 'Popular'}
               </button>
             )}
-            <button className={styles.catalog__activeTag} onClick={handleClearAll}>
+            <button
+              className={styles.catalog__activeTag}
+              onClick={handleClearAll}
+            >
               × Clear All
             </button>
           </div>
@@ -245,7 +337,9 @@ const Catalog = () => {
 
         {/* Skeleton */}
         {loading && (
-          <div className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}>
+          <div
+            className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}
+          >
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className={styles.catalog__skeleton} />
             ))}
@@ -262,23 +356,51 @@ const Catalog = () => {
         {/* Empty */}
         {!loading && !error && items.length === 0 && (
           <EmptyState
-            title="No items found"
-            subtitle="Try changing the filter or check back later"
-            buttonText="Show all"
+            title="Oops! No matches found"
+            subtitle="Try adjusting your filters or search terms."
+            buttonText="Clear All & Browse Items"
             buttonPath="/catalog"
+            onButtonClick={() => {
+              handleClearAll();
+              navigate('/catalog');
+            }}
           />
         )}
 
         {/* Grid */}
         {!loading && !error && items.length > 0 && (
-          <div className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}>
+          <div
+            className={`${styles.catalog__grid} ${styles[`catalog__grid--${gridView}`]}`}
+          >
             {items.map((item) => (
-              <ItemCard key={item.id} item={item} />
+              <ItemCard
+                key={item.id}
+                item={item}
+                isFavorite={isFavorite(item.id)}
+                onFavoriteToggle={toggleFavorite}
+                variant={gridView === 'large' ? 'large' : 'small'}
+              />
             ))}
           </div>
         )}
 
-        {/* Pagination */}
+        {/* Load More — mobile only */}
+        {!loading && page < totalPages && (
+          <div className={styles.catalog__loadMore}>
+            <p className={styles.catalog__loadMoreText}>
+              You have viewed {items.length} of {totalItems} items
+            </p>
+            <button
+              type="button"
+              className={styles.catalog__loadMoreBtn}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Load More
+            </button>
+          </div>
+        )}
+
+        {/* Pagination — tablet/desktop only */}
         {!loading && totalPages > 1 && (
           <div className={styles.catalog__pagination}>
             <button
@@ -286,23 +408,27 @@ const Catalog = () => {
               className={styles.catalog__pageBtn}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-            >←</button>
-
+            >
+              ←
+            </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
                 type="button"
                 className={`${styles.catalog__pageBtn} ${page === p ? styles['catalog__pageBtn--active'] : ''}`}
                 onClick={() => setPage(p)}
-              >{p}</button>
+              >
+                {p}
+              </button>
             ))}
-
             <button
               type="button"
               className={styles.catalog__pageBtn}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-            >→</button>
+            >
+              →
+            </button>
           </div>
         )}
       </main>

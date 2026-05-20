@@ -1,0 +1,53 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.wrapper {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+.cell {
+  flex: 1;
+  max-width: 65.75px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  @include text(20px, 500);
+  color: $color-text;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  background: $color-input-bg;
+  box-sizing: border-box;
+
+  &::placeholder { color: #a8a8b2; }
+
+  &:focus {
+    border-color: $color-text;
+    background: $color-white;
+  }
+
+  &:not(:placeholder-shown) { background: #FCFCFC; }
+
+  &--error {
+    border-color: $color-error;
+    background: $color-white;
+    color: $color-error;
+  }
+
+  &--success {
+    border-color: $color-success;
+    background: $color-white;
+    color: $color-success;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

@@ -19,14 +19,13 @@ export function useSearch(onClose: () => void): UseSearchReturn {
   const [recommendations, setRecommendations] = useState<BackendItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Загрузить recommendations один раз
   useEffect(() => {
     itemsApi.getPersonalizedRecommendations()
       .then(setRecommendations)
       .catch(() => {});
   }, []);
 
-  // Search suggestions с дебаунсом 300ms
+
   useEffect(() => {
     if (query.length < 3) {
       setSuggestions([]);

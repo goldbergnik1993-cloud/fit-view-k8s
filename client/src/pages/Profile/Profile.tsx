@@ -1,188 +1,255 @@
-import { useState, useEffect } from 'react';
+import { Header } from '../../shared/components/Header/Header';
+import { Footer } from '../../shared/components/Footer/Footer';
+import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
+import AccountDetailsIcon from '../../assets/icons/account-details.svg';
+import RulerIcon from '../../assets/icons/ruler.svg';
+import BoxIcon from '../../assets/icons/box.svg';
+import CreditCardIcon from '../../assets/icons/credit-card.svg';
+import LocationIcon from '../../assets/icons/location.svg';
+import HeadphonesIcon from '../../assets/icons/headphones.svg';
+import {
+  MeasurementFields,
+  type MeasurementValues,
+} from '../../shared/components/MeasurementFields/MeasurementFields';
+import { useState } from 'react';
+import { useUserProfile } from '../../hooks/useUserProfile';
 import { useAuth } from '../../hooks/useAuth';
-import { userApi, type ProfileData } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
+import type { ProfileResponse } from '../../services/api';
+import styles from './Profile.module.scss';
 
-const DEFAULT_FORM: ProfileData = {
-  height_cm: 165,
-  gender: 'female',
-  shoulders_length_cm: 40,
-  breast_length_cm: 90,
-  waist_length_cm: 70,
-  hips_length_cm: 95,
-  leg_length_cm: 80,
-};
+// ─── Nav items ────────────────────────────────────────────────────────────────
 
-const GENDER_OPTIONS: { label: string; value: NonNullable<ProfileData['gender']> }[] = [
-  { label: 'Female', value: 'female' },
-  { label: 'Male', value: 'male' },
-  { label: 'Unisex', value: 'unisex' },
+type TabId =
+  | 'personal'
+  | 'measurements'
+  | 'orders'
+  | 'payments'
+  | 'address'
+  | 'help';
+
+interface NavItem {
+  id: TabId;
+  label: string;
+  icon: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { id: 'personal', label: 'Personal Details', icon: AccountDetailsIcon },
+  { id: 'measurements', label: 'My Measurements', icon: RulerIcon },
+  { id: 'orders', label: 'Orders', icon: BoxIcon },
+  { id: 'payments', label: 'Payments', icon: CreditCardIcon },
+  { id: 'address', label: 'Address', icon: LocationIcon },
+  { id: 'help', label: 'Help', icon: HeadphonesIcon },
 ];
 
-const Profile = () => {
-  const { user, logout } = useAuth();
-  const [form, setForm] = useState<ProfileData>(DEFAULT_FORM);
-  const [profileExists, setProfileExists] = useState(false);
-  const [loading, setLoading] = useState(true);
+// ─── Personal Details Tab ─────────────────────────────────────────────────────
+
+const PersonalDetailsTab = ({ profile }: { profile: ProfileResponse }) => (
+  <div className={styles['profile__content-inner']}>
+    <div className={styles['profile__card']}>
+      <h2 className={styles['profile__card-title']}>Details</h2>
+      <div className={styles['profile__card-divider']} />
+      <div className={styles['profile__card-body']}>
+        <p className={styles['profile__card-info']}>
+          Name: {profile.first_name} {profile.last_name}
+        </p>
+        <p className={styles['profile__card-info']}>
+          Phone: {profile.phone_number}
+        </p>
+        <p className={styles['profile__card-info']}>
+          Birthday: {profile.birth_date ?? '—'}
+        </p>
+      </div>
+      <button className={styles['profile__edit-btn']}>Edit</button>
+    </div>
+
+    <div className={styles['profile__card']}>
+      <h2 className={styles['profile__card-title']}>Email</h2>
+      <div className={styles['profile__card-divider']} />
+      <div className={styles['profile__card-body']}>
+        <p className={styles['profile__card-info']}>{profile.email}</p>
+      </div>
+      <button className={styles['profile__edit-btn']}>Edit</button>
+    </div>
+
+    <div className={styles['profile__card']}>
+      <h2 className={styles['profile__card-title']}>Password</h2>
+      <div className={styles['profile__card-divider']} />
+      <div className={styles['profile__card-body']}>
+        <p className={styles['profile__card-info']}>*************</p>
+      </div>
+      <button className={styles['profile__edit-btn']}>Edit</button>
+    </div>
+  </div>
+);
+
+// ─── Measurements Tab ─────────────────────────────────────────────────────────
+
+const MeasurementsTab = ({ profile }: { profile: ProfileResponse }) => {
+  const { updateProfile } = useUserProfile();
+
+  const [fields, setFields] = useState<MeasurementValues>({
+    shoulders_length_cm: profile.shoulders_length_cm ?? 0,
+    breast_length_cm: profile.breast_length_cm ?? 0,
+    hips_length_cm: profile.hips_length_cm ?? 0,
+    waist_length_cm: profile.waist_length_cm ?? 0,
+    leg_length_cm: profile.leg_length_cm ?? 0,
+  });
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
-  // Load existing profile
-  useEffect(() => {
-    userApi.getProfile()
-      .then((profile) => {
-        setForm({
-          height_cm: profile.height_cm,
-          gender: profile.gender,
-          shoulders_length_cm: profile.shoulders_length_cm,
-          breast_length_cm: profile.breast_length_cm,
-          waist_length_cm: profile.waist_length_cm,
-          hips_length_cm: profile.hips_length_cm,
-          leg_length_cm: profile.leg_length_cm,
-        });
-        setProfileExists(true);
-      })
-      .catch(() => {
-        setProfileExists(false);
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  const handleChange = (field: keyof ProfileData, value: string | number) => {
-    setForm(prev => ({ ...prev, [field]: value }));
-    setSuccess(false);
+  const handleChange = (key: keyof MeasurementValues, raw: string) => {
+    const num = parseInt(raw.replace(/\D/g, ''), 10);
+    setFields((prev) => ({ ...prev, [key]: isNaN(num) ? 0 : num }));
   };
 
-  const handleSubmit = async () => {
+  const handleSave = async () => {
     setSaving(true);
-    setError(null);
-    setSuccess(false);
     try {
-      if (profileExists) {
-        await userApi.updateProfile(form);
-      } else {
-        await userApi.createProfile(form);
-        setProfileExists(true);
-      }
-      setSuccess(true);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      await updateProfile({
+        shoulders_length_cm: fields.shoulders_length_cm || null,
+        breast_length_cm: fields.breast_length_cm || null,
+        hips_length_cm: fields.hips_length_cm || null,
+        waist_length_cm: fields.waist_length_cm || null,
+        leg_length_cm: fields.leg_length_cm || null,
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div style={{ padding: '24px' }}>Loading...</div>;
+  return (
+    <div className={styles['profile__content-inner']}>
+      <div className={styles['profile__card']}>
+        <div className={styles['profile__fields']}>
+          <MeasurementFields
+            values={fields}
+            onChange={handleChange}
+            fieldClassName={styles['profile__field']}
+            fieldLabelClassName={styles['profile__field-label']}
+            infoBtnClassName={styles['profile__field-info-btn']}
+            tooltipClassName={styles['profile__field-tooltip']}
+            inputClassName={styles['profile__field-input']}
+          />
+        </div>
+        <PrimaryButton onClick={handleSave} loading={saving} disabled={saved}>
+          {saved ? 'Saved' : 'Save Measurements'}
+        </PrimaryButton>
+      </div>
+    </div>
+  );
+};
+
+// ─── Placeholder tabs ─────────────────────────────────────────────────────────
+
+const PlaceholderTab = ({ label }: { label: string }) => (
+  <div className={styles['profile__content-inner']}>
+    <p className={styles['profile__placeholder']}>{label} — coming soon</p>
+  </div>
+);
+
+// ─── Tab content map ──────────────────────────────────────────────────────────
+
+const getTabContent = (
+  tab: TabId,
+  profile: ProfileResponse | null
+): React.ReactNode => {
+  if (!profile) return null;
+  const map: Record<TabId, React.ReactNode> = {
+    personal: <PersonalDetailsTab profile={profile} />,
+    measurements: <MeasurementsTab profile={profile} />,
+    orders: <PlaceholderTab label="Orders" />,
+    payments: <PlaceholderTab label="Payments" />,
+    address: <PlaceholderTab label="Address" />,
+    help: <PlaceholderTab label="Help" />,
+  };
+  return map[tab];
+};
+
+// ─── Profile Page ─────────────────────────────────────────────────────────────
+
+const Profile = () => {
+  const [activeTab, setActiveTab] = useState<TabId>('personal');
+  const { profile, loading } = useUserProfile();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
-    <div style={{ padding: '24px', maxWidth: '480px', margin: '0 auto' }}>
-      <h1>Profile</h1>
-      {user && <p style={{ color: '#666', marginBottom: '24px' }}>{user.email}</p>}
+    <div className={styles['profile-page']}>
+      <Header />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <main className={styles['profile']}>
+        <h1 className={styles['profile__title']}>My Profile</h1>
 
-        {/* Gender */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '8px' }}>Gender</label>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {GENDER_OPTIONS.map(({ label, value }) => (
-              <button key={value} onClick={() => handleChange('gender', value)}
-                style={{
-                  padding: '8px 16px', borderRadius: '8px',
-                  border: '1px solid #534AB7',
-                  background: form.gender === value ? '#534AB7' : 'white',
-                  color: form.gender === value ? 'white' : '#534AB7',
-                  cursor: 'pointer', fontSize: '13px',
-                }}>
-                {label}
+        <div
+          className={styles['profile__tabs']}
+          role="tablist"
+          aria-label="Profile sections"
+        >
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.id}
+              role="tab"
+              aria-selected={activeTab === item.id}
+              className={`${styles['profile__tab']} ${activeTab === item.id ? styles['profile__tab--active'] : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <span className={styles['profile__tab-icon']}>
+                <img src={item.icon} alt="" width={20} height={20} />
+              </span>
+              {item.label}
+            </button>
+          ))}
+          <button
+            className={`${styles['profile__tab']} ${styles['profile__tab--logout']}`}
+            onClick={handleLogout}
+          >
+            Log Out
+          </button>
+        </div>
+
+        <div className={styles['profile__layout']}>
+          <aside className={styles['profile__sidebar']}>
+            <div className={styles['profile__sidebar-card']}>
+              <nav aria-label="Profile navigation">
+                {NAV_ITEMS.map((item) => (
+                  <button
+                    key={item.id}
+                    className={`${styles['profile__nav-item']} ${activeTab === item.id ? styles['profile__nav-item--active'] : ''}`}
+                    onClick={() => setActiveTab(item.id)}
+                    aria-current={activeTab === item.id ? 'page' : undefined}
+                  >
+                    <span className={styles['profile__nav-icon']}>
+                      <img src={item.icon} alt="" width={24} height={24} />
+                    </span>
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
+              <button
+                className={styles['profile__logout-btn']}
+                onClick={handleLogout}
+              >
+                Log Out
               </button>
-            ))}
+            </div>
+          </aside>
+
+          <div className={styles['profile__content']}>
+            {loading ? null : getTabContent(activeTab, profile)}
           </div>
         </div>
+      </main>
 
-        {/* Height */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Height: {form.height_cm} cm
-          </label>
-          <input type="range" min={100} max={250} value={form.height_cm}
-            onChange={e => handleChange('height_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Shoulders */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Shoulders: {form.shoulders_length_cm} cm
-          </label>
-          <input type="range" min={30} max={60} value={form.shoulders_length_cm}
-            onChange={e => handleChange('shoulders_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Breast */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Breast: {form.breast_length_cm} cm
-          </label>
-          <input type="range" min={60} max={180} value={form.breast_length_cm}
-            onChange={e => handleChange('breast_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Waist */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Waist: {form.waist_length_cm} cm
-          </label>
-          <input type="range" min={40} max={150} value={form.waist_length_cm}
-            onChange={e => handleChange('waist_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Hips */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Hips: {form.hips_length_cm} cm
-          </label>
-          <input type="range" min={60} max={180} value={form.hips_length_cm}
-            onChange={e => handleChange('hips_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {/* Leg */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: '#555', marginBottom: '6px' }}>
-            Leg length: {form.leg_length_cm} cm
-          </label>
-          <input type="range" min={50} max={120} value={form.leg_length_cm}
-            onChange={e => handleChange('leg_length_cm', Number(e.target.value))}
-            style={{ width: '100%' }} />
-        </div>
-
-        {error && (
-          <div style={{ padding: '12px', background: '#fff0f0', border: '1px solid #ffcccc', borderRadius: '8px', color: '#cc0000', fontSize: '13px' }}>
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div style={{ padding: '12px', background: '#f0fff0', border: '1px solid #ccffcc', borderRadius: '8px', color: '#007700', fontSize: '13px' }}>
-            Profile saved successfully!
-          </div>
-        )}
-
-        <button onClick={handleSubmit} disabled={saving}
-          style={{ padding: '12px', borderRadius: '8px', border: 'none', background: '#534AB7', color: 'white', fontSize: '15px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
-          {saving ? 'Saving...' : 'Save Profile'}
-        </button>
-
-        <button onClick={logout}
-          style={{ padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0', background: 'white', color: '#666', fontSize: '15px', cursor: 'pointer' }}>
-          Log Out
-        </button>
-
-      </div>
+      <Footer />
     </div>
   );
 };

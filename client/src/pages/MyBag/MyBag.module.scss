@@ -1,0 +1,954 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
+
+.main {
+  padding: $spacing-16 var(--container-padding) 80px;
+  flex: 1;
+  position: relative;
+}
+
+// ─── Typography shared ────────────────────────────────────────────────────────
+
+.page-title {
+  font-family: $font-family;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text;
+  margin: 0 0 4px;
+}
+
+.empty-wrap {
+  padding: $spacing-16 0 $spacing-48;
+
+  @include tablet {
+    padding: $spacing-16 0 100px;
+  }
+
+  @include desktop {
+    padding: $spacing-16 0 100px;
+  }
+}
+
+// ─── Step Dots ────────────────────────────────────────────────────────────────
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.step-dots__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $color-card-bg;
+  display: block;
+
+  &--active {
+    background: $color-primary;
+  }
+}
+
+.checkout-error {
+  @include text(14px, 400);
+  color: $color-error;
+  text-align: center;
+  margin: 0;
+}
+
+// ─── Step 1 ───────────────────────────────────────────────────────────────────
+
+.step1 {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  align-items: center;
+
+  @include desktop {
+    align-items: start;
+  }
+}
+
+.step1__left {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  align-items: center;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    align-items: flex-start;
+    width: 684px;
+  }
+}
+
+.step1__right {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-top: $spacing-16;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
+
+  @include desktop {
+    margin-top: 0;
+    width: 448px;
+    align-self: auto;
+  }
+}
+
+// ─── Cart List ────────────────────────────────────────────────────────────────
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  width: 100%;
+
+  @include desktop {
+    align-items: flex-start;
+  }
+}
+
+// ─── Cart Item ────────────────────────────────────────────────────────────────
+
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: $color-white;
+  border-radius: 16px;
+  width: 100%;
+  padding: $spacing-16;
+
+  @include desktop {
+    width: 684px;
+  }
+}
+
+.cart-item__remove {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  width: 24px;
+  height: 24px;
+  @include flex-center;
+  @include hover-opacity;
+}
+
+.cart-item__card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100px;
+
+  @include tablet {
+    min-height: 170px;
+  }
+}
+
+.cart-item__image {
+  width: 132px;
+  height: 100px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+  align-self: flex-start;
+
+  @include tablet {
+    width: 224px;
+    height: 170px;
+  }
+}
+
+.cart-item__details {
+  padding: 0 0 0 $spacing-16;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  @include tablet {
+    padding: 0 0 0 39px;
+    justify-content: space-between;
+  }
+
+  @include desktop {
+    padding: 0 0 0 80px;
+    justify-content: space-between;
+  }
+}
+
+.cart-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+.cart-item__name {
+  @include heading(16px, 600);
+  margin: 0;
+
+  @include tablet {
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
+
+.cart-item__brand {
+  @include text(12px);
+  margin: 0;
+
+  @include tablet {
+    font-size: 14px;
+  }
+}
+
+.cart-item__size {
+  @include text(14px);
+  color: $color-input-border;
+  margin: 0;
+}
+
+.cart-item__qty {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  margin-top: 18px;
+
+  @include tablet {
+    margin-top: $spacing-16;
+    justify-content: space-between;
+  }
+
+  @include desktop {
+    margin-top: 15px;
+    justify-content: space-between;
+  }
+}
+
+.cart-item__qty-controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.cart-item__qty-label {
+  display: none;
+
+  @include tablet {
+    display: block;
+    @include text(16px, 400);
+  }
+}
+
+.cart-item__qty-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #4c494d;
+  border-radius: 8px;
+  background: $color-white;
+  @include flex-center;
+  @include hover-opacity;
+}
+
+.cart-item__qty-value {
+  @include text(14px);
+  min-width: 20px;
+  text-align: center;
+
+  @include tablet {
+    font-size: 18px;
+    font-weight: 500;
+  }
+}
+
+// ─── Cart Item Subtotal ───────────────────────────────────────────────────────
+
+.cart-item__subtotal-mobile {
+  display: none;
+
+  @include tablet {
+    @include flex-between;
+    padding: $spacing-16 0 0;
+  }
+}
+
+.cart-item__subtotal-desktop {
+  @include flex-between;
+  padding: $spacing-16 0 0;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.cart-item__subtotal-label,
+.cart-item__subtotal-value {
+  @include heading(18px, 600);
+
+  @include tablet {
+    font-size: 20px;
+  }
+}
+
+// ─── Promo ────────────────────────────────────────────────────────────────────
+
+.promo__toggle {
+  @include flex-between;
+  @include text(16px);
+  width: 100%;
+  padding: $spacing-16 0;
+  border-bottom: 1px solid $color-card-bg;
+
+  @include tablet {
+    font-size: 18px;
+  }
+}
+
+.promo__chevron {
+  transition: transform 0.2s ease;
+}
+
+.promo__chevron--open {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+}
+
+.promo__body {
+  display: flex;
+  gap: $spacing-8;
+  padding: $spacing-16 0;
+}
+
+.promo__input {
+  flex: 1;
+  height: 48px;
+  border: 1px solid $color-card-bg;
+  border-radius: 8px;
+  padding: 0 $spacing-16;
+  font-family: $font-family;
+  font-size: 16px;
+  outline: none;
+
+  &:focus {
+    border-color: $color-primary;
+  }
+}
+
+.promo__apply {
+  height: 48px;
+  padding: 0 $spacing-24;
+  border-radius: 8px;
+  background: $color-primary;
+  color: $color-white;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $color-primary-hover;
+  }
+}
+
+// ─── Summary ──────────────────────────────────────────────────────────────────
+.summary-card {
+  background: $color-white;
+  border-radius: 16px;
+  padding: $spacing-16;
+  width: 100%;
+
+  @include desktop {
+    width: 448px;
+  }
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary__row {
+  @include flex-between;
+  align-items: center;
+  padding: $spacing-16 0;
+
+  &--total {
+    border-top: 1px solid $color-card-bg;
+  }
+}
+
+.summary__row-label,
+.summary__row-value {
+  @include text(16px);
+
+  @include tablet {
+    font-size: 18px;
+  }
+}
+
+.summary__row-label--bold,
+.summary__row-value--bold {
+  @include heading(16px, 600);
+
+  @include tablet {
+    font-size: 18px;
+  }
+}
+
+.summary__total-label,
+.summary__total-value {
+  @include h2;
+}
+
+// ─── Cart Compact (Step 2 & 3) ────────────────────────────────────────────────
+.cart-compact {
+  background: $color-white;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 448px;
+  }
+}
+
+.cart-compact__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-compact__item {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: $spacing-16;
+  align-items: flex-start;
+  padding: $spacing-16;
+}
+
+.cart-compact__image {
+  width: 132px;
+  height: 100px;
+  object-fit: contain;
+  flex-shrink: 0;
+
+  @include tablet {
+    width: 224px;
+    height: 170px;
+  }
+}
+
+.cart-compact__info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  min-height: 100px;
+
+  @include tablet {
+    min-height: 170px;
+  }
+}
+
+.cart-compact__info-top {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.cart-compact__name {
+  @include heading(16px, 600);
+  margin: 0;
+}
+
+.cart-compact__brand {
+  @include text(12px);
+  margin: 0;
+}
+
+.cart-compact__qty {
+  @include text(14px);
+  margin: 0;
+}
+
+.cart-compact__subtotal-mobile {
+  @include flex-between;
+  padding: $spacing-16;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.cart-compact__subtotal-desktop {
+  display: none;
+
+  @include tablet {
+    @include flex-between;
+    padding-top: $spacing-16;
+  }
+}
+
+.cart-compact__subtotal-label,
+.cart-compact__subtotal-value {
+  @include heading(18px, 600);
+}
+
+// ─── Step 2 ───────────────────────────────────────────────────────────────────
+
+.step2 {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  align-items: center;
+
+  @include desktop {
+    align-items: start;
+  }
+}
+
+.step2__left {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-32;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 684px;
+  }
+}
+
+.step2__right {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-32;
+    width: 448px;
+  }
+}
+
+.step2__left-compact {
+  display: block;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.step2__mobile-payment {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+.form-section {
+  background: $color-white;
+  border-radius: 16px;
+  padding: $spacing-16;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 684px;
+  }
+}
+
+.form-section__title {
+  @include heading(24px, 600);
+  margin: 0 0 $spacing-16;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+// ─── Radio ────────────────────────────────────────────────────────────────────
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  cursor: pointer;
+  margin-bottom: $spacing-8;
+
+  &--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.radio-input {
+  display: none;
+}
+
+.radio-custom {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid $color-text;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.2s ease;
+
+  .radio-input:checked + & {
+    border-color: $color-text;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: $color-text;
+    }
+  }
+}
+
+// ─── Step 3 ───────────────────────────────────────────────────────────────────
+
+.step3 {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  align-items: center;
+
+  @include desktop {
+    align-items: start;
+  }
+}
+
+.step3__left {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-32;
+  width: 100%;
+
+  @include tablet {
+    width: 590px;
+  }
+
+  @include desktop {
+    width: 684px;
+  }
+}
+
+.step3__left-compact {
+  display: block;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.step3__mobile-payment {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.step3__right {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-32;
+    width: 448px;
+  }
+}
+
+.review-text {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin: 0;
+
+  @include tablet {
+    gap: $spacing-24;
+  }
+}
+
+.review-text__line {
+  display: block;
+}
+
+// ─── Payment Block (Step 2 mobile/tablet right, Step 3) ──────────────────────
+
+.payment-block {
+  background: $color-white;
+  border-radius: 16px;
+  padding: $spacing-16 $spacing-16 $spacing-8;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.payment-block__title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 600;
+  color: $color-text;
+  margin: 0;
+}
+
+.payment-block__value {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-text;
+  margin: 0;
+}
+
+.payment-block__total {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid $color-card-bg;
+  padding-top: $spacing-16;
+}
+
+.payment-block__total-label {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.payment-block__total-value {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+// ─── Step 4 ───────────────────────────────────────────────────────────────────
+
+.step4 {
+  display: flex;
+  flex-direction: column;
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $spacing-32 0;
+  gap: $spacing-16;
+}
+
+.success__illustration {
+  margin-bottom: $spacing-8;
+}
+
+.success__title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0;
+}
+
+.success__text {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 400;
+  color: $color-input-border;
+  margin: 0;
+}
+
+.success__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  width: 100%;
+  max-width: 343px;
+}
+
+.success__keep-shopping {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  border: 1.5px solid $color-primary;
+  background: transparent;
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 500;
+  color: $color-primary;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+}
+
+// ─── Tablet (744px+) ──────────────────────────────────────────────────────────
+
+@include tablet {
+  .main {
+    padding: $spacing-24 var(--container-padding) $spacing-88;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-24;
+  }
+}
+
+// ─── Breadcrumb ───────────────────────────────────────────────────────────────
+
+.breadcrumb {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    align-items: center;
+    gap: $spacing-8;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.step1__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $spacing-16;
+  position: relative;
+
+  @include desktop {
+    align-items: center;
+  }
+}
+
+.step1__header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+.breadcrumb__item-wrap {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+}
+
+.breadcrumb__step {
+  font-family: $font-family;
+  font-size: 16px;
+  font-weight: 500;
+  color: #a8a8b2;
+}
+
+.breadcrumb__step--active {
+  color: $color-text;
+}
+
+.breadcrumb__arrow {
+  opacity: 1;
+}
+
+.breadcrumb__arrow--inactive {
+  opacity: 0.4;
+}
+
+// ─── Desktop (1440px+) ────────────────────────────────────────────────────────
+
+@include desktop {
+  .main {
+    padding: $spacing-32 var(--container-padding) $spacing-88;
+  }
+
+  .step1__top {
+    width: 100%;
+  }
+
+  .step1 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 260px;
+    align-items: start;
+    padding-top: $spacing-32;
+  }
+
+  .step2 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 260px;
+    align-items: start;
+  }
+
+  .step2__left {
+    gap: $spacing-32;
+  }
+
+  .step3 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 260px;
+    align-items: start;
+  }
+
+  .step4 {
+    display: flex;
+    flex-direction: column;
+
+    .emptyState {
+      align-self: center;
+    }
+  }
+}

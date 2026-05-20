@@ -4,7 +4,7 @@
 // ─── Mobile ───────────────────────────────────────────────────────────────────
 
 .section {
-  padding: 0 var(--container-padding) $spacing-32;
+  padding: 0 var(--container-padding) 80px;
   box-sizing: border-box;
 }
 
@@ -14,14 +14,8 @@
 }
 
 .section__title {
-  @include text(18px, 600, 100%);
+  @include text(16px, 400, 100%);
   margin: 0;
-}
-
-.section__see-all {
-  @include text(12px, 400, 100%);
-  @include hover-opacity;
-  white-space: nowrap;
 }
 
 .items-grid {
@@ -33,28 +27,43 @@
 .partner-card {
   @include flex-center;
   @include focus-visible;
-  background: $color-card-bg;
-  height: $card-height;
   width: 100%;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #E9E9F7;
+  border-radius: 8px;
+  background: $color-white;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
 
   &:hover {
-    opacity: 0.85;
-    transform: translateY(-2px);
+    box-shadow: 0 0 10px 0 rgba(48, 48, 242, 0.25);
+  }
+
+  &:active {
+    box-shadow: 0 0 10px 0 rgba(48, 48, 242, 0.25);
   }
 }
 
-.partner-card__name {
-  @include text(18px, 400);
-  margin: 0;
+.partner-card__logo {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
 }
 
 // ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
 
 @include tablet {
+  .section {
+    padding: 0 var(--container-padding) 100px;
+  }
+
   .items-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: $card-gap-mobile;
+  }
+
+  .section__title {
+    font-size: 18px;
   }
 }
 
@@ -62,14 +71,11 @@
 
 @include desktop {
   .items-grid {
-    grid-template-columns: repeat(4, 330px);
-    justify-content: center;
+    grid-template-columns: repeat(4, 1fr);
     gap: $card-gap-desktop;
   }
 
   .section__header {
-    max-width: calc(4 * 330px + 3 * #{$card-gap-desktop});
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: $spacing-24;
   }
 }

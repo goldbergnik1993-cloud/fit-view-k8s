@@ -1,11 +1,27 @@
 // ─── Colors ───────────────────────────────────────────────────────────────────
 $color-black: #000000;
 $color-white: #ffffff;
+$color-text: #0D0C0D;
 $color-card-bg: #e6e6e6;
 $color-btn-bg: #d9d9d9;
+$color-toggle-bg: #E4E4F2;
+$color-input-border: #666066;
+$color-nav-active: #4C494D;
+$color-input-bg: #E9E9F7;
+
+// ─── Primary Button ───────────────────────────────────────────────────────────
+$color-primary:          #3030F2;
+$color-primary-hover:    #1617E0;
+$color-primary-pressed:  #1314BF;
+$color-primary-disabled: #9999FF;
+
+// ─── Semantic ─────────────────────────────────────────────────────────────────
+$color-success: #42D921;
+$color-error:   #D92124;
 
 // ─── Typography ───────────────────────────────────────────────────────────────
-$font-family: 'Inter', sans-serif;
+$font-family-heading: 'Outfit', sans-serif;
+$font-family: 'Albert Sans', sans-serif;
 
 // ─── Spacing ──────────────────────────────────────────────────────────────────
 $spacing-4: 4px;
@@ -13,6 +29,7 @@ $spacing-8: 8px;
 $spacing-16: 16px;
 $spacing-24: 24px;
 $spacing-32: 32px;
+$spacing-40: 40px;
 $spacing-48: 48px;
 $spacing-88: 88px;
 

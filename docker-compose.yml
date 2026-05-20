@@ -44,9 +44,6 @@ services:
       target: development
       args:
         - VITE_API_URL=${VITE_API_URL}
-    volumes:
-      - ./client:/app
-      - /app/node_modules
     networks:
       - fit-network
     depends_on:
@@ -57,9 +54,6 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: fitview_backend
-    volumes:
-      - ./server:/app
-      - /app/.venv
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     environment: *common-env
     depends_on:
@@ -72,9 +66,6 @@ services:
       context: ./server
     container_name: fitview_worker
     command: celery -A core.celery_app worker --loglevel=info
-    volumes:
-      - ./server:/app
-      - /app/.venv
     environment: *common-env
     depends_on:
       - redis
@@ -86,9 +77,6 @@ services:
       context: ./server
     container_name: fitview_beat
     command: celery -A core.celery_app beat --loglevel=info
-    volumes:
-      - ./server:/app
-      - /app/.venv
     environment: *common-env
     depends_on:
       - redis

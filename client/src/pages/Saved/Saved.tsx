@@ -1,33 +1,69 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
 import EmptyState from '../../shared/components/EmptyState/EmptyState';
 import ItemCard from '../../shared/components/ItemCard/ItemCard';
-import { userApi } from '../../services/api';
+import { userApi, itemsApi } from '../../services/api';
 import { mapItem } from '../../hooks/useItems';
 import type { ClothingItem } from '../../types/clothing';
 import styles from './Saved.module.scss';
+import { useAuth } from '../../hooks/useAuth';
+import { useFavorites } from '../../providers/FavoritesContext';
+import { SimilarItems } from '../../shared/components/SimilarItems/SimilarItems';
+import EmptySavedIllustration from '../../assets/illustrations/empty-saved.png';
 
 const Saved = () => {
+  const { user, loading: authLoading } = useAuth();
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const [savedItems, setSavedItems] = useState<ClothingItem[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const favoritesRef = useRef(favorites);
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
 
   const fetchFavorites = useCallback(async () => {
+    if (!user) {
+      const guestIds = Object.entries(favoritesRef.current)
+        .filter(([, v]) => v)
+        .map(([id]) => id);
+
+      if (guestIds.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const results = await Promise.all(
+          guestIds.map((id) => itemsApi.getById(id))
+        );
+        setSavedItems(results.map(mapItem));
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
       const data = await userApi.getFavorites();
-      setSavedItems(data.map(mapItem));
+      setSavedItems(data.items.map(mapItem));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
-  useEffect(() => { fetchFavorites(); }, [fetchFavorites]);
+  useEffect(() => {
+    if (!authLoading) fetchFavorites();
+  }, [fetchFavorites, authLoading]);
 
   const isEmpty = !loading && !error && savedItems.length === 0;
 
@@ -36,10 +72,9 @@ const Saved = () => {
       <Header />
 
       <main className={styles.saved__main}>
-
         {loading && (
           <div className={styles.saved__skeletonWrap}>
-            {Array.from({ length: 3 }).map((_, i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className={styles.saved__skeleton} />
             ))}
           </div>
@@ -48,42 +83,52 @@ const Saved = () => {
         {error && !loading && (
           <div className={styles.saved__error}>
             <p>Something went wrong.</p>
-            <button type="button" onClick={fetchFavorites}>Retry</button>
+            <button type="button" onClick={fetchFavorites}>
+              Retry
+            </button>
           </div>
         )}
 
         {isEmpty && (
-          <EmptyState
-            title="You haven't saved any items yet!"
-            subtitle="Discover jackets and save your top picks for later"
-            buttonText="Browse items"
-            buttonPath="/catalog"
-          />
+          <div className={styles.saved__emptyWrap}>
+            <p className={styles.saved__label}>Saved</p>
+            <EmptyState
+              title="You haven't saved any items yet!"
+              subtitle="Discover jackets and save your top picks for later"
+              buttonText="Browse Items"
+              buttonPath="/catalog"
+              illustration={EmptySavedIllustration}
+              showRecommendations={true}
+            />
+          </div>
         )}
 
         {!loading && !error && savedItems.length > 0 && (
           <div className={styles.saved__content}>
-            <Link to="/" className={styles.saved__back} aria-label="Go back">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="1.5"
-                  strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
-
             <div className={styles.saved__heading}>
-              <div className={styles.saved__headingRow}>
-                <h1 className={styles.saved__title}>Saved</h1>
-                <button type="button" className={styles.saved__moreBtn} aria-label="More options">
-                  <span /><span /><span />
-                </button>
+              <p className={styles.saved__label}>Saved</p>
+              <div className={styles.saved__countRow}>
+                <h1 className={styles.saved__count}>
+                  {savedItems.length}{' '}
+                  {savedItems.length === 1 ? 'item' : 'items'}
+                </h1>
+                <span className={styles.saved__dots}>···</span>
               </div>
-              <p className={styles.saved__count}>{savedItems.length} items</p>
             </div>
 
             <div className={styles.saved__grid}>
               {savedItems.map((item) => (
-                <ItemCard key={item.id} item={item} />
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  isFavorite={isFavorite(item.id)}
+                  onFavoriteToggle={toggleFavorite}
+                />
               ))}
+            </div>
+
+            <div className={styles.saved__similar}>
+              <SimilarItems />
             </div>
           </div>
         )}
