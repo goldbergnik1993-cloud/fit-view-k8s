@@ -28,10 +28,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 400;
-  width: 691px;
+  width: 470px;
 
   @include desktop {
-    width: 684px;
+    width: 448px;
   }
 }
 
@@ -42,16 +42,19 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 0;
+  border-radius: 16px 16px 0 0;
+  max-height: 90vh;
 
   @include tablet {
     border-radius: 8px;
-    max-height: 487px;
+    min-height: 353px;
+    max-height: 80vh;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   }
 
   @include desktop {
-    max-height: 506px;
+    min-height: 353px;
+    max-height: 80vh;
   }
 }
 
@@ -59,13 +62,16 @@
 
 .header {
   @include flex-between;
-  padding: $spacing-16 $spacing-24;
-  border-bottom: 1px solid $color-card-bg;
+  padding: $spacing-16;
   flex-shrink: 0;
+
+  @include tablet {
+    padding: 20px $spacing-24;
+  }
 }
 
 .title {
-  @include text(18px, 500);
+  @include h3;
 }
 
 .headerRight {
@@ -126,12 +132,12 @@
   flex: 1;
   overflow-y: auto;
   padding: 0 $spacing-24;
+  min-height: 0;
 }
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 .section {
-  border-bottom: 1px solid $color-card-bg;
   padding: $spacing-4 0;
 }
 
@@ -191,18 +197,12 @@
 
 .footer {
   padding: $spacing-16 $spacing-24;
-  border-top: 1px solid $color-card-bg;
   flex-shrink: 0;
+  background: $color-white;
 }
 
 .applyBtn {
-  @include text(14px, 500);
-  width: 212px;
+  @include btn-primary;
   height: 48px;
-  background: $color-btn-bg;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: block;
-  @include hover-opacity;
+  border-radius: 8px;
 }

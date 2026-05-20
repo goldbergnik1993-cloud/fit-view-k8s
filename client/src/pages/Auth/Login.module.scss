@@ -1,0 +1,287 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-16 var(--container-padding) 85px;
+
+  @include tablet {
+    padding: $spacing-32 var(--container-padding) 100px;
+  }
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+.card-wrapper {
+  width: 100%;
+  max-width: 343px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+  @include tablet {
+    max-width: 470px;
+    position: relative;
+  }
+
+  @include desktop {
+    max-width: 448px;
+  }
+}
+
+.card {
+  background: $color-white;
+  border-radius: $spacing-8;
+  padding: $spacing-16;
+  width: 100%;
+  max-width: 343px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: $spacing-24;
+
+  @include tablet {
+    max-width: 470px;
+    padding: $spacing-24;
+  }
+
+  @include desktop {
+    max-width: 448px;
+  }
+}
+
+.card--inner {
+  max-width: 100%;
+}
+
+.card--otp {
+  gap: $spacing-24;
+  min-height: 317px;
+
+  @include tablet {
+    min-height: 292px;
+  }
+}
+
+.card__heading {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.card__title {
+  @include heading(24px, 600);
+  margin: 0;
+}
+
+.card__subtitle {
+  @include text(14px, 400);
+  margin: 0;
+}
+
+.card__fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+
+.tabs {
+  display: flex;
+  background: $color-toggle-bg;
+  border-radius: $spacing-8;
+  padding: 3px;
+}
+
+.tab {
+  flex: 1;
+  padding: $spacing-8;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #888;
+  transition: all 0.2s;
+
+  &--active {
+    background: $color-white;
+    color: $color-black;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// ─── Back button ──────────────────────────────────────────────────────────────
+
+.back {
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  align-self: flex-start;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+
+  &:hover { opacity: 0.6; }
+
+  @include tablet {
+    position: fixed;
+    top: 100px;
+    left: $spacing-40;
+  }
+}
+
+// ─── Password rules ───────────────────────────────────────────────────────────
+
+.rules {
+  list-style: disc;
+  padding-left: $spacing-16;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+
+  li {
+    @include text(13px, 400);
+    color: #555;
+  }
+}
+
+// ─── Dots ─────────────────────────────────────────────────────────────────────
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-8;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $color-card-bg;
+  transition: background 0.2s;
+
+  &--active { background: $color-primary; }
+}
+
+// ─── OTP ──────────────────────────────────────────────────────────────────────
+
+.otp__group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.otp__label {
+  @include text(13px, 400);
+  margin: 0;
+}
+
+.resend {
+  @include text(13px, 400);
+  margin: 0;
+}
+.resend__btn {
+  @include text(13px, 400);
+  color: $color-black;
+  text-decoration: underline;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.6; }
+}
+
+.otp__hints {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  @include text(12px, 400);
+  margin-top: $spacing-8;
+
+  &--error   { color: $color-error; }
+  &--success { color: $color-success; }
+}
+
+// ─── Sign In extras ───────────────────────────────────────────────────────────
+
+.signin__row {
+  @include flex-between;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  @include text(13px, 400);
+  cursor: pointer;
+}
+
+.remember__input {
+  display: none;
+}
+
+.forgot {
+  @include text(13px, 400);
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.6; }
+}
+
+// ─── Divider ──────────────────────────────────────────────────────────────────
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: $spacing-16;
+  font-size: 13px;
+  margin-top: $spacing-24;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #A8A8B2;
+  }
+}
+
+// ─── Social ───────────────────────────────────────────────────────────────────
+
+.social__label {
+  @include text(13px, 400);
+  text-align: center;
+  margin: 0;
+}
+
+.social {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-16;
+}
+
+.social__btn {
+  @include flex-center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 1px solid $color-card-bg;
+  pointer-events: none;
+}
+
+// ─── Error ────────────────────────────────────────────────────────────────────
+
+.error {
+  @include text(13px, 400);
+  color: $color-error;
+  margin: 0;
+}
+
+

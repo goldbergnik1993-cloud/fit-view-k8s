@@ -1,0 +1,150 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  @include tablet {
+    align-items: center;
+  }
+}
+
+.modal {
+  background: $color-white;
+  border-radius: 16px 16px 0 0;
+  padding: $spacing-24;
+  width: 100%;
+  min-height: 482px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+
+   @include tablet {
+    width: 470px;
+    height: 476px;
+    min-height: unset;
+    max-width: unset;
+    border-radius: 16px;
+    margin: $spacing-16;
+  }
+
+  @include desktop {
+    width: 448px;
+    height: 476px;
+  }
+}
+
+.modal__header {
+  @include flex-between;
+}
+
+.modal__title {
+  font-family: $font-family-heading;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 150%;
+  margin: 0;
+  color: $color-text;
+
+  @include tablet {
+    font-size: 20px;
+  }
+}
+
+.modal__close {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  @include text(18px, 400);
+  @include hover-opacity;
+}
+
+.modal__preview {
+  border-radius: 8px;
+  height: 240px;
+  @include flex-center;
+  overflow: hidden;
+  background: #E4E4F2;
+  border: 1px solid $color-card-bg;
+}
+
+
+.modal__preview-placeholder {
+  @include text(14px, 400);
+  color: $color-input-border;
+}
+
+.modal__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.modal__text {
+  @include text(16px, 400, 150%);
+  margin: 0;
+}
+
+.modal__dots {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-8;
+}
+
+.modal__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $color-card-bg;
+  transition: background 0.2s ease;
+
+  &--active {
+    background: $color-primary;
+  }
+}
+
+.modal__actions {
+  display: flex;
+  gap: $spacing-16;
+}
+
+.modal__btn-skip {
+  flex: 1;
+  height: 48px;
+  border: 1.5px solid $color-primary;
+  border-radius: 8px;
+  @include text(16px, 600);
+  color: $color-primary;
+  background: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:hover { 
+    background: $color-primary-pressed;
+    color: $color-white;
+    border-color: $color-primary-pressed;
+  }
+  &:active { 
+    background: $color-primary-pressed;
+    color: $color-white;
+  }
+}
+
+.modal__btn-next {
+  flex: 1;
+  height: 48px;
+  background: $color-primary;
+  border-radius: 8px;
+  @include text(16px, 600);
+  color: $color-white;
+  transition: background 0.2s ease;
+
+  &:hover { background: $color-primary-hover; }
+  &:active { background: $color-primary-pressed; }
+}

@@ -1,0 +1,356 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Page wrapper ─────────────────────────────────────────────────────────────
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// ─── Main container ───────────────────────────────────────────────────────────
+
+.profile {
+  flex: 1;
+  padding: $spacing-24 var(--container-padding);
+  max-width: $container-max-width;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────────
+
+.profile__title {
+  @include h3;
+  margin-bottom: $spacing-24;
+}
+
+// ─── Mobile/Tablet horizontal tabs ───────────────────────────────────────────
+
+.profile__tabs {
+  display: flex;
+  gap: $spacing-8;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: $spacing-24;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.profile__tab {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  padding: $spacing-8 $spacing-16;
+  border: 1px solid $color-card-bg;
+  border-radius: 4px;
+  white-space: nowrap;
+  @include text(16px, 400);
+  flex-shrink: 0;
+  background: $color-white;
+  color: $color-text;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(&--active) {
+    border-color: $color-nav-active;
+    opacity: 0.7;
+  }
+
+  &--active {
+    background: $color-nav-active;
+    color: $color-white;
+    border-color: $color-nav-active;
+
+    img { filter: invert(1) brightness(2); }
+  }
+}
+
+.profile__tab-icon {
+  @include flex-center;
+  width: 20px;
+  height: 20px;
+
+  img { width: 20px; height: 20px; }
+}
+
+// ─── Desktop layout ───────────────────────────────────────────────────────────
+
+.profile__layout {
+  display: flex;
+  gap: 142px;
+}
+
+// ─── Sidebar (hidden on mobile/tablet) ───────────────────────────────────────
+
+.profile__sidebar {
+  display: none;
+}
+
+// ─── Content area ─────────────────────────────────────────────────────────────
+
+.profile__content {
+  flex: 1;
+  min-width: 0;
+}
+
+// ─── Content inner — центрирование карточек ──────────────────────────────────
+
+.profile__content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-24;
+  width: 343px;
+  margin: 0 auto;
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+
+.profile__card {
+  background: $color-white;
+  border-radius: 16px;
+  padding: $spacing-16;
+  width: 343px;
+  box-sizing: border-box;
+}
+
+.profile__card-title {
+  @include h3;
+  margin-bottom: $spacing-16;
+}
+
+.profile__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  margin-bottom: $spacing-16;
+}
+
+.profile__card-info {
+  @include text(14px, 400);
+  margin: 0;
+  padding: 0;
+}
+
+// ─── Edit button ──────────────────────────────────────────────────────────────
+
+.profile__edit-btn {
+  width: 100%;
+  height: 44px;
+  padding: 0 $spacing-16;
+  border: 1px solid $color-primary;
+  border-radius: 8px;
+  @include text(16px, 500);
+  color: $color-primary;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+// ─── Measurement fields ───────────────────────────────────────────────────────
+
+.profile__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.profile__field-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+
+  span {
+    @include text(14px, 400);
+  }
+}
+
+// ─── Tooltip ─────────────────────────────────────────────────────────────────
+
+.profile__field-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile__field-info-btn {
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  @include hover-opacity;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: filter 0.2s ease;
+}
+
+.profile__field-tooltip {
+  @include text(14px, 400, 1.5);
+  color: $color-text;
+  background: #FCFCFC;
+  border-radius: 8px;
+  padding: $spacing-8 $spacing-16;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.25);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// ─── Input (из EditMeasurementsModal) ────────────────────────────────────────
+
+.profile__field-input {
+  width: 100%;
+  height: 44px;
+  background: $color-input-bg;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0 $spacing-16;
+  @include text(16px, 400);
+  color: $color-text;
+  outline: none;
+  transition: background 0.2s, border-color 0.2s;
+
+  &::placeholder { color: $color-input-border; }
+
+  &:focus {
+    background: $color-white;
+    border-color: $color-text;
+  }
+
+  &:not(:placeholder-shown) {
+    background: #fcfcfc;
+    border-color: $color-input-bg;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button { -webkit-appearance: none; }
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.profile__fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-16;
+  margin-bottom: $spacing-16;
+}
+
+// ─── Placeholder tab ──────────────────────────────────────────────────────────
+
+.profile__placeholder {
+  @include text(14px, 400);
+  color: $color-input-border;
+  padding: $spacing-32 0;
+  text-align: center;
+}
+
+// ─── Tablet: 744px+ ───────────────────────────────────────────────────────────
+
+@include tablet {
+  .profile__content-inner {
+    width: 470px;
+  }
+
+  .profile__card {
+    width: 470px;
+  }
+}
+
+// ─── Desktop: 1440px+ ─────────────────────────────────────────────────────────
+
+@include desktop {
+  .profile {
+    padding-top: $spacing-32;
+  }
+
+  .profile__tabs {
+    display: none;
+  }
+
+  .profile__sidebar {
+    display: block;
+    width: 330px;
+    flex-shrink: 0;
+  }
+
+  // ─── Sidebar card ───────────────────────────────────────────────────────────
+
+  .profile__sidebar-card {
+    background: $color-white;
+    border-radius: 8px;
+    padding: $spacing-16;
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-16;
+    }
+  }
+
+  .profile__nav-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-16;
+    width: 100%;
+    padding: $spacing-16;
+    border-radius: 4px;
+    @include text(16px, 400);
+    text-align: left;
+    background: transparent;
+    color: $color-text;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover:not(&--active) {
+      background-color: $color-toggle-bg;
+    }
+
+    &--active {
+      background: $color-nav-active;
+      color: $color-white;
+
+      img { filter: invert(1) brightness(2); }
+    }
+  }
+
+  .profile__nav-icon {
+    @include flex-center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+
+    img { width: 24px; height: 24px; }
+  }
+
+  // ─── Content ────────────────────────────────────────────────────────────────
+
+  .profile__content-inner {
+    width: 448px;
+    margin: 0;
+  }
+
+  .profile__card {
+    width: 448px;
+    padding: $spacing-16;
+  }
+}
+
+.profile__logout-btn {
+  width: 100%;
+  margin-top: $spacing-16;
+  padding: $spacing-16;
+  border-radius: 4px;
+  @include text(16px, 400);
+  color: $color-error;
+  text-align: left;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-toggle-bg;
+  }
+}
+
+.profile__tab--logout {
+  color: $color-error;
+  border-color: $color-error;
+  flex-shrink: 0;
+}

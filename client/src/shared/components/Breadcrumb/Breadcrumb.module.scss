@@ -1,0 +1,52 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-4;
+}
+
+.breadcrumb__item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+}
+
+.breadcrumb__link {
+  @include text(14px, 400);
+  color: $color-text;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  @include hover-opacity;
+
+  @include desktop {
+    font-family: $font-family-heading;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.breadcrumb__current {
+  @include text(14px, 400);
+  color: $color-text;
+
+  @include desktop {
+    font-family: $font-family-heading;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.breadcrumb__sep {
+  @include text(14px, 400);
+  color: $color-text;
+  opacity: 0.4;
+
+  @include desktop {
+    font-family: $font-family-heading;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}

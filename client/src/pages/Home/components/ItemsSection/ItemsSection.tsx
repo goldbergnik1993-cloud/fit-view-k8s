@@ -1,19 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+import { useItems } from '../../../../hooks/useItems';
+import { useBreakpoint } from '../../../../hooks/useBreakpoint';
+import ItemCard from '../../../../shared/components/ItemCard/ItemCard';
+import { useFavorites } from '../../../../providers/FavoritesContext';
 import styles from './ItemsSection.module.scss';
 
-const POPULAR_ITEMS = [
-  { id: 1, name: 'Midi dress', icon: 'icon-dress' },
-  { id: 2, name: 'Classic Jeans', icon: 'icon-jeans' },
-  { id: 3, name: 'Sweater', icon: 'icon-sweater' },
-  { id: 4, name: 'Jacket', icon: 'icon-jacket' },
-  { id: 5, name: 'Winter Coat', icon: 'icon-coat' },
-  { id: 6, name: 'Lightweight Jacket', icon: 'icon-lightweight-jacket' },
-  { id: 7, name: 'Overcoat', icon: 'icon-overcoat' },
-  { id: 8, name: 'Windbreaker', icon: 'icon-windbreacker' },
-];
-
 export const ItemsSection = () => {
-  const navigate = useNavigate();
+  const { isMobile } = useBreakpoint();
+  const { items, loading } = useItems({
+    sort_by: 'popular',
+    per_page: isMobile ? 4 : 8,
+  });
+
+  const {toggleFavorite, isFavorite } = useFavorites();
 
   return (
     <section className={styles.section} aria-labelledby="popular-items-heading">
@@ -21,34 +19,36 @@ export const ItemsSection = () => {
         <h2 id="popular-items-heading" className={styles['section__title']}>
           Popular Items
         </h2>
-        <a href="/catalog" className={styles['section__see-all']} aria-label="See all popular items">
+        <a
+          href="/catalog"
+          className={styles['section__see-all']}
+          aria-label="See all popular items"
+        >
           See all
         </a>
       </div>
 
-      <ul className={styles['items-grid']} role="list">
-        {POPULAR_ITEMS.map(item => (
-          <li key={item.id}>
-            <button
-              className={styles['item-card']}
-              onClick={() => navigate(`/item/${item.id}`)}
-              aria-label={`View ${item.name}`}
-            >
-              <div className={styles['item-card__placeholder']}>
-                <img
-                  src={`/icons/icon-clothes/${item.icon}.svg`}
-                  alt=""
-                  aria-hidden="true"
-                  className={styles['item-card__icon']}
-                  width={16}
-                  height={16}
-                />
-                <span className={styles['item-card__name']}>{item.name}</span>
-              </div>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {loading && (
+        <ul className={styles['items-grid']} role="list">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <li key={i} className={styles['item-skeleton']} />
+          ))}
+        </ul>
+      )}
+
+      {!loading && (
+        <ul className={styles['items-grid']} role="list">
+          {items.map((item) => (
+            <li key={item.id}>
+              <ItemCard
+                item={item}
+                isFavorite={isFavorite(item.id)}
+                onFavoriteToggle={toggleFavorite}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 };

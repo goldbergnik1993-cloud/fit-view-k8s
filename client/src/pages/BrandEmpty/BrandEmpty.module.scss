@@ -1,0 +1,97 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page__main {
+  flex: 1;
+  padding: 16px var(--container-padding) 80px;
+
+  @include tablet {
+    padding: 16px var(--container-padding) 100px;
+  }
+
+  @include desktop {
+    padding: 16px var(--container-padding) 100px;
+  }
+}
+
+.page__breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  @include text(14px, 400);
+  margin-bottom: $spacing-24;
+}
+
+.page__breadcrumbLink {
+  text-decoration: underline;
+  @include hover-opacity;
+}
+
+.page__breadcrumbSep {
+  color: $color-input-border;
+}
+
+.page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $spacing-48 0;
+  gap: 0;
+
+  .page__emptyIcon {
+    margin-bottom: $spacing-24;
+  }
+
+  .page__emptyTitle {
+    margin-bottom: $spacing-8;
+  }
+
+  .page__emptyText {
+    margin-bottom: $spacing-24;
+  }
+}
+
+.page__emptyIcon {
+  width: 220px;
+  height: 165px;
+  object-fit: contain;
+
+  @include tablet {
+    width: 265px;
+    height: 199px;
+  }
+}
+
+.page__emptyTitle {
+  @include h3;
+  font-size: 24px;
+}
+
+.page__emptyText {
+  @include text(16px, 400, 1.5);
+  color: #666;
+
+  @include tablet {
+    font-size: 14px;
+  }
+}
+
+.page__emptyBtn {
+  @include btn-primary;
+  max-width: 343px;
+
+  @include tablet {
+    max-width: 348px;
+  }
+
+  @include desktop {
+    max-width: 448px;
+  }
+}

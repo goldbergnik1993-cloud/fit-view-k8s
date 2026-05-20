@@ -1,20 +1,32 @@
 import { useState, useEffect, useCallback } from 'react';
-import { itemsApi, type BackendItem, type GetItemsParams } from '../services/api';
+import {
+  itemsApi,
+  type BackendItem,
+  type GetItemsParams,
+} from '../services/api';
 import type { ClothingItem } from '../types/clothing';
 
 export function mapItem(item: BackendItem): ClothingItem {
-  const brandName = typeof item.brand === 'object' && item.brand !== null
-    ? item.brand.name
-    : String(item.brand);
+  const brandName =
+    typeof item.brand === 'object' && item.brand !== null
+      ? item.brand.name
+      : String(item.brand);
 
-  const sizes = (item.available_sizes ?? []).map(s => ({
+  const brandId =
+    typeof item.brand === 'object' && item.brand !== null
+      ? item.brand.id
+      : undefined;
+
+  const sizes = (item.available_sizes ?? []).map((s) => ({
     id: s.id,
     sizeLabel: s.size_label,
   }));
 
-  const measurements = (item.available_measurements ?? []).map(s => ({
+  const measurements = (item.available_measurements ?? []).map((s) => ({
     id: s.id,
     sizeLabel: s.size_label,
+    totalLengthCm: s.total_length_cm,
+    inseamCm: s.inseam_cm,
   }));
 
   return {
@@ -22,13 +34,28 @@ export function mapItem(item: BackendItem): ClothingItem {
     name: item.name,
     brand: brandName,
     category: item.category as ClothingItem['category'],
-    imageUrl: item.image_url,
+    imageUrl:
+      item.image_url?.replace('http://127.0.0.1', 'http://localhost') ?? '',
+    fittingImageUrl: item.fitting_image_url ?? null,
     price: Number(item.price),
     isFavorite: item.is_favorite ?? false,
+    brandId,
     gender: item.gender,
+    description: item.description ?? null,
+    mandatoryFields: item.mandatory_fields ?? [],
     availableSizes: sizes,
-    sizeCharts: sizes.map(s => ({ id: String(s.id), itemId: String(item.id), sizeLabel: s.sizeLabel })),
-    measurements: measurements.map(s => ({ id: String(s.id), itemId: String(item.id), sizeLabel: s.sizeLabel })),
+    sizeCharts: sizes.map((s) => ({
+      id: String(s.id),
+      itemId: String(item.id),
+      sizeLabel: s.sizeLabel,
+    })),
+    measurements: measurements.map((s) => ({
+      id: String(s.id),
+      itemId: String(item.id),
+      sizeLabel: s.sizeLabel,
+      totalLengthCm: s.totalLengthCm,
+      inseamCm: s.inseamCm,
+    })),
   };
 }
 
@@ -41,10 +68,10 @@ interface UseItemsOptions {
   brands?: number[];
   name?: string;
   size?: string;
-  gender?: 'male' | 'female' | 'unisex';
+  gender?: 'male' | 'female';
   min_price?: number;
   max_price?: number;
-  sort_by?: 'price_asc' | 'price_desc';
+  sort_by?: 'price_asc' | 'price_desc' | 'new' | 'popular';
 }
 
 export function useItems({
@@ -92,10 +119,23 @@ export function useItems({
     } finally {
       setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, page, per_page, brandsKey, name, size, gender, min_price, max_price, sort_by]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    category,
+    page,
+    per_page,
+    brandsKey,
+    name,
+    size,
+    gender,
+    min_price,
+    max_price,
+    sort_by,
+  ]);
 
-  useEffect(() => { fetchItems(); }, [fetchItems]);
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
 
   return { items, loading, error, totalPages, totalItems };
 }
@@ -107,7 +147,10 @@ export function useItem(id: string | undefined) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchItem = useCallback(async () => {
-    if (!id) { setLoading(false); return; }
+    if (!id) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -120,7 +163,9 @@ export function useItem(id: string | undefined) {
     }
   }, [id]);
 
-  useEffect(() => { fetchItem(); }, [fetchItem]);
+  useEffect(() => {
+    fetchItem();
+  }, [fetchItem]);
 
   return { item, loading, error };
 }

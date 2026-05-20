@@ -1,0 +1,81 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.similar {
+  margin-top: $spacing-40;
+}
+
+.similar__header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+}
+
+.similar__title {
+  @include text(16px, 400);
+  margin: 0;
+}
+
+.similar__nav {
+  display: flex;
+  gap: $spacing-8;
+}
+
+.similar__navBtn {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  background: $color-white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    background-color: #4C494D;
+
+    img {
+      filter: invert(1);
+    }
+  }
+}
+
+.similar__list {
+  display: flex;
+  gap: $spacing-16;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 4px 2px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include tablet {
+    gap: $spacing-24;
+  }
+}
+
+.similar__item {
+  flex: 0 0 calc(50% - 8px);
+  min-width: 0;
+  scroll-snap-align: start;
+  display: flex;
+
+  & > * {
+    width: 100%;
+  }
+
+  @include tablet {
+    flex: 0 0 calc(50% - 12px);
+  }
+
+  @include desktop {
+    flex: 0 0 calc(25% - 18px);
+  }
+}

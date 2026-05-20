@@ -1,0 +1,864 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+.page {
+  flex: 1;
+  padding: $spacing-16 var(--container-padding) 80px;
+
+  @include tablet {
+    padding: $spacing-16 var(--container-padding) 100px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @include desktop {
+    padding: $spacing-24 var(--container-padding) 100px;
+    display: block;
+  }
+}
+
+.state {
+  padding: $spacing-24;
+  text-align: center;
+  @include text(14px, 400);
+  color: $color-input-border;
+}
+
+.breadcrumbWrap {
+  margin-bottom: $spacing-16;
+
+  @include tablet {
+    margin-bottom: $spacing-24;
+  }
+}
+
+// ─── Card view layout ─────────────────────────────────────────────────────────
+
+.layout {
+  @include desktop {
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    column-gap: $spacing-24;
+    grid-template-areas: 'left right';
+    align-items: start;
+  }
+}
+
+.layout__left {
+  @include desktop {
+    grid-area: left;
+  }
+}
+
+.layout__right {
+  margin-top: $spacing-32;
+  overflow: visible;
+
+  @include desktop {
+    grid-area: right;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 490px;
+    padding-right: $spacing-24;
+    overflow: visible;
+  }
+}
+
+.layout__right-spacer {
+  @include desktop {
+    flex: 1;
+  }
+}
+
+// ─── Title (card view) ────────────────────────────────────────────────────────
+
+.title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $color-text;
+  margin: 0 0 $spacing-16;
+
+  @include tablet {
+    display: none;
+  }
+}
+
+.title--right {
+  display: none;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  line-height: 1.2;
+  color: $color-text;
+  margin: 0 0 $spacing-16;
+
+  @include tablet {
+    display: block;
+    font-size: 32px;
+    margin-top: 0;
+  }
+
+  @include desktop {
+    display: block;
+    font-size: 32px;
+    margin-top: 0;
+  }
+}
+
+.brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: 0 0 $spacing-16;
+}
+
+// ─── Image (card view) ────────────────────────────────────────────────────────
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $color-white;
+  border: 1px solid #e9e9f7;
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-16 $spacing-24;
+  box-sizing: border-box;
+
+  @include tablet {
+    width: 590px;
+    height: 490px;
+    margin: 0 auto;
+  }
+
+  @include desktop {
+    width: 684px;
+    height: 490px;
+    margin: 0;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.favoriteBtn {
+  position: absolute;
+  bottom: $spacing-16;
+  right: $spacing-16;
+  width: 40px;
+  height: 40px;
+  @include flex-center;
+  color: $color-black;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    opacity: 0.7;
+  }
+  &--active {
+    color: $color-primary;
+  }
+}
+
+// ─── Description ─────────────────────────────────────────────────────────────
+
+.description {
+  @include text(16px, 400, 1.5);
+  margin: $spacing-16 0 $spacing-8;
+}
+
+.material {
+  @include text(14px, 400);
+  margin: 0 0 4px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+// ─── Section ─────────────────────────────────────────────────────────────────
+
+.section {
+  margin-top: $spacing-32;
+  position: relative;
+  overflow: visible;
+
+  @include tablet {
+    margin-top: $spacing-16;
+  }
+}
+
+.sectionLabel {
+  @include text(16px, 400);
+  color: $color-text;
+  margin: 0 0 $spacing-8;
+
+  @include desktop {
+    font-size: 18px;
+  }
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+.sizes {
+  display: flex;
+  align-items: center;
+  gap: $spacing-8;
+  position: relative;
+}
+
+.sizeBtn {
+  width: 33px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #787880;
+  background: $color-white;
+  @include text(14px, 400);
+  @include flex-center;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
+
+  &:hover {
+    border-color: #4c494d;
+  }
+
+  &--active {
+    border-color: #4c494d;
+    background: #4c494d;
+    color: $color-white;
+  }
+}
+
+.infoBtn {
+  width: 32px;
+  height: 32px;
+  @include flex-center;
+  border-radius: 50%;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+// ─── Size Guide ───────────────────────────────────────────────────────────────
+
+.sizeGuide {
+  margin-top: $spacing-8;
+  padding: $spacing-16;
+  background: $color-white;
+  border-radius: 8px;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+  width: 100%;
+  box-sizing: border-box;
+
+  @include tablet {
+    width: 343px;
+  }
+
+  @include desktop {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 10;
+    margin-top: 0;
+    width: 343px;
+  }
+}
+
+.sizeGuide__row {
+  @include text(14px, 400, 1.5);
+  margin: 0;
+}
+
+// ─── Colors ───────────────────────────────────────────────────────────────────
+
+.colors {
+  display: flex;
+  gap: $spacing-8;
+  margin-top: $spacing-16;
+}
+
+.colorDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: block;
+  flex-shrink: 0;
+}
+
+// ─── Price ────────────────────────────────────────────────────────────────────
+
+.priceRow {
+  @include flex-between;
+  margin-top: $spacing-32;
+
+  @include desktop {
+    margin-top: 41px;
+  }
+}
+.priceLabel {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.priceValue {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+// ─── Actions (card view) ─────────────────────────────────────────────────────
+
+.actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: $spacing-16;
+  margin-top: $spacing-16;
+
+  @include tablet {
+    flex-direction: row;
+    gap: $spacing-24;
+    margin-top: $spacing-16;
+  }
+
+  @include desktop {
+    flex-direction: row;
+    gap: $spacing-24;
+    margin-top: 27px;
+  }
+}
+
+.actions__primary {
+  width: 100%;
+
+  > button {
+    width: 100%;
+  }
+
+  @include tablet {
+    flex: 1;
+  }
+  @include desktop {
+    flex: 1;
+  }
+}
+
+.cartError {
+  @include text(13px, 400);
+  color: $color-error;
+  margin: $spacing-4 0 0;
+  text-align: center;
+}
+
+.tryOnBtn {
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  border: 1.5px solid $color-primary;
+  @include text(16px, 500);
+  color: $color-primary;
+  background: $color-white;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+
+  @include tablet {
+    flex: 1;
+    width: auto;
+  }
+
+  @include desktop {
+    flex: 1;
+    width: auto;
+  }
+}
+// ─── Similar ─────────────────────────────────────────────────────────────────
+
+.similar {
+  margin-top: 40px;
+}
+
+.similar__header {
+  @include flex-between;
+  margin-bottom: $spacing-16;
+}
+
+.similar__title {
+  @include text(16px, 400);
+  margin: 0;
+}
+
+.similar__nav {
+  display: flex;
+  gap: $spacing-8;
+
+  button {
+    width: 32px;
+    height: 32px;
+    @include flex-center;
+    @include hover-opacity;
+  }
+}
+
+.similar__list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-16;
+
+  @include desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FITTING ROOM
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.fitting__body {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  position: relative;
+}
+
+.fitting__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  width: 168px;
+  gap: $spacing-16;
+
+  @include tablet {
+    gap: $spacing-24;
+  }
+
+  @include desktop {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: auto;
+    gap: 0;
+  }
+}
+
+.fitting__back {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    width: 24px;
+    height: 24px;
+    @include flex-center;
+    @include hover-opacity;
+    margin-right: 94px;
+    align-self: center;
+  }
+}
+
+.fitting__vslider {
+  display: none;
+
+  @include tablet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    height: 446px;
+    margin: 0 $spacing-16;
+  }
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    height: 446px;
+    margin: 0 $spacing-16;
+  }
+}
+
+.fitting__vslider_top {
+  @include text(14px, 400);
+  color: #4c494d;
+  margin-bottom: $spacing-8;
+  white-space: nowrap;
+}
+
+.fitting__vslider_bottom {
+  @include text(14px, 400);
+  color: #4c494d;
+  margin-top: $spacing-8;
+  white-space: nowrap;
+}
+
+.fitting__vslider_track {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .slider {
+    transform: rotate(-90deg);
+    width: 380px;
+    transform-origin: center center;
+  }
+}
+
+.fitting__center {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+}
+
+.fitting__silhouette {
+  height: 276px;
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+
+  @include tablet {
+    height: 446px;
+  }
+}
+
+.fitting__itemImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.fitting__right {
+  display: none;
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 448px;
+    width: 448px;
+    padding-left: $spacing-48;
+    overflow: visible;
+    height: 446px;
+    flex-shrink: 0;
+  }
+}
+
+.fitting__right-title {
+  font-family: $font-family-heading;
+  font-size: 32px;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0;
+}
+
+.fitting__right-brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: $spacing-8 0 0;
+}
+
+.fitting__right-sizes {
+  margin-top: $spacing-32;
+  position: relative;
+  overflow: visible;
+}
+
+.fitting__right-colors {
+  margin-top: $spacing-16;
+}
+
+.fitting__right-price {
+  margin-top: auto;
+}
+
+.fitting__right-actions {
+  margin-top: $spacing-16;
+
+  > button {
+    width: 100%;
+    height: 44px;
+  }
+}
+
+.genderToggle {
+  display: flex;
+  gap: $spacing-8;
+
+  @include desktop {
+    flex-basis: auto;
+  }
+}
+
+.genderBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  @include text(14px, 400);
+  color: #a8a8b2;
+  @include flex-center;
+  border: 1px solid transparent;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+
+  &--active {
+    color: $color-text;
+    border-color: $color-text;
+  }
+
+  &--disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  @include text(14px, 400);
+  @include hover-opacity;
+  color: $color-text;
+  white-space: nowrap;
+
+  @include desktop {
+    flex-basis: 100%;
+    margin-top: $spacing-24;
+    padding-left: calc(24px + 94px);
+  }
+}
+
+.fitting__slider-wrap {
+  margin-top: $spacing-24;
+
+  @include tablet {
+    display: none;
+  }
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: #676767;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  display: block;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+    margin-top: -9px;
+  }
+
+  &::-webkit-slider-runnable-track {
+    height: 2px;
+    background: #676767;
+    border-radius: 2px;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $color-white;
+    border: 3px solid #676767;
+    cursor: pointer;
+  }
+
+  &::-moz-range-track {
+    height: 2px;
+    background: #676767;
+    border-radius: 2px;
+  }
+}
+
+.sliderLabels {
+  @include flex-between;
+  margin-top: $spacing-8;
+
+  span {
+    @include text(14px, 400);
+    color: #4c494d;
+  }
+}
+
+.fitting__endsLabel {
+  @include text(14px, 400);
+  color: #4c494d;
+
+  @include tablet {
+    display: none;
+  }
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__itemLengthLabel {
+  @include text(14px, 400);
+  color: #4c494d;
+
+  @include tablet {
+    display: none;
+  }
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__footerRow {
+  @include flex-between;
+  margin-top: $spacing-8;
+
+  @include desktop {
+    padding-left: calc(120px + 24px + 16px + 16px);
+    padding-right: 448px;
+  }
+}
+
+.fitting__title {
+  font-family: $font-family-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+  margin: $spacing-32 0 0;
+
+  @include tablet {
+    font-size: 32px;
+    width: 590px;
+    align-self: center;
+  }
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__brand {
+  @include text(14px, 400);
+  color: $color-input-border;
+  margin: $spacing-8 0 0;
+
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__section {
+  margin-top: $spacing-24;
+  position: relative;
+  overflow: visible;
+
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__section--sm {
+  margin-top: $spacing-16;
+
+  @include tablet {
+    width: 590px;
+    align-self: center;
+  }
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__priceRow {
+  @include flex-between;
+  margin-top: $spacing-24;
+
+  @include tablet {
+    margin-top: $spacing-32;
+    width: 590px;
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.fitting__actions {
+  margin-top: $spacing-16;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  > button {
+    width: 100%;
+    height: 44px;
+
+    @include tablet {
+      width: 590px;
+      height: 55px;
+      align-self: center;
+    }
+  }
+
+  @include desktop {
+    display: none;
+  }
+}

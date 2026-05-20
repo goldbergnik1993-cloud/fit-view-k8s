@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useBreakpoint } from '../../../hooks/useBreakpoint';
 import styles from './FilterPanel.module.scss';
 import CloseIcon from '../../../assets/icons/burger-close.svg';
+import ChevronRightIcon from '../../../assets/icons/chevron-right.svg';
+import ChevronUpIcon from '../../../assets/icons/chevron-up.svg';
 
 export interface FilterState {
-  sort_by: 'price_asc' | 'price_desc' | '';
+  sort_by: 'price_asc' | 'price_desc' | 'new' | 'popular' | '';
   gender: string[];
   size: string[];
   brands: number[];
@@ -20,10 +22,9 @@ interface FilterPanelProps {
 const GENDER_OPTIONS = [
   { label: 'Man', value: 'male' },
   { label: 'Woman', value: 'female' },
-  { label: 'Unisex', value: 'unisex' },
 ];
 
-const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const SIZE_OPTIONS = ['S', 'M', 'L'];
 
 const BRAND_OPTIONS = [
   { label: 'Zara', value: 1 },
@@ -37,6 +38,8 @@ const BRAND_OPTIONS = [
 ];
 
 const SORT_OPTIONS = [
+  { label: 'New', value: 'new' },
+  { label: 'Popular', value: 'popular' },
   { label: 'Price (Low - High)', value: 'price_asc' },
   { label: 'Price (High - Low)', value: 'price_desc' },
 ];
@@ -49,7 +52,7 @@ export const FilterPanel = ({
 }: FilterPanelProps) => {
   const { isMobile } = useBreakpoint();
   const [local, setLocal] = useState<FilterState>(filters);
-  const [expanded, setExpanded] = useState<string[]>(['sort_by']);
+  const [expanded, setExpanded] = useState<string[]>([]);
 
   const toggle = (section: string) => {
     setExpanded((prev) =>
@@ -108,12 +111,6 @@ export const FilterPanel = ({
     local.size.length > 0 ||
     local.brands.length > 0 ||
     local.sort_by !== '';
-
-  const hasChanges =
-    local.sort_by !== filters.sort_by ||
-    JSON.stringify(local.gender) !== JSON.stringify(filters.gender) ||
-    JSON.stringify(local.size) !== JSON.stringify(filters.size) ||
-    JSON.stringify(local.brands) !== JSON.stringify(filters.brands);
 
   if (!isOpen) return null;
 
@@ -189,7 +186,14 @@ export const FilterPanel = ({
             onClick={() => toggle('sort_by')}
           >
             <span>Sort by</span>
-            <span>{expanded.includes('sort_by') ? '∧' : '∨'}</span>
+            <img
+              src={
+                expanded.includes('sort_by') ? ChevronUpIcon : ChevronRightIcon
+              }
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('sort_by') && (
             <div className={styles.sectionBody}>
@@ -222,7 +226,14 @@ export const FilterPanel = ({
             onClick={() => toggle('gender')}
           >
             <span>Gender</span>
-            <span>{expanded.includes('gender') ? '∧' : '∨'}</span>
+            <img
+              src={
+                expanded.includes('gender') ? ChevronUpIcon : ChevronRightIcon
+              }
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('gender') && (
             <div className={styles.sectionBody}>
@@ -248,7 +259,12 @@ export const FilterPanel = ({
             onClick={() => toggle('size')}
           >
             <span>Size</span>
-            <span>{expanded.includes('size') ? '∧' : '∨'}</span>
+            <img
+              src={expanded.includes('size') ? ChevronUpIcon : ChevronRightIcon}
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('size') && (
             <div className={styles.sectionBody}>
@@ -274,7 +290,14 @@ export const FilterPanel = ({
             onClick={() => toggle('brands')}
           >
             <span>Brand</span>
-            <span>{expanded.includes('brands') ? '∧' : '∨'}</span>
+            <img
+              src={
+                expanded.includes('brands') ? ChevronUpIcon : ChevronRightIcon
+              }
+              alt=""
+              width={16}
+              height={16}
+            />
           </button>
           {expanded.includes('brands') && (
             <div className={styles.sectionBody}>
@@ -292,13 +315,20 @@ export const FilterPanel = ({
             </div>
           )}
         </div>
+
+        <div className={styles.section}>
+          <button className={styles.sectionHeader} disabled>
+            <span>Color</span>
+            <img src={ChevronRightIcon} alt="" width={16} height={16} />
+          </button>
+        </div>
       </div>
 
-      {/* Apply button — only if changes */}
-      {hasChanges && (
+      {/* Apply button */}
+      {hasFilters && (
         <div className={styles.footer}>
           <button className={styles.applyBtn} onClick={handleApply}>
-            Apply
+            Apply Filters
           </button>
         </div>
       )}
@@ -307,9 +337,12 @@ export const FilterPanel = ({
 
   //  Mobile version
   if (isMobile) {
-    return <div className={styles.mobileOverlay}>{content}</div>;
+    return (
+      <div className={styles.mobileOverlay} onClick={onClose}>
+        <div onClick={(e) => e.stopPropagation()}>{content}</div>
+      </div>
+    );
   }
-
   //  Desktop version + Tablet
   return (
     <>

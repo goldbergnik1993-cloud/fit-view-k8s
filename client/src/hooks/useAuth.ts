@@ -1,11 +1,24 @@
-import { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useCallback,
+} from 'react';
 import { authApi, tokenStorage, type AuthResponse } from '../services/api';
 
 interface AuthState {
   user: AuthResponse | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
+    birthDate?: string
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -50,10 +63,29 @@ export function useAuthProvider(): AuthState {
     setUser(profile);
   };
 
-  const signup = async (email: string, password: string) => {
-    await authApi.signup({ email, password });
-    // Auto-login after signup
-    await login(email, password);
+  const signup = async (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
+    birthDate?: string
+  ) => {
+    console.log('signup payload:', {
+      email,
+      firstName,
+      lastName,
+      phone,
+      birth_date: birthDate,
+    });
+    await authApi.signup({
+      email,
+      password,
+      first_name: firstName,
+      last_name: lastName,
+      phone_number: phone,
+      birth_date: birthDate || null,
+    });
   };
 
   const logout = () => {

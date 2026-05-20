@@ -1,189 +1,761 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { Header } from '../../shared/components/Header/Header';
 import { Footer } from '../../shared/components/Footer/Footer';
-import { cartApi, type Cart } from '../../services/api';
+import EmptyState from '../../shared/components/EmptyState/EmptyState';
+import { PrimaryButton } from '../../shared/components/ui/PrimaryButton/PrimaryButton';
+import { TextInput } from '../../shared/components/ui/TextInput/TextInput';
+import { useCart } from '../../providers/CartContext';
+import { ordersApi, type DeliveryMethod } from '../../services/api';
+import type { Cart, CartItem } from '../../services/api';
+
+import CircleXIcon from '../../assets/icons/circle-x-error.svg';
+import ChevronRightIcon from '../../assets/icons/chevron-right.svg';
+import EmptyBagIllustration from '../../assets/illustrations/empty-bag.png';
+import MinusIcon from '../../assets/icons/minus.svg';
+import PlusIcon from '../../assets/icons/plus.svg';
+import ArrowRightIcon from '../../assets/icons/arrow-right-white.svg';
+import ArrowRightDarkIcon from '../../assets/icons/arrow-right.svg';
+import styles from './MyBag.module.scss';
+import { useAuth } from '../../hooks/useAuth';
+
+// ─── Breadcrumb (desktop only) ────────────────────────────────────────────────
+
+interface BreadcrumbProps {
+  step: number;
+}
+
+const STEPS = ['My Bag', 'Checkout', 'Review Order'];
+
+const Breadcrumb = ({ step }: BreadcrumbProps) => (
+  <div className={styles['breadcrumb']}>
+    {STEPS.map((label, i) => (
+      <span key={label} className={styles['breadcrumb__item-wrap']}>
+        <span
+          className={`${styles['breadcrumb__step']} ${i + 1 === step ? styles['breadcrumb__step--active'] : ''}`}
+        >
+          {label}
+        </span>
+        {i < STEPS.length - 1 && (
+          <img
+            src={ArrowRightDarkIcon}
+            alt=""
+            width={16}
+            height={16}
+            className={
+              i + 1 < step
+                ? styles['breadcrumb__arrow']
+                : styles['breadcrumb__arrow--inactive']
+            }
+          />
+        )}
+      </span>
+    ))}
+  </div>
+);
+
+// ─── Step Dots ────────────────────────────────────────────────────────────────
+
+interface StepDotsProps {
+  current: number;
+  total: number;
+}
+
+const StepDots = ({ current, total }: StepDotsProps) => (
+  <div
+    className={styles['step-dots']}
+    aria-label={`Step ${current} of ${total}`}
+  >
+    {Array.from({ length: total }).map((_, i) => (
+      <span
+        key={i}
+        className={`${styles['step-dots__dot']} ${i + 1 === current ? styles['step-dots__dot--active'] : ''}`}
+      />
+    ))}
+  </div>
+);
+
+// ─── Cart Compact (used in Step 2 & 3) ───────────────────────────────────────
+
+interface CartCompactProps {
+  cart: Cart;
+}
+
+const CartCompact = ({ cart }: CartCompactProps) => (
+  <div className={styles['cart-compact']}>
+    {cart.cart_items.map((ci: CartItem) => (
+      <div key={ci.id} className={styles['cart-compact__wrapper']}>
+        <div className={styles['cart-compact__item']}>
+          <img
+            src={ci.item.image_url || 'https://placehold.co/80x100?text=Item'}
+            alt={ci.item.name}
+            className={styles['cart-compact__image']}
+          />
+          <div className={styles['cart-compact__info']}>
+            <div className={styles['cart-compact__info-top']}>
+              <p className={styles['cart-compact__name']}>{ci.item.name}</p>
+              <p className={styles['cart-compact__brand']}>
+                {ci.item.brand.name}
+              </p>
+            </div>
+            <p className={styles['cart-compact__qty']}>
+              Quantity: {ci.quantity}
+            </p>
+            <div className={styles['cart-compact__subtotal-desktop']}>
+              <span className={styles['cart-compact__subtotal-label']}>
+                Subtotal
+              </span>
+              <span className={styles['cart-compact__subtotal-value']}>
+                ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className={styles['cart-compact__subtotal-mobile']}>
+          <span className={styles['cart-compact__subtotal-label']}>
+            Subtotal
+          </span>
+          <span className={styles['cart-compact__subtotal-value']}>
+            ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+          </span>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+// ─── Step 1 — My Bag ──────────────────────────────────────────────────────────
+
+interface Step1Props {
+  cart: Cart;
+  onUpdateQuantity: (itemId: number, qty: number) => void;
+  onRemove: (itemId: number) => void;
+  onCheckout: () => void;
+}
+
+const Step1 = ({
+  cart,
+  onUpdateQuantity,
+  onRemove,
+  onCheckout,
+}: Step1Props) => (
+  <>
+    <div className={styles['step1__top']}>
+      <div className={styles['step1__header']}>
+        <p className={styles['page-title']}>My Bag</p>
+        <p className={styles['page-subtitle']}>
+          You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''}{' '}
+          in the bag
+        </p>
+      </div>
+      <Breadcrumb step={1} />
+    </div>
+
+    <div className={styles['step1']}>
+      {/* Left: cart items */}
+      <div className={styles['step1__left']}>
+        <div className={styles['cart-list']}>
+          {cart.cart_items.map((ci: CartItem) => (
+            <div key={ci.id} className={styles['cart-item']}>
+              {/* Remove button — outside card, top-left */}
+              <button
+                className={styles['cart-item__remove']}
+                onClick={() => onRemove(ci.id)}
+                aria-label="Remove item"
+              >
+                <img src={CircleXIcon} alt="" width={24} height={24} />
+              </button>
+
+              {/* Card */}
+              <div className={styles['cart-item__card']}>
+                <img
+                  src={ci.item.image_url}
+                  alt={ci.item.name}
+                  className={styles['cart-item__image']}
+                />
+                <div className={styles['cart-item__details']}>
+                  <div className={styles['cart-item__info']}>
+                    <p className={styles['cart-item__name']}>{ci.item.name}</p>
+                    <p className={styles['cart-item__brand']}>
+                      {ci.item.brand.name}
+                    </p>
+                  </div>
+                  <div className={styles['cart-item__qty']}>
+                    <span className={styles['cart-item__qty-label']}>
+                      Quantity
+                    </span>
+                    <div className={styles['cart-item__qty-controls']}>
+                      <button
+                        className={styles['cart-item__qty-btn']}
+                        onClick={() => onUpdateQuantity(ci.id, ci.quantity - 1)}
+                        aria-label="Decrease quantity"
+                      >
+                        <img src={MinusIcon} alt="" width={16} height={16} />
+                      </button>
+                      <span className={styles['cart-item__qty-value']}>
+                        {ci.quantity}
+                      </span>
+                      <button
+                        className={styles['cart-item__qty-btn']}
+                        onClick={() => onUpdateQuantity(ci.id, ci.quantity + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        <img src={PlusIcon} alt="" width={16} height={16} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className={styles['cart-item__subtotal-mobile']}>
+                    <span className={styles['cart-item__subtotal-label']}>
+                      Subtotal
+                    </span>
+                    <span className={styles['cart-item__subtotal-value']}>
+                      ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className={styles['cart-item__subtotal-desktop']}>
+                <span className={styles['cart-item__subtotal-label']}>
+                  Subtotal
+                </span>
+                <span className={styles['cart-item__subtotal-value']}>
+                  ${(Number(ci.item.price) * ci.quantity).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right: promo + summary */}
+      <div className={styles['step1__right']}>
+        {/* Promo + Summary */}
+        <div className={styles['summary-card']}>
+          <div className={styles['promo__toggle']}>
+            <span>Have a promo code?</span>
+            <img src={ChevronRightIcon} alt="" width={20} height={20} />
+          </div>
+          <div className={styles['summary']}>
+            <div className={styles['summary__row']}>
+              <span className={styles['summary__row-label--bold']}>
+                Subtotal
+              </span>
+              <span className={styles['summary__row-value--bold']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+            <div className={styles['summary__row']}>
+              <span className={styles['summary__row-label']}>Shipping</span>
+              <span className={styles['summary__row-value']}>$0.00</span>
+            </div>
+            <div className={styles['summary__row']}>
+              <span className={styles['summary__row-label']}>Tax</span>
+              <span className={styles['summary__row-value']}>$0.00</span>
+            </div>
+            <div
+              className={`${styles['summary__row']} ${styles['summary__row--total']}`}
+            >
+              <span className={styles['summary__total-label']}>Total</span>
+              <span className={styles['summary__total-value']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <PrimaryButton onClick={onCheckout}>
+          Checkout <img src={ArrowRightIcon} alt="" width={16} height={16} />
+        </PrimaryButton>
+        <StepDots current={1} total={3} />
+      </div>
+    </div>
+  </>
+);
+// ─── Step 2 — Checkout ────────────────────────────────────────────────────────
+
+interface FormState {
+  firstName: string;
+  lastName: string;
+  address: string;
+  address2: string;
+  city: string;
+  zip: string;
+  country: string;
+  phone: string;
+  email: string;
+  deliveryMethod: DeliveryMethod;
+}
+
+interface Step2Props {
+  cart: Cart;
+  form: FormState;
+  setForm: (f: FormState) => void;
+  onReview: () => void;
+}
+
+const REQUIRED_FIELDS: (keyof FormState)[] = [
+  'firstName',
+  'lastName',
+  'address',
+  'city',
+  'zip',
+  'phone',
+];
+
+const FIELD_LABELS: Partial<Record<keyof FormState, string>> = {
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  address: 'Address',
+  city: 'City',
+  zip: 'Zip Code',
+  phone: 'Phone Number',
+};
+
+const validateField = (
+  field: keyof FormState,
+  value: string
+): string | undefined => {
+  if (REQUIRED_FIELDS.includes(field) && !value.trim()) {
+    return `${FIELD_LABELS[field]} is required`;
+  }
+  if (field === 'phone' && value.trim()) {
+    if (!/^\+?[\d\s\-()]{7,}$/.test(value.trim())) {
+      return 'Please enter a valid phone number';
+    }
+  }
+  if (field === 'email' && value.trim()) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+      return 'Please enter a valid email';
+    }
+  }
+  if (field === 'zip' && value.trim()) {
+    if (value.trim().length < 3) {
+      return 'Zip code is too short';
+    }
+  }
+  return undefined;
+};
+
+const Step2 = ({ cart, form, setForm, onReview }: Step2Props) => {
+  const [touched, setTouched] = useState<
+    Partial<Record<keyof FormState, boolean>>
+  >({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
+  const set =
+    (field: keyof FormState) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setForm({ ...form, [field]: e.target.value });
+    };
+
+  const handleBlur = (field: keyof FormState) => () => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const getError = (field: keyof FormState): string | undefined => {
+    if (!touched[field] && !submitAttempted) return undefined;
+    return validateField(field, form[field] as string);
+  };
+
+  const handleReview = () => {
+    setSubmitAttempted(true);
+    const hasErrors = (Object.keys(form) as (keyof FormState)[]).some((f) =>
+      validateField(f, form[f] as string)
+    );
+    if (hasErrors) {
+      const firstEmpty = REQUIRED_FIELDS.find((f) => !form[f].trim());
+      if (firstEmpty) {
+        const el = document.getElementById(firstEmpty);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    onReview();
+  };
+
+  return (
+    <>
+      <div className={styles['step1__top']}>
+        <div className={styles['step1__header']}>
+          <p className={styles['page-title']}>My Bag</p>
+          <p className={styles['page-subtitle']}>
+            You've got {cart.total_items} item
+            {cart.total_items !== 1 ? 's' : ''} in the bag
+          </p>
+        </div>
+        <Breadcrumb step={2} />
+      </div>
+
+      <div className={styles['step2']}>
+        {/* Left */}
+        <div className={styles['step2__left']}>
+          <div className={styles['step2__left-compact']}>
+            <CartCompact cart={cart} />
+          </div>
+
+          <div className={styles['form-section']}>
+            <h2 className={styles['form-section__title']}>Shipping Details</h2>
+            <div className={styles['form-grid']}>
+              <TextInput
+                id="firstName"
+                label="First Name *"
+                placeholder="John"
+                value={form.firstName}
+                onChange={set('firstName')}
+                onBlur={handleBlur('firstName')}
+                error={getError('firstName')}
+              />
+              <TextInput
+                id="lastName"
+                label="Last Name *"
+                placeholder="Doe"
+                value={form.lastName}
+                onChange={set('lastName')}
+                onBlur={handleBlur('lastName')}
+                error={getError('lastName')}
+              />
+              <TextInput
+                id="address"
+                label="Address *"
+                placeholder="Address line 1"
+                value={form.address}
+                onChange={set('address')}
+                onBlur={handleBlur('address')}
+                error={getError('address')}
+              />
+              <TextInput
+                id="address2"
+                label="Address 2 (optional)"
+                placeholder="Address line 2"
+                value={form.address2}
+                onChange={set('address2')}
+              />
+              <TextInput
+                id="city"
+                label="City *"
+                placeholder="London"
+                value={form.city}
+                onChange={set('city')}
+                onBlur={handleBlur('city')}
+                error={getError('city')}
+              />
+              <TextInput
+                id="zip"
+                label="Zip Code *"
+                placeholder="NR32 1UE"
+                value={form.zip}
+                onChange={set('zip')}
+                onBlur={handleBlur('zip')}
+                error={getError('zip')}
+              />
+              <TextInput
+                id="phone"
+                label="Phone Number *"
+                placeholder="+07700 900123"
+                value={form.phone}
+                onChange={set('phone')}
+                onBlur={handleBlur('phone')}
+                error={getError('phone')}
+              />
+              <TextInput
+                id="email"
+                label="Email (optional)"
+                placeholder="mailbox@gmail.com"
+                value={form.email}
+                onChange={set('email')}
+              />
+            </div>
+          </div>
+
+          <div className={styles['step2__mobile-payment']}>
+            <div className={styles['payment-block']}>
+              <h2 className={styles['payment-block__title']}>
+                Payment details
+              </h2>
+              <label className={styles['radio-label']}>
+                <input
+                  type="radio"
+                  name="payment"
+                  defaultChecked
+                  className={styles['radio-input']}
+                />
+                <span className={styles['radio-custom']} />
+                Card
+              </label>
+              <label
+                className={`${styles['radio-label']} ${styles['radio-label--disabled']}`}
+              >
+                <input
+                  type="radio"
+                  name="payment"
+                  disabled
+                  className={styles['radio-input']}
+                />
+                <span className={styles['radio-custom']} />
+                Cash on delivery
+              </label>
+              <div className={styles['payment-block__total']}>
+                <span className={styles['payment-block__total-label']}>
+                  Total
+                </span>
+                <span className={styles['payment-block__total-value']}>
+                  ${Number(cart.total_price).toFixed(2)}
+                </span>
+              </div>
+            </div>
+            <PrimaryButton onClick={handleReview}>
+              Review Order{' '}
+              <img src={ArrowRightIcon} alt="" width={16} height={16} />
+            </PrimaryButton>
+            <StepDots current={2} total={3} />
+          </div>
+        </div>
+
+        {/* Right — desktop only */}
+        <div className={styles['step2__right']}>
+          <CartCompact cart={cart} />
+          <div className={styles['payment-block']}>
+            <h2 className={styles['payment-block__title']}>Payment details</h2>
+            <label className={styles['radio-label']}>
+              <input
+                type="radio"
+                name="payment2"
+                defaultChecked
+                className={styles['radio-input']}
+              />
+              <span className={styles['radio-custom']} />
+              Card
+            </label>
+            <label
+              className={`${styles['radio-label']} ${styles['radio-label--disabled']}`}
+            >
+              <input
+                type="radio"
+                name="payment2"
+                disabled
+                className={styles['radio-input']}
+              />
+              <span className={styles['radio-custom']} />
+              Cash on delivery
+            </label>
+            <div className={styles['payment-block__total']}>
+              <span className={styles['payment-block__total-label']}>
+                Total
+              </span>
+              <span className={styles['payment-block__total-value']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+          </div>
+          <PrimaryButton onClick={handleReview}>
+            Review Order{' '}
+            <img src={ArrowRightIcon} alt="" width={16} height={16} />
+          </PrimaryButton>
+        </div>
+      </div>
+    </>
+  );
+};
+// ─── Step 3 — Review Order ────────────────────────────────────────────────────
+
+interface Step3Props {
+  cart: Cart;
+  form: FormState;
+  onConfirm: () => void;
+  submitting: boolean;
+  checkoutError: string | null;
+}
+
+const Step3 = ({
+  cart,
+  form,
+  onConfirm,
+  submitting,
+  checkoutError,
+}: Step3Props) => (
+  <>
+    <div className={styles['step1__top']}>
+      <div className={styles['step1__header']}>
+        <p className={styles['page-title']}>My Bag</p>
+        <p className={styles['page-subtitle']}>
+          You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''}{' '}
+          in the bag
+        </p>
+      </div>
+      <Breadcrumb step={3} />
+    </div>
+
+    <div className={styles['step3']}>
+      {/* Left */}
+      <div className={styles['step3__left']}>
+        <div className={styles['step3__left-compact']}>
+          <CartCompact cart={cart} />
+        </div>
+
+        <div className={styles['form-section']}>
+          <h2 className={styles['form-section__title']}>Shipping details</h2>
+          <div className={styles['review-text']}>
+            <span className={styles['review-text__line']}>
+              {form.firstName} {form.lastName}
+            </span>
+            <span className={styles['review-text__line']}>
+              {form.address}
+              {form.address2 ? `, ${form.address2}` : ''}
+            </span>
+            <span className={styles['review-text__line']}>
+              {form.city}
+              {form.zip ? `, ${form.zip}` : ''}
+            </span>
+            <span className={styles['review-text__line']}>{form.phone}</span>
+            {form.email && (
+              <span className={styles['review-text__line']}>{form.email}</span>
+            )}
+          </div>
+        </div>
+
+        <div className={styles['step3__mobile-payment']}>
+          <div className={styles['payment-block']}>
+            <h2 className={styles['payment-block__title']}>Payment details</h2>
+            <p className={styles['payment-block__value']}>Card</p>
+            <div className={styles['payment-block__total']}>
+              <span className={styles['payment-block__total-label']}>
+                Total
+              </span>
+              <span className={styles['payment-block__total-value']}>
+                ${Number(cart.total_price).toFixed(2)}
+              </span>
+            </div>
+          </div>
+          <PrimaryButton onClick={onConfirm} loading={submitting}>
+            Payment <img src={ArrowRightIcon} alt="" width={16} height={16} />
+          </PrimaryButton>
+          {checkoutError && (
+            <p className={styles['checkout-error']}>{checkoutError}</p>
+          )}
+          <StepDots current={3} total={3} />
+        </div>
+      </div>
+
+      {/* Right — desktop only */}
+      <div className={styles['step3__right']}>
+        <CartCompact cart={cart} />
+        <div className={styles['payment-block']}>
+          <h2 className={styles['payment-block__title']}>Payment details</h2>
+          <p className={styles['payment-block__value']}>Card</p>
+          <div className={styles['payment-block__total']}>
+            <span className={styles['payment-block__total-label']}>Total</span>
+            <span className={styles['payment-block__total-value']}>
+              ${Number(cart.total_price).toFixed(2)}
+            </span>
+          </div>
+        </div>
+        <PrimaryButton onClick={onConfirm} loading={submitting}>
+          Payment <img src={ArrowRightIcon} alt="" width={16} height={16} />
+        </PrimaryButton>
+        {checkoutError && (
+          <p className={styles['checkout-error']}>{checkoutError}</p>
+        )}
+      </div>
+    </div>
+  </>
+);
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+
+const INITIAL_FORM: FormState = {
+  firstName: '',
+  lastName: '',
+  address: '',
+  address2: '',
+  city: '',
+  zip: '',
+  country: '',
+  phone: '',
+  email: '',
+  deliveryMethod: 'COURIER',
+};
 
 const MyBag = () => {
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [updatingId, setUpdatingId] = useState<number | null>(null);
-
-  const fetchCart = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await cartApi.getCart();
-      setCart(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load cart');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { fetchCart(); }, [fetchCart]);
-
-  const handleUpdateQuantity = async (itemId: number, quantity: number) => {
-    if (quantity < 1) return handleRemove(itemId);
-    setUpdatingId(itemId);
-    try {
-      const data = await cartApi.updateQuantity(itemId, quantity);
-      setCart(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
-  const handleRemove = async (itemId: number) => {
-    setUpdatingId(itemId);
-    try {
-      const data = await cartApi.removeItem(itemId);
-      setCart(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
-  const handleClearCart = async () => {
-    try {
-      const data = await cartApi.clearCart();
-      setCart(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const { user } = useAuth();
+  const { cart, loading, updateQuantity, removeItem } = useCart();
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [form, setForm] = useState<FormState>(INITIAL_FORM);
+  const [submitting, setSubmitting] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const isEmpty = !cart || cart.cart_items.length === 0;
+
+  const handleConfirm = async () => {
+    setSubmitting(true);
+    setCheckoutError(null);
+    try {
+      const order = await ordersApi.create({
+        delivery_info: {
+          country: form.country || 'US',
+          city: form.city,
+          delivery_method: form.deliveryMethod,
+          zip_code: form.zip || null,
+          address_line: form.address || null,
+        },
+      });
+      const session = await ordersApi.checkout(order.id);
+      window.location.href = session.checkout_url;
+    } catch (err) {
+      setCheckoutError(
+        err instanceof Error
+          ? err.message
+          : 'Something went wrong. Please try again.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading)
+    return (
+      <>
+        <Header />
+        <main className={styles.main} />
+        <Footer />
+      </>
+    );
 
   return (
     <>
       <Header />
-      <main style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-
-        {loading && <p>Loading...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-
-        {!loading && isEmpty && (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <p style={{ fontSize: '24px', fontWeight: 'bold' }}>
-              Nothing in your bag yet!
-            </p>
-            <p>Browse our store, find items & happy shopping!</p>
-            <Link to="/catalog">
-              <button style={{ padding: '12px 32px', marginTop: '16px', cursor: 'pointer' }}>
-                Browse items
-              </button>
-            </Link>
+      <main className={styles.main}>
+        {isEmpty ? (
+          <div className={styles['empty-wrap']}>
+            <p className={styles['page-title']}>My Bag</p>
+            <EmptyState
+              title="Nothing in your bag yet!"
+              subtitle="Browse our store, find items & happy shopping!"
+              buttonText="Browse Items"
+              buttonPath="/catalog"
+              illustration={EmptyBagIllustration}
+            />
           </div>
-        )}
-
-        {!loading && !isEmpty && cart && (
-          <div style={{ display: 'flex', gap: '48px' }}>
-
-            {/* Left — items */}
-            <div style={{ flex: 1 }}>
-              <h1>My Bag</h1>
-              <p>You've got {cart.total_items} item{cart.total_items !== 1 ? 's' : ''} in the bag</p>
-
-              {cart.cart_items.map((cartItem) => (
-                <div key={cartItem.id} style={{
-                  display: 'flex', alignItems: 'center', gap: '16px',
-                  padding: '16px 0', borderBottom: '1px solid #eee'
-                }}>
-                  {/* Remove */}
-                  <button
-                    onClick={() => handleRemove(cartItem.id)}
-                    disabled={updatingId === cartItem.id}
-                    style={{
-                      width: '24px', height: '24px', borderRadius: '50%',
-                      border: '1px solid #999', background: 'white',
-                      cursor: 'pointer', fontSize: '12px'
-                    }}
-                  >×</button>
-
-                  {/* Image */}
-                  <img
-                    src={cartItem.item.image_url}
-                    alt={cartItem.item.name}
-                    style={{ width: '80px', height: '80px', objectFit: 'cover', background: '#f0f0f0' }}
-                  />
-
-                  {/* Info */}
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 'bold', margin: 0 }}>{cartItem.item.name}</p>
-                    <p style={{ color: '#666', margin: 0, fontSize: '14px' }}>
-                      {cartItem.item.brand.name}
-                    </p>
-                  </div>
-
-                  {/* Quantity */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <button
-                      onClick={() => handleUpdateQuantity(cartItem.id, cartItem.quantity - 1)}
-                      disabled={updatingId === cartItem.id}
-                      style={{ padding: '4px 8px', cursor: 'pointer' }}
-                    >−</button>
-                    <span>{cartItem.quantity}</span>
-                    <button
-                      onClick={() => handleUpdateQuantity(cartItem.id, cartItem.quantity + 1)}
-                      disabled={updatingId === cartItem.id}
-                      style={{ padding: '4px 8px', cursor: 'pointer' }}
-                    >+</button>
-                  </div>
-                </div>
-              ))}
-
-              {/* Subtotal */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0' }}>
-                <span>Subtotal</span>
-                <span>${cart.total_price}</span>
-              </div>
-            </div>
-
-            {/* Right — summary */}
-            <div style={{ width: '300px' }}>
-              <div style={{ padding: '16px', border: '1px solid #eee' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                  <span>Subtotal</span><span>${cart.total_price}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span>Shipping</span><span>$0</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                  <span>Tax</span><span>$0</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '18px' }}>
-                  <span>Total</span><span>${cart.total_price}</span>
-                </div>
-                <button
-                  style={{
-                    width: '100%', marginTop: '16px', padding: '14px',
-                    background: '#ddd', border: 'none', cursor: 'pointer', fontSize: '15px'
-                  }}
-                >
-                  Checkout →
-                </button>
-                <button
-                  onClick={handleClearCart}
-                  style={{
-                    width: '100%', marginTop: '8px', padding: '10px',
-                    background: 'none', border: '1px solid #ccc',
-                    cursor: 'pointer', fontSize: '13px', color: '#999'
-                  }}
-                >
-                  Clear bag
-                </button>
-              </div>
-            </div>
-
-          </div>
-        )}
+        ) : step === 1 && cart ? (
+          <Step1
+            cart={cart}
+            onUpdateQuantity={updateQuantity}
+            onRemove={removeItem}
+            onCheckout={() => user ? setStep(2) : window.location.href = '/login'}
+          />
+        ) : step === 2 && cart ? (
+          <Step2
+            cart={cart}
+            form={form}
+            setForm={setForm}
+            onReview={() => setStep(3)}
+          />
+        ) : step === 3 && cart ? (
+          <Step3
+            cart={cart}
+            form={form}
+            onConfirm={handleConfirm}
+            submitting={submitting}
+            checkoutError={checkoutError}
+          />
+        ) : null}
       </main>
       <Footer />
     </>

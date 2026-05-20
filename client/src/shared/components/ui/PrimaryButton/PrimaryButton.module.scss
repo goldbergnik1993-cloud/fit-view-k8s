@@ -1,0 +1,10 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.btn {
+  @include btn-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
