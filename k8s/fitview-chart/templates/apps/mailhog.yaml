@@ -17,8 +17,11 @@ spec:
         - name: mailhog
           image: mailhog/mailhog:latest
           ports:
-            - containerPort: 1025 # SMTP
-            - containerPort: 8025 # UI
+            - containerPort: 1025
+            - containerPort: 8025
+          resources:
+            limits: { cpu: 100m, memory: 128Mi }
+            requests: { cpu: 25m, memory: 32Mi }
 ---
 apiVersion: v1
 kind: Service
