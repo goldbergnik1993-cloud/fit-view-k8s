@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-beat
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.beat | default 1 }}
   strategy:
     type: Recreate
   selector:
@@ -21,7 +21,7 @@ spec:
       containers:
         - name: beat
           image: {{ .Values.images.backend }}
-          command: ["celery", "-A", "core.celery_app", "beat", "--loglevel=info"]
+          command: ["celery", "-A", "core.celery_app", "beat", "--loglevel=info", "-s", "/tmp/celerybeat-schedule"]
           securityContext:
             {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
           volumeMounts:
@@ -36,8 +36,7 @@ spec:
             - name: DATABASE_URL
               value: "postgresql+asyncpg://$(PGUSER):$(PGPASSWORD)@$(PGHOST)/$(PGDATABASE)"
           resources:
-            limits: { cpu: 200m, memory: 256Mi }
-            requests: { cpu: 50m, memory: 128Mi }
+            {{- toYaml .Values.resources.beat | nindent 12 }}
       volumes:
         - name: static-data
           emptyDir: {}
