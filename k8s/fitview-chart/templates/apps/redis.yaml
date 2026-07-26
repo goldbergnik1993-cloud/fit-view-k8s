@@ -14,12 +14,14 @@ spec:
         app: redis
     spec:
       securityContext:
-        runAsUser: 1000
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
       containers:
         - name: redis
           image: redis:7-alpine
           ports:
             - containerPort: 6379
+          securityContext:
+            {{- toYaml .Values.security.containerSecurityContext | nindent 12 }}
           resources:
             limits: { cpu: 200m, memory: 256Mi }
             requests: { cpu: 100m, memory: 128Mi }
