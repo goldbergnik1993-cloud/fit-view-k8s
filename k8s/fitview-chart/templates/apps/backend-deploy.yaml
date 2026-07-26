@@ -20,6 +20,13 @@ spec:
         {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
 
       initContainers:
+        - name: seed-static
+          image: {{ .Values.images.backend }}
+          command: ["sh", "-c", "cp -a /app/static/. /seed-target/ 2>/dev/null || true"]
+          volumeMounts:
+            - name: static-data
+              mountPath: /seed-target
+
         - name: migrations
           image: {{ .Values.images.backend }}
           command: ["sh", "-c", "alembic upgrade head"]
@@ -54,6 +61,21 @@ spec:
           env:
             - name: DATABASE_URL
               value: "postgresql+asyncpg://$(PGUSER):$(PGPASSWORD)@$(PGHOST)/$(PGDATABASE)"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
           resources:
             {{- toYaml .Values.resources.backend | nindent 12 }}
 
