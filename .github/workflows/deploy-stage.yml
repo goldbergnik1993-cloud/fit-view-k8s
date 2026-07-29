@@ -38,7 +38,6 @@ jobs:
           helm template ${{ vars.RELEASE_NAME }} ./k8s/fitview-chart \
             --set images.backend="goldbernik/fitview-backend:${{ github.sha }}" \
             --set images.frontend="goldbernik/fitview-frontend:${{ github.sha }}" \
-            --set config.VITE_API_URL="${{ vars.VITE_API_URL }}" \
             --set config.FRONTEND_URL="${{ vars.FRONTEND_URL }}" \
             --set config.PGHOST="${{ vars.PGHOST }}" \
             --set config.PGDATABASE="${{ vars.PGDATABASE }}" \

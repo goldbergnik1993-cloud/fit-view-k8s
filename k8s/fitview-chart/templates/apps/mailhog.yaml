@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: mailhog
-          image: mailhog/mailhog:latest
+          image: {{ .Values.images.mailhog }}
           ports:
             - containerPort: 1025
             - containerPort: 8025
