@@ -1,0 +1,10 @@
+database_url    = "postgresql+asyncpg://user:password@host/dbname"
+pghost          = "your-neon-pooler-host"
+pgdatabase      = "neondb"
+pguser          = "neondb_owner"
+pgpassword      = "your-db-password"
+app_secret_key  = "generate-a-random-secret-for-jwt-signing"
+
+stripe_secret_key      = "sk_test_dummy"
+stripe_publishable_key = "pk_test_dummy"
+stripe_webhook_secret  = "whsec_dummy"

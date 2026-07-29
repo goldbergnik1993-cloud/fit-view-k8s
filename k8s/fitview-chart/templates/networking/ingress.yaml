@@ -7,7 +7,10 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: {{ .Values.global.domain | quote }}
+    -
+      {{- if .Values.global.domain }}
+      host: {{ .Values.global.domain | quote }}
+      {{- end }}
       http:
         paths:
           - path: /
@@ -35,7 +38,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /api/static$1
 spec:
   rules:
-    - host: {{ .Values.global.domain | quote }}
+    -
+      {{- if .Values.global.domain }}
+      host: {{ .Values.global.domain | quote }}
+      {{- end }}
       http:
         paths:
           - path: /static(.*)

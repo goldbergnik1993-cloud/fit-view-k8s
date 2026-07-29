@@ -5,6 +5,7 @@ global:
 images:
   backend: goldbernik/fitview-backend:latest
   frontend: goldbernik/fitview-frontend:latest
+  mailhog: axllent/mailpit:v1.30.6
   pullPolicy: IfNotPresent
 
 security:
@@ -51,7 +52,6 @@ resources:
     requests: { cpu: 50m, memory: 64Mi }
 
 config:
-  VITE_API_URL: "http://fitview.local"
   FRONTEND_URL: "http://fitview.local"
   PGHOST: "ep-late-voice-alj6zo9o-pooler.c-3.eu-central-1.aws.neon.tech"
   PGDATABASE: "neondb"
